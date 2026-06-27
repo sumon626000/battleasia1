@@ -50,12 +50,13 @@ export function SiteHeader() {
         <div className="hidden items-center gap-2 lg:flex">
           {isAuthenticated ? (
             <>
-              <div className="flex items-center gap-2 rounded-md border border-border/70 bg-background/60 px-3 py-1.5">
+              <Link to="/dashboard" className="flex items-center gap-2 rounded-md border border-border/70 bg-background/60 px-3 py-1.5 transition hover:border-gold/60 hover:text-gold">
                 <UserIcon size={14} className="text-gold" />
                 <span className="font-hud text-xs font-semibold tracking-wide">{userBadge}</span>
-              </div>
-              <button onClick={signOut} className="btn-outline-gold px-4 py-2 text-sm" aria-label="Sign out">
-                <LogOut size={14} className="mr-1" /> LOGOUT
+              </Link>
+              <Link to="/dashboard" className="btn-gold px-4 py-2 text-sm">DASHBOARD</Link>
+              <button onClick={signOut} className="btn-outline-gold px-3 py-2 text-sm" aria-label="Sign out">
+                <LogOut size={14} />
               </button>
             </>
           ) : (
