@@ -97,6 +97,12 @@ function AdminMatchesPage() {
 
   async function save() {
     if (!editing) return;
+    const missing: string[] = [];
+    if (!editing.match_name?.trim()) missing.push("Match Name");
+    if (!editing.map_name?.trim()) missing.push("Map");
+    if (!editing.schedule_at) missing.push("Schedule");
+    if (!editing.total_players || editing.total_players <= 0) missing.push("Total Players");
+    if (missing.length) return toast.error(`Required field missing: ${missing.join(", ")}`);
     const payload: Record<string, unknown> = { ...editing };
     if (payload.schedule_at && typeof payload.schedule_at === "string") {
       payload.schedule_at = new Date(payload.schedule_at).toISOString();
@@ -272,10 +278,10 @@ function EditorModal({
         </div>
 
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-          <Field label="Match Name"><input className={inp} value={draft.match_name ?? ""} onChange={(e) => upd({ match_name: e.target.value })} /></Field>
-          <Field label="Map"><input className={inp} value={draft.map_name ?? ""} onChange={(e) => upd({ map_name: e.target.value })} /></Field>
-          <Field label="Schedule (local)"><input type="datetime-local" className={inp} value={draft.schedule_at ?? ""} onChange={(e) => upd({ schedule_at: e.target.value })} /></Field>
-          <Field label="Total Players"><input type="number" className={inp} value={draft.total_players ?? 0} onChange={(e) => upd({ total_players: Number(e.target.value) })} /></Field>
+          <Field label="Match Name" required><input className={inp} value={draft.match_name ?? ""} onChange={(e) => upd({ match_name: e.target.value })} /></Field>
+          <Field label="Map" required><input className={inp} value={draft.map_name ?? ""} onChange={(e) => upd({ map_name: e.target.value })} /></Field>
+          <Field label="Schedule (local)" required><input type="datetime-local" className={inp} value={draft.schedule_at ?? ""} onChange={(e) => upd({ schedule_at: e.target.value })} /></Field>
+          <Field label="Total Players" required><input type="number" className={inp} value={draft.total_players ?? 0} onChange={(e) => upd({ total_players: Number(e.target.value) })} /></Field>
 
           <Select label="Status" value={draft.status} options={STATUS} onChange={(v) => upd({ status: v })} />
           <Select label="Match Type" value={draft.match_type} options={MATCH_TYPE} onChange={(v) => upd({ match_type: v })} />
@@ -350,10 +356,12 @@ function EditorModal({
 
 const inp = "w-full rounded border border-border/60 bg-secondary/40 px-3 py-2 font-mono text-sm outline-none focus:border-gold";
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
+function Field({ label, required, children }: { label: string; required?: boolean; children: React.ReactNode }) {
   return (
     <label className="flex flex-col gap-1">
-      <span className="font-hud text-[10px] uppercase tracking-widest text-foreground/60">{label}</span>
+      <span className="font-hud text-[10px] uppercase tracking-widest text-foreground/60">
+        {label}{required ? <span className="ml-1 text-destructive">*</span> : <span className="ml-1 text-foreground/30">(optional)</span>}
+      </span>
       {children}
     </label>
   );
