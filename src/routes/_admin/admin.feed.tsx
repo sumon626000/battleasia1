@@ -278,11 +278,12 @@ function PostFormModal({
               ))}
             </select>
           </Field>
-          <Field label="Cover Image URL">
-            <input
+          <Field label="Cover Image">
+            <ImageUploader
               value={form.cover_image_url}
-              onChange={(e) => setForm({ ...form, cover_image_url: e.target.value })}
-              className="w-full rounded border border-border/60 bg-background/60 px-3 py-2"
+              onChange={(u) => setForm({ ...form, cover_image_url: u ?? "" })}
+              folder="feed"
+              aspect="16/9"
             />
           </Field>
           <Field label="Description (HTML)">

@@ -225,7 +225,7 @@ function PackagesTab({ qc }: { qc: ReturnType<typeof useQueryClient> }) {
             <Field label="Price"><input type="number" className={inp} value={editing.price_value ?? 0} onChange={(e) => setEditing({ ...editing, price_value: Number(e.target.value) })} /></Field>
             <Field label="Discount %"><input type="number" className={inp} value={editing.discount_percentage ?? 0} onChange={(e) => setEditing({ ...editing, discount_percentage: Number(e.target.value) })} /></Field>
             <Field label="Category ID (optional)"><input type="number" className={inp} value={editing.category_id ?? ""} onChange={(e) => setEditing({ ...editing, category_id: e.target.value ? Number(e.target.value) : null })} /></Field>
-            <Field label="Image URL"><input className={inp} value={editing.image_url ?? ""} onChange={(e) => setEditing({ ...editing, image_url: e.target.value })} /></Field>
+            <Field label="Image"><ImageUploader value={editing.image_url} onChange={(u) => setEditing({ ...editing, image_url: u })} folder="shop" aspect="1/1" /></Field>
             <Field label="Sort Order"><input type="number" className={inp} value={editing.sort_order ?? 0} onChange={(e) => setEditing({ ...editing, sort_order: Number(e.target.value) })} /></Field>
             <label className="flex items-center gap-2 font-hud text-xs uppercase tracking-widest"><input type="checkbox" checked={!!editing.is_active} onChange={(e) => setEditing({ ...editing, is_active: e.target.checked })} /> Active</label>
           </Grid>
