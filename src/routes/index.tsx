@@ -22,7 +22,7 @@ export const Route = createFileRoute("/")({
   component: BattleAsiaLanding,
 });
 
-const NAV = ["HOME", "MATCHES", "LEADERBOARD", "SHOP", "NEWS", "SUPPORT"];
+
 
 const STATS = [
   { icon: Users,  value: "12,548",     label: "ONLINE USERS" },
