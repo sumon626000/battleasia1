@@ -1,13 +1,24 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Smartphone, Plus, Pencil, Trash2, Download } from "lucide-react";
+import { Smartphone, Plus, Pencil, Trash2, Download, Upload, Loader2 } from "lucide-react";
 
 export const Route = createFileRoute("/_admin/admin/apk")({
   component: AdminApkPage,
 });
+
+const BUCKET = "apk-files";
+
+function formatSize(b: number) {
+  if (!b) return "0 B";
+  const u = ["B", "KB", "MB", "GB"];
+  let i = 0;
+  let n = b;
+  while (n >= 1024 && i < u.length - 1) { n /= 1024; i++; }
+  return `${n.toFixed(1)} ${u[i]}`;
+}
 
 type Apk = {
   id: number;
