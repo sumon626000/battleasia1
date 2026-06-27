@@ -44,7 +44,7 @@ function PublicProfilePage() {
 
       const [parts, posts, followers, following, isFollowing, isBlocked] = await Promise.all([
         supabase.from("match_participants").select("kills, prize_bac, rank_position").eq("user_id", data.id).eq("result_applied", true),
-        supabase.from("social_posts").select("id, caption, created_at, like_count, comment_count, social_post_media(media_url, media_type)").eq("user_id", data.id).order("created_at", { ascending: false }).limit(30),
+        supabase.from("social_posts").select("id, caption, created_at, likes_count, comments_count, media_url, media_type, social_post_media(url, media_type)").eq("user_id", data.id).eq("visibility", "public").order("created_at", { ascending: false }).limit(30),
         supabase.from("user_follows").select("follower_id", { count: "exact", head: true }).eq("following_id", data.id),
         supabase.from("user_follows").select("following_id", { count: "exact", head: true }).eq("follower_id", data.id),
         user ? supabase.from("user_follows").select("follower_id").eq("follower_id", user.id).eq("following_id", data.id).maybeSingle() : Promise.resolve({ data: null }),
