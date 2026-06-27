@@ -42,7 +42,7 @@ export function LanguageSwitcher({ compact = false }: { compact?: boolean }) {
       {open && (
         <>
           <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-          <div className="absolute right-0 z-50 mt-2 w-44 overflow-hidden rounded-md border border-border bg-card shadow-xl">
+          <div className="absolute right-0 z-50 mt-2 w-44 overflow-hidden rounded-md border border-border bg-background shadow-xl backdrop-blur-md" style={{ backgroundColor: 'hsl(var(--card))', backgroundImage: 'linear-gradient(hsl(var(--card)), hsl(var(--card)))' }}>
             {LANGS.map((l) => (
               <button
                 key={l.code}
