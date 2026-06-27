@@ -47,21 +47,30 @@ function DashboardPage() {
   return (
     <div className="space-y-5">
       <section className="hud-panel relative overflow-hidden p-5 sm:p-6">
-        <div className="absolute inset-0 -z-10 bg-grid-hud opacity-30" />
+        <div
+          aria-hidden
+          className="absolute inset-0 -z-10 bg-cover bg-center opacity-30"
+          style={{ backgroundImage: `url(${squadHero})` }}
+        />
+        <div
+          aria-hidden
+          className="absolute inset-0 -z-10 bg-gradient-to-r from-background via-background/80 to-background/40"
+        />
+        <div aria-hidden className="absolute inset-0 -z-10 bg-grid-hud opacity-20" />
         <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4">
           <div className="min-w-0">
-            <p className="font-hud text-xs uppercase tracking-[0.25em] text-foreground/60">
+            <p className="font-hud text-xs uppercase tracking-[0.25em] text-gold/80">
               Welcome back, Operator
             </p>
             <h1 className="mt-1 truncate font-display text-2xl font-bold tracking-wide sm:text-3xl">
               {name}
             </h1>
-            <p className="mt-1 font-mono text-[11px] text-foreground/50">
+            <p className="mt-1 font-mono text-[11px] text-foreground/60">
               PUBG ID: {profile?.pubg_id ?? "—"} · Server: {profile?.game_server ?? "—"}
             </p>
           </div>
           <div className="hidden sm:block">
-            <TrendingUp className="h-12 w-12 text-gold/40" />
+            <TrendingUp className="h-12 w-12 text-gold/60" />
           </div>
         </div>
       </section>
