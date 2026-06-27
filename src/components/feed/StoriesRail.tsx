@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { Plus, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
+import { SignedImage, SignedVideo } from "@/components/feed/SignedMedia";
 
 type Story = {
   id: string;
@@ -140,9 +141,9 @@ export function StoriesRail() {
             {(() => {
               const s = groups[viewer.gi].stories[viewer.si];
               return s.media_type === "video" ? (
-                <video src={s.media_url} autoPlay playsInline className="h-full w-full object-contain" />
+                <SignedVideo src={s.media_url} autoPlay playsInline className="h-full w-full object-contain" />
               ) : (
-                <img src={s.media_url} alt="story" className="h-full w-full object-contain" />
+                <SignedImage src={s.media_url} alt="story" className="h-full w-full object-contain" />
               );
             })()}
 

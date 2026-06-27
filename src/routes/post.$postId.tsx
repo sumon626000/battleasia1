@@ -6,6 +6,7 @@ import { SiteShell } from "@/components/site/SiteShell";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { CommentsThread } from "@/components/feed/CommentsThread";
+import { SignedImage, SignedVideo } from "@/components/feed/SignedMedia";
 
 type Post = {
   id: string;
@@ -118,9 +119,9 @@ function PostPage() {
           {post.media_url && (
             <div className="bg-black">
               {post.media_type === "video" ? (
-                <video src={post.media_url} controls className="max-h-[640px] w-full object-contain" />
+                <SignedVideo src={post.media_url} controls className="max-h-[640px] w-full object-contain" />
               ) : (
-                <img src={post.media_url} alt="post" className="max-h-[640px] w-full object-contain" />
+                <SignedImage src={post.media_url} alt="post" className="max-h-[640px] w-full object-contain" />
               )}
             </div>
           )}

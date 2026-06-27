@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { CommentsThread, LikeBurst } from "@/components/feed/CommentsThread";
 import { StoriesRail } from "@/components/feed/StoriesRail";
+import { SignedImage, SignedVideo } from "@/components/feed/SignedMedia";
 
 export const Route = createFileRoute("/feed")({
   head: () => ({
@@ -217,9 +218,9 @@ function PostCard({ post, onLike }: { post: Post; onLike: () => void }) {
       {post.media_url ? (
         <div className="relative bg-black">
           {post.media_type === "video" ? (
-            <video src={post.media_url} controls className="max-h-[640px] w-full object-contain" />
+            <SignedVideo src={post.media_url} controls className="max-h-[640px] w-full object-contain" />
           ) : (
-            <img src={post.media_url} alt="post" className="max-h-[640px] w-full object-contain" loading="lazy" />
+            <SignedImage src={post.media_url} alt="post" className="max-h-[640px] w-full object-contain" loading="lazy" />
           )}
           {/* corner HUD bracket */}
           <span className="pointer-events-none absolute left-2 top-2 h-3 w-3 border-l-2 border-t-2 border-gold/70" />
