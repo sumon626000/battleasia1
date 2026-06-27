@@ -33,6 +33,7 @@ import { Route as AdminAdminWithdrawConfigRouteImport } from './routes/_admin/ad
 import { Route as AdminAdminUsersRouteImport } from './routes/_admin/admin.users'
 import { Route as AdminAdminSupportRouteImport } from './routes/_admin/admin.support'
 import { Route as AdminAdminShopRouteImport } from './routes/_admin/admin.shop'
+import { Route as AdminAdminSettingsRouteImport } from './routes/_admin/admin.settings'
 import { Route as AdminAdminResultsRouteImport } from './routes/_admin/admin.results'
 import { Route as AdminAdminParticipantsRouteImport } from './routes/_admin/admin.participants'
 import { Route as AdminAdminNotificationsRouteImport } from './routes/_admin/admin.notifications'
@@ -176,6 +177,11 @@ const AdminAdminShopRoute = AdminAdminShopRouteImport.update({
   path: '/admin/shop',
   getParentRoute: () => AdminRouteRoute,
 } as any)
+const AdminAdminSettingsRoute = AdminAdminSettingsRouteImport.update({
+  id: '/admin/settings',
+  path: '/admin/settings',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
 const AdminAdminResultsRoute = AdminAdminResultsRouteImport.update({
   id: '/admin/results',
   path: '/admin/results',
@@ -263,6 +269,7 @@ export interface FileRoutesByFullPath {
   '/admin/notifications': typeof AdminAdminNotificationsRoute
   '/admin/participants': typeof AdminAdminParticipantsRoute
   '/admin/results': typeof AdminAdminResultsRoute
+  '/admin/settings': typeof AdminAdminSettingsRoute
   '/admin/shop': typeof AdminAdminShopRoute
   '/admin/support': typeof AdminAdminSupportRoute
   '/admin/users': typeof AdminAdminUsersRoute
@@ -300,6 +307,7 @@ export interface FileRoutesByTo {
   '/admin/notifications': typeof AdminAdminNotificationsRoute
   '/admin/participants': typeof AdminAdminParticipantsRoute
   '/admin/results': typeof AdminAdminResultsRoute
+  '/admin/settings': typeof AdminAdminSettingsRoute
   '/admin/shop': typeof AdminAdminShopRoute
   '/admin/support': typeof AdminAdminSupportRoute
   '/admin/users': typeof AdminAdminUsersRoute
@@ -340,6 +348,7 @@ export interface FileRoutesById {
   '/_admin/admin/notifications': typeof AdminAdminNotificationsRoute
   '/_admin/admin/participants': typeof AdminAdminParticipantsRoute
   '/_admin/admin/results': typeof AdminAdminResultsRoute
+  '/_admin/admin/settings': typeof AdminAdminSettingsRoute
   '/_admin/admin/shop': typeof AdminAdminShopRoute
   '/_admin/admin/support': typeof AdminAdminSupportRoute
   '/_admin/admin/users': typeof AdminAdminUsersRoute
@@ -379,6 +388,7 @@ export interface FileRouteTypes {
     | '/admin/notifications'
     | '/admin/participants'
     | '/admin/results'
+    | '/admin/settings'
     | '/admin/shop'
     | '/admin/support'
     | '/admin/users'
@@ -416,6 +426,7 @@ export interface FileRouteTypes {
     | '/admin/notifications'
     | '/admin/participants'
     | '/admin/results'
+    | '/admin/settings'
     | '/admin/shop'
     | '/admin/support'
     | '/admin/users'
@@ -455,6 +466,7 @@ export interface FileRouteTypes {
     | '/_admin/admin/notifications'
     | '/_admin/admin/participants'
     | '/_admin/admin/results'
+    | '/_admin/admin/settings'
     | '/_admin/admin/shop'
     | '/_admin/admin/support'
     | '/_admin/admin/users'
@@ -655,6 +667,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAdminShopRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/_admin/admin/settings': {
+      id: '/_admin/admin/settings'
+      path: '/admin/settings'
+      fullPath: '/admin/settings'
+      preLoaderRoute: typeof AdminAdminSettingsRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
     '/_admin/admin/results': {
       id: '/_admin/admin/results'
       path: '/admin/results'
@@ -761,6 +780,7 @@ interface AdminRouteRouteChildren {
   AdminAdminNotificationsRoute: typeof AdminAdminNotificationsRoute
   AdminAdminParticipantsRoute: typeof AdminAdminParticipantsRoute
   AdminAdminResultsRoute: typeof AdminAdminResultsRoute
+  AdminAdminSettingsRoute: typeof AdminAdminSettingsRoute
   AdminAdminShopRoute: typeof AdminAdminShopRoute
   AdminAdminSupportRoute: typeof AdminAdminSupportRoute
   AdminAdminUsersRoute: typeof AdminAdminUsersRoute
@@ -781,6 +801,7 @@ const AdminRouteRouteChildren: AdminRouteRouteChildren = {
   AdminAdminNotificationsRoute: AdminAdminNotificationsRoute,
   AdminAdminParticipantsRoute: AdminAdminParticipantsRoute,
   AdminAdminResultsRoute: AdminAdminResultsRoute,
+  AdminAdminSettingsRoute: AdminAdminSettingsRoute,
   AdminAdminShopRoute: AdminAdminShopRoute,
   AdminAdminSupportRoute: AdminAdminSupportRoute,
   AdminAdminUsersRoute: AdminAdminUsersRoute,
