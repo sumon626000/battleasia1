@@ -155,6 +155,7 @@ function RootComponent() {
             <Outlet />
           </SiteShell>
         )}
+        <Toaster position="top-right" richColors closeButton theme="dark" />
       </I18nProvider>
     </QueryClientProvider>
   );
