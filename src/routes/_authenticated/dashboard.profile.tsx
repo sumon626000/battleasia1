@@ -194,6 +194,64 @@ function ProfilePage() {
     }
   }
 
+  async function onCoverChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+    if (!/^image\/(png|jpe?g|webp)$/.test(file.type)) {
+      toast.error("Please choose a PNG, JPG or WEBP image");
+      return;
+    }
+    if (file.size > 8 * 1024 * 1024) {
+      toast.error("Cover must be 8MB or less");
+      return;
+    }
+    setUploadingCover(true);
+    try {
+      const ext = file.name.split(".").pop()?.toLowerCase() || "png";
+      const path = `${user.id}/cover-${Date.now()}.${ext}`;
+      const { error: upErr } = await supabase.storage
+        .from("covers")
+        .upload(path, file, { upsert: true, contentType: file.type });
+      if (upErr) throw upErr;
+      const { data: signed, error: signErr } = await supabase.storage
+        .from("covers")
+        .createSignedUrl(path, 60 * 60 * 24 * 365);
+      if (signErr || !signed) throw signErr || new Error("Failed to sign URL");
+      const { error: profErr } = await supabase
+        .from("profiles")
+        .update({ cover_url: signed.signedUrl })
+        .eq("id", user.id);
+      if (profErr) throw profErr;
+      toast.success("Cover updated");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Cover upload failed");
+    } finally {
+      setUploadingCover(false);
+      if (coverInputRef.current) coverInputRef.current.value = "";
+    }
+  }
+
+  async function onSaveSocial() {
+    if (!user) return;
+    setSavingSocial(true);
+    try {
+      const cleaned = Object.fromEntries(
+        Object.entries(social).filter(([, v]) => v.trim().length > 0),
+      );
+      const { error } = await supabase
+        .from("profiles")
+        .update({ bio: bio.trim() || null, social_links: cleaned })
+        .eq("id", user.id);
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+      toast.success("Social profile updated");
+    } finally {
+      setSavingSocial(false);
+    }
+  }
+
   async function onSaveProfile(values: ProfileUpdateValues) {
     if (!user) return;
     setSavingProfile(true);
