@@ -143,7 +143,13 @@ function LeaderboardPage() {
           </thead>
           <tbody>
             {q.data?.map((r, i) => (
-              <tr key={r.user_id} className="border-t border-border/30 hover:bg-secondary/30">
+              <tr key={r.user_id} className={`border-t border-border/30 transition-colors ${
+                i === 0 ? "bg-gold/10 hover:bg-gold/15" :
+                i === 1 ? "bg-slate-300/5 hover:bg-slate-300/10" :
+                i === 2 ? "bg-amber-700/10 hover:bg-amber-700/15" :
+                "hover:bg-secondary/30"
+              }`}>
+
                 <td className="px-3 py-2">
                   {i === 0 ? <Crown size={16} className="text-gold" /> :
                    i === 1 ? <Medal size={16} className="text-slate-300" /> :
