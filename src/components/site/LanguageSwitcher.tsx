@@ -2,6 +2,22 @@ import { useState } from "react";
 import { Globe, Check } from "lucide-react";
 import { LANGS, useT, type Lang } from "@/lib/i18n";
 
+function FlagImg({ iso2, size = 18 }: { iso2: string; size?: number }) {
+  const code = iso2.toLowerCase();
+  return (
+    <img
+      src={`https://flagcdn.com/w40/${code}.png`}
+      srcSet={`https://flagcdn.com/w80/${code}.png 2x`}
+      alt={iso2}
+      width={size}
+      height={Math.round((size * 3) / 4)}
+      className="inline-block shrink-0 rounded-[2px] object-cover shadow-sm ring-1 ring-black/20"
+      style={{ width: size, height: Math.round((size * 3) / 4) }}
+      loading="lazy"
+    />
+  );
+}
+
 export function LanguageSwitcher({ compact = false }: { compact?: boolean }) {
   const { lang, setLang } = useT();
   const [open, setOpen] = useState(false);
@@ -16,8 +32,11 @@ export function LanguageSwitcher({ compact = false }: { compact?: boolean }) {
         aria-label="Change language"
       >
         <Globe size={14} className="text-gold" />
-        {compact ? <span>{current.flag}</span> : (
-          <span className="font-hud tracking-wide">{current.flag} {current.code.toUpperCase()}</span>
+        {compact ? <FlagImg iso2={current.iso2} size={16} /> : (
+          <span className="flex items-center gap-1.5 font-hud tracking-wide">
+            <FlagImg iso2={current.iso2} size={16} />
+            {current.code.toUpperCase()}
+          </span>
         )}
       </button>
       {open && (
@@ -31,7 +50,7 @@ export function LanguageSwitcher({ compact = false }: { compact?: boolean }) {
                 className="flex w-full items-center justify-between px-3 py-2 text-left text-sm transition hover:bg-secondary"
               >
                 <span className="flex items-center gap-2">
-                  <span>{l.flag}</span>
+                  <FlagImg iso2={l.iso2} size={18} />
                   <span className="font-medium">{l.label}</span>
                 </span>
                 {l.code === lang && <Check size={14} className="text-gold" />}
