@@ -166,10 +166,10 @@ function BattleAsiaLanding() {
     },
   });
 
-  const STATS: Array<{ icon: any; value: string; label: string; isCoin?: boolean }> = [
+  const STATS: Array<{ icon: any; value: string; label: string; isCoin?: boolean; valueCoin?: boolean }> = [
     { icon: Users2,  value: pulse.data ? `${formatBAC(pulse.data.processed + pulse.data.ongoing)}` : "—", label: "TOTAL MATCHES" },
     { icon: Swords,  value: pulse.data ? formatBAC(pulse.data.ongoing) : "—", label: "LIVE MATCHES" },
-    { icon: Trophy,  value: pulse.data ? `৳${formatBAC(pulse.data.totalWinnings)}` : "—", label: "TOTAL PAID OUT" },
+    { icon: Trophy,  value: pulse.data ? formatBAC(pulse.data.totalWinnings) : "—", label: "TOTAL PAID OUT", valueCoin: true },
     { icon: null,    value: pulse.data ? formatBAC(pulse.data.processed) : "—", label: "PROCESSED MATCHES", isCoin: true },
   ];
 
@@ -220,7 +220,7 @@ function BattleAsiaLanding() {
             </p>
             <div className="my-3 flex w-full items-center gap-3">
               <span className="hud-divider flex-1" />
-              <span className="font-mono-tab text-[10px] tracking-widest text-gold">1 BAC = ৳1</span>
+              <span className="font-mono-tab inline-flex items-center gap-1 text-[10px] tracking-widest text-gold">1 BAC = 1 <CoinIcon size={10} /></span>
               <span className="hud-divider flex-1" />
             </div>
             <button className="btn-gold w-full px-6 py-2.5 text-sm">BUY NOW</button>
@@ -245,20 +245,23 @@ function BattleAsiaLanding() {
             </div>
             <div className="text-right">
               <div className="font-hud text-[10px] tracking-[0.3em] text-muted-foreground">PLATFORM TOTAL WINNINGS</div>
-              <div className="font-display font-mono-tab mt-1 text-3xl font-bold text-gold sm:text-4xl">
-                ৳{pulse.data ? formatBAC(pulse.data.totalWinnings) : "—"}
+              <div className="font-display font-mono-tab mt-1 inline-flex items-center gap-2 text-3xl font-bold text-gold sm:text-4xl">
+                <CoinIcon size={28} />
+                {pulse.data ? formatBAC(pulse.data.totalWinnings) : "—"}
               </div>
             </div>
           </div>
 
           <div className="relative mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
-            {STATS.map(({ icon: Icon, value, label, isCoin }) => (
+            {STATS.map(({ icon: Icon, value, label, isCoin, valueCoin }) => (
               <div key={label} className="flex items-center gap-3 rounded-sm border border-border/60 bg-background/40 p-3">
                 <div className="grid h-10 w-10 shrink-0 place-items-center rounded-md bg-gold/10 text-gold ring-1 ring-gold/30">
                   {isCoin ? <CoinIcon size={20} /> : <Icon size={18} />}
                 </div>
                 <div className="min-w-0">
-                  <div className="font-display font-mono-tab truncate text-lg font-bold leading-none">{value}</div>
+                  <div className="font-display font-mono-tab inline-flex items-center gap-1 truncate text-lg font-bold leading-none">
+                    {valueCoin && <CoinIcon size={14} />}{value}
+                  </div>
                   <div className="font-hud mt-1 text-[9px] tracking-[0.2em] text-muted-foreground">{label}</div>
                 </div>
               </div>
@@ -302,7 +305,7 @@ function BattleAsiaLanding() {
           loading={topProfit.isLoading}
           rows={(topProfit.data ?? []).map((p, i) => ({
             rank: i + 1, name: p.name, avatar: p.avatar,
-            right: `৳${formatBAC(p.total)}`, sub: "Lifetime winnings",
+            right: formatBAC(p.total), rightCoin: true, sub: "Lifetime winnings",
           }))}
         />
         <LeaderCard
@@ -322,7 +325,7 @@ function BattleAsiaLanding() {
           empty="No high-prize battles right now."
           items={(highPrize.data ?? []).map((m: any) => ({
             id: m.id, name: m.match_name, mode: m.player_mode, map: m.map_name,
-            value: `৳${formatBAC(Number(m.rank_1_prize_bac))}`,
+            value: formatBAC(Number(m.rank_1_prize_bac)),
             valueLabel: "RANK 1 PRIZE",
           }))}
         />
@@ -331,7 +334,7 @@ function BattleAsiaLanding() {
           empty="No ongoing matches right now. Check back soon."
           items={(ongoingMatches.data ?? []).map((m: any) => ({
             id: m.id, name: m.match_name, mode: m.player_mode, map: m.map_name,
-            value: `৳${formatBAC(Number(m.rank_1_prize_bac))}`,
+            value: formatBAC(Number(m.rank_1_prize_bac)),
             valueLabel: "TOP PRIZE",
           }))}
         />
@@ -360,12 +363,14 @@ function BattleAsiaLanding() {
           <div className="grid grid-cols-2 gap-3">
             {[
               { v: "500K+", k: "Active Players" },
-              { v: "৳2M+", k: "Prize Money" },
+              { v: "2M+", k: "Prize Money", coin: true },
               { v: "15+", k: "Games Supported" },
               { v: "24/7", k: "Tournaments" },
             ].map((c) => (
               <div key={c.k} className="hud-panel grid place-items-center p-5 text-center">
-                <div className="font-display text-3xl font-bold text-gold">{c.v}</div>
+                <div className="font-display inline-flex items-center gap-1 text-3xl font-bold text-gold">
+                  {c.coin && <CoinIcon size={22} />}{c.v}
+                </div>
                 <div className="font-hud mt-1 text-[10px] tracking-[0.2em] text-muted-foreground">{c.k}</div>
               </div>
             ))}
@@ -513,7 +518,7 @@ function BattleAsiaLanding() {
 
 /* ============== SUB-COMPONENTS ============== */
 
-type LeaderRow = { rank: number; name: string; avatar: string | null; right: string; sub: string };
+type LeaderRow = { rank: number; name: string; avatar: string | null; right: string; sub: string; rightCoin?: boolean };
 function LeaderCard({
   tag, icon: Icon, title, highlight, rows, loading,
 }: {
@@ -563,7 +568,9 @@ function LeaderCard({
                 <div className="truncate text-sm font-semibold">{r.name}</div>
                 <div className="font-hud text-[10px] tracking-[0.15em] text-muted-foreground">{r.sub}</div>
               </div>
-              <div className="font-mono-tab text-right text-sm font-bold text-gold">{r.right}</div>
+              <div className="font-mono-tab inline-flex items-center gap-1 text-right text-sm font-bold text-gold">
+                {r.rightCoin && <CoinIcon size={12} />}{r.right}
+              </div>
             </li>
           ))}
         </ol>
@@ -618,7 +625,9 @@ function MatchStrip({
                 </div>
               </div>
               <div className="text-right">
-                <div className="font-mono-tab text-sm font-bold text-gold">{m.value}</div>
+                <div className="font-mono-tab inline-flex items-center gap-1 text-sm font-bold text-gold">
+                  <CoinIcon size={12} />{m.value}
+                </div>
                 <div className="font-hud text-[9px] tracking-[0.18em] text-muted-foreground">{m.valueLabel}</div>
               </div>
             </li>
