@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Heart, MessageCircle, Send, Plus, RefreshCw, MoreHorizontal, Bookmark } from "lucide-react";
 import { toast } from "sonner";
-import { SiteShell } from "@/components/site/SiteShell";
+
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { CommentsThread, LikeBurst } from "@/components/feed/CommentsThread";
@@ -17,9 +17,7 @@ export const Route = createFileRoute("/feed")({
   }),
   component: FeedPage,
   errorComponent: ({ error }) => (
-    <SiteShell>
-      <div className="mx-auto max-w-2xl p-6 font-hud text-sm text-red-400">{error.message}</div>
-    </SiteShell>
+    <div className="mx-auto max-w-2xl p-6 font-hud text-sm text-red-400">{error.message}</div>
   ),
 });
 
@@ -127,8 +125,7 @@ function FeedPage() {
   }
 
   return (
-    <SiteShell>
-      <div className="mx-auto max-w-[600px] px-2 py-5 sm:px-4">
+    <div className="mx-auto max-w-[600px] px-2 py-5 sm:px-4">
         {/* HUD header */}
         <header className="mb-5 flex items-center justify-between border-b border-border/60 pb-3">
           <div className="min-w-0">
@@ -173,8 +170,7 @@ function FeedPage() {
             ))}
           </ul>
         )}
-      </div>
-    </SiteShell>
+    </div>
   );
 }
 
