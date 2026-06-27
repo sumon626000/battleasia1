@@ -17,6 +17,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AdminRouteRouteImport } from './routes/_admin/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as UUsernameRouteImport } from './routes/u.$username'
 import { Route as PSlugRouteImport } from './routes/p.$slug'
 import { Route as EmailVerifyRouteImport } from './routes/email.verify'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
@@ -93,6 +94,11 @@ const AdminRouteRoute = AdminRouteRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UUsernameRoute = UUsernameRouteImport.update({
+  id: '/u/$username',
+  path: '/u/$username',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PSlugRoute = PSlugRouteImport.update({
@@ -316,6 +322,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/email/verify': typeof EmailVerifyRoute
   '/p/$slug': typeof PSlugRoute
+  '/u/$username': typeof UUsernameRoute
   '/admin/apk': typeof AdminAdminApkRoute
   '/admin/balances': typeof AdminAdminBalancesRoute
   '/admin/business-wallets': typeof AdminAdminBusinessWalletsRoute
@@ -363,6 +370,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/email/verify': typeof EmailVerifyRoute
   '/p/$slug': typeof PSlugRoute
+  '/u/$username': typeof UUsernameRoute
   '/admin/apk': typeof AdminAdminApkRoute
   '/admin/balances': typeof AdminAdminBalancesRoute
   '/admin/business-wallets': typeof AdminAdminBusinessWalletsRoute
@@ -413,6 +421,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/email/verify': typeof EmailVerifyRoute
   '/p/$slug': typeof PSlugRoute
+  '/u/$username': typeof UUsernameRoute
   '/_admin/admin/apk': typeof AdminAdminApkRoute
   '/_admin/admin/balances': typeof AdminAdminBalancesRoute
   '/_admin/admin/business-wallets': typeof AdminAdminBusinessWalletsRoute
@@ -462,6 +471,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/email/verify'
     | '/p/$slug'
+    | '/u/$username'
     | '/admin/apk'
     | '/admin/balances'
     | '/admin/business-wallets'
@@ -509,6 +519,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/email/verify'
     | '/p/$slug'
+    | '/u/$username'
     | '/admin/apk'
     | '/admin/balances'
     | '/admin/business-wallets'
@@ -558,6 +569,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard'
     | '/email/verify'
     | '/p/$slug'
+    | '/u/$username'
     | '/_admin/admin/apk'
     | '/_admin/admin/balances'
     | '/_admin/admin/business-wallets'
@@ -607,6 +619,7 @@ export interface RootRouteChildren {
   ResetPasswordRoute: typeof ResetPasswordRoute
   EmailVerifyRoute: typeof EmailVerifyRoute
   PSlugRoute: typeof PSlugRoute
+  UUsernameRoute: typeof UUsernameRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -665,6 +678,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/u/$username': {
+      id: '/u/$username'
+      path: '/u/$username'
+      fullPath: '/u/$username'
+      preLoaderRoute: typeof UUsernameRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/p/$slug': {
@@ -1088,6 +1108,7 @@ const rootRouteChildren: RootRouteChildren = {
   ResetPasswordRoute: ResetPasswordRoute,
   EmailVerifyRoute: EmailVerifyRoute,
   PSlugRoute: PSlugRoute,
+  UUsernameRoute: UUsernameRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
