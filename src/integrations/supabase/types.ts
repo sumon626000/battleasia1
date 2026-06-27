@@ -1908,6 +1908,17 @@ export type Database = {
       join_match: { Args: { p_match_id: number }; Returns: number }
       mark_notifications_read: { Args: { p_ids?: number[] }; Returns: number }
       mark_ticket_read: { Args: { p_ticket_id: number }; Returns: undefined }
+      notify_premium_lifecycle: { Args: never; Returns: number }
+      notify_user: {
+        Args: {
+          p_default_message: string
+          p_default_title: string
+          p_key: string
+          p_type?: string
+          p_user_id: string
+        }
+        Returns: undefined
+      }
       record_login_event: {
         Args: {
           _browser: string
