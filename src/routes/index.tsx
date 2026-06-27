@@ -81,6 +81,7 @@ function shortName(s: string | null | undefined, fallback = "Player") {
 }
 
 function BattleAsiaLanding() {
+  const { t } = useT();
   /* ---------- LIVE DATA ---------- */
   const pulse = useQuery({
     queryKey: ["home", "pulse"],
