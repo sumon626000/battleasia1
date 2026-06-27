@@ -58,3 +58,24 @@ export const loginSchema = z.object({
 });
 
 export type LoginValues = z.infer<typeof loginSchema>;
+
+export const profileUpdateSchema = z.object({
+  in_game_username: z.string().trim().min(3).max(32),
+  display_name: z.string().trim().max(64).optional().or(z.literal("")),
+  country_code: z.string().trim().regex(/^\+\d{1,4}$/, "Country code like +880"),
+  mobile_number: z.string().trim().regex(/^\d{6,15}$/, "Enter a valid mobile number"),
+  pubg_id: z.string().trim().regex(/^\d{6,15}$/, "PUBG ID must be 6-15 digits"),
+  game_server: z.enum(["Asia", "Europe", "SouthAmerica", "MiddleEast", "KRJP"]),
+});
+export type ProfileUpdateValues = z.infer<typeof profileUpdateSchema>;
+
+export const passwordChangeSchema = z
+  .object({
+    new_password: passwordSchema,
+    confirm_password: z.string(),
+  })
+  .refine((d) => d.new_password === d.confirm_password, {
+    message: "Passwords do not match",
+    path: ["confirm_password"],
+  });
+export type PasswordChangeValues = z.infer<typeof passwordChangeSchema>;
