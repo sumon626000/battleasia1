@@ -60,7 +60,7 @@ function StatisticsPage() {
       const [parts, txs] = await Promise.all([
         supabase
           .from("match_participants")
-          .select("*, matches:match_id(id, title, status, scheduled_at, entry_fee, prize_pool)")
+          .select("*, matches:match_id(id, title, status, scheduled_at, entry_fee_bac)")
           .eq("user_id", uid!)
           .order("created_at", { ascending: false }),
         supabase
