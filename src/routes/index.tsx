@@ -21,6 +21,11 @@ import modeSoloBg from "@/assets/mode-solo.jpg";
 import modeDuoBg from "@/assets/mode-duo.jpg";
 import modeSquadBg from "@/assets/mode-squad.jpg";
 import modeTdmBg from "@/assets/mode-tdm.jpg";
+import pubgSquadAction from "@/assets/pubg-squad-action.jpg";
+import pubgVehicleChase from "@/assets/pubg-vehicle-chase.jpg";
+import pubgSniperRooftop from "@/assets/pubg-sniper-rooftop.jpg";
+import pubgAirdrop from "@/assets/pubg-airdrop.jpg";
+
 
 
 export const Route = createFileRoute("/")({
