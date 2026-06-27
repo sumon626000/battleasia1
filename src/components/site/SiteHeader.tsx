@@ -80,9 +80,7 @@ export function SiteHeader() {
             ))}
             {isAuthenticated ? (
               <div className="mt-2 grid grid-cols-1 gap-2">
-                <div className="rounded-md border border-border bg-background/60 px-3 py-2 text-center font-hud text-xs">
-                  {userBadge}
-                </div>
+                <Link to="/dashboard" className="btn-gold py-2 text-center text-sm">DASHBOARD</Link>
                 <button onClick={signOut} className="btn-outline-gold py-2 text-center text-sm">LOGOUT</button>
               </div>
             ) : (
