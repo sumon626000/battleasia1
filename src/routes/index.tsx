@@ -506,9 +506,11 @@ function BattleAsiaLanding() {
 
       {/* ============ ABOUT ============ */}
       <section className="relative overflow-hidden border-y border-border/60 bg-card/30 py-14">
-        <img loading="lazy" decoding="async" src={pubgAirdrop} alt="" aria-hidden width={1024} height={1024} className="pointer-events-none absolute -right-20 top-1/2 hidden h-[120%] w-[55%] -translate-y-1/2 object-cover opacity-15 lg:block" />
-        <div aria-hidden className="pointer-events-none absolute inset-0 hidden bg-gradient-to-r from-background via-background/60 to-transparent lg:block" />
+        <img loading="lazy" decoding="async" src={pubgAirdrop} alt="" aria-hidden width={1600} height={900} className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-25" />
+        <div aria-hidden className="pointer-events-none absolute inset-0 bg-gradient-to-b from-background/85 via-background/75 to-background/90 lg:bg-gradient-to-r lg:from-background lg:via-background/70 lg:to-background/30" />
+        <div aria-hidden className="pointer-events-none absolute inset-0 bg-grid-hud opacity-10" />
         <div className="relative mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-[1.5fr,1fr]">
+
           <div>
             <div className="chip-tag mb-3"><Star size={12} /> ABOUT</div>
             <h2 className="font-display text-3xl font-bold sm:text-4xl">
