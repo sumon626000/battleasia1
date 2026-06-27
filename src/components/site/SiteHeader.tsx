@@ -35,7 +35,7 @@ export function SiteHeader() {
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
         <Link to="/" className="group flex items-center gap-2.5">
           <div className="relative grid h-10 w-10 place-items-center rounded-md bg-gradient-to-br from-gold/30 to-transparent ring-1 ring-gold/40">
-            <img src={logoShield} alt="Battle Asia" width={32} height={32} className="h-7 w-7" />
+            <img loading="lazy" decoding="async" src={logoShield} alt="Battle Asia" width={32} height={32} className="h-7 w-7" />
           </div>
           <span className="font-display text-xl font-bold leading-none tracking-wide">
             <span className="block">BATTLE</span>

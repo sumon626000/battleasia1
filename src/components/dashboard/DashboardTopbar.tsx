@@ -37,7 +37,7 @@ export function DashboardTopbar({ profile, onOpenMobileNav }: Props) {
             <Menu size={20} />
           </button>
           <Link to="/" className="flex items-center gap-2">
-            <img src={logoShield} alt="Battle Asia" width={28} height={28} className="h-7 w-7" />
+            <img loading="lazy" decoding="async" src={logoShield} alt="Battle Asia" width={28} height={28} className="h-7 w-7" />
             <span className="hidden font-display text-lg font-bold leading-none tracking-wide sm:inline">
               BATTLE<span className="text-gold">ASIA</span>
             </span>
@@ -85,7 +85,7 @@ export function DashboardTopbar({ profile, onOpenMobileNav }: Props) {
             className="flex items-center gap-2 rounded-md border border-border/70 bg-background/60 px-2 py-1 transition hover:border-gold/60"
           >
             {profile?.avatar_url ? (
-              <img src={profile.avatar_url} alt="" className="h-7 w-7 rounded-sm object-cover" />
+              <img loading="lazy" decoding="async" src={profile.avatar_url} alt="" className="h-7 w-7 rounded-sm object-cover" />
             ) : (
               <div className="grid h-7 w-7 place-items-center rounded-sm bg-gold/20 font-mono text-[11px] font-bold text-gold">
                 {initials}

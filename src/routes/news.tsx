@@ -63,7 +63,7 @@ function PublicNewsPage() {
             >
               {p.cover_image_url && (
                 <div className="h-44 overflow-hidden">
-                  <img src={p.cover_image_url} alt={p.title} className="h-full w-full object-cover group-hover:scale-105 transition" />
+                  <img loading="lazy" decoding="async" src={p.cover_image_url} alt={p.title} className="h-full w-full object-cover group-hover:scale-105 transition" />
                 </div>
               )}
               <div className="p-4 space-y-2">

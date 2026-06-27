@@ -107,7 +107,7 @@ function AdminGamesPage() {
               <tr key={g.id} className="border-t border-border/40">
                 <td className="p-2">
                   {g.image_url ? (
-                    <img src={g.image_url} alt="" className="h-10 w-10 rounded border border-border/60 object-cover" />
+                    <img loading="lazy" decoding="async" src={g.image_url} alt="" className="h-10 w-10 rounded border border-border/60 object-cover" />
                   ) : (
                     <div className="h-10 w-10 rounded border border-border/60 bg-card/60" />
                   )}

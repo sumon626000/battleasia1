@@ -66,7 +66,7 @@ function PublicProfilePage() {
       <div className="hud-panel p-6">
         <div className="flex flex-col sm:flex-row items-start gap-4">
           {profile.avatar_url ? (
-            <img src={profile.avatar_url} alt={profile.username} className="h-24 w-24 rounded border-2 border-gold/60 object-cover" />
+            <img loading="lazy" decoding="async" src={profile.avatar_url} alt={profile.username} className="h-24 w-24 rounded border-2 border-gold/60 object-cover" />
           ) : (
             <div className="h-24 w-24 rounded border-2 border-border bg-secondary" />
           )}

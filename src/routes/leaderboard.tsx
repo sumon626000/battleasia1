@@ -126,7 +126,7 @@ function LeaderboardPage() {
                 <td className="px-3 py-2">
                   <div className="flex items-center gap-2">
                     {r.avatar_url ? (
-                      <img src={r.avatar_url} alt={r.username} className="h-7 w-7 rounded-full object-cover" />
+                      <img loading="lazy" decoding="async" src={r.avatar_url} alt={r.username} className="h-7 w-7 rounded-full object-cover" />
                     ) : (
                       <div className="h-7 w-7 rounded-full bg-secondary border border-border/60" />
                     )}
@@ -170,7 +170,7 @@ function Podium({ rows, metric }: { rows: LBRow[]; metric: "kills" | "prize" | "
             <div key={r.user_id} className="flex flex-col items-center">
               <div className="relative">
                 {r.avatar_url ? (
-                  <img src={r.avatar_url} alt={r.username} className={`h-14 w-14 rounded-full border-2 object-cover ${colors[i].split(" ")[1]}`} />
+                  <img loading="lazy" decoding="async" src={r.avatar_url} alt={r.username} className={`h-14 w-14 rounded-full border-2 object-cover ${colors[i].split(" ")[1]}`} />
                 ) : (
                   <div className={`h-14 w-14 rounded-full border-2 bg-secondary ${colors[i].split(" ")[1]}`} />
                 )}

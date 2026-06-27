@@ -201,7 +201,7 @@ function AdminTwoFactorPage() {
             Scan this QR with Google Authenticator, then enter the 6-digit code below.
           </p>
           <div className="mt-4 flex flex-col items-start gap-4 sm:flex-row">
-            <img src={qrDataUrl} alt="TOTP QR" className="rounded border border-border/60" />
+            <img loading="lazy" decoding="async" src={qrDataUrl} alt="TOTP QR" className="rounded border border-border/60" />
             <div className="flex-1 space-y-3">
               <div className="rounded border border-border/60 bg-card/40 p-3">
                 <div className="text-[10px] uppercase tracking-widest text-foreground/50">
