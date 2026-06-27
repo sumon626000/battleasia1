@@ -58,6 +58,19 @@ export function TwoFactorGate({
       return;
     }
     (async () => {
+      // Global toggle: if admin 2FA is disabled in settings, skip gate entirely
+      const { data: setting } = await supabase
+        .from("website_settings")
+        .select("value")
+        .eq("key", "admin_2fa_enabled")
+        .maybeSingle();
+      const enforced = String(setting?.value ?? "false").toLowerCase() === "true";
+      if (!active) return;
+      if (!enforced) {
+        setState("ok");
+        return;
+      }
+
       const { data } = await supabase
         .from("admin_totp_secrets")
         .select("user_id, secret, enabled, recovery_codes")
