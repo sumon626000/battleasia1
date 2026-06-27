@@ -1,6 +1,7 @@
 import { useNavigate, useRouterState } from "@tanstack/react-router";
 import {
   LayoutDashboard,
+  Home,
   Swords,
   Vault,
   Trophy,
@@ -13,8 +14,10 @@ import {
   Crown,
   Settings,
   BarChart3,
+  ShieldCheck,
 } from "lucide-react";
 import { useT } from "@/lib/i18n";
+import { useIsAdmin } from "@/hooks/use-is-admin";
 
 export const DASH_NAV = [
   { key: "dash.overview", href: "/dashboard", icon: LayoutDashboard },
@@ -36,9 +39,18 @@ export function DashboardSidebar() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const navigate = useNavigate();
   const { t } = useT();
+  const isAdmin = useIsAdmin();
   return (
     <aside className="hidden w-60 shrink-0 border-r border-border/70 bg-card/40 lg:block">
       <nav className="sticky top-20 flex flex-col gap-1 p-3">
+        <button
+          type="button"
+          onClick={() => navigate({ to: "/" })}
+          className="group flex items-center gap-3 rounded-md border border-transparent px-3 py-2 text-left font-hud text-sm font-semibold tracking-wide text-foreground/75 transition hover:border-border hover:bg-secondary/60 hover:text-gold"
+        >
+          <Home size={16} className="text-foreground/60 group-hover:text-gold" />
+          <span className="uppercase">Back to Home</span>
+        </button>
         {DASH_NAV.map((item) => {
           const Icon = item.icon;
           const active =
@@ -61,6 +73,16 @@ export function DashboardSidebar() {
             </button>
           );
         })}
+        {isAdmin && (
+          <button
+            type="button"
+            onClick={() => navigate({ to: "/admin" })}
+            className="group mt-2 flex items-center gap-3 rounded-md border border-gold/40 bg-gold/5 px-3 py-2 text-left font-hud text-sm font-semibold uppercase tracking-wide text-gold transition hover:border-gold hover:bg-gold/10"
+          >
+            <ShieldCheck size={16} />
+            <span>Go Admin</span>
+          </button>
+        )}
       </nav>
     </aside>
   );
