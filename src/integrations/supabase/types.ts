@@ -1634,6 +1634,24 @@ export type Database = {
         Args: { p_delta: number; p_note: string; p_user_id: string }
         Returns: number
       }
+      admin_cancel_match: {
+        Args: { p_match_id: number; p_reason: string }
+        Returns: number
+      }
+      admin_delete_match: { Args: { p_match_id: number }; Returns: undefined }
+      admin_publish_match_result: {
+        Args: {
+          p_match_id: number
+          p_result_description?: string
+          p_result_image_url?: string
+          p_results: Json
+        }
+        Returns: number
+      }
+      admin_save_match: {
+        Args: { p_match_id: number; p_payload: Json }
+        Returns: number
+      }
       admin_set_user_role: {
         Args: {
           p_role: Database["public"]["Enums"]["app_role"]

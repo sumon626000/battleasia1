@@ -29,6 +29,8 @@ import { Route as AuthenticatedDashboardMyMatchesRouteImport } from './routes/_a
 import { Route as AuthenticatedDashboardMatchesRouteImport } from './routes/_authenticated/dashboard.matches'
 import { Route as AuthenticatedDashboardFeedRouteImport } from './routes/_authenticated/dashboard.feed'
 import { Route as AdminAdminUsersRouteImport } from './routes/_admin/admin.users'
+import { Route as AdminAdminResultsRouteImport } from './routes/_admin/admin.results'
+import { Route as AdminAdminMatchesRouteImport } from './routes/_admin/admin.matches'
 import { Route as AuthenticatedDashboardMatchesMatchIdRouteImport } from './routes/_authenticated/dashboard.matches.$matchId'
 import { Route as AuthenticatedDashboardFeedPostIdRouteImport } from './routes/_authenticated/dashboard.feed.$postId'
 
@@ -140,6 +142,16 @@ const AdminAdminUsersRoute = AdminAdminUsersRouteImport.update({
   path: '/admin/users',
   getParentRoute: () => AdminRouteRoute,
 } as any)
+const AdminAdminResultsRoute = AdminAdminResultsRouteImport.update({
+  id: '/admin/results',
+  path: '/admin/results',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminAdminMatchesRoute = AdminAdminMatchesRouteImport.update({
+  id: '/admin/matches',
+  path: '/admin/matches',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
 const AuthenticatedDashboardMatchesMatchIdRoute =
   AuthenticatedDashboardMatchesMatchIdRouteImport.update({
     id: '/$matchId',
@@ -160,6 +172,8 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/email/verify': typeof EmailVerifyRoute
   '/p/$slug': typeof PSlugRoute
+  '/admin/matches': typeof AdminAdminMatchesRoute
+  '/admin/results': typeof AdminAdminResultsRoute
   '/admin/users': typeof AdminAdminUsersRoute
   '/dashboard/feed': typeof AuthenticatedDashboardFeedRouteWithChildren
   '/dashboard/matches': typeof AuthenticatedDashboardMatchesRouteWithChildren
@@ -182,6 +196,8 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/email/verify': typeof EmailVerifyRoute
   '/p/$slug': typeof PSlugRoute
+  '/admin/matches': typeof AdminAdminMatchesRoute
+  '/admin/results': typeof AdminAdminResultsRoute
   '/admin/users': typeof AdminAdminUsersRoute
   '/dashboard/feed': typeof AuthenticatedDashboardFeedRouteWithChildren
   '/dashboard/matches': typeof AuthenticatedDashboardMatchesRouteWithChildren
@@ -207,6 +223,8 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/email/verify': typeof EmailVerifyRoute
   '/p/$slug': typeof PSlugRoute
+  '/_admin/admin/matches': typeof AdminAdminMatchesRoute
+  '/_admin/admin/results': typeof AdminAdminResultsRoute
   '/_admin/admin/users': typeof AdminAdminUsersRoute
   '/_authenticated/dashboard/feed': typeof AuthenticatedDashboardFeedRouteWithChildren
   '/_authenticated/dashboard/matches': typeof AuthenticatedDashboardMatchesRouteWithChildren
@@ -231,6 +249,8 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/email/verify'
     | '/p/$slug'
+    | '/admin/matches'
+    | '/admin/results'
     | '/admin/users'
     | '/dashboard/feed'
     | '/dashboard/matches'
@@ -253,6 +273,8 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/email/verify'
     | '/p/$slug'
+    | '/admin/matches'
+    | '/admin/results'
     | '/admin/users'
     | '/dashboard/feed'
     | '/dashboard/matches'
@@ -277,6 +299,8 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard'
     | '/email/verify'
     | '/p/$slug'
+    | '/_admin/admin/matches'
+    | '/_admin/admin/results'
     | '/_admin/admin/users'
     | '/_authenticated/dashboard/feed'
     | '/_authenticated/dashboard/matches'
@@ -445,6 +469,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAdminUsersRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/_admin/admin/results': {
+      id: '/_admin/admin/results'
+      path: '/admin/results'
+      fullPath: '/admin/results'
+      preLoaderRoute: typeof AdminAdminResultsRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/_admin/admin/matches': {
+      id: '/_admin/admin/matches'
+      path: '/admin/matches'
+      fullPath: '/admin/matches'
+      preLoaderRoute: typeof AdminAdminMatchesRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
     '/_authenticated/dashboard/matches/$matchId': {
       id: '/_authenticated/dashboard/matches/$matchId'
       path: '/$matchId'
@@ -463,11 +501,15 @@ declare module '@tanstack/react-router' {
 }
 
 interface AdminRouteRouteChildren {
+  AdminAdminMatchesRoute: typeof AdminAdminMatchesRoute
+  AdminAdminResultsRoute: typeof AdminAdminResultsRoute
   AdminAdminUsersRoute: typeof AdminAdminUsersRoute
   AdminAdminIndexRoute: typeof AdminAdminIndexRoute
 }
 
 const AdminRouteRouteChildren: AdminRouteRouteChildren = {
+  AdminAdminMatchesRoute: AdminAdminMatchesRoute,
+  AdminAdminResultsRoute: AdminAdminResultsRoute,
   AdminAdminUsersRoute: AdminAdminUsersRoute,
   AdminAdminIndexRoute: AdminAdminIndexRoute,
 }
