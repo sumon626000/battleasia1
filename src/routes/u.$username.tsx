@@ -188,6 +188,14 @@ function PublicProfilePage() {
                 {isFollowing ? <UserCheck size={14} /> : <UserPlus size={14} />}
                 {isFollowing ? "Following" : "Follow"}
               </button>
+              {!isBlocked && (
+                <button
+                  onClick={startMessage}
+                  disabled={busy}
+                  className="flex items-center gap-1.5 px-3 py-2 rounded border border-border text-foreground/80 hover:text-gold hover:border-gold font-hud text-xs uppercase tracking-widest transition"
+                >
+                  <Send size={14} /> Message
+                </button>)}
               <button
                 onClick={toggleBlock}
                 disabled={busy}
