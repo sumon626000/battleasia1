@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import {
-  Swords, Trophy, Coins, Shield, Zap, Lock, Headphones,
+  Swords, Trophy, Shield, Zap, Lock, Headphones,
   Smartphone, Download, ChevronRight, Crosshair,
   Radio, Flame, Star, TrendingUp, Activity, Users2,
   User, Users, UsersRound, Crosshair as Target,
@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import {
   Accordion, AccordionContent, AccordionItem, AccordionTrigger,
 } from "@/components/ui/accordion";
+import { CoinIcon } from "@/components/site/CoinIcon";
 import heroSoldier from "@/assets/hero-soldier.jpg";
 import phoneApp from "@/assets/phone-app.jpg";
 import bacCoin from "@/assets/battleasia-coin.png";
