@@ -14,6 +14,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { SiteShell } from "@/components/site/SiteShell";
 import { I18nProvider } from "@/lib/i18n";
+import { Toaster } from "@/components/ui/sonner";
 
 function NotFoundComponent() {
   return (
@@ -154,6 +155,7 @@ function RootComponent() {
             <Outlet />
           </SiteShell>
         )}
+        <Toaster position="top-right" richColors closeButton theme="dark" />
       </I18nProvider>
     </QueryClientProvider>
   );
