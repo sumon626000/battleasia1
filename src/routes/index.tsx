@@ -16,6 +16,11 @@ import { useT } from "@/lib/i18n";
 import heroSoldier from "@/assets/hero-soldier.jpg";
 import phoneApp from "@/assets/phone-app.jpg";
 import bacCoin from "@/assets/battleasia-coin.png";
+import modeSoloBg from "@/assets/mode-solo.jpg";
+import modeDuoBg from "@/assets/mode-duo.jpg";
+import modeSquadBg from "@/assets/mode-squad.jpg";
+import modeTdmBg from "@/assets/mode-tdm.jpg";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -40,26 +45,27 @@ const PAYMENTS = ["bKash", "Nagad", "Rocket", "Upay", "Bank Transfer", "USDT TRC
 
 const HOW_TO_PLAY = [
   {
-    icon: User, color: "from-violet-500 to-purple-700", title: "SOLO MODE",
+    icon: User, color: "from-violet-500 to-purple-700", title: "SOLO MODE", bg: modeSoloBg,
     desc: "Play alone vs every other solo. Highest kills + rank wins.",
     points: ["Pay entry fee, get room ID", "Enter the match on time", "Top kills + rank = prize pool"],
   },
   {
-    icon: Users, color: "from-sky-500 to-blue-700", title: "DUO MODE",
+    icon: Users, color: "from-sky-500 to-blue-700", title: "DUO MODE", bg: modeDuoBg,
     desc: "Team up with a partner to dominate the lobby.",
     points: ["Invite or find a partner", "Both must join the room", "Combined kills count"],
   },
   {
-    icon: UsersRound, color: "from-amber-500 to-orange-600", title: "SQUAD MODE",
+    icon: UsersRound, color: "from-amber-500 to-orange-600", title: "SQUAD MODE", bg: modeSquadBg,
     desc: "Form a team of four and battle for the squad crown.",
     points: ["4-member squads only", "Squad leader pays entry", "Rewards split as configured"],
   },
   {
-    icon: Target, color: "from-rose-500 to-red-600", title: "TDM MODE",
+    icon: Target, color: "from-rose-500 to-red-600", title: "TDM MODE", bg: modeTdmBg,
     desc: "Fast-paced team deathmatch action.",
     points: ["4v4 quick deathmatch", "Per-kill rewards available", "Short rounds, high reward"],
   },
 ];
+
 
 const RULES = [
   { q: "No Hacks or Emulators", a: "Any use of third-party hacks, mods, ESP, aimbot, macros or emulators on mobile-only tournaments results in instant ban and forfeiture of all prizes and balances." },
@@ -504,23 +510,32 @@ function BattleAsiaLanding() {
           <div className="mx-auto mt-3 h-0.5 w-20 bg-gradient-to-r from-transparent via-gold to-transparent" />
         </div>
         <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {HOW_TO_PLAY.map(({ icon: Icon, color, title, desc, points }) => (
-            <div key={title} className="hud-panel hud-bracket flex flex-col p-6">
-              <div className={`relative mx-auto grid h-16 w-16 place-items-center rounded-full bg-gradient-to-br ${color} text-white shadow-lg`}>
-                <Icon size={26} />
+          {HOW_TO_PLAY.map(({ icon: Icon, color, title, desc, points, bg }) => (
+            <div key={title} className="hud-panel hud-bracket relative flex flex-col overflow-hidden p-6">
+              <div
+                aria-hidden
+                className="pointer-events-none absolute inset-0 bg-cover bg-center opacity-30 transition-opacity duration-500 group-hover:opacity-45"
+                style={{ backgroundImage: `url(${bg})` }}
+              />
+              <div aria-hidden className="pointer-events-none absolute inset-0 bg-gradient-to-b from-background/60 via-background/85 to-background/95" />
+              <div className="relative">
+                <div className={`relative mx-auto grid h-16 w-16 place-items-center rounded-full bg-gradient-to-br ${color} text-white shadow-lg ring-2 ring-background/50`}>
+                  <Icon size={26} />
+                </div>
+                <h3 className="font-display mt-4 text-center text-lg font-bold tracking-wider drop-shadow-[0_1px_8px_rgba(0,0,0,0.8)]">{title}</h3>
+                <p className="mt-2 text-center text-xs text-muted-foreground">{desc}</p>
+                <ul className="mt-4 space-y-2 text-xs text-foreground/90">
+                  {points.map((p) => (
+                    <li key={p} className="flex gap-2">
+                      <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-gold" />
+                      <span>{p}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
-              <h3 className="font-display mt-4 text-center text-lg font-bold tracking-wider">{title}</h3>
-              <p className="mt-2 text-center text-xs text-muted-foreground">{desc}</p>
-              <ul className="mt-4 space-y-2 text-xs text-foreground/85">
-                {points.map((p) => (
-                  <li key={p} className="flex gap-2">
-                    <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-gold" />
-                    <span>{p}</span>
-                  </li>
-                ))}
-              </ul>
             </div>
           ))}
+
         </div>
       </section>
 
