@@ -12,7 +12,7 @@ type Story = {
   caption: string | null;
   created_at: string;
 };
-type Author = { username: string | null; full_name: string | null; avatar_url: string | null };
+type Author = { username: string | null; full_name?: string | null; avatar_url: string | null };
 type Group = { user_id: string; author: Author | null; stories: Story[] };
 
 export function StoriesRail() {
@@ -33,9 +33,9 @@ export function StoriesRail() {
     if (ids.length) {
       const { data: profs } = await supabase
         .from("profiles")
-        .select("id,username,full_name,avatar_url")
+        .select("id,username,avatar_url")
         .in("id", ids);
-      map = Object.fromEntries((profs ?? []).map((p: any) => [p.id, p]));
+      map = Object.fromEntries((profs ?? []).map((p: any) => [p.id, p as Author]));
     }
     const byUser = new Map<string, Group>();
     for (const s of list) {

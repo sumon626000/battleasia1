@@ -27,6 +27,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as AdminRouteRouteImport } from './routes/_admin/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as UUsernameRouteImport } from './routes/u.$username'
+import { Route as PostPostIdRouteImport } from './routes/post.$postId'
 import { Route as PSlugRouteImport } from './routes/p.$slug'
 import { Route as EmailVerifyRouteImport } from './routes/email.verify'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
@@ -172,6 +173,11 @@ const IndexRoute = IndexRouteImport.update({
 const UUsernameRoute = UUsernameRouteImport.update({
   id: '/u/$username',
   path: '/u/$username',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PostPostIdRoute = PostPostIdRouteImport.update({
+  id: '/post/$postId',
+  path: '/post/$postId',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PSlugRoute = PSlugRouteImport.update({
@@ -508,6 +514,7 @@ export interface FileRoutesByFullPath {
   '/auth/callback': typeof AuthCallbackRoute
   '/email/verify': typeof EmailVerifyRoute
   '/p/$slug': typeof PSlugRoute
+  '/post/$postId': typeof PostPostIdRoute
   '/u/$username': typeof UUsernameRouteWithChildren
   '/admin/account-deletions': typeof AdminAdminAccountDeletionsRoute
   '/admin/apk': typeof AdminAdminApkRoute
@@ -583,6 +590,7 @@ export interface FileRoutesByTo {
   '/auth/callback': typeof AuthCallbackRoute
   '/email/verify': typeof EmailVerifyRoute
   '/p/$slug': typeof PSlugRoute
+  '/post/$postId': typeof PostPostIdRoute
   '/u/$username': typeof UUsernameRouteWithChildren
   '/admin/account-deletions': typeof AdminAdminAccountDeletionsRoute
   '/admin/apk': typeof AdminAdminApkRoute
@@ -662,6 +670,7 @@ export interface FileRoutesById {
   '/auth/callback': typeof AuthCallbackRoute
   '/email/verify': typeof EmailVerifyRoute
   '/p/$slug': typeof PSlugRoute
+  '/post/$postId': typeof PostPostIdRoute
   '/u/$username': typeof UUsernameRouteWithChildren
   '/_admin/admin/account-deletions': typeof AdminAdminAccountDeletionsRoute
   '/_admin/admin/apk': typeof AdminAdminApkRoute
@@ -740,6 +749,7 @@ export interface FileRouteTypes {
     | '/auth/callback'
     | '/email/verify'
     | '/p/$slug'
+    | '/post/$postId'
     | '/u/$username'
     | '/admin/account-deletions'
     | '/admin/apk'
@@ -815,6 +825,7 @@ export interface FileRouteTypes {
     | '/auth/callback'
     | '/email/verify'
     | '/p/$slug'
+    | '/post/$postId'
     | '/u/$username'
     | '/admin/account-deletions'
     | '/admin/apk'
@@ -893,6 +904,7 @@ export interface FileRouteTypes {
     | '/auth/callback'
     | '/email/verify'
     | '/p/$slug'
+    | '/post/$postId'
     | '/u/$username'
     | '/_admin/admin/account-deletions'
     | '/_admin/admin/apk'
@@ -970,6 +982,7 @@ export interface RootRouteChildren {
   SupportRoute: typeof SupportRoute
   EmailVerifyRoute: typeof EmailVerifyRoute
   PSlugRoute: typeof PSlugRoute
+  PostPostIdRoute: typeof PostPostIdRoute
   UUsernameRoute: typeof UUsernameRouteWithChildren
 }
 
@@ -1099,6 +1112,13 @@ declare module '@tanstack/react-router' {
       path: '/u/$username'
       fullPath: '/u/$username'
       preLoaderRoute: typeof UUsernameRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/post/$postId': {
+      id: '/post/$postId'
+      path: '/post/$postId'
+      fullPath: '/post/$postId'
+      preLoaderRoute: typeof PostPostIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/p/$slug': {
@@ -1735,6 +1755,7 @@ const rootRouteChildren: RootRouteChildren = {
   SupportRoute: SupportRoute,
   EmailVerifyRoute: EmailVerifyRoute,
   PSlugRoute: PSlugRoute,
+  PostPostIdRoute: PostPostIdRoute,
   UUsernameRoute: UUsernameRouteWithChildren,
 }
 export const routeTree = rootRouteImport

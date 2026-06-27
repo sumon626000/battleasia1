@@ -17,7 +17,7 @@ type Post = {
   comments_count: number;
   created_at: string;
 };
-type Author = { username: string | null; full_name: string | null; avatar_url: string | null };
+type Author = { username: string | null; full_name?: string | null; avatar_url: string | null };
 
 export const Route = createFileRoute("/post/$postId")({
   head: ({ params }) => ({
@@ -55,10 +55,10 @@ function PostPage() {
       setPost(data as Post);
       const { data: prof } = await supabase
         .from("profiles")
-        .select("username,full_name,avatar_url")
+        .select("username,avatar_url")
         .eq("id", (data as Post).user_id)
         .maybeSingle();
-      setAuthor((prof as Author) ?? null);
+      setAuthor((prof as any) ?? null);
       if (user) {
         const { data: l } = await supabase
           .from("social_likes")
