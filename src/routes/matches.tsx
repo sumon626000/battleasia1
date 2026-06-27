@@ -29,7 +29,8 @@ type Match = {
   premium_only: boolean;
   status: string;
   banner_image_url: string | null;
-};
+  live_stream_url: string | null;
+  game?: { game_name: string | null; image_url: string | null } | null;
 
 function PublicMatchesPage() {
   const q = useQuery({
