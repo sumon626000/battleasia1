@@ -64,8 +64,11 @@ function NewPostPage() {
           contentType: file.type || undefined,
         });
         if (upErr) throw upErr;
-        const { data: pub } = supabase.storage.from("social-media").getPublicUrl(path);
-        media_url = pub.publicUrl;
+        const { data: signed, error: sErr } = await supabase.storage
+          .from("social-media")
+          .createSignedUrl(path, 60 * 60 * 24 * 365 * 5);
+        if (sErr) throw sErr;
+        media_url = signed.signedUrl;
         media_type = mediaType;
       }
       const { error } = await supabase.from("social_posts").insert({
