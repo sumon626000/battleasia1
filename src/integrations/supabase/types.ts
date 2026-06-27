@@ -1227,6 +1227,85 @@ export type Database = {
           },
         ]
       }
+      shop_purchases: {
+        Row: {
+          admin_note: string | null
+          bac_amount: number
+          business_wallet_id: number | null
+          created_at: string
+          id: number
+          package_id: number
+          payment_channel_id: number | null
+          price_currency: string
+          price_value: number
+          reviewed_at: string | null
+          reviewed_by: string | null
+          sender_number_or_addr: string
+          status: string
+          transaction_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          admin_note?: string | null
+          bac_amount: number
+          business_wallet_id?: number | null
+          created_at?: string
+          id?: number
+          package_id: number
+          payment_channel_id?: number | null
+          price_currency: string
+          price_value: number
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          sender_number_or_addr: string
+          status?: string
+          transaction_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          admin_note?: string | null
+          bac_amount?: number
+          business_wallet_id?: number | null
+          created_at?: string
+          id?: number
+          package_id?: number
+          payment_channel_id?: number | null
+          price_currency?: string
+          price_value?: number
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          sender_number_or_addr?: string
+          status?: string
+          transaction_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shop_purchases_business_wallet_id_fkey"
+            columns: ["business_wallet_id"]
+            isOneToOne: false
+            referencedRelation: "business_wallets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shop_purchases_package_id_fkey"
+            columns: ["package_id"]
+            isOneToOne: false
+            referencedRelation: "shop_packages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shop_purchases_payment_channel_id_fkey"
+            columns: ["payment_channel_id"]
+            isOneToOne: false
+            referencedRelation: "payment_channels"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       static_pages: {
         Row: {
           content_html: string
@@ -1561,6 +1640,16 @@ export type Database = {
           p_business_wallet_id: number
           p_currency: string
           p_fiat_amount: number
+          p_payment_channel_id: number
+          p_sender: string
+          p_transaction_id: string
+        }
+        Returns: number
+      }
+      submit_shop_purchase: {
+        Args: {
+          p_business_wallet_id: number
+          p_package_id: number
           p_payment_channel_id: number
           p_sender: string
           p_transaction_id: string
