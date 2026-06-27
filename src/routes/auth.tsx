@@ -170,7 +170,6 @@ function LoginForm({ busy, setBusy }: { busy: boolean; setBusy: (b: boolean) => 
   const {
     register,
     handleSubmit,
-    getValues,
     formState: { errors },
   } = useForm<LoginValues>({ resolver: zodResolver(loginSchema) });
 
@@ -193,16 +192,6 @@ function LoginForm({ busy, setBusy }: { busy: boolean; setBusy: (b: boolean) => 
     navigate({ to: "/dashboard" });
   }
 
-  async function handleForgot() {
-    const email = getValues("email");
-    if (!email) return toast.error("Enter your email first");
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/reset-password`,
-    });
-    if (error) return toast.error(error.message);
-    toast.success("Password reset email sent");
-  }
-
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="mt-5 space-y-3">
       <Field label="EMAIL" type="email" placeholder="you@example.com" {...register("email")} error={errors.email?.message} />
@@ -213,9 +202,9 @@ function LoginForm({ busy, setBusy }: { busy: boolean; setBusy: (b: boolean) => 
         registration={register("password")}
         error={errors.password?.message}
       />
-      <button type="button" onClick={handleForgot} className="text-xs font-semibold text-gold hover:underline">
+      <a href="/forgot-password" className="block text-xs font-semibold text-gold hover:underline">
         Forgot password?
-      </button>
+      </a>
       <button type="submit" disabled={busy} className="btn-gold w-full justify-center py-3 text-sm disabled:opacity-60">
         {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : "LOGIN"}
       </button>

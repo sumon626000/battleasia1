@@ -13,6 +13,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { SiteShell } from "@/components/site/SiteShell";
+import { I18nProvider } from "@/lib/i18n";
 
 function NotFoundComponent() {
   return (
@@ -138,18 +139,21 @@ function RootComponent() {
     pathname.startsWith("/dashboard") ||
     pathname.startsWith("/auth") ||
     pathname.startsWith("/email") ||
+    pathname.startsWith("/forgot-password") ||
     pathname.startsWith("/reset-password");
 
   return (
     <QueryClientProvider client={queryClient}>
-      {bareLayout ? (
-        <Outlet />
-      ) : (
-        <SiteShell>
-          {/* Required: nested routes render here. */}
+      <I18nProvider>
+        {bareLayout ? (
           <Outlet />
-        </SiteShell>
-      )}
+        ) : (
+          <SiteShell>
+            {/* Required: nested routes render here. */}
+            <Outlet />
+          </SiteShell>
+        )}
+      </I18nProvider>
     </QueryClientProvider>
   );
 }

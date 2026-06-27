@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import logoShield from "@/assets/logo-shield.png";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
+import { LanguageSwitcher } from "@/components/site/LanguageSwitcher";
 
 const NAV: { label: string; href: string }[] = [
   { label: "HOME", href: "/" },
@@ -49,6 +50,7 @@ export function SiteHeader() {
           ))}
         </nav>
         <div className="hidden items-center gap-2 lg:flex">
+          <LanguageSwitcher />
           {isAuthenticated ? (
             <>
               <Link to="/dashboard" className="flex items-center gap-2 rounded-md border border-border/70 bg-background/60 px-3 py-1.5 transition hover:border-gold/60 hover:text-gold">
@@ -67,9 +69,12 @@ export function SiteHeader() {
             </>
           )}
         </div>
-        <button onClick={() => setOpen(!open)} className="rounded-md p-2 text-gold lg:hidden" aria-label="Toggle menu">
-          {open ? <X size={24} /> : <Menu size={24} />}
-        </button>
+        <div className="flex items-center gap-1 lg:hidden">
+          <LanguageSwitcher compact />
+          <button onClick={() => setOpen(!open)} className="rounded-md p-2 text-gold" aria-label="Toggle menu">
+            {open ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
       </div>
       {open && (
         <div className="border-t border-border bg-card lg:hidden">
