@@ -3,7 +3,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Search, ShieldCheck, ShieldOff, Coins, UserX, UserCheck, X } from "lucide-react";
+import { Search, ShieldCheck, ShieldOff, Coins, UserX, UserCheck, X, Download } from "lucide-react";
+import { exportRowsAsCSV } from "@/lib/csv";
+
 
 export const Route = createFileRoute("/_admin/admin/users")({
   component: AdminUsers,
