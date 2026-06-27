@@ -1,4 +1,4 @@
-import { Link, useRouterState } from "@tanstack/react-router";
+import { useNavigate, useRouterState } from "@tanstack/react-router";
 import { X } from "lucide-react";
 import { DASH_NAV } from "./DashboardSidebar";
 
@@ -9,6 +9,7 @@ interface Props {
 
 export function DashboardMobileDrawer({ open, onClose }: Props) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const navigate = useNavigate();
   if (!open) return null;
   return (
     <div className="fixed inset-0 z-[60] lg:hidden">
@@ -34,11 +35,14 @@ export function DashboardMobileDrawer({ open, onClose }: Props) {
                 ? pathname === "/dashboard"
                 : pathname.startsWith(item.href);
             return (
-              <Link
+              <button
                 key={item.href}
-                to={item.href}
-                onClick={() => setTimeout(onClose, 0)}
-                className={`flex items-center gap-3 rounded-md border px-3 py-2.5 font-hud text-sm font-semibold uppercase tracking-wide transition ${
+                type="button"
+                onClick={() => {
+                  onClose();
+                  navigate({ to: item.href });
+                }}
+                className={`flex items-center gap-3 rounded-md border px-3 py-2.5 text-left font-hud text-sm font-semibold uppercase tracking-wide transition ${
                   active
                     ? "border-gold/60 bg-gold/10 text-gold"
                     : "border-transparent text-foreground/80 hover:border-border hover:bg-secondary/60"
@@ -46,7 +50,7 @@ export function DashboardMobileDrawer({ open, onClose }: Props) {
               >
                 <Icon size={16} />
                 {item.label}
-              </Link>
+              </button>
             );
           })}
         </nav>
