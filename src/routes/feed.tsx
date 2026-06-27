@@ -236,13 +236,22 @@ function PostCard({ post, onLike }: { post: Post; onLike: () => void }) {
           >
             {handle}
           </Link>
-          <div className="font-hud text-[10px] uppercase tracking-wider text-foreground/50">
-            {timeAgo(post.created_at)} ago
-          </div>
+          <Link
+            to="/post/$postId"
+            params={{ postId: post.id }}
+            className="font-hud text-[10px] uppercase tracking-wider text-foreground/50 hover:text-gold"
+          >
+            {timeAgo(post.created_at)} ago · View post
+          </Link>
         </div>
-        <button className="p-1.5 text-foreground/40 hover:text-foreground" aria-label="More">
+        <Link
+          to="/post/$postId"
+          params={{ postId: post.id }}
+          className="p-1.5 text-foreground/40 hover:text-gold"
+          aria-label="View post"
+        >
           <MoreHorizontal size={18} />
-        </button>
+        </Link>
       </div>
 
       {/* media */}
