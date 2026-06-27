@@ -16,6 +16,11 @@ import { useT } from "@/lib/i18n";
 import heroSoldier from "@/assets/hero-soldier.jpg";
 import phoneApp from "@/assets/phone-app.jpg";
 import bacCoin from "@/assets/battleasia-coin.png";
+import modeSoloBg from "@/assets/mode-solo.jpg";
+import modeDuoBg from "@/assets/mode-duo.jpg";
+import modeSquadBg from "@/assets/mode-squad.jpg";
+import modeTdmBg from "@/assets/mode-tdm.jpg";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
