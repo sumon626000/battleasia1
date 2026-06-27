@@ -26,7 +26,7 @@ function DashboardPage() {
   const name = profile?.in_game_username || profile?.username || "Player";
   const balance = Number(profile?.bac_coin_balance ?? 0);
 
-  const stats = [
+  const stats: Array<{ label: string; value: string; icon: any; accent?: boolean; isCoin?: boolean }> = [
     { label: "BAC Balance", value: balance.toLocaleString(), icon: null, accent: true, isCoin: true },
     { label: "Matches Played", value: "0", icon: Swords },
     { label: "Wins", value: "0", icon: Trophy },
