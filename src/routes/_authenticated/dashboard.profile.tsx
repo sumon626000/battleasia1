@@ -518,6 +518,59 @@ function ProfilePage() {
       </SectionCard>
 
       {/* Password */}
+      <SectionCard title="Bio & Social Links" desc="Tell other players about yourself and link your channels.">
+        <div className="grid gap-4">
+          <label className="block">
+            <span className="font-mono text-[10px] font-semibold tracking-widest text-muted-foreground">BIO</span>
+            <textarea
+              value={bio}
+              onChange={(e) => setBio(e.target.value)}
+              rows={3}
+              maxLength={280}
+              placeholder="A short tagline shown on your public profile"
+              className="mt-1 w-full rounded-md border border-border bg-background/80 px-3 py-2 text-sm outline-none transition focus:border-gold focus:ring-1 focus:ring-gold/50"
+            />
+            <div className="mt-1 text-right text-[10px] text-foreground/50">{bio.length}/280</div>
+          </label>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {(
+              [
+                ["facebook", "Facebook URL"],
+                ["twitter", "X / Twitter URL"],
+                ["instagram", "Instagram URL"],
+                ["youtube", "YouTube URL"],
+                ["discord", "Discord invite / tag"],
+                ["website", "Website URL"],
+              ] as const
+            ).map(([key, label]) => (
+              <label key={key} className="block">
+                <span className="font-mono text-[10px] font-semibold tracking-widest text-muted-foreground">{label}</span>
+                <div className="relative mt-1">
+                  <Link2 size={13} className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-foreground/40" />
+                  <input
+                    value={social[key]}
+                    onChange={(e) => setSocial((s) => ({ ...s, [key]: e.target.value }))}
+                    placeholder="https://…"
+                    className="w-full rounded-md border border-border bg-background/80 px-3 py-2.5 pl-8 text-sm outline-none transition focus:border-gold focus:ring-1 focus:ring-gold/50"
+                  />
+                </div>
+              </label>
+            ))}
+          </div>
+          <div>
+            <button
+              type="button"
+              onClick={onSaveSocial}
+              disabled={savingSocial}
+              className="btn-gold inline-flex items-center gap-2 px-5 py-2.5 font-hud text-sm font-bold uppercase tracking-wider disabled:opacity-60"
+            >
+              {savingSocial ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
+              Save Social Profile
+            </button>
+          </div>
+        </div>
+      </SectionCard>
+
       <SectionCard title="Change Password" desc="Use a strong, unique password you don't use elsewhere.">
         <form onSubmit={handlePw(onChangePassword)} className="grid gap-4 sm:grid-cols-2">
           <Field
