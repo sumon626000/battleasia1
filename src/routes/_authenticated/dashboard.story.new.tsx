@@ -8,10 +8,10 @@ import { useAuth } from "@/hooks/use-auth";
 export const Route = createFileRoute("/_authenticated/dashboard/story/new")({
   component: NewStoryPage,
   errorComponent: ({ error }) => (
-    <SiteShell><div className="mx-auto max-w-xl p-6 font-hud text-sm text-red-400">{error.message}</div></SiteShell>
+    <div className="mx-auto max-w-xl p-6 font-hud text-sm text-red-400">{error.message}</div>
   ),
   notFoundComponent: () => (
-    <SiteShell><div className="mx-auto max-w-xl p-6 font-hud text-sm">Not found.</div></SiteShell>
+    <div className="mx-auto max-w-xl p-6 font-hud text-sm">Not found.</div>
   ),
 });
 
