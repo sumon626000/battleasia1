@@ -65,7 +65,7 @@ export function CountryCodeSelect({ label = "COUNTRY", value, onChange, error }:
         <span className="flex min-w-0 items-center gap-2">
           {selected ? (
             <>
-              <span className="text-lg leading-none">{flagEmoji(selected.iso2)}</span>
+              <FlagImg iso2={selected.iso2} size={22} />
               <span className="truncate font-mono text-xs font-bold text-gold">
                 {selected.dial}
               </span>
