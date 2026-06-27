@@ -83,18 +83,18 @@ function StatisticsPage() {
       const m = p.matches as { status?: string } | null;
       return m?.status === "completed" || m?.status === "result_published";
     });
-    const wins = finished.filter((p) => Number(p.rank ?? 0) === 1).length;
+    const wins = finished.filter((p) => Number(p.rank_position ?? 0) === 1).length;
     const top3 = finished.filter(
-      (p) => Number(p.rank ?? 0) > 0 && Number(p.rank ?? 0) <= 3,
+      (p) => Number(p.rank_position ?? 0) > 0 && Number(p.rank_position ?? 0) <= 3,
     ).length;
     const top10 = finished.filter(
-      (p) => Number(p.rank ?? 0) > 0 && Number(p.rank ?? 0) <= 10,
+      (p) => Number(p.rank_position ?? 0) > 0 && Number(p.rank_position ?? 0) <= 10,
     ).length;
     const totalKills = finished.reduce((s, p) => s + Number(p.kills ?? 0), 0);
-    const totalPrize = finished.reduce((s, p) => s + Number(p.prize_won ?? 0), 0);
+    const totalPrize = finished.reduce((s, p) => s + Number(p.prize_bac ?? 0), 0);
     const totalEntry = parts.reduce((s, p) => {
-      const m = p.matches as { entry_fee?: number } | null;
-      return s + Number(m?.entry_fee ?? 0);
+      const m = p.matches as { entry_fee_bac?: number } | null;
+      return s + Number(m?.entry_fee_bac ?? 0);
     }, 0);
     const winRate = finished.length ? Math.round((wins / finished.length) * 100) : 0;
     const avgKills = finished.length ? (totalKills / finished.length).toFixed(1) : "0.0";
@@ -196,11 +196,11 @@ function StatisticsPage() {
                           </td>
                           <td className="py-2 text-foreground/70">{m?.status ?? "—"}</td>
                           <td className="py-2 text-right font-mono">
-                            {p.rank ? `#${p.rank}` : "—"}
+                            {p.rank_position ? `#${p.rank_position}` : "—"}
                           </td>
                           <td className="py-2 text-right font-mono">{p.kills ?? 0}</td>
                           <td className="py-2 text-right font-mono text-gold">
-                            {Number(p.prize_won ?? 0).toLocaleString()}
+                            {Number(p.prize_bac ?? 0).toLocaleString()}
                           </td>
                         </tr>
                       );
