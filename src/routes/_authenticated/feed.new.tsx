@@ -77,7 +77,7 @@ function NewPostPage() {
         user_id: user.id,
         caption: caption.trim() || null,
         media_url,
-        media_type,
+        media_type: media_type ?? undefined,
         visibility: "public",
       });
       if (error) throw error;
