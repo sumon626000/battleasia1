@@ -1,17 +1,19 @@
 import { useNavigate, useRouterState } from "@tanstack/react-router";
 import { LayoutDashboard, Swords, Wallet, ShoppingBag, User as UserIcon } from "lucide-react";
+import { useT } from "@/lib/i18n";
 
 const BOTTOM = [
-  { label: "Home", href: "/dashboard", icon: LayoutDashboard },
-  { label: "Play", href: "/dashboard/matches", icon: Swords },
-  { label: "Wallet", href: "/dashboard/wallet", icon: Wallet },
-  { label: "Shop", href: "/dashboard/shop", icon: ShoppingBag },
-  { label: "Profile", href: "/dashboard/profile", icon: UserIcon },
+  { key: "dash.home", href: "/dashboard", icon: LayoutDashboard },
+  { key: "dash.play", href: "/dashboard/matches", icon: Swords },
+  { key: "dash.wallet", href: "/dashboard/wallet", icon: Wallet },
+  { key: "dash.shop", href: "/dashboard/shop", icon: ShoppingBag },
+  { key: "dash.profile", href: "/dashboard/profile", icon: UserIcon },
 ] as const;
 
 export function DashboardBottomNav() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const navigate = useNavigate();
+  const { t } = useT();
   return (
     <nav className="sticky bottom-0 z-40 border-t border-border/70 bg-background/95 backdrop-blur-xl lg:hidden">
       <ul className="grid grid-cols-5">
