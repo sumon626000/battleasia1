@@ -1,12 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
 import {
-  Menu, X, Users, Swords, Trophy, Coins, Shield, Zap, Lock, Headphones,
-  Facebook, Twitter, Send, Smartphone, Download, ChevronRight, Crosshair,
+  Users, Swords, Trophy, Coins, Shield, Zap, Lock, Headphones,
+  Smartphone, Download, ChevronRight, Crosshair,
   Radio, Flame, Star,
 } from "lucide-react";
 import heroSoldier from "@/assets/hero-soldier.jpg";
-import logoShield from "@/assets/logo-shield.png";
 import matchSolo from "@/assets/match-solo.jpg";
 import matchSquad from "@/assets/match-squad.jpg";
 import matchDuo from "@/assets/match-duo.jpg";
