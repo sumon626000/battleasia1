@@ -1,10 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Heart, MessageCircle, Send, Plus, RefreshCw, MoreHorizontal, Bookmark } from "lucide-react";
+import { toast } from "sonner";
 import { SiteShell } from "@/components/site/SiteShell";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { CommentsThread, LikeBurst } from "@/components/feed/CommentsThread";
+import { StoriesRail } from "@/components/feed/StoriesRail";
 
 export const Route = createFileRoute("/feed")({
   head: () => ({
@@ -152,6 +154,8 @@ function FeedPage() {
           </div>
         </header>
 
+        <StoriesRail />
+
         {loading && posts.length === 0 ? (
           <div className="space-y-5">
             {[1, 2, 3].map((i) => (
@@ -247,7 +251,18 @@ function PostCard({ post, onLike }: { post: Post; onLike: () => void }) {
         >
           <MessageCircle size={22} strokeWidth={2} />
         </button>
-        <button className="rounded-full p-2 text-foreground/80 transition hover:text-gold" aria-label="Share">
+        <button
+          onClick={async () => {
+            const url = `${window.location.origin}/post/${post.id}`;
+            if ((navigator as any).share) {
+              try { await (navigator as any).share({ title: "Battle Asia post", url }); return; } catch {}
+            }
+            await navigator.clipboard.writeText(url);
+            toast.success("Link copied");
+          }}
+          className="rounded-full p-2 text-foreground/80 transition hover:text-gold"
+          aria-label="Share"
+        >
           <Send size={22} strokeWidth={2} />
         </button>
         <button className="ml-auto rounded-full p-2 text-foreground/80 transition hover:text-gold" aria-label="Save">
