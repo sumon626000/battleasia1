@@ -104,10 +104,11 @@
     content: "";
     position: absolute;
     inset: 0;
-    background: linear-gradient(120deg, transparent 30%, oklch(1 0 0 / 0.55) 50%, transparent 70%);
+    background: linear-gradient(120deg, transparent 35%, oklch(1 0 0 / 0.5) 50%, transparent 65%);
     transform: translateX(-120%);
-    transition: transform 0.7s cubic-bezier(.2,.8,.2,1);
+    animation: btn-shine 3.6s ease-in-out infinite;
     pointer-events: none;
+    will-change: transform;
   }
   &:hover {
     filter: brightness(1.1);
@@ -116,7 +117,8 @@
                 0 12px 36px -6px color-mix(in oklab, var(--gold) 70%, transparent),
                 inset 0 1px 0 oklch(1 0 0 / 0.35);
   }
-  &:hover::before { transform: translateX(120%); }
+  &:hover::before { animation-duration: 1.4s; }
+
   &:active { transform: translateY(0); }
 }
 
@@ -136,10 +138,12 @@
     content: "";
     position: absolute;
     inset: 0;
-    background: linear-gradient(120deg, transparent 30%, color-mix(in oklab, var(--gold) 35%, transparent) 50%, transparent 70%);
+    background: linear-gradient(120deg, transparent 35%, color-mix(in oklab, var(--gold) 40%, transparent) 50%, transparent 65%);
     transform: translateX(-120%);
-    transition: transform 0.7s cubic-bezier(.2,.8,.2,1);
+    animation: btn-shine 4.2s ease-in-out infinite;
+    animation-delay: 1.2s;
     pointer-events: none;
+    will-change: transform;
   }
   &:hover {
     background: color-mix(in oklab, var(--gold) 18%, transparent);
@@ -148,13 +152,24 @@
     box-shadow: 0 0 0 1px var(--gold),
                 0 10px 30px -8px color-mix(in oklab, var(--gold) 50%, transparent);
   }
-  &:hover::before { transform: translateX(120%); }
+  &:hover::before { animation-duration: 1.6s; }
+
   &:active { transform: translateY(0); }
 }
 
 
 
+@keyframes btn-shine {
+  0%   { transform: translateX(-120%); }
+  60%  { transform: translateX(120%); }
+  100% { transform: translateX(120%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .btn-gold::before, .btn-outline-gold::before { animation: none; }
+}
+
 @utility text-gold { color: var(--gold); }
+
 @utility bg-gold { background-color: var(--gold); }
 @utility ring-gold { --tw-ring-color: var(--gold); }
 
