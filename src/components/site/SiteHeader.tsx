@@ -11,8 +11,9 @@ const NAV: { label: string; href: string }[] = [
   { label: "MATCHES", href: "/matches" },
   { label: "LEADERBOARD", href: "/leaderboard" },
   { label: "SHOP", href: "/shop" },
+  { label: "PREMIUM", href: "/premium" },
   { label: "NEWS", href: "/news" },
-  { label: "SUPPORT", href: "/support" },
+  { label: "ABOUT", href: "/about" },
 ];
 
 export function SiteHeader() {
