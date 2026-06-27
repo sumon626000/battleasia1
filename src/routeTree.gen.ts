@@ -33,8 +33,10 @@ import { Route as AdminAdminWithdrawConfigRouteImport } from './routes/_admin/ad
 import { Route as AdminAdminUsersRouteImport } from './routes/_admin/admin.users'
 import { Route as AdminAdminSupportRouteImport } from './routes/_admin/admin.support'
 import { Route as AdminAdminShopRouteImport } from './routes/_admin/admin.shop'
+import { Route as AdminAdminSettingsRouteImport } from './routes/_admin/admin.settings'
 import { Route as AdminAdminResultsRouteImport } from './routes/_admin/admin.results'
 import { Route as AdminAdminParticipantsRouteImport } from './routes/_admin/admin.participants'
+import { Route as AdminAdminPagesRouteImport } from './routes/_admin/admin.pages'
 import { Route as AdminAdminNotificationsRouteImport } from './routes/_admin/admin.notifications'
 import { Route as AdminAdminMatchesRouteImport } from './routes/_admin/admin.matches'
 import { Route as AdminAdminGamesRouteImport } from './routes/_admin/admin.games'
@@ -44,6 +46,7 @@ import { Route as AdminAdminCoinRatesRouteImport } from './routes/_admin/admin.c
 import { Route as AdminAdminChannelsRouteImport } from './routes/_admin/admin.channels'
 import { Route as AdminAdminBusinessWalletsRouteImport } from './routes/_admin/admin.business-wallets'
 import { Route as AdminAdminBalancesRouteImport } from './routes/_admin/admin.balances'
+import { Route as AdminAdminApkRouteImport } from './routes/_admin/admin.apk'
 import { Route as AuthenticatedDashboardMatchesMatchIdRouteImport } from './routes/_authenticated/dashboard.matches.$matchId'
 import { Route as AuthenticatedDashboardFeedPostIdRouteImport } from './routes/_authenticated/dashboard.feed.$postId'
 
@@ -176,6 +179,11 @@ const AdminAdminShopRoute = AdminAdminShopRouteImport.update({
   path: '/admin/shop',
   getParentRoute: () => AdminRouteRoute,
 } as any)
+const AdminAdminSettingsRoute = AdminAdminSettingsRouteImport.update({
+  id: '/admin/settings',
+  path: '/admin/settings',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
 const AdminAdminResultsRoute = AdminAdminResultsRouteImport.update({
   id: '/admin/results',
   path: '/admin/results',
@@ -184,6 +192,11 @@ const AdminAdminResultsRoute = AdminAdminResultsRouteImport.update({
 const AdminAdminParticipantsRoute = AdminAdminParticipantsRouteImport.update({
   id: '/admin/participants',
   path: '/admin/participants',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminAdminPagesRoute = AdminAdminPagesRouteImport.update({
+  id: '/admin/pages',
+  path: '/admin/pages',
   getParentRoute: () => AdminRouteRoute,
 } as any)
 const AdminAdminNotificationsRoute = AdminAdminNotificationsRouteImport.update({
@@ -232,6 +245,11 @@ const AdminAdminBalancesRoute = AdminAdminBalancesRouteImport.update({
   path: '/admin/balances',
   getParentRoute: () => AdminRouteRoute,
 } as any)
+const AdminAdminApkRoute = AdminAdminApkRouteImport.update({
+  id: '/admin/apk',
+  path: '/admin/apk',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
 const AuthenticatedDashboardMatchesMatchIdRoute =
   AuthenticatedDashboardMatchesMatchIdRouteImport.update({
     id: '/$matchId',
@@ -252,6 +270,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/email/verify': typeof EmailVerifyRoute
   '/p/$slug': typeof PSlugRoute
+  '/admin/apk': typeof AdminAdminApkRoute
   '/admin/balances': typeof AdminAdminBalancesRoute
   '/admin/business-wallets': typeof AdminAdminBusinessWalletsRoute
   '/admin/channels': typeof AdminAdminChannelsRoute
@@ -261,8 +280,10 @@ export interface FileRoutesByFullPath {
   '/admin/games': typeof AdminAdminGamesRoute
   '/admin/matches': typeof AdminAdminMatchesRoute
   '/admin/notifications': typeof AdminAdminNotificationsRoute
+  '/admin/pages': typeof AdminAdminPagesRoute
   '/admin/participants': typeof AdminAdminParticipantsRoute
   '/admin/results': typeof AdminAdminResultsRoute
+  '/admin/settings': typeof AdminAdminSettingsRoute
   '/admin/shop': typeof AdminAdminShopRoute
   '/admin/support': typeof AdminAdminSupportRoute
   '/admin/users': typeof AdminAdminUsersRoute
@@ -289,6 +310,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/email/verify': typeof EmailVerifyRoute
   '/p/$slug': typeof PSlugRoute
+  '/admin/apk': typeof AdminAdminApkRoute
   '/admin/balances': typeof AdminAdminBalancesRoute
   '/admin/business-wallets': typeof AdminAdminBusinessWalletsRoute
   '/admin/channels': typeof AdminAdminChannelsRoute
@@ -298,8 +320,10 @@ export interface FileRoutesByTo {
   '/admin/games': typeof AdminAdminGamesRoute
   '/admin/matches': typeof AdminAdminMatchesRoute
   '/admin/notifications': typeof AdminAdminNotificationsRoute
+  '/admin/pages': typeof AdminAdminPagesRoute
   '/admin/participants': typeof AdminAdminParticipantsRoute
   '/admin/results': typeof AdminAdminResultsRoute
+  '/admin/settings': typeof AdminAdminSettingsRoute
   '/admin/shop': typeof AdminAdminShopRoute
   '/admin/support': typeof AdminAdminSupportRoute
   '/admin/users': typeof AdminAdminUsersRoute
@@ -329,6 +353,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/email/verify': typeof EmailVerifyRoute
   '/p/$slug': typeof PSlugRoute
+  '/_admin/admin/apk': typeof AdminAdminApkRoute
   '/_admin/admin/balances': typeof AdminAdminBalancesRoute
   '/_admin/admin/business-wallets': typeof AdminAdminBusinessWalletsRoute
   '/_admin/admin/channels': typeof AdminAdminChannelsRoute
@@ -338,8 +363,10 @@ export interface FileRoutesById {
   '/_admin/admin/games': typeof AdminAdminGamesRoute
   '/_admin/admin/matches': typeof AdminAdminMatchesRoute
   '/_admin/admin/notifications': typeof AdminAdminNotificationsRoute
+  '/_admin/admin/pages': typeof AdminAdminPagesRoute
   '/_admin/admin/participants': typeof AdminAdminParticipantsRoute
   '/_admin/admin/results': typeof AdminAdminResultsRoute
+  '/_admin/admin/settings': typeof AdminAdminSettingsRoute
   '/_admin/admin/shop': typeof AdminAdminShopRoute
   '/_admin/admin/support': typeof AdminAdminSupportRoute
   '/_admin/admin/users': typeof AdminAdminUsersRoute
@@ -368,6 +395,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/email/verify'
     | '/p/$slug'
+    | '/admin/apk'
     | '/admin/balances'
     | '/admin/business-wallets'
     | '/admin/channels'
@@ -377,8 +405,10 @@ export interface FileRouteTypes {
     | '/admin/games'
     | '/admin/matches'
     | '/admin/notifications'
+    | '/admin/pages'
     | '/admin/participants'
     | '/admin/results'
+    | '/admin/settings'
     | '/admin/shop'
     | '/admin/support'
     | '/admin/users'
@@ -405,6 +435,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/email/verify'
     | '/p/$slug'
+    | '/admin/apk'
     | '/admin/balances'
     | '/admin/business-wallets'
     | '/admin/channels'
@@ -414,8 +445,10 @@ export interface FileRouteTypes {
     | '/admin/games'
     | '/admin/matches'
     | '/admin/notifications'
+    | '/admin/pages'
     | '/admin/participants'
     | '/admin/results'
+    | '/admin/settings'
     | '/admin/shop'
     | '/admin/support'
     | '/admin/users'
@@ -444,6 +477,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard'
     | '/email/verify'
     | '/p/$slug'
+    | '/_admin/admin/apk'
     | '/_admin/admin/balances'
     | '/_admin/admin/business-wallets'
     | '/_admin/admin/channels'
@@ -453,8 +487,10 @@ export interface FileRouteTypes {
     | '/_admin/admin/games'
     | '/_admin/admin/matches'
     | '/_admin/admin/notifications'
+    | '/_admin/admin/pages'
     | '/_admin/admin/participants'
     | '/_admin/admin/results'
+    | '/_admin/admin/settings'
     | '/_admin/admin/shop'
     | '/_admin/admin/support'
     | '/_admin/admin/users'
@@ -655,6 +691,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAdminShopRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/_admin/admin/settings': {
+      id: '/_admin/admin/settings'
+      path: '/admin/settings'
+      fullPath: '/admin/settings'
+      preLoaderRoute: typeof AdminAdminSettingsRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
     '/_admin/admin/results': {
       id: '/_admin/admin/results'
       path: '/admin/results'
@@ -667,6 +710,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/participants'
       fullPath: '/admin/participants'
       preLoaderRoute: typeof AdminAdminParticipantsRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/_admin/admin/pages': {
+      id: '/_admin/admin/pages'
+      path: '/admin/pages'
+      fullPath: '/admin/pages'
+      preLoaderRoute: typeof AdminAdminPagesRouteImport
       parentRoute: typeof AdminRouteRoute
     }
     '/_admin/admin/notifications': {
@@ -732,6 +782,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAdminBalancesRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/_admin/admin/apk': {
+      id: '/_admin/admin/apk'
+      path: '/admin/apk'
+      fullPath: '/admin/apk'
+      preLoaderRoute: typeof AdminAdminApkRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
     '/_authenticated/dashboard/matches/$matchId': {
       id: '/_authenticated/dashboard/matches/$matchId'
       path: '/$matchId'
@@ -750,6 +807,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AdminRouteRouteChildren {
+  AdminAdminApkRoute: typeof AdminAdminApkRoute
   AdminAdminBalancesRoute: typeof AdminAdminBalancesRoute
   AdminAdminBusinessWalletsRoute: typeof AdminAdminBusinessWalletsRoute
   AdminAdminChannelsRoute: typeof AdminAdminChannelsRoute
@@ -759,8 +817,10 @@ interface AdminRouteRouteChildren {
   AdminAdminGamesRoute: typeof AdminAdminGamesRoute
   AdminAdminMatchesRoute: typeof AdminAdminMatchesRoute
   AdminAdminNotificationsRoute: typeof AdminAdminNotificationsRoute
+  AdminAdminPagesRoute: typeof AdminAdminPagesRoute
   AdminAdminParticipantsRoute: typeof AdminAdminParticipantsRoute
   AdminAdminResultsRoute: typeof AdminAdminResultsRoute
+  AdminAdminSettingsRoute: typeof AdminAdminSettingsRoute
   AdminAdminShopRoute: typeof AdminAdminShopRoute
   AdminAdminSupportRoute: typeof AdminAdminSupportRoute
   AdminAdminUsersRoute: typeof AdminAdminUsersRoute
@@ -770,6 +830,7 @@ interface AdminRouteRouteChildren {
 }
 
 const AdminRouteRouteChildren: AdminRouteRouteChildren = {
+  AdminAdminApkRoute: AdminAdminApkRoute,
   AdminAdminBalancesRoute: AdminAdminBalancesRoute,
   AdminAdminBusinessWalletsRoute: AdminAdminBusinessWalletsRoute,
   AdminAdminChannelsRoute: AdminAdminChannelsRoute,
@@ -779,8 +840,10 @@ const AdminRouteRouteChildren: AdminRouteRouteChildren = {
   AdminAdminGamesRoute: AdminAdminGamesRoute,
   AdminAdminMatchesRoute: AdminAdminMatchesRoute,
   AdminAdminNotificationsRoute: AdminAdminNotificationsRoute,
+  AdminAdminPagesRoute: AdminAdminPagesRoute,
   AdminAdminParticipantsRoute: AdminAdminParticipantsRoute,
   AdminAdminResultsRoute: AdminAdminResultsRoute,
+  AdminAdminSettingsRoute: AdminAdminSettingsRoute,
   AdminAdminShopRoute: AdminAdminShopRoute,
   AdminAdminSupportRoute: AdminAdminSupportRoute,
   AdminAdminUsersRoute: AdminAdminUsersRoute,
