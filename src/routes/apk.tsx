@@ -84,7 +84,7 @@ function ApkPage() {
               rel="noopener noreferrer"
               className="btn-gold inline-flex items-center gap-2 px-5 py-2.5 text-sm"
             >
-              <Download className="h-4 w-4" /> Download APK
+              <ApkIcon size={18} /> Download APK
             </a>
           </div>
           {latest.changelog && (
