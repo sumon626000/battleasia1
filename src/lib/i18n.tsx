@@ -4,12 +4,12 @@ import { createContext, useContext, useEffect, useMemo, useState, type ReactNode
 
 export type Lang = "en" | "bn" | "hi" | "ur" | "ar";
 
-export const LANGS: { code: Lang; label: string; flag: string; rtl?: boolean }[] = [
-  { code: "en", label: "English", flag: "🇬🇧" },
-  { code: "bn", label: "বাংলা", flag: "🇧🇩" },
-  { code: "hi", label: "हिन्दी", flag: "🇮🇳" },
-  { code: "ur", label: "اردو", flag: "🇵🇰", rtl: true },
-  { code: "ar", label: "العربية", flag: "🇸🇦", rtl: true },
+export const LANGS: { code: Lang; label: string; flag: string; iso2: string; rtl?: boolean }[] = [
+  { code: "en", label: "English", flag: "🇬🇧", iso2: "gb" },
+  { code: "bn", label: "বাংলা", flag: "🇧🇩", iso2: "bd" },
+  { code: "hi", label: "हिन्दी", flag: "🇮🇳", iso2: "in" },
+  { code: "ur", label: "اردو", flag: "🇵🇰", iso2: "pk", rtl: true },
+  { code: "ar", label: "العربية", flag: "🇸🇦", iso2: "sa", rtl: true },
 ];
 
 type Dict = Record<string, string>;
