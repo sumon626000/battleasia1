@@ -1,7 +1,8 @@
 import { useNavigate, useRouterState } from "@tanstack/react-router";
-import { X } from "lucide-react";
+import { X, Home, ShieldCheck } from "lucide-react";
 import { DASH_NAV } from "./DashboardSidebar";
 import { useT } from "@/lib/i18n";
+import { useIsAdmin } from "@/hooks/use-is-admin";
 
 interface Props {
   open: boolean;
@@ -12,6 +13,7 @@ export function DashboardMobileDrawer({ open, onClose }: Props) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const navigate = useNavigate();
   const { t } = useT();
+  const isAdmin = useIsAdmin();
   if (!open) return null;
   return (
     <div className="fixed inset-0 z-[60] lg:hidden">
@@ -30,6 +32,17 @@ export function DashboardMobileDrawer({ open, onClose }: Props) {
           </button>
         </div>
         <nav className="flex flex-col gap-1 p-3">
+          <button
+            type="button"
+            onClick={() => {
+              onClose();
+              navigate({ to: "/" });
+            }}
+            className="flex items-center gap-3 rounded-md border border-transparent px-3 py-2.5 text-left font-hud text-sm font-semibold uppercase tracking-wide text-foreground/80 transition hover:border-border hover:bg-secondary/60"
+          >
+            <Home size={16} />
+            Back to Home
+          </button>
           {DASH_NAV.map((item) => {
             const Icon = item.icon;
             const active =
@@ -55,6 +68,19 @@ export function DashboardMobileDrawer({ open, onClose }: Props) {
               </button>
             );
           })}
+          {isAdmin && (
+            <button
+              type="button"
+              onClick={() => {
+                onClose();
+                navigate({ to: "/admin" });
+              }}
+              className="mt-2 flex items-center gap-3 rounded-md border border-gold/40 bg-gold/5 px-3 py-2.5 text-left font-hud text-sm font-semibold uppercase tracking-wide text-gold transition hover:border-gold hover:bg-gold/10"
+            >
+              <ShieldCheck size={16} />
+              Go Admin
+            </button>
+          )}
         </nav>
       </div>
     </div>
