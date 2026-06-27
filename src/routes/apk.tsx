@@ -1,0 +1,151 @@
+import { createFileRoute } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { Smartphone, Download, ShieldCheck, Calendar } from "lucide-react";
+
+export const Route = createFileRoute("/apk")({
+  head: () => ({
+    meta: [
+      { title: "Download APK — Battle Asia" },
+      { name: "description", content: "Download the Battle Asia mobile app (APK) for Android. Compete in tournaments on the go." },
+      { property: "og:title", content: "Download Battle Asia APK" },
+      { property: "og:description", content: "Official Android APK for Battle Asia." },
+    ],
+  }),
+  component: ApkPage,
+});
+
+type Apk = {
+  id: string;
+  version: string;
+  version_code: number | null;
+  download_url: string;
+  changelog: string | null;
+  release_notes: string | null;
+  file_size_mb: number | null;
+  is_force_update: boolean | null;
+  released_at: string | null;
+  created_at: string;
+};
+
+async function fetchApk() {
+  const { data, error } = await supabase
+    .from("apk_versions")
+    .select("id,version,version_code,download_url,changelog,release_notes,file_size_mb,is_force_update,released_at,created_at")
+    .eq("is_active", true)
+    .order("version_code", { ascending: false })
+    .limit(10);
+  if (error) throw error;
+  return (data ?? []) as Apk[];
+}
+
+function ApkPage() {
+  const { data, isLoading } = useQuery({ queryKey: ["public-apk"], queryFn: fetchApk });
+  const latest = data?.[0];
+  const older = (data ?? []).slice(1);
+
+  return (
+    <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
+      <div className="hud-panel rounded-md border border-gold/30 bg-card/40 p-6">
+        <div className="flex items-center gap-3">
+          <Smartphone className="h-6 w-6 text-gold" />
+          <h1 className="font-display text-3xl uppercase tracking-[0.2em] text-gold">Download APK</h1>
+        </div>
+        <p className="mt-2 font-hud text-xs uppercase tracking-widest text-foreground/60">
+          Official Battle Asia Android app
+        </p>
+      </div>
+
+      {isLoading && <p className="mt-6 text-center text-foreground/50">Loading…</p>}
+      {!isLoading && !latest && (
+        <p className="mt-6 text-center text-foreground/50">No APK available right now.</p>
+      )}
+
+      {latest && (
+        <div className="mt-6 hud-panel rounded-md border border-gold/60 bg-card/60 p-6">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <div className="font-hud text-[10px] uppercase tracking-widest text-emerald-400">
+                Latest Build
+              </div>
+              <h2 className="font-display text-2xl uppercase tracking-wide text-foreground">
+                v{latest.version}
+                {latest.version_code ? (
+                  <span className="ml-2 font-mono text-sm text-foreground/50">({latest.version_code})</span>
+                ) : null}
+              </h2>
+              <div className="mt-1 flex flex-wrap gap-3 font-mono text-[11px] text-foreground/60">
+                {latest.file_size_mb && <span>{latest.file_size_mb} MB</span>}
+                {latest.released_at && (
+                  <span className="inline-flex items-center gap-1">
+                    <Calendar className="h-3 w-3" />
+                    {new Date(latest.released_at).toLocaleDateString()}
+                  </span>
+                )}
+                {latest.is_force_update && (
+                  <span className="rounded bg-destructive/20 px-1.5 text-destructive">Required</span>
+                )}
+              </div>
+            </div>
+            <a
+              href={latest.download_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-gold inline-flex items-center gap-2 px-5 py-2.5 text-sm"
+            >
+              <Download className="h-4 w-4" /> Download APK
+            </a>
+          </div>
+          {(latest.release_notes || latest.changelog) && (
+            <div className="mt-4 border-t border-border/40 pt-4">
+              <div className="font-hud text-[10px] uppercase tracking-widest text-foreground/60">
+                Release Notes
+              </div>
+              <p className="mt-2 whitespace-pre-line text-sm text-foreground/80">
+                {latest.release_notes || latest.changelog}
+              </p>
+            </div>
+          )}
+          <div className="mt-4 flex items-start gap-2 rounded border border-border/40 bg-background/60 p-3">
+            <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-emerald-400" />
+            <p className="font-mono text-[11px] text-foreground/60">
+              Enable "Install from unknown sources" in Android settings before installing. Only download from official Battle Asia sources.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {older.length > 0 && (
+        <div className="mt-8">
+          <h3 className="mb-3 font-hud text-xs uppercase tracking-widest text-foreground/60">
+            Previous Versions
+          </h3>
+          <div className="space-y-2">
+            {older.map((a) => (
+              <div
+                key={a.id}
+                className="flex items-center justify-between rounded border border-border/40 bg-card/30 px-4 py-3"
+              >
+                <div>
+                  <div className="font-display text-sm uppercase tracking-wide">v{a.version}</div>
+                  <div className="font-mono text-[10px] text-foreground/50">
+                    {a.released_at ? new Date(a.released_at).toLocaleDateString() : ""}
+                    {a.file_size_mb ? ` · ${a.file_size_mb} MB` : ""}
+                  </div>
+                </div>
+                <a
+                  href={a.download_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-outline-gold px-3 py-1.5 text-xs"
+                >
+                  <Download className="mr-1 inline h-3 w-3" /> Get
+                </a>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
