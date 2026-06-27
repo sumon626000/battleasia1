@@ -1,0 +1,1 @@
+ALTER TABLE public.premium_settings DROP CONSTRAINT IF EXISTS premium_settings_id_check;
