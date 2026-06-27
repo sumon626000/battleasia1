@@ -66,11 +66,18 @@ function AuthPage() {
   const [tab, setTab] = useState<"login" | "register">(search.tab ?? "login");
   const [busy, setBusy] = useState(false);
   const [legal, setLegal] = useState<"terms" | "privacy" | null>(null);
+  const [googleEnabled, setGoogleEnabled] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
       if (data.session) navigate({ to: "/dashboard" });
     });
+    supabase
+      .from("website_settings")
+      .select("value")
+      .eq("key", "google_login_enabled")
+      .maybeSingle()
+      .then(({ data }) => setGoogleEnabled(String((data as any)?.value ?? "false") === "true"));
   }, [navigate]);
 
   async function handleGoogle() {
