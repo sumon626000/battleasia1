@@ -170,7 +170,6 @@ function LoginForm({ busy, setBusy }: { busy: boolean; setBusy: (b: boolean) => 
   const {
     register,
     handleSubmit,
-    getValues,
     formState: { errors },
   } = useForm<LoginValues>({ resolver: zodResolver(loginSchema) });
 
