@@ -40,10 +40,11 @@ function NewStoryPage() {
       const path = `${user.id}/stories/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
       const { error: upErr } = await supabase.storage.from("social-media").upload(path, file, { cacheControl: "3600", upsert: false, contentType: file.type || undefined });
       if (upErr) throw upErr;
-      const { data: pub } = supabase.storage.from("social-media").getPublicUrl(path);
+      const { data: signed, error: sErr } = await supabase.storage.from("social-media").createSignedUrl(path, 60 * 60 * 24 * 365 * 5);
+      if (sErr) throw sErr;
       const { error } = await supabase.from("social_stories").insert({
         user_id: user.id,
-        media_url: pub.publicUrl,
+        media_url: signed.signedUrl,
         media_type: mediaType ?? "image",
         caption: caption.trim() || null,
       });
