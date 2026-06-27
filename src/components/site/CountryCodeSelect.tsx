@@ -1,6 +1,22 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Search, ChevronDown } from "lucide-react";
-import { COUNTRIES, findByDial, flagEmoji } from "@/lib/countries";
+import { COUNTRIES, findByDial } from "@/lib/countries";
+
+function FlagImg({ iso2, size = 20 }: { iso2: string; size?: number }) {
+  const code = iso2.toLowerCase();
+  return (
+    <img
+      src={`https://flagcdn.com/w40/${code}.png`}
+      srcSet={`https://flagcdn.com/w80/${code}.png 2x`}
+      alt={iso2}
+      width={size}
+      height={Math.round((size * 3) / 4)}
+      className="inline-block shrink-0 rounded-[2px] object-cover shadow-sm ring-1 ring-black/20"
+      style={{ width: size, height: Math.round((size * 3) / 4) }}
+      loading="lazy"
+    />
+  );
+}
 
 interface Props {
   label?: string;
