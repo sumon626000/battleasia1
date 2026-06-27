@@ -18,15 +18,34 @@ type TypeFilter = "all" | "Free" | "Paid";
 
 function MatchesPage() {
   const { user } = useAuth();
+  const { game: selectedGameId } = Route.useSearch();
+  const navigate = useNavigate();
   const [status, setStatus] = useState<Status>("all");
   const [mode, setMode] = useState<ModeFilter>("all");
   const [type, setType] = useState<TypeFilter>("all");
 
+  const games = useQuery({
+    queryKey: ["play-games"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("games")
+        .select("id, game_name, image_url, status, coming_soon")
+        .is("deleted_at", null)
+        .order("sort_order", { ascending: true, nullsFirst: false })
+        .order("id");
+      return data ?? [];
+    },
+  });
+
+  const selectedGame = games.data?.find((g: any) => g.id === selectedGameId);
+
   const matches = useQuery({
-    queryKey: ["matches", status, mode, type],
+    queryKey: ["matches", selectedGameId, status, mode, type],
+    enabled: !!selectedGameId,
     queryFn: async () => {
       let q = supabase
         .from("matches").select("*").is("deleted_at", null)
+        .eq("game_id", selectedGameId!)
         .order("schedule_at", { ascending: true });
       if (status !== "all") q = q.eq("status", status);
       else q = q.in("status", ["Upcoming", "Active", "Ongoing"]);
