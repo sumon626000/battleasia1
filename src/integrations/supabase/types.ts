@@ -1626,6 +1626,11 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      add_feed_comment: {
+        Args: { p_parent?: number; p_post_id: number; p_text: string }
+        Returns: number
+      }
+      archive_notification: { Args: { p_id: number }; Returns: undefined }
       buy_premium: { Args: { p_plan_id: number }; Returns: number }
       has_role: {
         Args: {
@@ -1634,8 +1639,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      increment_feed_view: { Args: { p_post_id: number }; Returns: undefined }
       is_admin: { Args: never; Returns: boolean }
       join_match: { Args: { p_match_id: number }; Returns: number }
+      mark_notifications_read: { Args: { p_ids?: number[] }; Returns: number }
       submit_deposit: {
         Args: {
           p_bac_amount: number
@@ -1667,6 +1674,7 @@ export type Database = {
         }
         Returns: number
       }
+      toggle_feed_like: { Args: { p_post_id: number }; Returns: boolean }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
