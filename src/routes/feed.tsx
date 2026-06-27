@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { CommentsThread, LikeBurst } from "@/components/feed/CommentsThread";
 import { StoriesRail } from "@/components/feed/StoriesRail";
+import { SignedImage, SignedVideo } from "@/components/feed/SignedMedia";
 
 export const Route = createFileRoute("/feed")({
   head: () => ({
