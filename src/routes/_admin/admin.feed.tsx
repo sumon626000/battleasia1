@@ -463,7 +463,7 @@ function CategoryFormModal({
       p_id: category?.id ?? null,
       p_name: form.name,
       p_slug: form.slug,
-    });
+    } as never);
     setSaving(false);
     if (error) toast.error(error.message);
     else {

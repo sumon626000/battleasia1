@@ -54,7 +54,7 @@ function AdminNotificationsPage() {
       p_title: title,
       p_message: message,
       p_type: type,
-    });
+    } as never);
     setSending(false);
     if (error) {
       toast.error(error.message);
