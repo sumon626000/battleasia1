@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Outlet, createFileRoute, useNavigate } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { AdminShell } from "@/components/admin/AdminShell";
+import { TwoFactorGate } from "@/components/admin/TwoFactorGate";
 import { ShieldAlert } from "lucide-react";
 
 export const Route = createFileRoute("/_admin")({
@@ -9,9 +10,13 @@ export const Route = createFileRoute("/_admin")({
   component: AdminLayout,
 });
 
+
 function AdminLayout() {
   const navigate = useNavigate();
   const [state, setState] = useState<"checking" | "ok" | "denied">("checking");
+  const [userId, setUserId] = useState<string | null>(null);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
+
 
   useEffect(() => {
     let active = true;
@@ -27,6 +32,8 @@ function AdminLayout() {
       if (error || !data) {
         setState("denied");
       } else {
+        setUserId(session.user.id);
+        setUserEmail(session.user.email ?? null);
         setState("ok");
       }
     })();
@@ -34,6 +41,7 @@ function AdminLayout() {
       active = false;
     };
   }, [navigate]);
+
 
   if (state === "checking") {
     return (
@@ -68,8 +76,11 @@ function AdminLayout() {
   }
 
   return (
-    <AdminShell>
-      <Outlet />
-    </AdminShell>
+    <TwoFactorGate userId={userId!} userEmail={userEmail}>
+      <AdminShell>
+        <Outlet />
+      </AdminShell>
+    </TwoFactorGate>
   );
 }
+
