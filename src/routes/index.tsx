@@ -359,7 +359,7 @@ function BattleAsiaLanding() {
         <LeaderCard
           tag="EARNINGS" icon={TrendingUp} title="TOP PROFIT" highlight="GENERATORS"
           loading={topProfit.isLoading}
-          rows={(topProfit.data ?? []).map((p, i) => ({
+          rows={mergeProfit(topProfit.data ?? []).map((p, i) => ({
             rank: i + 1, name: p.name, avatar: p.avatar,
             right: formatBAC(p.total), rightCoin: true, sub: "Lifetime winnings",
           }))}
@@ -367,11 +367,12 @@ function BattleAsiaLanding() {
         <LeaderCard
           tag="LEADERBOARD" icon={Crosshair} title="TOP" highlight="PLAYERS"
           loading={topKillers.isLoading}
-          rows={(topKillers.data ?? []).map((p, i) => ({
+          rows={mergeKills(topKillers.data ?? []).map((p, i) => ({
             rank: i + 1, name: p.name, avatar: p.avatar,
             right: `${formatBAC(p.kills)} K`, sub: "Total kills",
           }))}
         />
+
       </section>
 
       {/* ============ HIGH PRIZE + ONGOING ============ */}
