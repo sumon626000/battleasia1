@@ -3,33 +3,33 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2, Pin, Eye, EyeOff } from "lucide-react";
+import { Plus, Pencil, Trash2, Eye, EyeOff, Crown } from "lucide-react";
 
 export const Route = createFileRoute("/_admin/admin/feed")({
   component: AdminFeedPage,
 });
 
 type Category = {
-  id: string;
+  id: number;
   name: string;
   slug: string;
-  sort_order: number;
-  is_active: boolean;
+  deleted_at: string | null;
 };
 
 type Post = {
-  id: string;
-  category_id: string | null;
+  id: number;
+  category_id: number | null;
   title: string;
-  slug: string;
-  excerpt: string | null;
-  body: string | null;
-  cover_url: string | null;
-  is_published: boolean;
-  is_pinned: boolean;
+  description_html: string;
+  cover_image_url: string | null;
+  status: string;
+  premium_only: boolean;
+  views_count: number;
+  likes_count: number;
+  comments_count: number;
   published_at: string | null;
   created_at: string;
-  view_count: number | null;
+  deleted_at: string | null;
 };
 
 function AdminFeedPage() {
@@ -78,9 +78,10 @@ function PostsTab({ qc }: { qc: ReturnType<typeof useQueryClient> }) {
       const { data, error } = await supabase
         .from("feed_posts")
         .select("*")
+        .is("deleted_at", null)
         .order("created_at", { ascending: false });
       if (error) throw error;
-      return data as Post[];
+      return (data ?? []) as unknown as Post[];
     },
   });
 
@@ -90,13 +91,14 @@ function PostsTab({ qc }: { qc: ReturnType<typeof useQueryClient> }) {
       const { data, error } = await supabase
         .from("feed_categories")
         .select("*")
-        .order("sort_order");
+        .is("deleted_at", null)
+        .order("name");
       if (error) throw error;
-      return data as Category[];
+      return (data ?? []) as unknown as Category[];
     },
   });
 
-  async function handleDelete(id: string) {
+  async function handleDelete(id: number) {
     if (!confirm("Delete this post?")) return;
     const { error } = await supabase.rpc("admin_delete_feed_post", { p_id: id });
     if (error) toast.error(error.message);
@@ -127,24 +129,19 @@ function PostsTab({ qc }: { qc: ReturnType<typeof useQueryClient> }) {
             <thead className="border-b border-border/60 bg-secondary/40 font-hud text-[11px] uppercase tracking-widest text-foreground/60">
               <tr>
                 <th className="p-3 text-left">Title</th>
-                <th className="p-3 text-left">Slug</th>
                 <th className="p-3 text-left">Status</th>
+                <th className="p-3 text-left">Premium</th>
                 <th className="p-3 text-left">Views</th>
+                <th className="p-3 text-left">Likes</th>
                 <th className="p-3 text-right">Actions</th>
               </tr>
             </thead>
             <tbody>
               {posts?.map((p) => (
                 <tr key={p.id} className="border-b border-border/40 last:border-0">
+                  <td className="p-3 font-semibold">{p.title}</td>
                   <td className="p-3">
-                    <div className="flex items-center gap-2">
-                      {p.is_pinned && <Pin size={12} className="text-gold" />}
-                      <span className="font-semibold">{p.title}</span>
-                    </div>
-                  </td>
-                  <td className="p-3 font-mono text-xs text-foreground/60">{p.slug}</td>
-                  <td className="p-3">
-                    {p.is_published ? (
+                    {p.status === "Published" ? (
                       <span className="inline-flex items-center gap-1 rounded border border-emerald-500/40 bg-emerald-500/10 px-2 py-0.5 font-hud text-[10px] uppercase tracking-widest text-emerald-400">
                         <Eye size={10} /> Live
                       </span>
@@ -154,7 +151,11 @@ function PostsTab({ qc }: { qc: ReturnType<typeof useQueryClient> }) {
                       </span>
                     )}
                   </td>
-                  <td className="p-3 font-mono text-xs">{p.view_count ?? 0}</td>
+                  <td className="p-3">
+                    {p.premium_only ? <Crown size={14} className="text-gold" /> : "—"}
+                  </td>
+                  <td className="p-3 font-mono text-xs">{p.views_count}</td>
+                  <td className="p-3 font-mono text-xs">{p.likes_count}</td>
                   <td className="p-3 text-right">
                     <div className="flex justify-end gap-2">
                       <button
@@ -175,7 +176,7 @@ function PostsTab({ qc }: { qc: ReturnType<typeof useQueryClient> }) {
               ))}
               {posts?.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="p-8 text-center font-hud text-xs uppercase tracking-widest text-foreground/60">
+                  <td colSpan={6} className="p-8 text-center font-hud text-xs uppercase tracking-widest text-foreground/60">
                     No posts yet
                   </td>
                 </tr>
@@ -217,13 +218,11 @@ function PostFormModal({
 }) {
   const [form, setForm] = useState({
     title: post?.title ?? "",
-    slug: post?.slug ?? "",
-    excerpt: post?.excerpt ?? "",
-    body: post?.body ?? "",
-    cover_url: post?.cover_url ?? "",
-    category_id: post?.category_id ?? "",
-    is_published: post?.is_published ?? false,
-    is_pinned: post?.is_pinned ?? false,
+    description_html: post?.description_html ?? "",
+    cover_image_url: post?.cover_image_url ?? "",
+    category_id: post?.category_id ? String(post.category_id) : "",
+    status: post?.status ?? "Draft",
+    premium_only: post?.premium_only ?? false,
   });
   const [saving, setSaving] = useState(false);
 
@@ -232,15 +231,12 @@ function PostFormModal({
     setSaving(true);
     const { error } = await supabase.rpc("admin_save_feed_post", {
       p_id: post?.id ?? null,
-      p_category_id: form.category_id || null,
+      p_category_id: form.category_id ? Number(form.category_id) : null,
       p_title: form.title,
-      p_slug: form.slug,
-      p_excerpt: form.excerpt || null,
-      p_body: form.body || null,
-      p_cover_url: form.cover_url || null,
-      p_is_published: form.is_published,
-      p_is_pinned: form.is_pinned,
-      p_published_at: null,
+      p_description_html: form.description_html,
+      p_cover_image_url: form.cover_image_url || null,
+      p_status: form.status,
+      p_premium_only: form.premium_only,
     });
     setSaving(false);
     if (error) toast.error(error.message);
@@ -268,14 +264,6 @@ function PostFormModal({
               className="w-full rounded border border-border/60 bg-background/60 px-3 py-2"
             />
           </Field>
-          <Field label="Slug">
-            <input
-              required
-              value={form.slug}
-              onChange={(e) => setForm({ ...form, slug: e.target.value })}
-              className="w-full rounded border border-border/60 bg-background/60 px-3 py-2 font-mono text-sm"
-            />
-          </Field>
           <Field label="Category">
             <select
               value={form.category_id}
@@ -284,51 +272,46 @@ function PostFormModal({
             >
               <option value="">— None —</option>
               {categories.map((c) => (
-                <option key={c.id} value={c.id}>
+                <option key={c.id} value={String(c.id)}>
                   {c.name}
                 </option>
               ))}
             </select>
           </Field>
-          <Field label="Cover URL">
+          <Field label="Cover Image URL">
             <input
-              value={form.cover_url}
-              onChange={(e) => setForm({ ...form, cover_url: e.target.value })}
+              value={form.cover_image_url}
+              onChange={(e) => setForm({ ...form, cover_image_url: e.target.value })}
               className="w-full rounded border border-border/60 bg-background/60 px-3 py-2"
             />
           </Field>
-          <Field label="Excerpt">
+          <Field label="Description (HTML)">
             <textarea
-              rows={2}
-              value={form.excerpt}
-              onChange={(e) => setForm({ ...form, excerpt: e.target.value })}
-              className="w-full rounded border border-border/60 bg-background/60 px-3 py-2"
-            />
-          </Field>
-          <Field label="Body (Markdown)">
-            <textarea
-              rows={8}
-              value={form.body}
-              onChange={(e) => setForm({ ...form, body: e.target.value })}
+              required
+              rows={10}
+              value={form.description_html}
+              onChange={(e) => setForm({ ...form, description_html: e.target.value })}
               className="w-full rounded border border-border/60 bg-background/60 px-3 py-2 font-mono text-sm"
             />
           </Field>
-          <div className="flex gap-6">
-            <label className="flex items-center gap-2 font-hud text-xs uppercase tracking-widest">
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="Status">
+              <select
+                value={form.status}
+                onChange={(e) => setForm({ ...form, status: e.target.value })}
+                className="w-full rounded border border-border/60 bg-background/60 px-3 py-2"
+              >
+                <option value="Draft">Draft</option>
+                <option value="Published">Published</option>
+              </select>
+            </Field>
+            <label className="mt-6 flex items-center gap-2 font-hud text-xs uppercase tracking-widest">
               <input
                 type="checkbox"
-                checked={form.is_published}
-                onChange={(e) => setForm({ ...form, is_published: e.target.checked })}
+                checked={form.premium_only}
+                onChange={(e) => setForm({ ...form, premium_only: e.target.checked })}
               />
-              Published
-            </label>
-            <label className="flex items-center gap-2 font-hud text-xs uppercase tracking-widest">
-              <input
-                type="checkbox"
-                checked={form.is_pinned}
-                onChange={(e) => setForm({ ...form, is_pinned: e.target.checked })}
-              />
-              Pinned
+              Premium Only
             </label>
           </div>
         </div>
@@ -363,13 +346,14 @@ function CategoriesTab({ qc }: { qc: ReturnType<typeof useQueryClient> }) {
       const { data, error } = await supabase
         .from("feed_categories")
         .select("*")
-        .order("sort_order");
+        .is("deleted_at", null)
+        .order("name");
       if (error) throw error;
-      return data as Category[];
+      return (data ?? []) as unknown as Category[];
     },
   });
 
-  async function handleDelete(id: string) {
+  async function handleDelete(id: number) {
     if (!confirm("Delete this category?")) return;
     const { error } = await supabase.rpc("admin_delete_feed_category", { p_id: id });
     if (error) toast.error(error.message);
@@ -401,8 +385,6 @@ function CategoriesTab({ qc }: { qc: ReturnType<typeof useQueryClient> }) {
               <tr>
                 <th className="p-3 text-left">Name</th>
                 <th className="p-3 text-left">Slug</th>
-                <th className="p-3 text-left">Order</th>
-                <th className="p-3 text-left">Active</th>
                 <th className="p-3 text-right">Actions</th>
               </tr>
             </thead>
@@ -411,8 +393,6 @@ function CategoriesTab({ qc }: { qc: ReturnType<typeof useQueryClient> }) {
                 <tr key={c.id} className="border-b border-border/40 last:border-0">
                   <td className="p-3 font-semibold">{c.name}</td>
                   <td className="p-3 font-mono text-xs">{c.slug}</td>
-                  <td className="p-3">{c.sort_order}</td>
-                  <td className="p-3">{c.is_active ? "Yes" : "No"}</td>
                   <td className="p-3 text-right">
                     <div className="flex justify-end gap-2">
                       <button
@@ -433,7 +413,7 @@ function CategoriesTab({ qc }: { qc: ReturnType<typeof useQueryClient> }) {
               ))}
               {categories?.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="p-8 text-center font-hud text-xs uppercase tracking-widest text-foreground/60">
+                  <td colSpan={3} className="p-8 text-center font-hud text-xs uppercase tracking-widest text-foreground/60">
                     No categories yet
                   </td>
                 </tr>
@@ -473,8 +453,6 @@ function CategoryFormModal({
   const [form, setForm] = useState({
     name: category?.name ?? "",
     slug: category?.slug ?? "",
-    sort_order: category?.sort_order ?? 0,
-    is_active: category?.is_active ?? true,
   });
   const [saving, setSaving] = useState(false);
 
@@ -485,8 +463,6 @@ function CategoryFormModal({
       p_id: category?.id ?? null,
       p_name: form.name,
       p_slug: form.slug,
-      p_sort_order: form.sort_order,
-      p_is_active: form.is_active,
     });
     setSaving(false);
     if (error) toast.error(error.message);
@@ -522,22 +498,6 @@ function CategoryFormModal({
               className="w-full rounded border border-border/60 bg-background/60 px-3 py-2 font-mono text-sm"
             />
           </Field>
-          <Field label="Sort Order">
-            <input
-              type="number"
-              value={form.sort_order}
-              onChange={(e) => setForm({ ...form, sort_order: Number(e.target.value) })}
-              className="w-full rounded border border-border/60 bg-background/60 px-3 py-2"
-            />
-          </Field>
-          <label className="flex items-center gap-2 font-hud text-xs uppercase tracking-widest">
-            <input
-              type="checkbox"
-              checked={form.is_active}
-              onChange={(e) => setForm({ ...form, is_active: e.target.checked })}
-            />
-            Active
-          </label>
         </div>
         <div className="mt-6 flex justify-end gap-2">
           <button

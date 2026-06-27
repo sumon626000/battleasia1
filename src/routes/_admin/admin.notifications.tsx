@@ -10,13 +10,12 @@ export const Route = createFileRoute("/_admin/admin/notifications")({
 });
 
 type Sent = {
-  id: string;
+  id: number;
   user_id: string;
   title: string;
-  body: string | null;
+  message: string;
   type: string | null;
-  link: string | null;
-  is_read: boolean;
+  read_at: string | null;
   created_at: string;
 };
 
@@ -25,8 +24,7 @@ function AdminNotificationsPage() {
   const [target, setTarget] = useState<"user" | "all" | "premium">("all");
   const [userId, setUserId] = useState("");
   const [title, setTitle] = useState("");
-  const [body, setBody] = useState("");
-  const [link, setLink] = useState("");
+  const [message, setMessage] = useState("");
   const [type, setType] = useState("system");
   const [sending, setSending] = useState(false);
 
@@ -39,7 +37,7 @@ function AdminNotificationsPage() {
         .order("created_at", { ascending: false })
         .limit(50);
       if (error) throw error;
-      return data as Sent[];
+      return (data ?? []) as unknown as Sent[];
     },
   });
 
@@ -54,8 +52,7 @@ function AdminNotificationsPage() {
       p_target: target,
       p_user_id: target === "user" ? userId : null,
       p_title: title,
-      p_body: body || null,
-      p_link: link || null,
+      p_message: message,
       p_type: type,
     });
     setSending(false);
@@ -64,8 +61,7 @@ function AdminNotificationsPage() {
     } else {
       toast.success(`Sent to ${data ?? 0} recipient(s)`);
       setTitle("");
-      setBody("");
-      setLink("");
+      setMessage("");
       setUserId("");
       qc.invalidateQueries({ queryKey: ["admin-recent-notifications"] });
     }
@@ -133,38 +129,29 @@ function AdminNotificationsPage() {
           />
         </Field>
 
-        <Field label="Body">
+        <Field label="Message">
           <textarea
+            required
             rows={3}
-            value={body}
-            onChange={(e) => setBody(e.target.value)}
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
             className="w-full rounded border border-border/60 bg-background/60 px-3 py-2"
           />
         </Field>
 
-        <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-          <Field label="Type">
-            <select
-              value={type}
-              onChange={(e) => setType(e.target.value)}
-              className="w-full rounded border border-border/60 bg-background/60 px-3 py-2"
-            >
-              <option value="system">System</option>
-              <option value="match">Match</option>
-              <option value="wallet">Wallet</option>
-              <option value="promo">Promotion</option>
-              <option value="alert">Alert</option>
-            </select>
-          </Field>
-          <Field label="Link (optional)">
-            <input
-              value={link}
-              onChange={(e) => setLink(e.target.value)}
-              placeholder="/dashboard/matches"
-              className="w-full rounded border border-border/60 bg-background/60 px-3 py-2"
-            />
-          </Field>
-        </div>
+        <Field label="Type">
+          <select
+            value={type}
+            onChange={(e) => setType(e.target.value)}
+            className="w-full rounded border border-border/60 bg-background/60 px-3 py-2"
+          >
+            <option value="system">System</option>
+            <option value="match">Match</option>
+            <option value="wallet">Wallet</option>
+            <option value="promo">Promotion</option>
+            <option value="alert">Alert</option>
+          </select>
+        </Field>
 
         <div className="flex justify-end">
           <button
@@ -202,7 +189,7 @@ function AdminNotificationsPage() {
                   <td className="p-3 font-mono text-xs text-foreground/60">
                     {n.user_id.slice(0, 8)}…
                   </td>
-                  <td className="p-3">{n.is_read ? "Yes" : "No"}</td>
+                  <td className="p-3">{n.read_at ? "Yes" : "No"}</td>
                   <td className="p-3 font-mono text-xs">
                     {new Date(n.created_at).toLocaleString()}
                   </td>
