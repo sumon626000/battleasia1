@@ -1,15 +1,37 @@
-import { createFileRoute, useNavigate, useRouter, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { forwardRef } from "react";
+import { createFileRoute, useNavigate, useRouter, useSearch } from "@tanstack/react-router";
+import { useEffect, useMemo, useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
+import {
+  GAME_SERVERS,
+  loginSchema,
+  registerSchema,
+  type LoginValues,
+  type RegisterValues,
+} from "@/lib/auth-validation";
+import { LegalModal } from "@/components/site/LegalModal";
+
+const searchSchema = z.object({
+  ref: z.string().trim().optional(),
+  tab: z.enum(["login", "register"]).optional(),
+});
 
 export const Route = createFileRoute("/auth")({
+  validateSearch: searchSchema,
   head: () => ({
     meta: [
       { title: "Sign In or Register | Battle Asia" },
-      { name: "description", content: "Join Battle Asia esports arena. Log in or create your free account to compete in tournaments." },
+      {
+        name: "description",
+        content:
+          "Join Battle Asia esports arena. Log in or create your free account to compete in PUBG tournaments.",
+      },
       { name: "robots", content: "noindex" },
     ],
   }),
@@ -20,7 +42,13 @@ export const Route = createFileRoute("/auth")({
       <div className="mx-auto max-w-md p-8 text-center">
         <h1 className="font-display text-2xl text-gold">Auth error</h1>
         <p className="mt-2 text-sm text-muted-foreground">{error.message}</p>
-        <button onClick={() => { router.invalidate(); reset(); }} className="btn-gold mt-4 px-4 py-2 text-sm">
+        <button
+          onClick={() => {
+            router.invalidate();
+            reset();
+          }}
+          className="btn-gold mt-4 px-4 py-2 text-sm"
+        >
           Retry
         </button>
       </div>
@@ -31,47 +59,16 @@ export const Route = createFileRoute("/auth")({
 
 function AuthPage() {
   const navigate = useNavigate();
-  const [tab, setTab] = useState<"login" | "register">("login");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [username, setUsername] = useState("");
+  const search = useSearch({ from: "/auth" });
+  const [tab, setTab] = useState<"login" | "register">(search.tab ?? "login");
   const [busy, setBusy] = useState(false);
+  const [legal, setLegal] = useState<"terms" | "privacy" | null>(null);
 
-  // Redirect if already signed in
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
       if (data.session) navigate({ to: "/" });
     });
   }, [navigate]);
-
-  async function handleLogin(e: React.FormEvent) {
-    e.preventDefault();
-    setBusy(true);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    setBusy(false);
-    if (error) return toast.error(error.message);
-    toast.success("Welcome back, soldier");
-    navigate({ to: "/" });
-  }
-
-  async function handleRegister(e: React.FormEvent) {
-    e.preventDefault();
-    if (password.length < 6) return toast.error("Password must be at least 6 characters");
-    if (!username.trim()) return toast.error("Username is required");
-    setBusy(true);
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: `${window.location.origin}/`,
-        data: { username: username.trim(), display_name: username.trim() },
-      },
-    });
-    setBusy(false);
-    if (error) return toast.error(error.message);
-    toast.success("Account created — check your email to verify");
-    setTab("login");
-  }
 
   async function handleGoogle() {
     setBusy(true);
@@ -84,17 +81,8 @@ function AuthPage() {
     navigate({ to: "/" });
   }
 
-  async function handleForgot() {
-    if (!email) return toast.error("Enter your email first");
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/reset-password`,
-    });
-    if (error) return toast.error(error.message);
-    toast.success("Password reset email sent");
-  }
-
   return (
-    <div className="mx-auto flex min-h-[calc(100vh-12rem)] max-w-md flex-col justify-center px-4 py-12">
+    <div className="mx-auto flex min-h-[calc(100vh-12rem)] max-w-lg flex-col justify-center px-4 py-12">
       <div className="hud-panel relative overflow-hidden border border-border/80 bg-card/80 p-6 backdrop-blur">
         <span className="hud-bracket hud-bracket-tl" />
         <span className="hud-bracket hud-bracket-tr" />
@@ -105,41 +93,41 @@ function AuthPage() {
           {tab === "login" ? "ENTER THE ARENA" : "JOIN THE BATTLE"}
         </h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          {tab === "login" ? "Sign in to your Battle Asia account" : "Create your free Battle Asia account"}
+          {tab === "login"
+            ? "Sign in to your Battle Asia account"
+            : "Create your free Battle Asia account"}
         </p>
 
         <div className="mt-5 grid grid-cols-2 gap-1 rounded-md border border-border bg-background/60 p-1">
           <button
             onClick={() => setTab("login")}
-            className={`font-hud rounded px-3 py-2 text-sm font-semibold transition ${tab === "login" ? "bg-gold text-black" : "text-foreground/70 hover:text-gold"}`}
+            className={`font-hud rounded px-3 py-2 text-sm font-semibold transition ${
+              tab === "login" ? "bg-gold text-black" : "text-foreground/70 hover:text-gold"
+            }`}
           >
             LOGIN
           </button>
           <button
             onClick={() => setTab("register")}
-            className={`font-hud rounded px-3 py-2 text-sm font-semibold transition ${tab === "register" ? "bg-gold text-black" : "text-foreground/70 hover:text-gold"}`}
+            className={`font-hud rounded px-3 py-2 text-sm font-semibold transition ${
+              tab === "register" ? "bg-gold text-black" : "text-foreground/70 hover:text-gold"
+            }`}
           >
             REGISTER
           </button>
         </div>
 
-        <form onSubmit={tab === "login" ? handleLogin : handleRegister} className="mt-5 space-y-3">
-          {tab === "register" && (
-            <Field label="USERNAME" value={username} onChange={setUsername} placeholder="ProGamer123" />
-          )}
-          <Field label="EMAIL" type="email" value={email} onChange={setEmail} placeholder="you@example.com" />
-          <Field label="PASSWORD" type="password" value={password} onChange={setPassword} placeholder="••••••••" />
-
-          {tab === "login" && (
-            <button type="button" onClick={handleForgot} className="text-xs font-semibold text-gold hover:underline">
-              Forgot password?
-            </button>
-          )}
-
-          <button type="submit" disabled={busy} className="btn-gold w-full justify-center py-3 text-sm disabled:opacity-60">
-            {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : tab === "login" ? "LOGIN" : "CREATE ACCOUNT"}
-          </button>
-        </form>
+        {tab === "login" ? (
+          <LoginForm busy={busy} setBusy={setBusy} />
+        ) : (
+          <RegisterForm
+            busy={busy}
+            setBusy={setBusy}
+            refCode={search.ref ?? ""}
+            openLegal={(t) => setLegal(t)}
+            onRegistered={(email) => navigate({ to: "/email/verify", search: { email } })}
+          />
+        )}
 
         <div className="my-5 flex items-center gap-3">
           <div className="h-px flex-1 bg-border" />
@@ -147,34 +135,392 @@ function AuthPage() {
           <div className="h-px flex-1 bg-border" />
         </div>
 
-        <button onClick={handleGoogle} disabled={busy} className="btn-outline-gold w-full justify-center py-3 text-sm disabled:opacity-60">
+        <button
+          onClick={handleGoogle}
+          disabled={busy}
+          className="btn-outline-gold w-full justify-center py-3 text-sm disabled:opacity-60"
+        >
           CONTINUE WITH GOOGLE
         </button>
 
         <p className="mt-5 text-center text-xs text-muted-foreground">
           By continuing you agree to the{" "}
-          <Link to="/" className="text-gold hover:underline">Terms</Link> and{" "}
-          <Link to="/" className="text-gold hover:underline">Privacy Policy</Link>.
+          <button onClick={() => setLegal("terms")} className="text-gold hover:underline">
+            Terms
+          </button>{" "}
+          and{" "}
+          <button onClick={() => setLegal("privacy")} className="text-gold hover:underline">
+            Privacy Policy
+          </button>
+          .
         </p>
       </div>
+
+      <LegalModal type={legal ?? "terms"} open={legal !== null} onClose={() => setLegal(null)} />
     </div>
   );
 }
 
-function Field({
-  label, value, onChange, type = "text", placeholder,
-}: { label: string; value: string; onChange: (v: string) => void; type?: string; placeholder?: string }) {
+/* ---------------- Login ---------------- */
+
+function LoginForm({ busy, setBusy }: { busy: boolean; setBusy: (b: boolean) => void }) {
+  const navigate = useNavigate();
+  const [showPwd, setShowPwd] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    getValues,
+    formState: { errors },
+  } = useForm<LoginValues>({ resolver: zodResolver(loginSchema) });
+
+  async function onSubmit(values: LoginValues) {
+    setBusy(true);
+    const { error } = await supabase.auth.signInWithPassword({
+      email: values.email,
+      password: values.password,
+    });
+    setBusy(false);
+    if (error) {
+      if (error.message.toLowerCase().includes("email not confirmed")) {
+        toast.error("Email not verified. Check your inbox.");
+        navigate({ to: "/email/verify", search: { email: values.email } });
+        return;
+      }
+      return toast.error(error.message);
+    }
+    toast.success("Welcome back, soldier");
+    navigate({ to: "/" });
+  }
+
+  async function handleForgot() {
+    const email = getValues("email");
+    if (!email) return toast.error("Enter your email first");
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+    if (error) return toast.error(error.message);
+    toast.success("Password reset email sent");
+  }
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)} className="mt-5 space-y-3">
+      <Field label="EMAIL" type="email" placeholder="you@example.com" {...register("email")} error={errors.email?.message} />
+      <PasswordField
+        label="PASSWORD"
+        show={showPwd}
+        onToggle={() => setShowPwd((v) => !v)}
+        registration={register("password")}
+        error={errors.password?.message}
+      />
+      <button type="button" onClick={handleForgot} className="text-xs font-semibold text-gold hover:underline">
+        Forgot password?
+      </button>
+      <button type="submit" disabled={busy} className="btn-gold w-full justify-center py-3 text-sm disabled:opacity-60">
+        {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : "LOGIN"}
+      </button>
+    </form>
+  );
+}
+
+/* ---------------- Register ---------------- */
+
+function RegisterForm({
+  busy,
+  setBusy,
+  refCode,
+  openLegal,
+  onRegistered,
+}: {
+  busy: boolean;
+  setBusy: (b: boolean) => void;
+  refCode: string;
+  openLegal: (t: "terms" | "privacy") => void;
+  onRegistered: (email: string) => void;
+}) {
+  const [showPwd, setShowPwd] = useState(false);
+  const [showPwd2, setShowPwd2] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors },
+  } = useForm<RegisterValues>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: {
+      country_code: "+880",
+      game_server: "Asia",
+      referral_code_input: refCode,
+      terms_agreed: false as unknown as true,
+    },
+  });
+
+  const password = watch("password") ?? "";
+  const strength = useMemo(() => passwordStrength(password), [password]);
+
+  async function onSubmit(values: RegisterValues) {
+    setBusy(true);
+    const { error } = await supabase.auth.signUp({
+      email: values.email,
+      password: values.password,
+      options: {
+        emailRedirectTo: `${window.location.origin}/email/verify`,
+        data: {
+          username: values.in_game_username,
+          display_name: values.in_game_username,
+          in_game_username: values.in_game_username,
+          country_code: values.country_code,
+          mobile_number: values.mobile_number,
+          pubg_id: values.pubg_id,
+          game_server: values.game_server,
+          referral_code_input: values.referral_code_input || null,
+        },
+      },
+    });
+    setBusy(false);
+    if (error) {
+      if (error.message.toLowerCase().includes("already registered")) {
+        return toast.error("This email is already registered. Try logging in.");
+      }
+      return toast.error(error.message);
+    }
+    toast.success("Account created — check your email for the verification code");
+    onRegistered(values.email);
+  }
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)} className="mt-5 space-y-3">
+      <Field
+        label="IN-GAME USERNAME"
+        placeholder="ProSniper99"
+        {...register("in_game_username")}
+        error={errors.in_game_username?.message}
+      />
+
+      <div className="grid grid-cols-3 gap-3">
+        <Field
+          label="CODE"
+          placeholder="+880"
+          {...register("country_code")}
+          error={errors.country_code?.message}
+        />
+        <div className="col-span-2">
+          <Field
+            label="MOBILE NUMBER"
+            placeholder="17XXXXXXXX"
+            inputMode="numeric"
+            {...register("mobile_number")}
+            error={errors.mobile_number?.message}
+          />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-3">
+        <Field
+          label="PUBG ID"
+          placeholder="5123456789"
+          inputMode="numeric"
+          {...register("pubg_id")}
+          error={errors.pubg_id?.message}
+        />
+        <SelectField
+          label="GAME SERVER"
+          value={watch("game_server")}
+          onChange={(v) => setValue("game_server", v as RegisterValues["game_server"], { shouldValidate: true })}
+          options={GAME_SERVERS}
+          error={errors.game_server?.message}
+        />
+      </div>
+
+      <Field
+        label="EMAIL"
+        type="email"
+        placeholder="you@example.com"
+        {...register("email")}
+        error={errors.email?.message}
+      />
+
+      <PasswordField
+        label="PASSWORD"
+        show={showPwd}
+        onToggle={() => setShowPwd((v) => !v)}
+        registration={register("password")}
+        error={errors.password?.message}
+      />
+      <PasswordStrengthBar score={strength.score} label={strength.label} />
+
+      <PasswordField
+        label="CONFIRM PASSWORD"
+        show={showPwd2}
+        onToggle={() => setShowPwd2((v) => !v)}
+        registration={register("password_confirmation")}
+        error={errors.password_confirmation?.message}
+      />
+
+      <Field
+        label="REFERRAL CODE (OPTIONAL)"
+        placeholder="BA12345678"
+        {...register("referral_code_input")}
+        error={errors.referral_code_input?.message}
+      />
+
+      <label className="mt-2 flex items-start gap-2 text-xs text-foreground/80">
+        <input
+          type="checkbox"
+          className="mt-0.5 h-4 w-4 accent-[hsl(var(--gold))]"
+          {...register("terms_agreed")}
+        />
+        <span>
+          I agree to the{" "}
+          <button type="button" onClick={() => openLegal("terms")} className="text-gold hover:underline">
+            Terms
+          </button>{" "}
+          and{" "}
+          <button type="button" onClick={() => openLegal("privacy")} className="text-gold hover:underline">
+            Privacy Policy
+          </button>
+          .
+        </span>
+      </label>
+      {errors.terms_agreed && (
+        <p className="text-[11px] text-destructive">{errors.terms_agreed.message as string}</p>
+      )}
+
+      <button type="submit" disabled={busy} className="btn-gold w-full justify-center py-3 text-sm disabled:opacity-60">
+        {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : "CREATE ACCOUNT"}
+      </button>
+    </form>
+  );
+}
+
+/* ---------------- Reusable fields ---------------- */
+
+type FieldProps = React.InputHTMLAttributes<HTMLInputElement> & {
+  label: string;
+  error?: string;
+};
+
+const Field = forwardRef<HTMLInputElement, FieldProps>(function Field(
+  { label, error, className, ...rest },
+  ref,
+) {
   return (
     <label className="block">
-      <span className="font-mono text-[10px] font-semibold tracking-widest text-muted-foreground">{label}</span>
+      <span className="font-mono text-[10px] font-semibold tracking-widest text-muted-foreground">
+        {label}
+      </span>
       <input
-        type={type}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
-        required
-        className="mt-1 w-full rounded-md border border-border bg-background/80 px-3 py-2.5 text-sm text-foreground outline-none transition focus:border-gold focus:ring-1 focus:ring-gold/50"
+        ref={ref}
+        {...rest}
+        className={`mt-1 w-full rounded-md border bg-background/80 px-3 py-2.5 text-sm text-foreground outline-none transition focus:border-gold focus:ring-1 focus:ring-gold/50 ${
+          error ? "border-destructive" : "border-border"
+        } ${className ?? ""}`}
       />
+      {error && <p className="mt-1 text-[11px] text-destructive">{error}</p>}
     </label>
   );
+});
+
+function PasswordField({
+  label,
+  show,
+  onToggle,
+  registration,
+  error,
+}: {
+  label: string;
+  show: boolean;
+  onToggle: () => void;
+  registration: ReturnType<ReturnType<typeof useForm>["register"]>;
+  error?: string;
+}) {
+  return (
+    <label className="block">
+      <span className="font-mono text-[10px] font-semibold tracking-widest text-muted-foreground">
+        {label}
+      </span>
+      <div className="relative mt-1">
+        <input
+          type={show ? "text" : "password"}
+          {...registration}
+          className={`w-full rounded-md border bg-background/80 px-3 py-2.5 pr-10 text-sm text-foreground outline-none transition focus:border-gold focus:ring-1 focus:ring-gold/50 ${
+            error ? "border-destructive" : "border-border"
+          }`}
+        />
+        <button
+          type="button"
+          onClick={onToggle}
+          className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-foreground/60 hover:text-gold"
+        >
+          {show ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+        </button>
+      </div>
+      {error && <p className="mt-1 text-[11px] text-destructive">{error}</p>}
+    </label>
+  );
+}
+
+function SelectField({
+  label,
+  value,
+  onChange,
+  options,
+  error,
+}: {
+  label: string;
+  value: string | undefined;
+  onChange: (v: string) => void;
+  options: readonly { value: string; label: string }[];
+  error?: string;
+}) {
+  return (
+    <label className="block">
+      <span className="font-mono text-[10px] font-semibold tracking-widest text-muted-foreground">
+        {label}
+      </span>
+      <select
+        value={value ?? ""}
+        onChange={(e) => onChange(e.target.value)}
+        className={`mt-1 w-full rounded-md border bg-background/80 px-3 py-2.5 text-sm text-foreground outline-none transition focus:border-gold focus:ring-1 focus:ring-gold/50 ${
+          error ? "border-destructive" : "border-border"
+        }`}
+      >
+        {options.map((o) => (
+          <option key={o.value} value={o.value} className="bg-background">
+            {o.label}
+          </option>
+        ))}
+      </select>
+      {error && <p className="mt-1 text-[11px] text-destructive">{error}</p>}
+    </label>
+  );
+}
+
+function PasswordStrengthBar({ score, label }: { score: number; label: string }) {
+  const colors = ["bg-destructive", "bg-destructive", "bg-amber-500", "bg-amber-400", "bg-emerald-500"];
+  return (
+    <div className="space-y-1">
+      <div className="flex h-1.5 gap-1">
+        {[0, 1, 2, 3].map((i) => (
+          <div
+            key={i}
+            className={`h-full flex-1 rounded ${i < score ? colors[score] : "bg-border"}`}
+          />
+        ))}
+      </div>
+      <p className="font-mono text-[10px] tracking-widest text-muted-foreground">
+        STRENGTH: <span className="text-foreground/80">{label}</span>
+      </p>
+    </div>
+  );
+}
+
+function passwordStrength(pwd: string): { score: number; label: string } {
+  let score = 0;
+  if (pwd.length >= 8) score++;
+  if (/[A-Z]/.test(pwd)) score++;
+  if (/[0-9]/.test(pwd)) score++;
+  if (/[^A-Za-z0-9]/.test(pwd)) score++;
+  const labels = ["Too weak", "Weak", "Fair", "Good", "Strong"];
+  return { score, label: labels[score] };
 }
