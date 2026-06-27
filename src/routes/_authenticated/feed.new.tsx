@@ -66,7 +66,7 @@ function NewPostPage() {
         const { error: upErr } = await supabase.storage.from("social-media").upload(path, file, {
           cacheControl: "3600",
           upsert: false,
-          contentType: file.type,
+          contentType: file.type || undefined,
         });
         if (upErr) throw upErr;
         const { data: pub } = supabase.storage.from("social-media").getPublicUrl(path);
