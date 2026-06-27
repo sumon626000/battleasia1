@@ -37,37 +37,40 @@
 
 :root {
   --radius: 0.5rem;
-  /* Dark gaming theme */
-  --background: oklch(0.16 0.015 250);
+  /* PUBG-inspired dark gaming theme: deep black/charcoal + amber-orange */
+  --background: oklch(0.14 0.01 60);
   --foreground: oklch(0.98 0 0);
-  --card: oklch(0.21 0.018 250);
+  --card: oklch(0.19 0.012 60);
   --card-foreground: oklch(0.98 0 0);
-  --popover: oklch(0.21 0.018 250);
+  --popover: oklch(0.19 0.012 60);
   --popover-foreground: oklch(0.98 0 0);
-  --primary: oklch(0.82 0.17 85);   /* gold/yellow */
-  --primary-foreground: oklch(0.16 0.02 250);
-  --secondary: oklch(0.26 0.02 250);
+  --primary: oklch(0.78 0.19 65);   /* PUBG amber-orange */
+  --primary-foreground: oklch(0.14 0.01 60);
+  --secondary: oklch(0.24 0.015 60);
   --secondary-foreground: oklch(0.98 0 0);
-  --muted: oklch(0.26 0.02 250);
-  --muted-foreground: oklch(0.72 0.01 250);
-  --accent: oklch(0.82 0.17 85);
-  --accent-foreground: oklch(0.16 0.02 250);
-  --destructive: oklch(0.65 0.22 25);
+  --muted: oklch(0.24 0.015 60);
+  --muted-foreground: oklch(0.72 0.01 60);
+  --accent: oklch(0.78 0.19 65);
+  --accent-foreground: oklch(0.14 0.01 60);
+  --destructive: oklch(0.65 0.24 28);
   --destructive-foreground: oklch(0.98 0 0);
-  --border: oklch(0.3 0.02 250);
-  --input: oklch(0.3 0.02 250);
-  --ring: oklch(0.82 0.17 85);
+  --border: oklch(0.3 0.02 60);
+  --input: oklch(0.3 0.02 60);
+  --ring: oklch(0.78 0.19 65);
 
-  --gold: oklch(0.82 0.17 85);
-  --gold-foreground: oklch(0.16 0.02 250);
-  --success: oklch(0.65 0.18 145);
-  --live: oklch(0.62 0.23 25);
+  --gold: oklch(0.78 0.19 65);
+  --gold-foreground: oklch(0.14 0.01 60);
+  --success: oklch(0.7 0.2 145);
+  --live: oklch(0.62 0.25 28);
 
-  --gradient-hero: linear-gradient(135deg, oklch(0.16 0.015 250) 0%, oklch(0.22 0.03 40) 100%);
-  --gradient-gold: linear-gradient(135deg, oklch(0.88 0.17 90), oklch(0.72 0.17 75));
-  --shadow-gold: 0 8px 30px -8px color-mix(in oklab, var(--gold) 50%, transparent);
-  --shadow-card: 0 4px 20px -4px oklch(0 0 0 / 0.5);
+  --gradient-hero: linear-gradient(135deg, oklch(0.14 0.01 60) 0%, oklch(0.22 0.05 50) 100%);
+  --gradient-gold: linear-gradient(135deg, oklch(0.86 0.18 75), oklch(0.7 0.22 50));
+  --shadow-gold: 0 0 0 1px color-mix(in oklab, var(--gold) 50%, transparent),
+                 0 8px 30px -6px color-mix(in oklab, var(--gold) 55%, transparent),
+                 inset 0 1px 0 oklch(1 0 0 / 0.25);
+  --shadow-card: 0 4px 20px -4px oklch(0 0 0 / 0.6);
 }
+
 
 .dark { color-scheme: dark; }
 
