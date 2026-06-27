@@ -54,23 +54,38 @@ function FeedPage() {
 
     // Blocked users (both directions) — exclude from feed
     let blockedIds = new Set<string>();
+    let followingIds = new Set<string>();
     if (user) {
-      const [a, b] = await Promise.all([
+      const [a, b, f] = await Promise.all([
         supabase.from("user_blocks").select("blocked_id").eq("blocker_id", user.id),
         supabase.from("user_blocks").select("blocker_id").eq("blocked_id", user.id),
+        supabase.from("user_follows").select("following_id").eq("follower_id", user.id),
       ]);
       (a.data ?? []).forEach((r: any) => blockedIds.add(r.blocked_id));
       (b.data ?? []).forEach((r: any) => blockedIds.add(r.blocker_id));
+      (f.data ?? []).forEach((r: any) => followingIds.add(r.following_id));
     }
 
+    // Pull a larger window so we can mix followed + viral
     const { data: rows } = await supabase
       .from("social_posts")
       .select("id,user_id,caption,media_url,media_type,likes_count,comments_count,created_at")
       .eq("visibility", "public")
       .order("created_at", { ascending: false })
-      .limit(50);
-    let list = (rows ?? []) as Post[];
-    if (blockedIds.size) list = list.filter((p) => !blockedIds.has(p.user_id));
+      .limit(150);
+    let pool = (rows ?? []) as Post[];
+    if (blockedIds.size) pool = pool.filter((p) => !blockedIds.has(p.user_id));
+
+    // Rank: followed first (recent), then viral (likes), then fresh discovery
+    const now = Date.now();
+    const scored = pool.map((p) => {
+      const ageH = Math.max(1, (now - new Date(p.created_at).getTime()) / 3.6e6);
+      const viral = (p.likes_count * 3 + p.comments_count * 2) / Math.pow(ageH + 2, 0.8);
+      const followBoost = followingIds.has(p.user_id) ? 1000 - ageH : 0;
+      return { p, score: followBoost + viral };
+    });
+    scored.sort((x, y) => y.score - x.score);
+    const list = scored.slice(0, 50).map((s) => s.p);
 
     const ids = Array.from(new Set(list.map((p) => p.user_id)));
     let profileMap: Record<string, Post["author"]> = {};
@@ -143,9 +158,14 @@ function FeedPage() {
               <RefreshCw size={14} />
             </button>
             {isAuthenticated ? (
-              <Link to="/feed/new" className="btn-gold inline-flex items-center gap-1.5 px-3 py-2 text-xs">
-                <Plus size={14} /> Post
-              </Link>
+              <>
+                <Link to="/dashboard/story/new" className="btn-outline-gold inline-flex items-center gap-1.5 px-3 py-2 text-xs">
+                  <Plus size={14} /> Story
+                </Link>
+                <Link to="/feed/new" className="btn-gold inline-flex items-center gap-1.5 px-3 py-2 text-xs">
+                  <Plus size={14} /> Post
+                </Link>
+              </>
             ) : (
               <Link to="/auth" className="btn-gold px-3 py-2 text-xs">Sign in</Link>
             )}
