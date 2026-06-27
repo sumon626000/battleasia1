@@ -686,9 +686,46 @@ function BattleAsiaLanding() {
           </div>
         </div>
       </section>
+
+      {/* spacer so fixed bottom CTA doesn't cover footer content */}
+      <div aria-hidden className="h-20 sm:h-16" />
+
+      {/* ============ FIXED BOTTOM CTA BAR ============ */}
+      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-gold/30 bg-background/85 backdrop-blur-xl">
+        <div aria-hidden className="pointer-events-none absolute inset-x-0 -top-px h-px bg-gradient-to-r from-transparent via-gold to-transparent" />
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-3 py-2.5 sm:px-6 sm:py-3">
+          <div className="flex min-w-0 items-center gap-2.5">
+            <span className="relative grid h-9 w-9 shrink-0 place-items-center rounded-md bg-gold/15 text-gold sm:h-10 sm:w-10">
+              <Swords size={16} />
+              <span aria-hidden className="absolute inset-0 animate-ping rounded-md bg-gold/20" />
+            </span>
+            <div className="min-w-0">
+              <div className="font-hud text-[10px] uppercase tracking-[0.22em] text-gold/80 sm:text-[11px]">Live Arena</div>
+              <div className="truncate font-display text-xs font-bold uppercase tracking-wide text-foreground sm:text-sm">
+                Ready to drop in?
+              </div>
+            </div>
+          </div>
+          <div className="flex shrink-0 items-center gap-2">
+            <Link
+              to="/matches"
+              className="hidden rounded-md border border-gold/40 px-3 py-2 font-hud text-[11px] font-semibold uppercase tracking-wider text-gold transition hover:bg-gold/10 sm:inline-flex"
+            >
+              Matches
+            </Link>
+            <Link
+              to="/auth"
+              className="btn-gold inline-flex items-center gap-1.5 px-4 py-2 text-[11px] sm:px-5 sm:py-2.5 sm:text-xs"
+            >
+              <Flame size={14} /> Join Battle
+            </Link>
+          </div>
+        </div>
+      </div>
     </>
   );
 }
+
 
 /* ============== SUB-COMPONENTS ============== */
 
