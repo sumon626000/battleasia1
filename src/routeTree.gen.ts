@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as NewsRouteImport } from './routes/news'
 import { Route as MatchesRouteImport } from './routes/matches'
 import { Route as LeaderboardRouteImport } from './routes/leaderboard'
 import { Route as AuthRouteImport } from './routes/auth'
@@ -59,6 +60,11 @@ import { Route as AuthenticatedDashboardFeedPostIdRouteImport } from './routes/_
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NewsRoute = NewsRouteImport.update({
+  id: '/news',
+  path: '/news',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MatchesRoute = MatchesRouteImport.update({
@@ -305,6 +311,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/leaderboard': typeof LeaderboardRoute
   '/matches': typeof MatchesRoute
+  '/news': typeof NewsRoute
   '/reset-password': typeof ResetPasswordRoute
   '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/email/verify': typeof EmailVerifyRoute
@@ -351,6 +358,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/leaderboard': typeof LeaderboardRoute
   '/matches': typeof MatchesRoute
+  '/news': typeof NewsRoute
   '/reset-password': typeof ResetPasswordRoute
   '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/email/verify': typeof EmailVerifyRoute
@@ -400,6 +408,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/leaderboard': typeof LeaderboardRoute
   '/matches': typeof MatchesRoute
+  '/news': typeof NewsRoute
   '/reset-password': typeof ResetPasswordRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/email/verify': typeof EmailVerifyRoute
@@ -448,6 +457,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/leaderboard'
     | '/matches'
+    | '/news'
     | '/reset-password'
     | '/dashboard'
     | '/email/verify'
@@ -494,6 +504,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/leaderboard'
     | '/matches'
+    | '/news'
     | '/reset-password'
     | '/dashboard'
     | '/email/verify'
@@ -542,6 +553,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/leaderboard'
     | '/matches'
+    | '/news'
     | '/reset-password'
     | '/_authenticated/dashboard'
     | '/email/verify'
@@ -591,6 +603,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   LeaderboardRoute: typeof LeaderboardRoute
   MatchesRoute: typeof MatchesRoute
+  NewsRoute: typeof NewsRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   EmailVerifyRoute: typeof EmailVerifyRoute
   PSlugRoute: typeof PSlugRoute
@@ -603,6 +616,13 @@ declare module '@tanstack/react-router' {
       path: '/reset-password'
       fullPath: '/reset-password'
       preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/news': {
+      id: '/news'
+      path: '/news'
+      fullPath: '/news'
+      preLoaderRoute: typeof NewsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/matches': {
@@ -1064,6 +1084,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   LeaderboardRoute: LeaderboardRoute,
   MatchesRoute: MatchesRoute,
+  NewsRoute: NewsRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   EmailVerifyRoute: EmailVerifyRoute,
   PSlugRoute: PSlugRoute,
