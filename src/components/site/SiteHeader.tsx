@@ -8,10 +8,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { LanguageSwitcher } from "@/components/site/LanguageSwitcher";
 import { useT } from "@/lib/i18n";
 
-const NAV_KEYS: { key: string; href: string }[] = [
+const NAV_KEYS: { key: string; href: string; label?: string }[] = [
   { key: "nav.home", href: "/" },
   { key: "nav.matches", href: "/matches" },
   { key: "nav.leaderboard", href: "/leaderboard" },
+  { key: "nav.feed", href: "/feed", label: "Feed" },
   { key: "nav.shop", href: "/shop" },
   { key: "nav.premium", href: "/premium" },
   { key: "nav.news", href: "/news" },

@@ -59,6 +59,9 @@ export const DASH_GROUPS: DashGroup[] = [
     label: "Social",
     icon: Megaphone,
     items: [
+      { key: "dash.socialFeed", href: "/feed", icon: Newspaper },
+      { key: "dash.newPost", href: "/feed/new", icon: ShoppingBag },
+      { key: "dash.newStory", href: "/dashboard/story/new", icon: Crown },
       { key: "dash.feed", href: "/dashboard/feed", icon: Newspaper },
       { key: "dash.messages", href: "/dashboard/messages", icon: MessageSquare },
       { key: "dash.referrals", href: "/dashboard/referrals", icon: Users },
