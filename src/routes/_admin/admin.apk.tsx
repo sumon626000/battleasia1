@@ -184,7 +184,30 @@ function AdminApkPage() {
               <Field label="Version Code"><input type="number" className="hud-input" value={editing.version_code ?? 0} onChange={(e) => setEditing({ ...editing, version_code: Number(e.target.value) })} /></Field>
               <Field label="Size (bytes)"><input type="number" className="hud-input" value={editing.file_size_bytes ?? 0} onChange={(e) => setEditing({ ...editing, file_size_bytes: Number(e.target.value) })} /></Field>
             </div>
-            <Field label="APK File URL"><input className="hud-input" value={editing.apk_file_url ?? ""} onChange={(e) => setEditing({ ...editing, apk_file_url: e.target.value })} /></Field>
+            <div className="rounded border border-dashed border-gold/40 bg-gold/5 p-3">
+              <div className="font-hud text-[10px] uppercase tracking-widest text-muted-foreground mb-2">Upload .apk File</div>
+              <input
+                ref={fileRef}
+                type="file"
+                accept=".apk,application/vnd.android.package-archive"
+                className="hidden"
+                onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadApk(f); e.target.value = ""; }}
+              />
+              <button
+                type="button"
+                onClick={() => fileRef.current?.click()}
+                disabled={uploading}
+                className="flex w-full items-center justify-center gap-2 rounded border border-gold/60 bg-gold/10 px-3 py-2 font-hud text-xs uppercase tracking-widest text-gold hover:bg-gold/20 disabled:opacity-50"
+              >
+                {uploading ? <><Loader2 size={14} className="animate-spin" /> Uploading…</> : <><Upload size={14} /> Choose APK File</>}
+              </button>
+              {editing.apk_file_url && (
+                <div className="mt-2 truncate font-mono text-[10px] text-muted-foreground">
+                  ✓ {formatSize(editing.file_size_bytes ?? 0)} — link saved
+                </div>
+              )}
+            </div>
+            <Field label="APK File URL (auto-filled or paste)"><input className="hud-input" value={editing.apk_file_url ?? ""} onChange={(e) => setEditing({ ...editing, apk_file_url: e.target.value })} /></Field>
             <Field label="Changelog"><textarea rows={4} className="hud-input" value={editing.changelog ?? ""} onChange={(e) => setEditing({ ...editing, changelog: e.target.value })} /></Field>
             <div className="flex gap-4">
               <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={editing.is_active ?? false} onChange={(e) => setEditing({ ...editing, is_active: e.target.checked })} /> Active</label>
