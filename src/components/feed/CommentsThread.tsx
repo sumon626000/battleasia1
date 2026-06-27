@@ -159,17 +159,19 @@ export function CommentsThread({ postId, onCountChange }: { postId: string; onCo
   );
 }
 
-export function LikeBurst({ active }: { active: boolean }) {
+export function LikeBurst({ active, children }: { active: boolean; children?: React.ReactNode }) {
   return (
     <span className="relative inline-grid place-items-center">
-      <Heart
-        size={18}
-        fill={active ? "currentColor" : "none"}
-        className={`transition-transform duration-200 ${active ? "scale-125" : "scale-100"}`}
-      />
+      {children ?? (
+        <Heart
+          size={18}
+          fill={active ? "currentColor" : "none"}
+          className={`transition-transform duration-200 ${active ? "scale-110" : "scale-100"}`}
+        />
+      )}
       {active && (
         <span className="pointer-events-none absolute inset-0 grid place-items-center">
-          <span className="h-6 w-6 animate-ping rounded-full bg-red-500/30" />
+          <span className="h-6 w-6 animate-ping rounded-full bg-rose-500/30" />
         </span>
       )}
     </span>
