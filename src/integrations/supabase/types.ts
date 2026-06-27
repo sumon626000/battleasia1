@@ -1639,6 +1639,8 @@ export type Database = {
         Returns: number
       }
       admin_delete_match: { Args: { p_match_id: number }; Returns: undefined }
+      admin_delete_shop_category: { Args: { p_id: number }; Returns: undefined }
+      admin_delete_shop_package: { Args: { p_id: number }; Returns: undefined }
       admin_publish_match_result: {
         Args: {
           p_match_id: number
@@ -1648,8 +1650,38 @@ export type Database = {
         }
         Returns: number
       }
+      admin_review_deposit: {
+        Args: { p_approve: boolean; p_id: number; p_reason?: string }
+        Returns: undefined
+      }
+      admin_review_shop_purchase: {
+        Args: { p_approve: boolean; p_id: number; p_note?: string }
+        Returns: undefined
+      }
+      admin_review_withdrawal: {
+        Args: {
+          p_approve: boolean
+          p_fiat_amount?: number
+          p_id: number
+          p_reason?: string
+        }
+        Returns: undefined
+      }
       admin_save_match: {
         Args: { p_match_id: number; p_payload: Json }
+        Returns: number
+      }
+      admin_save_shop_category: {
+        Args: {
+          p_id: number
+          p_name: string
+          p_slug: string
+          p_sort_order?: number
+        }
+        Returns: number
+      }
+      admin_save_shop_package: {
+        Args: { p_id: number; p_payload: Json }
         Returns: number
       }
       admin_set_user_role: {
