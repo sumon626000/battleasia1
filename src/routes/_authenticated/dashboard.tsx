@@ -2,7 +2,6 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/use-auth";
 import { useProfile } from "@/hooks/use-profile";
 import {
-  Coins,
   Trophy,
   Swords,
   Users,
@@ -12,6 +11,7 @@ import {
   Crown,
   ArrowRight,
 } from "lucide-react";
+import { CoinIcon } from "@/components/site/CoinIcon";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
@@ -26,8 +26,8 @@ function DashboardPage() {
   const name = profile?.in_game_username || profile?.username || "Player";
   const balance = Number(profile?.bac_coin_balance ?? 0);
 
-  const stats = [
-    { label: "BAC Balance", value: balance.toLocaleString(), icon: Coins, accent: true },
+  const stats: Array<{ label: string; value: string; icon: any; accent?: boolean; isCoin?: boolean }> = [
+    { label: "BAC Balance", value: balance.toLocaleString(), icon: null, accent: true, isCoin: true },
     { label: "Matches Played", value: "0", icon: Swords },
     { label: "Wins", value: "0", icon: Trophy },
     { label: "Referrals", value: "0", icon: Users },
@@ -74,7 +74,7 @@ function DashboardPage() {
                 <span className="font-hud text-[10px] uppercase tracking-wider text-foreground/60">
                   {s.label}
                 </span>
-                <Icon size={14} className={s.accent ? "text-gold" : "text-foreground/50"} />
+                {s.isCoin ? <CoinIcon size={16} /> : <Icon size={14} className={s.accent ? "text-gold" : "text-foreground/50"} />}
               </div>
               <div className={`mt-2 font-mono text-xl font-bold tabular-nums sm:text-2xl ${s.accent ? "text-gold" : ""}`}>
                 {s.value}

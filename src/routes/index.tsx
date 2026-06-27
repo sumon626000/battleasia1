@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import {
-  Swords, Trophy, Coins, Shield, Zap, Lock, Headphones,
+  Swords, Trophy, Shield, Zap, Lock, Headphones,
   Smartphone, Download, ChevronRight, Crosshair,
   Radio, Flame, Star, TrendingUp, Activity, Users2,
   User, Users, UsersRound, Crosshair as Target,
@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import {
   Accordion, AccordionContent, AccordionItem, AccordionTrigger,
 } from "@/components/ui/accordion";
+import { CoinIcon } from "@/components/site/CoinIcon";
 import heroSoldier from "@/assets/hero-soldier.jpg";
 import phoneApp from "@/assets/phone-app.jpg";
 import bacCoin from "@/assets/battleasia-coin.png";
@@ -165,11 +166,11 @@ function BattleAsiaLanding() {
     },
   });
 
-  const STATS = [
+  const STATS: Array<{ icon: any; value: string; label: string; isCoin?: boolean }> = [
     { icon: Users2,  value: pulse.data ? `${formatBAC(pulse.data.processed + pulse.data.ongoing)}` : "—", label: "TOTAL MATCHES" },
     { icon: Swords,  value: pulse.data ? formatBAC(pulse.data.ongoing) : "—", label: "LIVE MATCHES" },
     { icon: Trophy,  value: pulse.data ? `৳${formatBAC(pulse.data.totalWinnings)}` : "—", label: "TOTAL PAID OUT" },
-    { icon: Coins,   value: pulse.data ? formatBAC(pulse.data.processed) : "—", label: "PROCESSED MATCHES" },
+    { icon: null,    value: pulse.data ? formatBAC(pulse.data.processed) : "—", label: "PROCESSED MATCHES", isCoin: true },
   ];
 
   return (
@@ -251,10 +252,10 @@ function BattleAsiaLanding() {
           </div>
 
           <div className="relative mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
-            {STATS.map(({ icon: Icon, value, label }) => (
+            {STATS.map(({ icon: Icon, value, label, isCoin }) => (
               <div key={label} className="flex items-center gap-3 rounded-sm border border-border/60 bg-background/40 p-3">
                 <div className="grid h-10 w-10 shrink-0 place-items-center rounded-md bg-gold/10 text-gold ring-1 ring-gold/30">
-                  <Icon size={18} />
+                  {isCoin ? <CoinIcon size={20} /> : <Icon size={18} />}
                 </div>
                 <div className="min-w-0">
                   <div className="font-display font-mono-tab truncate text-lg font-bold leading-none">{value}</div>
