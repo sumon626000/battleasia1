@@ -485,9 +485,9 @@ function BattleAsiaLanding() {
       {/* ============ PAYMENTS ============ */}
       <section className="mx-auto max-w-7xl px-4 pb-14 sm:px-6">
         <div className="mb-6 flex items-center gap-4">
-          <h2 className="font-display text-xl font-bold tracking-wider">PAYMENT METHODS</h2>
+          <h2 className="font-display text-xl font-bold tracking-wider">{t("home.paymentMethods")}</h2>
           <span className="hud-divider flex-1" />
-          <span className="font-hud text-[10px] tracking-[0.2em] text-muted-foreground">SECURE · INSTANT</span>
+          <span className="font-hud text-[10px] tracking-[0.2em] text-muted-foreground">{t("common.secure")} · {t("home.pulse")}</span>
         </div>
         <div className="grid grid-cols-3 gap-3 sm:grid-cols-6">
           {PAYMENTS.map((p) => (
