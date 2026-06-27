@@ -19,6 +19,7 @@ export const DASH_NAV = [
   { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { label: "Play Matches", href: "/dashboard/matches", icon: Swords },
   { label: "My Matches", href: "/dashboard/my-matches", icon: Trophy },
+  { label: "My Statistics", href: "/dashboard/statistics", icon: BarChart3 },
   { label: "Wallet", href: "/dashboard/wallet", icon: Wallet },
   { label: "Shop", href: "/dashboard/shop", icon: ShoppingBag },
   { label: "Referrals", href: "/dashboard/referrals", icon: Users },
