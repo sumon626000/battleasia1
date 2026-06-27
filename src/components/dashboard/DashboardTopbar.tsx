@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import logoShield from "@/assets/logo-shield.png";
 import { CoinIcon } from "@/components/site/CoinIcon";
 import { supabase } from "@/integrations/supabase/client";
+import { useNotifications } from "@/hooks/use-notifications";
 import type { Profile } from "@/hooks/use-profile";
 
 interface Props {
@@ -13,6 +14,7 @@ interface Props {
 
 export function DashboardTopbar({ profile, onOpenMobileNav }: Props) {
   const navigate = useNavigate();
+  const { unread } = useNotifications();
   const username = profile?.in_game_username || profile?.username || "PLAYER";
   const initials = username.slice(0, 2).toUpperCase();
   const balance = Number(profile?.bac_coin_balance ?? 0);
@@ -72,6 +74,11 @@ export function DashboardTopbar({ profile, onOpenMobileNav }: Props) {
             aria-label="Notifications"
           >
             <Bell size={16} />
+            {unread > 0 && (
+              <span className="absolute -right-1 -top-1 grid h-4 min-w-[16px] place-items-center rounded-full bg-destructive px-1 font-mono text-[9px] font-bold leading-none text-white">
+                {unread > 99 ? "99+" : unread}
+              </span>
+            )}
           </Link>
           <Link
             to="/dashboard/profile"
