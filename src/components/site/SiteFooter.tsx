@@ -48,11 +48,9 @@ export function SiteFooter() {
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
         <div className="grid gap-10 lg:grid-cols-6">
           <div className="lg:col-span-2">
-            <a href="/" className="flex items-center gap-2.5">
-              <div className="grid h-10 w-10 place-items-center rounded-md bg-gradient-to-br from-gold/30 to-transparent ring-1 ring-gold/40">
-                <img loading="lazy" decoding="async" src={logoShield} alt="Battle Asia" width={32} height={32} className="h-7 w-7" />
-              </div>
-              <span className="font-display text-xl font-bold leading-none tracking-wide">
+            <a href="/" className="flex items-center gap-3">
+              <img loading="lazy" decoding="async" src={logoShield} alt="Battle Asia" width={72} height={72} className="h-16 w-16 object-contain drop-shadow-[0_0_14px_rgba(255,176,32,0.4)]" />
+              <span className="font-display text-2xl font-bold leading-none tracking-wide">
                 <span className="block">BATTLE</span>
                 <span className="block text-gold">ASIA</span>
               </span>
