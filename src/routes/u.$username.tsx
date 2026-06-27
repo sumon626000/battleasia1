@@ -29,6 +29,7 @@ function PublicProfilePage() {
   const { username } = Route.useParams();
   const { user } = useAuth();
   const qc = useQueryClient();
+  const navigate = useNavigate();
   const [busy, setBusy] = useState(false);
 
   const q = useQuery({
