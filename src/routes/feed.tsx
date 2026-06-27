@@ -125,8 +125,7 @@ function FeedPage() {
   }
 
   return (
-    <SiteShell>
-      <div className="mx-auto max-w-[600px] px-2 py-5 sm:px-4">
+    <div className="mx-auto max-w-[600px] px-2 py-5 sm:px-4">
         {/* HUD header */}
         <header className="mb-5 flex items-center justify-between border-b border-border/60 pb-3">
           <div className="min-w-0">
@@ -171,8 +170,7 @@ function FeedPage() {
             ))}
           </ul>
         )}
-      </div>
-    </SiteShell>
+    </div>
   );
 }
 
