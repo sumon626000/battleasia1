@@ -35,7 +35,7 @@ function DashboardPage() {
 
   const quick = [
     { label: "Join Match", href: "/dashboard/matches", icon: Swords },
-    { label: "Deposit", href: "/dashboard/wallet", icon: WalletIcon },
+    { label: "Get BAC Coin", href: "/dashboard/vault", icon: WalletIcon },
     { label: "Shop", href: "/dashboard/shop", icon: ShoppingBag },
     { label: "Go Premium", href: "/dashboard/premium", icon: Crown },
   ];

@@ -1,12 +1,12 @@
 import { useNavigate, useRouterState } from "@tanstack/react-router";
-import { LayoutDashboard, Swords, Wallet, ShoppingBag, User as UserIcon } from "lucide-react";
+import { LayoutDashboard, Swords, Vault, ShoppingBag, User as UserIcon } from "lucide-react";
 import { useT } from "@/lib/i18n";
 
 const BOTTOM = [
   { key: "dash.home", href: "/dashboard", icon: LayoutDashboard },
   { key: "dash.play", href: "/dashboard/matches", icon: Swords },
-  { key: "dash.wallet", href: "/dashboard/wallet", icon: Wallet },
   { key: "dash.shop", href: "/dashboard/shop", icon: ShoppingBag },
+  { key: "dash.vault", href: "/dashboard/vault", icon: Vault },
   { key: "dash.profile", href: "/dashboard/profile", icon: UserIcon },
 ] as const;
 
