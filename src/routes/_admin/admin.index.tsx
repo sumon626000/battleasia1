@@ -130,9 +130,12 @@ function AdminOverview() {
             >
               <div>
                 <span className="font-hud text-[10px] uppercase tracking-widest text-gold">
-                  {log.action_type}
+                  {log.action} · {log.module}
                 </span>
-                <p className="text-foreground/80">{log.description}</p>
+                <p className="text-foreground/80">
+                  {log.target_type ? `${log.target_type} ${(log.target_id ?? "").toString().slice(0, 8)}` : ""}
+                  {log.new_value ? ` — ${JSON.stringify(log.new_value)}` : ""}
+                </p>
               </div>
               <span className="shrink-0 font-mono text-[10px] text-foreground/50">
                 {new Date(log.created_at).toLocaleString()}
