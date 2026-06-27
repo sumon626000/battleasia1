@@ -7,7 +7,9 @@ const STATIC = [
   "/leaderboard",
   "/news",
   "/shop",
+  "/premium",
   "/apk",
+  "/about",
   "/support",
   "/auth",
 ];
