@@ -60,6 +60,7 @@ export const ADMIN_NAV = [
   { label: "Backups", href: "/admin/backups", icon: Database },
   { label: "Two-Factor", href: "/admin/two-factor", icon: ShieldAlert },
   { label: "SMTP / Email", href: "/admin/smtp", icon: Mail },
+  { label: "Push Notifications", href: "/admin/push", icon: Mail },
   { label: "Site Settings", href: "/admin/settings", icon: Settings },
 ] as const;
 

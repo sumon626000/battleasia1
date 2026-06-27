@@ -3,7 +3,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { passwordChangeSchema } from "@/lib/auth-validation";
-import { KeyRound, Bell, Trash2 } from "lucide-react";
+import { KeyRound, Bell, Trash2, BellRing } from "lucide-react";
+import { usePushSubscription } from "@/hooks/use-push";
 
 export const Route = createFileRoute("/_authenticated/dashboard/settings")({
   component: DashboardSettingsPage,
@@ -13,6 +14,7 @@ function DashboardSettingsPage() {
   const [pw, setPw] = useState("");
   const [pw2, setPw2] = useState("");
   const [busy, setBusy] = useState(false);
+  const push = usePushSubscription();
 
   async function changePassword(e: React.FormEvent) {
     e.preventDefault();
@@ -104,6 +106,31 @@ function DashboardSettingsPage() {
         >
           Open Inbox
         </Link>
+      </section>
+
+      <section className="hud-panel rounded-md border border-border/70 bg-card/40 p-5">
+        <h2 className="font-display text-base uppercase tracking-widest flex items-center gap-2">
+          <BellRing className="h-4 w-4 text-gold" /> Browser Push Notifications
+        </h2>
+        {!push.supported ? (
+          <p className="mt-2 font-hud text-xs text-foreground/60">Not supported on this device/browser.</p>
+        ) : push.permission === "denied" ? (
+          <p className="mt-2 font-hud text-xs text-destructive">Blocked. Enable notifications in browser settings.</p>
+        ) : (
+          <>
+            <p className="mt-2 font-hud text-xs text-foreground/60">
+              {push.subscribed ? "You will receive match alerts, deposit updates, and announcements." : "Enable to receive real-time alerts even when the app is closed."}
+            </p>
+            <button
+              type="button"
+              disabled={push.loading}
+              onClick={() => (push.subscribed ? push.unsubscribe() : push.subscribe().catch((e) => alert(e.message)))}
+              className="mt-3 inline-flex rounded border border-gold/60 bg-gold/10 px-4 py-2 font-hud text-xs uppercase tracking-widest text-gold hover:bg-gold/20 disabled:opacity-50"
+            >
+              {push.loading ? "…" : push.subscribed ? "Disable Push" : "Enable Push"}
+            </button>
+          </>
+        )}
       </section>
 
       <section className="hud-panel rounded-md border border-destructive/40 bg-destructive/5 p-5">
