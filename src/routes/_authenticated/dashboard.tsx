@@ -27,7 +27,7 @@ function DashboardPage() {
   const balance = Number(profile?.bac_coin_balance ?? 0);
 
   const stats = [
-    { label: "BAC Balance", value: balance.toLocaleString(), icon: Coins, accent: true },
+    { label: "BAC Balance", value: balance.toLocaleString(), icon: null, accent: true, isCoin: true },
     { label: "Matches Played", value: "0", icon: Swords },
     { label: "Wins", value: "0", icon: Trophy },
     { label: "Referrals", value: "0", icon: Users },
