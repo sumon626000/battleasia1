@@ -119,6 +119,29 @@ const DEMO_PLAYERS: Array<{ name: string; avatar: null; profit: number; kills: n
   { name: "ECHO_PRIME",  avatar: null, profit: 11800, kills:  58 },
 ];
 
+const DEMO_HIGH_PRIZE = [
+  { id: -101, match_name: "ERANGEL CHAMPIONSHIP",  player_mode: "SQUAD", map_name: "Erangel",  rank_1_prize_bac: 50000 },
+  { id: -102, match_name: "MIRAMAR SHOWDOWN",      player_mode: "DUO",   map_name: "Miramar",  rank_1_prize_bac: 32000 },
+  { id: -103, match_name: "SANHOK SOLO KING",      player_mode: "SOLO",  map_name: "Sanhok",   rank_1_prize_bac: 18000 },
+  { id: -104, match_name: "VIKENDI SNOW CLASH",    player_mode: "SQUAD", map_name: "Vikendi",  rank_1_prize_bac: 12000 },
+  { id: -105, match_name: "LIVIK BLITZ CUP",       player_mode: "DUO",   map_name: "Livik",    rank_1_prize_bac:  8000 },
+];
+const DEMO_ONGOING = [
+  { id: -201, match_name: "NIGHT OPS · SQUAD",     player_mode: "SQUAD", map_name: "Erangel",  rank_1_prize_bac: 22000 },
+  { id: -202, match_name: "TDM RAPID FIRE",        player_mode: "TDM",   map_name: "Warehouse",rank_1_prize_bac: 15000 },
+  { id: -203, match_name: "DUO DOMINATION",        player_mode: "DUO",   map_name: "Miramar",  rank_1_prize_bac: 10000 },
+  { id: -204, match_name: "SOLO HUNTER ARENA",     player_mode: "SOLO",  map_name: "Sanhok",   rank_1_prize_bac:  6500 },
+];
+
+function mergeMatches(live: any[], demo: any[], limit = 5) {
+  const out = [...live];
+  for (const d of demo) {
+    if (out.length >= limit) break;
+    out.push(d);
+  }
+  return out.slice(0, limit);
+}
+
 function mergeProfit(live: Array<{ name: string; avatar: string | null; total: number }>) {
   const out = [...live];
   for (const d of DEMO_PLAYERS) {
