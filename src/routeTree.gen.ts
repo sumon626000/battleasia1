@@ -27,6 +27,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as AdminRouteRouteImport } from './routes/_admin/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as UUsernameRouteImport } from './routes/u.$username'
+import { Route as PostPostIdRouteImport } from './routes/post.$postId'
 import { Route as PSlugRouteImport } from './routes/p.$slug'
 import { Route as EmailVerifyRouteImport } from './routes/email.verify'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
@@ -82,6 +83,7 @@ import { Route as AdminAdminBalancesRouteImport } from './routes/_admin/admin.ba
 import { Route as AdminAdminBackupsRouteImport } from './routes/_admin/admin.backups'
 import { Route as AdminAdminApkRouteImport } from './routes/_admin/admin.apk'
 import { Route as AdminAdminAccountDeletionsRouteImport } from './routes/_admin/admin.account-deletions'
+import { Route as AuthenticatedDashboardStoryNewRouteImport } from './routes/_authenticated/dashboard.story.new'
 import { Route as AuthenticatedDashboardMessagesThreadIdRouteImport } from './routes/_authenticated/dashboard.messages.$threadId'
 import { Route as AuthenticatedDashboardMatchesMatchIdRouteImport } from './routes/_authenticated/dashboard.matches.$matchId'
 import { Route as AuthenticatedDashboardFeedPostIdRouteImport } from './routes/_authenticated/dashboard.feed.$postId'
@@ -172,6 +174,11 @@ const IndexRoute = IndexRouteImport.update({
 const UUsernameRoute = UUsernameRouteImport.update({
   id: '/u/$username',
   path: '/u/$username',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PostPostIdRoute = PostPostIdRouteImport.update({
+  id: '/post/$postId',
+  path: '/post/$postId',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PSlugRoute = PSlugRouteImport.update({
@@ -469,6 +476,12 @@ const AdminAdminAccountDeletionsRoute =
     path: '/admin/account-deletions',
     getParentRoute: () => AdminRouteRoute,
   } as any)
+const AuthenticatedDashboardStoryNewRoute =
+  AuthenticatedDashboardStoryNewRouteImport.update({
+    id: '/story/new',
+    path: '/story/new',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
 const AuthenticatedDashboardMessagesThreadIdRoute =
   AuthenticatedDashboardMessagesThreadIdRouteImport.update({
     id: '/$threadId',
@@ -508,6 +521,7 @@ export interface FileRoutesByFullPath {
   '/auth/callback': typeof AuthCallbackRoute
   '/email/verify': typeof EmailVerifyRoute
   '/p/$slug': typeof PSlugRoute
+  '/post/$postId': typeof PostPostIdRoute
   '/u/$username': typeof UUsernameRouteWithChildren
   '/admin/account-deletions': typeof AdminAdminAccountDeletionsRoute
   '/admin/apk': typeof AdminAdminApkRoute
@@ -563,6 +577,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/feed/$postId': typeof AuthenticatedDashboardFeedPostIdRoute
   '/dashboard/matches/$matchId': typeof AuthenticatedDashboardMatchesMatchIdRoute
   '/dashboard/messages/$threadId': typeof AuthenticatedDashboardMessagesThreadIdRoute
+  '/dashboard/story/new': typeof AuthenticatedDashboardStoryNewRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -583,6 +598,7 @@ export interface FileRoutesByTo {
   '/auth/callback': typeof AuthCallbackRoute
   '/email/verify': typeof EmailVerifyRoute
   '/p/$slug': typeof PSlugRoute
+  '/post/$postId': typeof PostPostIdRoute
   '/u/$username': typeof UUsernameRouteWithChildren
   '/admin/account-deletions': typeof AdminAdminAccountDeletionsRoute
   '/admin/apk': typeof AdminAdminApkRoute
@@ -638,6 +654,7 @@ export interface FileRoutesByTo {
   '/dashboard/feed/$postId': typeof AuthenticatedDashboardFeedPostIdRoute
   '/dashboard/matches/$matchId': typeof AuthenticatedDashboardMatchesMatchIdRoute
   '/dashboard/messages/$threadId': typeof AuthenticatedDashboardMessagesThreadIdRoute
+  '/dashboard/story/new': typeof AuthenticatedDashboardStoryNewRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -662,6 +679,7 @@ export interface FileRoutesById {
   '/auth/callback': typeof AuthCallbackRoute
   '/email/verify': typeof EmailVerifyRoute
   '/p/$slug': typeof PSlugRoute
+  '/post/$postId': typeof PostPostIdRoute
   '/u/$username': typeof UUsernameRouteWithChildren
   '/_admin/admin/account-deletions': typeof AdminAdminAccountDeletionsRoute
   '/_admin/admin/apk': typeof AdminAdminApkRoute
@@ -717,6 +735,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard/feed/$postId': typeof AuthenticatedDashboardFeedPostIdRoute
   '/_authenticated/dashboard/matches/$matchId': typeof AuthenticatedDashboardMatchesMatchIdRoute
   '/_authenticated/dashboard/messages/$threadId': typeof AuthenticatedDashboardMessagesThreadIdRoute
+  '/_authenticated/dashboard/story/new': typeof AuthenticatedDashboardStoryNewRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -740,6 +759,7 @@ export interface FileRouteTypes {
     | '/auth/callback'
     | '/email/verify'
     | '/p/$slug'
+    | '/post/$postId'
     | '/u/$username'
     | '/admin/account-deletions'
     | '/admin/apk'
@@ -795,6 +815,7 @@ export interface FileRouteTypes {
     | '/dashboard/feed/$postId'
     | '/dashboard/matches/$matchId'
     | '/dashboard/messages/$threadId'
+    | '/dashboard/story/new'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -815,6 +836,7 @@ export interface FileRouteTypes {
     | '/auth/callback'
     | '/email/verify'
     | '/p/$slug'
+    | '/post/$postId'
     | '/u/$username'
     | '/admin/account-deletions'
     | '/admin/apk'
@@ -870,6 +892,7 @@ export interface FileRouteTypes {
     | '/dashboard/feed/$postId'
     | '/dashboard/matches/$matchId'
     | '/dashboard/messages/$threadId'
+    | '/dashboard/story/new'
   id:
     | '__root__'
     | '/'
@@ -893,6 +916,7 @@ export interface FileRouteTypes {
     | '/auth/callback'
     | '/email/verify'
     | '/p/$slug'
+    | '/post/$postId'
     | '/u/$username'
     | '/_admin/admin/account-deletions'
     | '/_admin/admin/apk'
@@ -948,6 +972,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard/feed/$postId'
     | '/_authenticated/dashboard/matches/$matchId'
     | '/_authenticated/dashboard/messages/$threadId'
+    | '/_authenticated/dashboard/story/new'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -970,6 +995,7 @@ export interface RootRouteChildren {
   SupportRoute: typeof SupportRoute
   EmailVerifyRoute: typeof EmailVerifyRoute
   PSlugRoute: typeof PSlugRoute
+  PostPostIdRoute: typeof PostPostIdRoute
   UUsernameRoute: typeof UUsernameRouteWithChildren
 }
 
@@ -1099,6 +1125,13 @@ declare module '@tanstack/react-router' {
       path: '/u/$username'
       fullPath: '/u/$username'
       preLoaderRoute: typeof UUsernameRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/post/$postId': {
+      id: '/post/$postId'
+      path: '/post/$postId'
+      fullPath: '/post/$postId'
+      preLoaderRoute: typeof PostPostIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/p/$slug': {
@@ -1486,6 +1519,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAdminAccountDeletionsRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/_authenticated/dashboard/story/new': {
+      id: '/_authenticated/dashboard/story/new'
+      path: '/story/new'
+      fullPath: '/dashboard/story/new'
+      preLoaderRoute: typeof AuthenticatedDashboardStoryNewRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
     '/_authenticated/dashboard/messages/$threadId': {
       id: '/_authenticated/dashboard/messages/$threadId'
       path: '/$threadId'
@@ -1646,6 +1686,7 @@ interface AuthenticatedDashboardRouteChildren {
   AuthenticatedDashboardVaultRoute: typeof AuthenticatedDashboardVaultRoute
   AuthenticatedDashboardWalletRoute: typeof AuthenticatedDashboardWalletRoute
   AuthenticatedDashboardIndexRoute: typeof AuthenticatedDashboardIndexRoute
+  AuthenticatedDashboardStoryNewRoute: typeof AuthenticatedDashboardStoryNewRoute
 }
 
 const AuthenticatedDashboardRouteChildren: AuthenticatedDashboardRouteChildren =
@@ -1671,6 +1712,7 @@ const AuthenticatedDashboardRouteChildren: AuthenticatedDashboardRouteChildren =
     AuthenticatedDashboardVaultRoute: AuthenticatedDashboardVaultRoute,
     AuthenticatedDashboardWalletRoute: AuthenticatedDashboardWalletRoute,
     AuthenticatedDashboardIndexRoute: AuthenticatedDashboardIndexRoute,
+    AuthenticatedDashboardStoryNewRoute: AuthenticatedDashboardStoryNewRoute,
   }
 
 const AuthenticatedDashboardRouteWithChildren =
@@ -1735,6 +1777,7 @@ const rootRouteChildren: RootRouteChildren = {
   SupportRoute: SupportRoute,
   EmailVerifyRoute: EmailVerifyRoute,
   PSlugRoute: PSlugRoute,
+  PostPostIdRoute: PostPostIdRoute,
   UUsernameRoute: UUsernameRouteWithChildren,
 }
 export const routeTree = rootRouteImport
