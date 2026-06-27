@@ -1,9 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Heart, MessageCircle, Image as ImageIcon, Plus, RefreshCw } from "lucide-react";
+import { MessageCircle, Image as ImageIcon, Plus, RefreshCw } from "lucide-react";
 import { SiteShell } from "@/components/site/SiteShell";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
+import { CommentsThread, LikeBurst } from "@/components/feed/CommentsThread";
 
 export const Route = createFileRoute("/feed")({
   head: () => ({
@@ -159,6 +160,7 @@ function PostCard({ post, onLike }: { post: Post; onLike: () => void }) {
   const handle = post.author?.username || post.author?.full_name || "player";
   const initials = handle.slice(0, 2).toUpperCase();
   const time = new Date(post.created_at).toLocaleString();
+  const [showComments, setShowComments] = useState(false);
   return (
     <li className="overflow-hidden rounded-xl border border-border/70 bg-card/60 shadow-[0_0_0_1px_rgba(255,176,32,0.05)] backdrop-blur transition hover:border-gold/40">
       <div className="flex items-center gap-3 px-4 py-3">
@@ -202,13 +204,16 @@ function PostCard({ post, onLike }: { post: Post; onLike: () => void }) {
             onClick={onLike}
             className={`inline-flex items-center gap-1.5 transition ${post.liked_by_me ? "text-red-400" : "text-foreground/70 hover:text-red-400"}`}
           >
-            <Heart size={16} fill={post.liked_by_me ? "currentColor" : "none"} />
+            <LikeBurst active={!!post.liked_by_me} />
             <span className="font-bold">{post.likes_count}</span>
           </button>
-          <span className="inline-flex items-center gap-1.5 text-foreground/70">
+          <button
+            onClick={() => setShowComments((v) => !v)}
+            className={`inline-flex items-center gap-1.5 transition ${showComments ? "text-gold" : "text-foreground/70 hover:text-gold"}`}
+          >
             <MessageCircle size={16} />
             <span className="font-bold">{post.comments_count}</span>
-          </span>
+          </button>
           {post.media_type ? (
             <span className="ml-auto inline-flex items-center gap-1 text-foreground/40">
               <ImageIcon size={12} /> {post.media_type}
@@ -216,6 +221,7 @@ function PostCard({ post, onLike }: { post: Post; onLike: () => void }) {
           ) : null}
         </div>
       </div>
+      {showComments && <CommentsThread postId={post.id} />}
     </li>
   );
 }
