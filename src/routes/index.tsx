@@ -330,7 +330,9 @@ function BattleAsiaLanding() {
               <Link to="/auth" className="btn-gold inline-flex items-center gap-2 px-8 py-3 text-sm sm:text-base">
                 {t("home.joinNow")} <ChevronRight size={16} />
               </Link>
-              <button className="btn-outline-gold px-8 py-3 text-sm sm:text-base">{t("home.apkDownload")}</button>
+              <Link to="/apk" className="btn-outline-gold inline-flex items-center gap-2 px-8 py-3 text-sm sm:text-base">
+                <ApkIcon size={18} className="text-gold" /> {t("home.apkDownload")}
+              </Link>
             </div>
           </div>
 
