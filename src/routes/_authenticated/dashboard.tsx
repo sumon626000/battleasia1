@@ -74,7 +74,7 @@ function DashboardPage() {
                 <span className="font-hud text-[10px] uppercase tracking-wider text-foreground/60">
                   {s.label}
                 </span>
-                <Icon size={14} className={s.accent ? "text-gold" : "text-foreground/50"} />
+                {s.isCoin ? <CoinIcon size={16} /> : <Icon size={14} className={s.accent ? "text-gold" : "text-foreground/50"} />}
               </div>
               <div className={`mt-2 font-mono text-xl font-bold tabular-nums sm:text-2xl ${s.accent ? "text-gold" : ""}`}>
                 {s.value}
