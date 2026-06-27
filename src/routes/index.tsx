@@ -1,41 +1,29 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import {
-  Users, Swords, Trophy, Coins, Shield, Zap, Lock, Headphones,
+  Swords, Trophy, Coins, Shield, Zap, Lock, Headphones,
   Smartphone, Download, ChevronRight, Crosshair,
-  Radio, Flame, Star,
+  Radio, Flame, Star, TrendingUp, Activity, Users2,
+  User, Users, UsersRound, Crosshair as Target,
 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import {
+  Accordion, AccordionContent, AccordionItem, AccordionTrigger,
+} from "@/components/ui/accordion";
 import heroSoldier from "@/assets/hero-soldier.jpg";
-import matchSolo from "@/assets/match-solo.jpg";
-import matchSquad from "@/assets/match-squad.jpg";
-import matchDuo from "@/assets/match-duo.jpg";
 import phoneApp from "@/assets/phone-app.jpg";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Battle Asia — Official Mobile Tournament Arena" },
-      { name: "description", content: "Compete in mobile tournaments, win BAC coins, and climb the Battle Asia leaderboard. The official mobile tournament arena for elite gamers across Asia." },
+      { name: "description", content: "Compete in PUBG Mobile, Free Fire, COD Mobile tournaments. Win real cash prizes on Battle Asia — the official mobile tournament arena for Asian gamers." },
       { property: "og:title", content: "Battle Asia — Official Mobile Tournament Arena" },
       { property: "og:description", content: "Compete. Win. Earn BAC. Join the official mobile tournament arena." },
     ],
   }),
   component: BattleAsiaLanding,
 });
-
-
-
-const STATS = [
-  { icon: Users,  value: "12,548",     label: "ONLINE USERS" },
-  { icon: Swords, value: "24",         label: "LIVE MATCHES" },
-  { icon: Trophy, value: "৳2,45,300",  label: "PRIZE POOL" },
-  { icon: Coins,  value: "3,25,000",   label: "BAC CIRCULATION" },
-];
-
-const MATCHES = [
-  { img: matchSolo,  status: "OPEN", title: "SOLO WARZONE", mode: "TPP · SOLO",  entry: "50 BAC",  prize: "1,500 BAC", players: "45/100", cta: "JOIN NOW",    live: false, hot: true  },
-  { img: matchSquad, status: "LIVE", title: "SQUAD CLASH",  mode: "TPP · SQUAD", entry: "100 BAC", prize: "5,000 BAC", players: "80/100", cta: "VIEW MATCH",  live: true,  hot: true  },
-  { img: matchDuo,   status: "OPEN", title: "DUO RUMBLE",   mode: "FPP · DUO",   entry: "80 BAC",  prize: "2,500 BAC", players: "32/50",  cta: "JOIN NOW",    live: false, hot: false },
-];
 
 const FEATURES = [
   { icon: Shield,     title: "FAIR PLAY",       sub: "100% Fair Match\nNo Hack, No Cheat" },
@@ -46,30 +34,158 @@ const FEATURES = [
 
 const PAYMENTS = ["bKash", "Nagad", "Rocket", "Upay", "Bank Transfer", "USDT TRC20"];
 
+const HOW_TO_PLAY = [
+  {
+    icon: User, color: "from-violet-500 to-purple-700", title: "SOLO MODE",
+    desc: "Play alone vs every other solo. Highest kills + rank wins.",
+    points: ["Pay entry fee, get room ID", "Enter the match on time", "Top kills + rank = prize pool"],
+  },
+  {
+    icon: Users, color: "from-sky-500 to-blue-700", title: "DUO MODE",
+    desc: "Team up with a partner to dominate the lobby.",
+    points: ["Invite or find a partner", "Both must join the room", "Combined kills count"],
+  },
+  {
+    icon: UsersRound, color: "from-amber-500 to-orange-600", title: "SQUAD MODE",
+    desc: "Form a team of four and battle for the squad crown.",
+    points: ["4-member squads only", "Squad leader pays entry", "Rewards split as configured"],
+  },
+  {
+    icon: Target, color: "from-rose-500 to-red-600", title: "TDM MODE",
+    desc: "Fast-paced team deathmatch action.",
+    points: ["4v4 quick deathmatch", "Per-kill rewards available", "Short rounds, high reward"],
+  },
+];
+
+const RULES = [
+  { q: "No Hacks or Emulators", a: "Any use of third-party hacks, mods, ESP, aimbot, macros or emulators on mobile-only tournaments results in instant ban and forfeiture of all prizes and balances." },
+  { q: "Match Join Time", a: "Players must enter the custom room within 5 minutes of the scheduled time. Late entries are not eligible for refund or prize." },
+  { q: "Name Must Match", a: "Your in-game name must exactly match the name registered on your Battle Asia profile. Mismatched names will be disqualified." },
+  { q: "Kill & Prize Claims", a: "Submit kill screenshots and result media within 30 minutes of match end. Disputes after this window will not be reviewed." },
+  { q: "No Teaming", a: "Teaming with players from other squads in solo/duo modes is strictly prohibited and leads to a permanent ban." },
+  { q: "Payment Rules", a: "All entry fees are paid in BAC coins. Buying BAC is non-refundable once credited to your wallet." },
+  { q: "Disconnect = No Refund", a: "Network or device disconnects after the match has started do not qualify for a refund. Ensure a stable connection before joining." },
+  { q: "Abusive Behaviour = Ban", a: "Toxic chat, hate speech, harassment or threats in lobby, voice or feed result in suspension or permanent ban." },
+  { q: "Prize Distribution", a: "Prizes are credited to wallet within minutes after admin verification. BAC is withdrawable through approved payment channels only." },
+  { q: "Final Decision", a: "Battle Asia admins reserve the right to make final decisions on all disputes, results and rule interpretations." },
+];
+
+function formatBAC(n: number) {
+  return new Intl.NumberFormat("en-IN", { maximumFractionDigits: 2 }).format(n);
+}
+function shortName(s: string | null | undefined, fallback = "Player") {
+  return (s && s.trim()) || fallback;
+}
+
 function BattleAsiaLanding() {
+  /* ---------- LIVE DATA ---------- */
+  const pulse = useQuery({
+    queryKey: ["home", "pulse"],
+    queryFn: async () => {
+      const [winnings, processed, ongoing] = await Promise.all([
+        supabase.from("match_participants").select("prize_bac"),
+        supabase.from("matches").select("id", { count: "exact", head: true }).eq("status", "Complete"),
+        supabase.from("matches").select("id", { count: "exact", head: true }).in("status", ["Active", "Ongoing"]),
+      ]);
+      const total = (winnings.data ?? []).reduce((s, r: any) => s + Number(r.prize_bac ?? 0), 0);
+      return {
+        totalWinnings: total,
+        processed: processed.count ?? 0,
+        ongoing: ongoing.count ?? 0,
+      };
+    },
+  });
+
+  const topProfit = useQuery({
+    queryKey: ["home", "top-profit"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("match_participants")
+        .select("user_id, prize_bac, profiles:user_id(in_game_username, username, avatar_url)")
+        .gt("prize_bac", 0);
+      const agg = new Map<string, { name: string; avatar: string | null; total: number }>();
+      (data ?? []).forEach((r: any) => {
+        const cur = agg.get(r.user_id) ?? {
+          name: shortName(r.profiles?.in_game_username ?? r.profiles?.username),
+          avatar: r.profiles?.avatar_url ?? null,
+          total: 0,
+        };
+        cur.total += Number(r.prize_bac ?? 0);
+        agg.set(r.user_id, cur);
+      });
+      return Array.from(agg.values()).sort((a, b) => b.total - a.total).slice(0, 5);
+    },
+  });
+
+  const topKillers = useQuery({
+    queryKey: ["home", "top-kills"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("match_participants")
+        .select("user_id, kills, profiles:user_id(in_game_username, username, avatar_url)")
+        .gt("kills", 0);
+      const agg = new Map<string, { name: string; avatar: string | null; kills: number }>();
+      (data ?? []).forEach((r: any) => {
+        const cur = agg.get(r.user_id) ?? {
+          name: shortName(r.profiles?.in_game_username ?? r.profiles?.username),
+          avatar: r.profiles?.avatar_url ?? null,
+          kills: 0,
+        };
+        cur.kills += Number(r.kills ?? 0);
+        agg.set(r.user_id, cur);
+      });
+      return Array.from(agg.values()).sort((a, b) => b.kills - a.kills).slice(0, 5);
+    },
+  });
+
+  const highPrize = useQuery({
+    queryKey: ["home", "high-prize"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("matches")
+        .select("id, match_name, map_name, player_mode, schedule_at, rank_1_prize_bac, total_players, banner_image_url")
+        .in("status", ["Upcoming", "Active"])
+        .order("rank_1_prize_bac", { ascending: false })
+        .limit(6);
+      return data ?? [];
+    },
+  });
+
+  const ongoingMatches = useQuery({
+    queryKey: ["home", "ongoing"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("matches")
+        .select("id, match_name, map_name, player_mode, rank_1_prize_bac")
+        .in("status", ["Active", "Ongoing"])
+        .order("schedule_at", { ascending: true })
+        .limit(6);
+      return data ?? [];
+    },
+  });
+
+  const STATS = [
+    { icon: Users2,  value: pulse.data ? `${formatBAC(pulse.data.processed + pulse.data.ongoing)}` : "—", label: "TOTAL MATCHES" },
+    { icon: Swords,  value: pulse.data ? formatBAC(pulse.data.ongoing) : "—", label: "LIVE MATCHES" },
+    { icon: Trophy,  value: pulse.data ? `৳${formatBAC(pulse.data.totalWinnings)}` : "—", label: "TOTAL PAID OUT" },
+    { icon: Coins,   value: pulse.data ? formatBAC(pulse.data.processed) : "—", label: "PROCESSED MATCHES" },
+  ];
+
   return (
     <>
-      {/* HERO */}
+      {/* ============ HERO ============ */}
       <section className="relative overflow-hidden bg-grid-hud">
-        <img
-          src={heroSoldier}
-          alt="Battle Asia tournament hero"
-          width={1280}
-          height={768}
-          className="absolute inset-0 h-full w-full object-cover opacity-60"
-        />
+        <img src={heroSoldier} alt="Battle Asia tournament hero" width={1280} height={768}
+          className="absolute inset-0 h-full w-full object-cover opacity-60" />
         <div className="absolute inset-0 bg-gradient-to-r from-background via-background/85 to-background/10" />
         <div className="absolute inset-0 bg-scanlines opacity-40" />
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold/60 to-transparent" />
 
         <div className="relative mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 md:py-20 lg:grid-cols-3 lg:py-28">
           <div className="lg:col-span-2">
-            <div className="chip-tag mb-5">
-              <Crosshair size={12} /> SEASON 04 · LIVE
-            </div>
+            <div className="chip-tag mb-5"><Crosshair size={12} /> SEASON 04 · LIVE</div>
             <h1 className="font-display text-5xl font-bold leading-[0.92] sm:text-6xl md:text-7xl lg:text-[6.5rem]">
-              BATTLE <span className="relative text-gold">
-                ASIA
+              BATTLE <span className="relative text-gold">ASIA
                 <span aria-hidden className="absolute -bottom-2 left-0 h-[3px] w-2/3 bg-gradient-to-r from-gold to-transparent" />
               </span>
             </h1>
@@ -82,30 +198,15 @@ function BattleAsiaLanding() {
                 COMPETE · WIN · EARN BAC
               </p>
             </div>
-
             <div className="mt-8 flex flex-wrap gap-3">
-              <button className="btn-gold inline-flex items-center gap-2 px-8 py-3 text-sm sm:text-base">
+              <Link to="/auth" className="btn-gold inline-flex items-center gap-2 px-8 py-3 text-sm sm:text-base">
                 JOIN NOW <ChevronRight size={16} />
-              </button>
-              <button className="btn-outline-gold px-8 py-3 text-sm sm:text-base">BUY BAC</button>
-            </div>
-
-            {/* Mini KPI row */}
-            <div className="mt-10 grid max-w-md grid-cols-3 gap-4">
-              {[
-                { k: "PLAYERS", v: "120K+" },
-                { k: "MATCHES", v: "8.4K" },
-                { k: "PAID OUT", v: "৳18M+" },
-              ].map(({ k, v }) => (
-                <div key={k} className="border-l-2 border-gold/60 pl-3">
-                  <div className="font-display text-2xl font-bold leading-none">{v}</div>
-                  <div className="font-hud mt-1 text-[10px] tracking-[0.2em] text-muted-foreground">{k}</div>
-                </div>
-              ))}
+              </Link>
+              <button className="btn-outline-gold px-8 py-3 text-sm sm:text-base">APK DOWNLOAD</button>
             </div>
           </div>
 
-          {/* BAC Coin card */}
+          {/* BAC card */}
           <div className="hud-panel hud-bracket relative flex flex-col items-center gap-3 p-7 text-center lg:self-center">
             <div className="font-hud absolute left-3 top-3 text-[10px] tracking-[0.2em] text-muted-foreground">// CURRENCY_01</div>
             <div className="relative mt-3 grid h-20 w-20 place-items-center rounded-full bg-gradient-to-br from-yellow-300 to-yellow-600 shadow-[0_0_40px_-5px_var(--gold)]">
@@ -124,22 +225,40 @@ function BattleAsiaLanding() {
             <button className="btn-gold w-full px-6 py-2.5 text-sm">BUY NOW</button>
           </div>
         </div>
-
         <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-gold/50 to-transparent" />
       </section>
 
-      {/* STATS — scoreboard strip */}
-      <section className="border-b border-border/60 bg-card/30">
-        <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6">
-          <div className="grid grid-cols-2 divide-y divide-border/60 sm:divide-y-0 sm:divide-x lg:grid-cols-4">
-            {STATS.map(({ icon: Icon, value, label }, i) => (
-              <div key={label} className={`flex items-center gap-4 p-4 ${i % 2 ? "" : ""}`}>
-                <div className="grid h-12 w-12 shrink-0 place-items-center rounded-md bg-gold/10 text-gold ring-1 ring-gold/30">
-                  <Icon size={22} />
+      {/* ============ BATTLEASIA PULSE ============ */}
+      <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
+        <div className="hud-panel hud-bracket relative overflow-hidden p-6 sm:p-8">
+          <div aria-hidden className="absolute inset-0 bg-grid-hud opacity-30" />
+          <div className="relative grid gap-6 lg:grid-cols-[1fr,auto] lg:items-center">
+            <div>
+              <div className="chip-tag mb-3"><Activity size={12} /> LIVE</div>
+              <h2 className="font-display text-3xl font-bold sm:text-4xl">
+                BATTLEASIA <span className="text-gold">PULSE</span>
+              </h2>
+              <p className="mt-2 max-w-xl text-sm text-muted-foreground">
+                Real-time platform stats. Total winnings paid to players, processed matches and live matches happening right now.
+              </p>
+            </div>
+            <div className="text-right">
+              <div className="font-hud text-[10px] tracking-[0.3em] text-muted-foreground">PLATFORM TOTAL WINNINGS</div>
+              <div className="font-display font-mono-tab mt-1 text-3xl font-bold text-gold sm:text-4xl">
+                ৳{pulse.data ? formatBAC(pulse.data.totalWinnings) : "—"}
+              </div>
+            </div>
+          </div>
+
+          <div className="relative mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+            {STATS.map(({ icon: Icon, value, label }) => (
+              <div key={label} className="flex items-center gap-3 rounded-sm border border-border/60 bg-background/40 p-3">
+                <div className="grid h-10 w-10 shrink-0 place-items-center rounded-md bg-gold/10 text-gold ring-1 ring-gold/30">
+                  <Icon size={18} />
                 </div>
-                <div>
-                  <div className="font-display font-mono-tab text-2xl font-bold leading-none">{value}</div>
-                  <div className="font-hud mt-1.5 text-[10px] tracking-[0.2em] text-muted-foreground">{label}</div>
+                <div className="min-w-0">
+                  <div className="font-display font-mono-tab truncate text-lg font-bold leading-none">{value}</div>
+                  <div className="font-hud mt-1 text-[9px] tracking-[0.2em] text-muted-foreground">{label}</div>
                 </div>
               </div>
             ))}
@@ -147,80 +266,150 @@ function BattleAsiaLanding() {
         </div>
       </section>
 
-      {/* FEATURED MATCHES */}
-      <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6">
-        <div className="mb-8 flex items-end justify-between gap-4">
+      {/* ============ TOP PROFIT + TOP PLAYERS ============ */}
+      <section className="mx-auto grid max-w-7xl gap-5 px-4 pb-10 sm:px-6 lg:grid-cols-2">
+        <LeaderCard
+          tag="EARNINGS" icon={TrendingUp} title="TOP PROFIT" highlight="GENERATORS"
+          loading={topProfit.isLoading}
+          rows={(topProfit.data ?? []).map((p, i) => ({
+            rank: i + 1, name: p.name, avatar: p.avatar,
+            right: `৳${formatBAC(p.total)}`, sub: "Lifetime winnings",
+          }))}
+        />
+        <LeaderCard
+          tag="LEADERBOARD" icon={Crosshair} title="TOP" highlight="PLAYERS"
+          loading={topKillers.isLoading}
+          rows={(topKillers.data ?? []).map((p, i) => ({
+            rank: i + 1, name: p.name, avatar: p.avatar,
+            right: `${formatBAC(p.kills)} K`, sub: "Total kills",
+          }))}
+        />
+      </section>
+
+      {/* ============ HIGH PRIZE + ONGOING ============ */}
+      <section className="mx-auto grid max-w-7xl gap-5 px-4 pb-14 sm:px-6 lg:grid-cols-2">
+        <MatchStrip title="HIGH-PRIZE" highlight="BATTLES" tag="TOP" icon={Flame}
+          loading={highPrize.isLoading}
+          empty="No high-prize battles right now."
+          items={(highPrize.data ?? []).map((m: any) => ({
+            id: m.id, name: m.match_name, mode: m.player_mode, map: m.map_name,
+            value: `৳${formatBAC(Number(m.rank_1_prize_bac))}`,
+            valueLabel: "RANK 1 PRIZE",
+          }))}
+        />
+        <MatchStrip title="ONGOING" highlight="MATCHES" tag="LIVE" icon={Radio}
+          loading={ongoingMatches.isLoading}
+          empty="No ongoing matches right now. Check back soon."
+          items={(ongoingMatches.data ?? []).map((m: any) => ({
+            id: m.id, name: m.match_name, mode: m.player_mode, map: m.map_name,
+            value: `৳${formatBAC(Number(m.rank_1_prize_bac))}`,
+            valueLabel: "TOP PRIZE",
+          }))}
+        />
+      </section>
+
+      {/* ============ ABOUT ============ */}
+      <section className="border-y border-border/60 bg-card/30 py-14">
+        <div className="mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-[1.5fr,1fr]">
           <div>
-            <div className="chip-tag mb-3"><Flame size={12} /> ARENA</div>
-            <h2 className="font-display text-3xl font-bold leading-none sm:text-4xl">
-              FEATURED <span className="text-gold">MATCHES</span>
+            <div className="chip-tag mb-3"><Star size={12} /> ABOUT</div>
+            <h2 className="font-display text-3xl font-bold sm:text-4xl">
+              ABOUT <span className="text-gold">BATTLEASIA</span>
             </h2>
+            <div className="mt-5 space-y-4 text-sm leading-relaxed text-muted-foreground sm:text-base">
+              <p>
+                Battle Asia is a premier mobile gaming tournament platform where players compete in exciting tournaments and win real cash prizes. Our platform brings together the best mobile gamers from across the region to participate in competitive gaming events.
+              </p>
+              <p>
+                We support popular mobile games including PUBG Mobile, Free Fire, COD Mobile, and many more. Whether you're a casual player or a competitive pro, Battle Asia offers tournaments suitable for all skill levels.
+              </p>
+              <p>
+                With secure payment systems, fair play policies, and a thriving community of gamers, Battle Asia is the ultimate destination for mobile esports. Join thousands of players who are already competing and winning on our platform.
+              </p>
+            </div>
           </div>
-          <a href="#" className="font-hud inline-flex items-center gap-1 text-sm font-semibold text-gold hover:underline">
-            VIEW ALL <ChevronRight size={14} />
-          </a>
+          <div className="grid grid-cols-2 gap-3">
+            {[
+              { v: "500K+", k: "Active Players" },
+              { v: "৳2M+", k: "Prize Money" },
+              { v: "15+", k: "Games Supported" },
+              { v: "24/7", k: "Tournaments" },
+            ].map((c) => (
+              <div key={c.k} className="hud-panel grid place-items-center p-5 text-center">
+                <div className="font-display text-3xl font-bold text-gold">{c.v}</div>
+                <div className="font-hud mt-1 text-[10px] tracking-[0.2em] text-muted-foreground">{c.k}</div>
+              </div>
+            ))}
+          </div>
         </div>
+      </section>
 
-        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {MATCHES.map((m) => (
-            <article key={m.title} className="hud-panel hud-bracket group overflow-hidden transition duration-300 hover:-translate-y-1">
-              <div className="relative aspect-[16/10] overflow-hidden">
-                <img src={m.img} alt={m.title} width={768} height={512} loading="lazy"
-                  className="h-full w-full object-cover transition duration-700 group-hover:scale-105" />
-                <div className="absolute inset-0 bg-gradient-to-t from-card via-card/40 to-transparent" />
-                <div className="absolute left-3 top-3 flex items-center gap-2">
-                  <span className={m.live ? "badge-live" : "badge-open"}>{m.status}</span>
-                  {m.hot && (
-                    <span className="chip-tag !text-[10px] !px-2"><Flame size={10} /> HOT</span>
-                  )}
-                </div>
-                <div className="font-hud absolute right-3 top-3 rounded-sm bg-background/70 px-2 py-1 text-[10px] tracking-widest text-foreground/85 backdrop-blur">
-                  {m.mode}
-                </div>
+      {/* ============ HOW TO PLAY ============ */}
+      <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6">
+        <div className="text-center">
+          <div className="chip-tag mx-auto mb-3 inline-flex"><Swords size={12} /> GUIDE</div>
+          <h2 className="font-display text-3xl font-bold sm:text-4xl">
+            HOW TO <span className="text-gold">PLAY</span>
+          </h2>
+          <div className="mx-auto mt-3 h-0.5 w-20 bg-gradient-to-r from-transparent via-gold to-transparent" />
+        </div>
+        <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {HOW_TO_PLAY.map(({ icon: Icon, color, title, desc, points }) => (
+            <div key={title} className="hud-panel hud-bracket flex flex-col p-6">
+              <div className={`relative mx-auto grid h-16 w-16 place-items-center rounded-full bg-gradient-to-br ${color} text-white shadow-lg`}>
+                <Icon size={26} />
               </div>
-
-              <div className="p-5">
-                <h3 className="font-display text-xl font-bold tracking-wide">{m.title}</h3>
-
-                <div className="mt-4 grid grid-cols-3 gap-2 rounded-sm border border-border/60 bg-background/40 p-3 text-center">
-                  {[
-                    { l: "ENTRY",  v: m.entry },
-                    { l: "PRIZE",  v: m.prize, hi: true },
-                    { l: "PLAYERS", v: m.players },
-                  ].map(({ l, v, hi }) => (
-                    <div key={l}>
-                      <div className="font-hud text-[9px] tracking-[0.18em] text-muted-foreground">{l}</div>
-                      <div className={`mt-1 font-mono-tab text-sm font-bold ${hi ? "text-gold" : "text-foreground"}`}>{v}</div>
-                    </div>
-                  ))}
-                </div>
-
-                {/* slot fill bar */}
-                <div className="mt-4">
-                  <div className="h-1.5 w-full overflow-hidden rounded-full bg-secondary">
-                    <div
-                      className="h-full bg-gradient-to-r from-gold to-yellow-400"
-                      style={{ width: `${(parseInt(m.players) / parseInt(m.players.split("/")[1])) * 100}%` }}
-                    />
-                  </div>
-                </div>
-
-                <button className={`mt-5 inline-flex w-full items-center justify-center gap-2 py-2.5 text-sm ${m.live ? "btn-outline-gold" : "btn-gold"}`}>
-                  {m.cta} <ChevronRight size={14} />
-                </button>
-              </div>
-            </article>
+              <h3 className="font-display mt-4 text-center text-lg font-bold tracking-wider">{title}</h3>
+              <p className="mt-2 text-center text-xs text-muted-foreground">{desc}</p>
+              <ul className="mt-4 space-y-2 text-xs text-foreground/85">
+                {points.map((p) => (
+                  <li key={p} className="flex gap-2">
+                    <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-gold" />
+                    <span>{p}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
           ))}
         </div>
       </section>
 
-      {/* WHY + APP */}
-      <section className="mx-auto grid max-w-7xl gap-5 px-4 pb-14 sm:px-6 lg:grid-cols-3">
+      {/* ============ TOURNAMENT RULES ============ */}
+      <section className="border-y border-border/60 bg-card/30 py-14">
+        <div className="mx-auto max-w-4xl px-4 sm:px-6">
+          <div className="text-center">
+            <div className="chip-tag mx-auto mb-3 inline-flex"><Shield size={12} /> REGULATIONS</div>
+            <h2 className="font-display text-3xl font-bold sm:text-4xl">
+              TOURNAMENT <span className="text-gold">RULES</span>
+            </h2>
+            <p className="font-hud mt-2 text-[11px] tracking-[0.25em] text-muted-foreground">
+              OFFICIAL BATTLEASIA TOURNAMENT REGULATIONS
+            </p>
+            <div className="mx-auto mt-3 h-0.5 w-20 bg-gradient-to-r from-transparent via-gold to-transparent" />
+          </div>
+
+          <Accordion type="single" collapsible className="mt-8 space-y-2">
+            {RULES.map((r, i) => (
+              <AccordionItem key={r.q} value={`r-${i}`} className="hud-panel border-0 px-4">
+                <AccordionTrigger className="font-hud text-left text-sm font-semibold tracking-wide hover:text-gold hover:no-underline">
+                  {r.q}
+                </AccordionTrigger>
+                <AccordionContent className="text-sm leading-relaxed text-muted-foreground">
+                  {r.a}
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </div>
+      </section>
+
+      {/* ============ WHY + APP ============ */}
+      <section className="mx-auto grid max-w-7xl gap-5 px-4 py-14 sm:px-6 lg:grid-cols-3">
         <div className="hud-panel relative overflow-hidden p-6 lg:col-span-2">
           <div aria-hidden className="absolute inset-0 bg-grid-hud opacity-40" />
           <div className="relative">
             <div className="chip-tag mb-3"><Star size={12} /> BENEFITS</div>
-            <h2 className="font-display text-3xl font-bold leading-none sm:text-4xl">
+            <h2 className="font-display text-3xl font-bold sm:text-4xl">
               WHY CHOOSE <span className="text-gold">BATTLE ASIA?</span>
             </h2>
             <div className="mt-7 grid grid-cols-2 gap-6 sm:grid-cols-4">
@@ -228,7 +417,6 @@ function BattleAsiaLanding() {
                 <div key={title} className="group text-center">
                   <div className="relative mx-auto grid h-16 w-16 place-items-center rounded-md bg-gradient-to-br from-gold/20 to-transparent text-gold ring-1 ring-gold/30 transition group-hover:ring-gold/60">
                     <Icon size={28} />
-                    <span aria-hidden className="absolute -inset-0.5 rounded-md bg-gold/15 opacity-0 blur-md transition group-hover:opacity-100" />
                   </div>
                   <div className="font-display mt-3 text-sm font-bold tracking-wider">{title}</div>
                   <p className="mt-1 whitespace-pre-line text-xs text-muted-foreground">{sub}</p>
@@ -258,7 +446,7 @@ function BattleAsiaLanding() {
         </div>
       </section>
 
-      {/* PAYMENTS */}
+      {/* ============ PAYMENTS ============ */}
       <section className="mx-auto max-w-7xl px-4 pb-14 sm:px-6">
         <div className="mb-6 flex items-center gap-4">
           <h2 className="font-display text-xl font-bold tracking-wider">PAYMENT METHODS</h2>
@@ -274,7 +462,7 @@ function BattleAsiaLanding() {
         </div>
       </section>
 
-      {/* CTA BAND */}
+      {/* ============ CTA BAND ============ */}
       <section className="relative overflow-hidden border-y border-gold/30 bg-gradient-to-r from-card via-background to-card">
         <div aria-hidden className="absolute inset-0 bg-grid-hud opacity-30" />
         <div className="relative mx-auto flex max-w-7xl flex-col items-center justify-between gap-5 px-4 py-10 sm:px-6 md:flex-row">
@@ -285,13 +473,129 @@ function BattleAsiaLanding() {
             </h3>
           </div>
           <div className="flex gap-3">
-            <button className="btn-gold px-7 py-3 text-sm">JOIN FREE</button>
+            <Link to="/auth" className="btn-gold px-7 py-3 text-sm">JOIN FREE</Link>
             <button className="btn-outline-gold px-7 py-3 text-sm">EXPLORE</button>
           </div>
         </div>
       </section>
-
-      {/* FOOTER */}
     </>
+  );
+}
+
+/* ============== SUB-COMPONENTS ============== */
+
+type LeaderRow = { rank: number; name: string; avatar: string | null; right: string; sub: string };
+function LeaderCard({
+  tag, icon: Icon, title, highlight, rows, loading,
+}: {
+  tag: string; icon: React.ComponentType<{ size?: number }>;
+  title: string; highlight: string; rows: LeaderRow[]; loading: boolean;
+}) {
+  return (
+    <div className="hud-panel hud-bracket p-5">
+      <div className="mb-4 flex items-center justify-between">
+        <div>
+          <div className="chip-tag mb-2"><Icon size={12} /> {tag}</div>
+          <h3 className="font-display text-xl font-bold tracking-wide">
+            {title} <span className="text-gold">{highlight}</span>
+          </h3>
+        </div>
+        <span className="font-hud text-[10px] tracking-[0.2em] text-muted-foreground">TOP 5</span>
+      </div>
+
+      {loading ? (
+        <div className="space-y-2">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <div key={i} className="h-12 animate-pulse rounded-sm bg-secondary/50" />
+          ))}
+        </div>
+      ) : rows.length === 0 ? (
+        <div className="font-hud py-8 text-center text-xs tracking-widest text-muted-foreground">
+          NO DATA YET
+        </div>
+      ) : (
+        <ol className="space-y-1.5">
+          {rows.map((r) => (
+            <li key={r.rank} className="flex items-center gap-3 rounded-sm border border-border/60 bg-background/40 p-2.5">
+              <span className={`font-display grid h-7 w-7 shrink-0 place-items-center rounded-sm text-sm font-bold ${
+                r.rank === 1 ? "bg-gold text-background" :
+                r.rank === 2 ? "bg-foreground/80 text-background" :
+                r.rank === 3 ? "bg-amber-700 text-background" :
+                "bg-secondary text-foreground"
+              }`}>{r.rank}</span>
+              {r.avatar ? (
+                <img src={r.avatar} alt={r.name} className="h-9 w-9 shrink-0 rounded-full object-cover ring-1 ring-border" />
+              ) : (
+                <div className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-secondary font-bold text-foreground/80">
+                  {r.name.charAt(0).toUpperCase()}
+                </div>
+              )}
+              <div className="min-w-0 flex-1">
+                <div className="truncate text-sm font-semibold">{r.name}</div>
+                <div className="font-hud text-[10px] tracking-[0.15em] text-muted-foreground">{r.sub}</div>
+              </div>
+              <div className="font-mono-tab text-right text-sm font-bold text-gold">{r.right}</div>
+            </li>
+          ))}
+        </ol>
+      )}
+    </div>
+  );
+}
+
+type StripItem = { id: number; name: string; mode: string; map: string; value: string; valueLabel: string };
+function MatchStrip({
+  title, highlight, tag, icon: Icon, items, loading, empty,
+}: {
+  title: string; highlight: string; tag: string;
+  icon: React.ComponentType<{ size?: number }>;
+  items: StripItem[]; loading: boolean; empty: string;
+}) {
+  return (
+    <div className="hud-panel hud-bracket p-5">
+      <div className="mb-4 flex items-center justify-between">
+        <div>
+          <div className="chip-tag mb-2"><Icon size={12} /> {tag}</div>
+          <h3 className="font-display text-xl font-bold tracking-wide">
+            {title} <span className="text-gold">{highlight}</span>
+          </h3>
+        </div>
+        <a href="#" className="font-hud inline-flex items-center gap-1 text-xs font-semibold text-gold hover:underline">
+          VIEW ALL <ChevronRight size={12} />
+        </a>
+      </div>
+
+      {loading ? (
+        <div className="space-y-2">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="h-14 animate-pulse rounded-sm bg-secondary/50" />
+          ))}
+        </div>
+      ) : items.length === 0 ? (
+        <div className="font-hud py-8 text-center text-xs tracking-widest text-muted-foreground">
+          {empty}
+        </div>
+      ) : (
+        <ul className="space-y-2">
+          {items.map((m) => (
+            <li key={m.id} className="flex items-center gap-3 rounded-sm border border-border/60 bg-background/40 p-3 transition hover:border-gold/50">
+              <div className="grid h-10 w-10 shrink-0 place-items-center rounded-sm bg-gold/10 text-gold ring-1 ring-gold/30">
+                <Swords size={16} />
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="truncate text-sm font-semibold">{m.name}</div>
+                <div className="font-hud text-[10px] tracking-[0.18em] text-muted-foreground">
+                  {m.mode} · {m.map}
+                </div>
+              </div>
+              <div className="text-right">
+                <div className="font-mono-tab text-sm font-bold text-gold">{m.value}</div>
+                <div className="font-hud text-[9px] tracking-[0.18em] text-muted-foreground">{m.valueLabel}</div>
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
   );
 }
