@@ -32,7 +32,9 @@ import { Route as AdminAdminWithdrawalsRouteImport } from './routes/_admin/admin
 import { Route as AdminAdminUsersRouteImport } from './routes/_admin/admin.users'
 import { Route as AdminAdminShopRouteImport } from './routes/_admin/admin.shop'
 import { Route as AdminAdminResultsRouteImport } from './routes/_admin/admin.results'
+import { Route as AdminAdminNotificationsRouteImport } from './routes/_admin/admin.notifications'
 import { Route as AdminAdminMatchesRouteImport } from './routes/_admin/admin.matches'
+import { Route as AdminAdminFeedRouteImport } from './routes/_admin/admin.feed'
 import { Route as AdminAdminDepositsRouteImport } from './routes/_admin/admin.deposits'
 import { Route as AuthenticatedDashboardMatchesMatchIdRouteImport } from './routes/_authenticated/dashboard.matches.$matchId'
 import { Route as AuthenticatedDashboardFeedPostIdRouteImport } from './routes/_authenticated/dashboard.feed.$postId'
@@ -160,9 +162,19 @@ const AdminAdminResultsRoute = AdminAdminResultsRouteImport.update({
   path: '/admin/results',
   getParentRoute: () => AdminRouteRoute,
 } as any)
+const AdminAdminNotificationsRoute = AdminAdminNotificationsRouteImport.update({
+  id: '/admin/notifications',
+  path: '/admin/notifications',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
 const AdminAdminMatchesRoute = AdminAdminMatchesRouteImport.update({
   id: '/admin/matches',
   path: '/admin/matches',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminAdminFeedRoute = AdminAdminFeedRouteImport.update({
+  id: '/admin/feed',
+  path: '/admin/feed',
   getParentRoute: () => AdminRouteRoute,
 } as any)
 const AdminAdminDepositsRoute = AdminAdminDepositsRouteImport.update({
@@ -191,7 +203,9 @@ export interface FileRoutesByFullPath {
   '/email/verify': typeof EmailVerifyRoute
   '/p/$slug': typeof PSlugRoute
   '/admin/deposits': typeof AdminAdminDepositsRoute
+  '/admin/feed': typeof AdminAdminFeedRoute
   '/admin/matches': typeof AdminAdminMatchesRoute
+  '/admin/notifications': typeof AdminAdminNotificationsRoute
   '/admin/results': typeof AdminAdminResultsRoute
   '/admin/shop': typeof AdminAdminShopRoute
   '/admin/users': typeof AdminAdminUsersRoute
@@ -218,7 +232,9 @@ export interface FileRoutesByTo {
   '/email/verify': typeof EmailVerifyRoute
   '/p/$slug': typeof PSlugRoute
   '/admin/deposits': typeof AdminAdminDepositsRoute
+  '/admin/feed': typeof AdminAdminFeedRoute
   '/admin/matches': typeof AdminAdminMatchesRoute
+  '/admin/notifications': typeof AdminAdminNotificationsRoute
   '/admin/results': typeof AdminAdminResultsRoute
   '/admin/shop': typeof AdminAdminShopRoute
   '/admin/users': typeof AdminAdminUsersRoute
@@ -248,7 +264,9 @@ export interface FileRoutesById {
   '/email/verify': typeof EmailVerifyRoute
   '/p/$slug': typeof PSlugRoute
   '/_admin/admin/deposits': typeof AdminAdminDepositsRoute
+  '/_admin/admin/feed': typeof AdminAdminFeedRoute
   '/_admin/admin/matches': typeof AdminAdminMatchesRoute
+  '/_admin/admin/notifications': typeof AdminAdminNotificationsRoute
   '/_admin/admin/results': typeof AdminAdminResultsRoute
   '/_admin/admin/shop': typeof AdminAdminShopRoute
   '/_admin/admin/users': typeof AdminAdminUsersRoute
@@ -277,7 +295,9 @@ export interface FileRouteTypes {
     | '/email/verify'
     | '/p/$slug'
     | '/admin/deposits'
+    | '/admin/feed'
     | '/admin/matches'
+    | '/admin/notifications'
     | '/admin/results'
     | '/admin/shop'
     | '/admin/users'
@@ -304,7 +324,9 @@ export interface FileRouteTypes {
     | '/email/verify'
     | '/p/$slug'
     | '/admin/deposits'
+    | '/admin/feed'
     | '/admin/matches'
+    | '/admin/notifications'
     | '/admin/results'
     | '/admin/shop'
     | '/admin/users'
@@ -333,7 +355,9 @@ export interface FileRouteTypes {
     | '/email/verify'
     | '/p/$slug'
     | '/_admin/admin/deposits'
+    | '/_admin/admin/feed'
     | '/_admin/admin/matches'
+    | '/_admin/admin/notifications'
     | '/_admin/admin/results'
     | '/_admin/admin/shop'
     | '/_admin/admin/users'
@@ -526,11 +550,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAdminResultsRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/_admin/admin/notifications': {
+      id: '/_admin/admin/notifications'
+      path: '/admin/notifications'
+      fullPath: '/admin/notifications'
+      preLoaderRoute: typeof AdminAdminNotificationsRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
     '/_admin/admin/matches': {
       id: '/_admin/admin/matches'
       path: '/admin/matches'
       fullPath: '/admin/matches'
       preLoaderRoute: typeof AdminAdminMatchesRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/_admin/admin/feed': {
+      id: '/_admin/admin/feed'
+      path: '/admin/feed'
+      fullPath: '/admin/feed'
+      preLoaderRoute: typeof AdminAdminFeedRouteImport
       parentRoute: typeof AdminRouteRoute
     }
     '/_admin/admin/deposits': {
@@ -559,7 +597,9 @@ declare module '@tanstack/react-router' {
 
 interface AdminRouteRouteChildren {
   AdminAdminDepositsRoute: typeof AdminAdminDepositsRoute
+  AdminAdminFeedRoute: typeof AdminAdminFeedRoute
   AdminAdminMatchesRoute: typeof AdminAdminMatchesRoute
+  AdminAdminNotificationsRoute: typeof AdminAdminNotificationsRoute
   AdminAdminResultsRoute: typeof AdminAdminResultsRoute
   AdminAdminShopRoute: typeof AdminAdminShopRoute
   AdminAdminUsersRoute: typeof AdminAdminUsersRoute
@@ -569,7 +609,9 @@ interface AdminRouteRouteChildren {
 
 const AdminRouteRouteChildren: AdminRouteRouteChildren = {
   AdminAdminDepositsRoute: AdminAdminDepositsRoute,
+  AdminAdminFeedRoute: AdminAdminFeedRoute,
   AdminAdminMatchesRoute: AdminAdminMatchesRoute,
+  AdminAdminNotificationsRoute: AdminAdminNotificationsRoute,
   AdminAdminResultsRoute: AdminAdminResultsRoute,
   AdminAdminShopRoute: AdminAdminShopRoute,
   AdminAdminUsersRoute: AdminAdminUsersRoute,
