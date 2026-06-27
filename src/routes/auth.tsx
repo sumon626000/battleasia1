@@ -85,78 +85,139 @@ function AuthPage() {
   }
 
   return (
-    <div className="mx-auto flex min-h-[calc(100vh-12rem)] max-w-lg flex-col justify-center px-4 py-12">
-      <div className="hud-panel relative overflow-hidden border border-border/80 bg-card/80 p-6 backdrop-blur">
-        <span className="hud-bracket hud-bracket-tl" />
-        <span className="hud-bracket hud-bracket-tr" />
-        <span className="hud-bracket hud-bracket-bl" />
-        <span className="hud-bracket hud-bracket-br" />
-
-        <h1 className="font-display text-3xl font-bold tracking-wide text-foreground">
-          {tab === "login" ? "ENTER THE ARENA" : "JOIN THE BATTLE"}
-        </h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          {tab === "login"
-            ? "Sign in to your Battle Asia account"
-            : "Create your free Battle Asia account"}
-        </p>
-
-        <div className="mt-5 grid grid-cols-2 gap-1 rounded-md border border-border bg-background/60 p-1">
-          <button
-            onClick={() => setTab("login")}
-            className={`font-hud rounded px-3 py-2 text-sm font-semibold transition ${
-              tab === "login" ? "bg-gold text-black" : "text-foreground/70 hover:text-gold"
-            }`}
-          >
-            LOGIN
-          </button>
-          <button
-            onClick={() => setTab("register")}
-            className={`font-hud rounded px-3 py-2 text-sm font-semibold transition ${
-              tab === "register" ? "bg-gold text-black" : "text-foreground/70 hover:text-gold"
-            }`}
-          >
-            REGISTER
-          </button>
-        </div>
-
-        {tab === "login" ? (
-          <LoginForm busy={busy} setBusy={setBusy} />
-        ) : (
-          <RegisterForm
-            busy={busy}
-            setBusy={setBusy}
-            refCode={search.ref ?? ""}
-            openLegal={(t) => setLegal(t)}
-            onRegistered={(email) => navigate({ to: "/email/verify", search: { email } })}
+    <div className="relative min-h-[calc(100vh-8rem)] w-full">
+      <div className="mx-auto grid max-w-7xl gap-8 px-4 py-8 lg:grid-cols-2 lg:gap-12 lg:py-12">
+        {/* Hero side */}
+        <aside className="relative hidden overflow-hidden rounded-xl border border-border/70 lg:block">
+          <img
+            src={authHero}
+            alt="Battle Asia warrior"
+            width={1024}
+            height={1536}
+            className="absolute inset-0 h-full w-full object-cover"
           />
-        )}
+          <div className="absolute inset-0 bg-gradient-to-tr from-background via-background/60 to-transparent" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,176,32,0.18),transparent_55%)]" />
+          <span className="hud-bracket hud-bracket-tl" />
+          <span className="hud-bracket hud-bracket-tr" />
+          <span className="hud-bracket hud-bracket-bl" />
+          <span className="hud-bracket hud-bracket-br" />
+          <div className="relative z-10 flex h-full flex-col justify-between p-8">
+            <Link to="/" className="group flex items-center gap-3">
+              <img src={logoShield} alt="Battle Asia" className="h-14 w-14 object-contain drop-shadow-[0_0_18px_rgba(255,176,32,0.5)]" />
+              <div className="font-display text-xl font-bold leading-none">
+                <div>BATTLE</div>
+                <div className="text-gold">ASIA</div>
+              </div>
+            </Link>
+            <div>
+              <div className="font-mono text-[10px] tracking-[0.3em] text-gold/80">// MISSION BRIEFING</div>
+              <h2 className="font-display mt-2 text-4xl font-black uppercase leading-tight tracking-wide text-foreground">
+                Drop In.<br />Loot Up.<br /><span className="text-gold">Win Big.</span>
+              </h2>
+              <p className="mt-3 max-w-sm text-sm text-foreground/70">
+                Join thousands of warriors competing in daily PUBG tournaments across Asia.
+              </p>
+            </div>
+          </div>
+        </aside>
 
-        <div className="my-5 flex items-center gap-3">
-          <div className="h-px flex-1 bg-border" />
-          <span className="font-mono text-[10px] tracking-widest text-muted-foreground">OR</span>
-          <div className="h-px flex-1 bg-border" />
-        </div>
+        {/* Form side */}
+        <section className="flex flex-col justify-center">
+          {/* Mobile header */}
+          <div className="mb-5 flex items-center justify-between lg:hidden">
+            <Link to="/" className="flex items-center gap-2">
+              <img src={logoShield} alt="Battle Asia" className="h-12 w-12 object-contain drop-shadow-[0_0_14px_rgba(255,176,32,0.5)]" />
+              <div className="font-display text-base font-bold leading-none">
+                <div>BATTLE</div>
+                <div className="text-gold">ASIA</div>
+              </div>
+            </Link>
+            <Link to="/" className="btn-outline-gold inline-flex items-center gap-1.5 px-3 py-1.5 text-xs">
+              <ArrowLeft size={12} /> HOME
+            </Link>
+          </div>
 
-        <button
-          onClick={handleGoogle}
-          disabled={busy}
-          className="btn-outline-gold w-full justify-center py-3 text-sm disabled:opacity-60"
-        >
-          CONTINUE WITH GOOGLE
-        </button>
+          {/* Desktop back-home pill */}
+          <div className="mb-4 hidden lg:flex">
+            <Link to="/" className="btn-outline-gold inline-flex items-center gap-1.5 px-3 py-1.5 text-xs">
+              <ArrowLeft size={12} /> BACK TO HOME
+            </Link>
+          </div>
 
-        <p className="mt-5 text-center text-xs text-muted-foreground">
-          By continuing you agree to the{" "}
-          <button onClick={() => setLegal("terms")} className="text-gold hover:underline">
-            Terms
-          </button>{" "}
-          and{" "}
-          <button onClick={() => setLegal("privacy")} className="text-gold hover:underline">
-            Privacy Policy
-          </button>
-          .
-        </p>
+          <div className="hud-panel relative mx-auto w-full max-w-lg overflow-hidden border border-border/80 bg-card/80 p-6 backdrop-blur">
+            <span className="hud-bracket hud-bracket-tl" />
+            <span className="hud-bracket hud-bracket-tr" />
+            <span className="hud-bracket hud-bracket-bl" />
+            <span className="hud-bracket hud-bracket-br" />
+
+            <h1 className="font-display text-3xl font-bold tracking-wide text-foreground">
+              {tab === "login" ? "ENTER THE ARENA" : "JOIN THE BATTLE"}
+            </h1>
+            <p className="mt-1 text-sm text-muted-foreground">
+              {tab === "login"
+                ? "Sign in to your Battle Asia account"
+                : "Create your free Battle Asia account"}
+            </p>
+
+            <div className="mt-5 grid grid-cols-2 gap-1 rounded-md border border-border bg-background/60 p-1">
+              <button
+                onClick={() => setTab("login")}
+                className={`font-hud rounded px-3 py-2 text-sm font-semibold transition ${
+                  tab === "login" ? "bg-gold text-black" : "text-foreground/70 hover:text-gold"
+                }`}
+              >
+                LOGIN
+              </button>
+              <button
+                onClick={() => setTab("register")}
+                className={`font-hud rounded px-3 py-2 text-sm font-semibold transition ${
+                  tab === "register" ? "bg-gold text-black" : "text-foreground/70 hover:text-gold"
+                }`}
+              >
+                REGISTER
+              </button>
+            </div>
+
+            {tab === "login" ? (
+              <LoginForm busy={busy} setBusy={setBusy} />
+            ) : (
+              <RegisterForm
+                busy={busy}
+                setBusy={setBusy}
+                refCode={search.ref ?? ""}
+                openLegal={(t) => setLegal(t)}
+                onRegistered={(email) => navigate({ to: "/email/verify", search: { email } })}
+              />
+            )}
+
+            <div className="my-5 flex items-center gap-3">
+              <div className="h-px flex-1 bg-border" />
+              <span className="font-mono text-[10px] tracking-widest text-muted-foreground">OR</span>
+              <div className="h-px flex-1 bg-border" />
+            </div>
+
+            <button
+              onClick={handleGoogle}
+              disabled={busy}
+              className="btn-outline-gold w-full justify-center py-3 text-sm disabled:opacity-60"
+            >
+              CONTINUE WITH GOOGLE
+            </button>
+
+            <p className="mt-5 text-center text-xs text-muted-foreground">
+              By continuing you agree to the{" "}
+              <button onClick={() => setLegal("terms")} className="text-gold hover:underline">
+                Terms
+              </button>{" "}
+              and{" "}
+              <button onClick={() => setLegal("privacy")} className="text-gold hover:underline">
+                Privacy Policy
+              </button>
+              .
+            </p>
+          </div>
+        </section>
       </div>
 
       <LegalModal type={legal ?? "terms"} open={legal !== null} onClose={() => setLegal(null)} />
