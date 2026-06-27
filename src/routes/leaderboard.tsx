@@ -100,7 +100,10 @@ function LeaderboardPage() {
         ))}
       </div>
 
+      {q.data && q.data.length > 0 && <Podium rows={q.data.slice(0, 3)} metric={metric} />}
+
       <div className="hud-panel overflow-hidden">
+
         <table className="w-full text-sm">
           <thead className="bg-secondary/40 text-xs uppercase text-foreground/60">
             <tr>
