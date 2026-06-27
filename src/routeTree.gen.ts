@@ -52,8 +52,10 @@ import { Route as AdminAdminReferralConfigRouteImport } from './routes/_admin/ad
 import { Route as AdminAdminPremiumRouteImport } from './routes/_admin/admin.premium'
 import { Route as AdminAdminParticipantsRouteImport } from './routes/_admin/admin.participants'
 import { Route as AdminAdminPagesRouteImport } from './routes/_admin/admin.pages'
+import { Route as AdminAdminOnlineUsersRouteImport } from './routes/_admin/admin.online-users'
 import { Route as AdminAdminNotificationsRouteImport } from './routes/_admin/admin.notifications'
 import { Route as AdminAdminMatchesRouteImport } from './routes/_admin/admin.matches'
+import { Route as AdminAdminLoginHistoryRouteImport } from './routes/_admin/admin.login-history'
 import { Route as AdminAdminGamesRouteImport } from './routes/_admin/admin.games'
 import { Route as AdminAdminFeedRouteImport } from './routes/_admin/admin.feed'
 import { Route as AdminAdminDepositsRouteImport } from './routes/_admin/admin.deposits'
@@ -61,6 +63,7 @@ import { Route as AdminAdminCoinRatesRouteImport } from './routes/_admin/admin.c
 import { Route as AdminAdminChannelsRouteImport } from './routes/_admin/admin.channels'
 import { Route as AdminAdminBusinessWalletsRouteImport } from './routes/_admin/admin.business-wallets'
 import { Route as AdminAdminBalancesRouteImport } from './routes/_admin/admin.balances'
+import { Route as AdminAdminBackupsRouteImport } from './routes/_admin/admin.backups'
 import { Route as AdminAdminApkRouteImport } from './routes/_admin/admin.apk'
 import { Route as AuthenticatedDashboardMatchesMatchIdRouteImport } from './routes/_authenticated/dashboard.matches.$matchId'
 import { Route as AuthenticatedDashboardFeedPostIdRouteImport } from './routes/_authenticated/dashboard.feed.$postId'
@@ -290,6 +293,11 @@ const AdminAdminPagesRoute = AdminAdminPagesRouteImport.update({
   path: '/admin/pages',
   getParentRoute: () => AdminRouteRoute,
 } as any)
+const AdminAdminOnlineUsersRoute = AdminAdminOnlineUsersRouteImport.update({
+  id: '/admin/online-users',
+  path: '/admin/online-users',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
 const AdminAdminNotificationsRoute = AdminAdminNotificationsRouteImport.update({
   id: '/admin/notifications',
   path: '/admin/notifications',
@@ -298,6 +306,11 @@ const AdminAdminNotificationsRoute = AdminAdminNotificationsRouteImport.update({
 const AdminAdminMatchesRoute = AdminAdminMatchesRouteImport.update({
   id: '/admin/matches',
   path: '/admin/matches',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminAdminLoginHistoryRoute = AdminAdminLoginHistoryRouteImport.update({
+  id: '/admin/login-history',
+  path: '/admin/login-history',
   getParentRoute: () => AdminRouteRoute,
 } as any)
 const AdminAdminGamesRoute = AdminAdminGamesRouteImport.update({
@@ -334,6 +347,11 @@ const AdminAdminBusinessWalletsRoute =
 const AdminAdminBalancesRoute = AdminAdminBalancesRouteImport.update({
   id: '/admin/balances',
   path: '/admin/balances',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminAdminBackupsRoute = AdminAdminBackupsRouteImport.update({
+  id: '/admin/backups',
+  path: '/admin/backups',
   getParentRoute: () => AdminRouteRoute,
 } as any)
 const AdminAdminApkRoute = AdminAdminApkRouteImport.update({
@@ -373,6 +391,7 @@ export interface FileRoutesByFullPath {
   '/p/$slug': typeof PSlugRoute
   '/u/$username': typeof UUsernameRoute
   '/admin/apk': typeof AdminAdminApkRoute
+  '/admin/backups': typeof AdminAdminBackupsRoute
   '/admin/balances': typeof AdminAdminBalancesRoute
   '/admin/business-wallets': typeof AdminAdminBusinessWalletsRoute
   '/admin/channels': typeof AdminAdminChannelsRoute
@@ -380,8 +399,10 @@ export interface FileRoutesByFullPath {
   '/admin/deposits': typeof AdminAdminDepositsRoute
   '/admin/feed': typeof AdminAdminFeedRoute
   '/admin/games': typeof AdminAdminGamesRoute
+  '/admin/login-history': typeof AdminAdminLoginHistoryRoute
   '/admin/matches': typeof AdminAdminMatchesRoute
   '/admin/notifications': typeof AdminAdminNotificationsRoute
+  '/admin/online-users': typeof AdminAdminOnlineUsersRoute
   '/admin/pages': typeof AdminAdminPagesRoute
   '/admin/participants': typeof AdminAdminParticipantsRoute
   '/admin/premium': typeof AdminAdminPremiumRoute
@@ -428,6 +449,7 @@ export interface FileRoutesByTo {
   '/p/$slug': typeof PSlugRoute
   '/u/$username': typeof UUsernameRoute
   '/admin/apk': typeof AdminAdminApkRoute
+  '/admin/backups': typeof AdminAdminBackupsRoute
   '/admin/balances': typeof AdminAdminBalancesRoute
   '/admin/business-wallets': typeof AdminAdminBusinessWalletsRoute
   '/admin/channels': typeof AdminAdminChannelsRoute
@@ -435,8 +457,10 @@ export interface FileRoutesByTo {
   '/admin/deposits': typeof AdminAdminDepositsRoute
   '/admin/feed': typeof AdminAdminFeedRoute
   '/admin/games': typeof AdminAdminGamesRoute
+  '/admin/login-history': typeof AdminAdminLoginHistoryRoute
   '/admin/matches': typeof AdminAdminMatchesRoute
   '/admin/notifications': typeof AdminAdminNotificationsRoute
+  '/admin/online-users': typeof AdminAdminOnlineUsersRoute
   '/admin/pages': typeof AdminAdminPagesRoute
   '/admin/participants': typeof AdminAdminParticipantsRoute
   '/admin/premium': typeof AdminAdminPremiumRoute
@@ -486,6 +510,7 @@ export interface FileRoutesById {
   '/p/$slug': typeof PSlugRoute
   '/u/$username': typeof UUsernameRoute
   '/_admin/admin/apk': typeof AdminAdminApkRoute
+  '/_admin/admin/backups': typeof AdminAdminBackupsRoute
   '/_admin/admin/balances': typeof AdminAdminBalancesRoute
   '/_admin/admin/business-wallets': typeof AdminAdminBusinessWalletsRoute
   '/_admin/admin/channels': typeof AdminAdminChannelsRoute
@@ -493,8 +518,10 @@ export interface FileRoutesById {
   '/_admin/admin/deposits': typeof AdminAdminDepositsRoute
   '/_admin/admin/feed': typeof AdminAdminFeedRoute
   '/_admin/admin/games': typeof AdminAdminGamesRoute
+  '/_admin/admin/login-history': typeof AdminAdminLoginHistoryRoute
   '/_admin/admin/matches': typeof AdminAdminMatchesRoute
   '/_admin/admin/notifications': typeof AdminAdminNotificationsRoute
+  '/_admin/admin/online-users': typeof AdminAdminOnlineUsersRoute
   '/_admin/admin/pages': typeof AdminAdminPagesRoute
   '/_admin/admin/participants': typeof AdminAdminParticipantsRoute
   '/_admin/admin/premium': typeof AdminAdminPremiumRoute
@@ -543,6 +570,7 @@ export interface FileRouteTypes {
     | '/p/$slug'
     | '/u/$username'
     | '/admin/apk'
+    | '/admin/backups'
     | '/admin/balances'
     | '/admin/business-wallets'
     | '/admin/channels'
@@ -550,8 +578,10 @@ export interface FileRouteTypes {
     | '/admin/deposits'
     | '/admin/feed'
     | '/admin/games'
+    | '/admin/login-history'
     | '/admin/matches'
     | '/admin/notifications'
+    | '/admin/online-users'
     | '/admin/pages'
     | '/admin/participants'
     | '/admin/premium'
@@ -598,6 +628,7 @@ export interface FileRouteTypes {
     | '/p/$slug'
     | '/u/$username'
     | '/admin/apk'
+    | '/admin/backups'
     | '/admin/balances'
     | '/admin/business-wallets'
     | '/admin/channels'
@@ -605,8 +636,10 @@ export interface FileRouteTypes {
     | '/admin/deposits'
     | '/admin/feed'
     | '/admin/games'
+    | '/admin/login-history'
     | '/admin/matches'
     | '/admin/notifications'
+    | '/admin/online-users'
     | '/admin/pages'
     | '/admin/participants'
     | '/admin/premium'
@@ -655,6 +688,7 @@ export interface FileRouteTypes {
     | '/p/$slug'
     | '/u/$username'
     | '/_admin/admin/apk'
+    | '/_admin/admin/backups'
     | '/_admin/admin/balances'
     | '/_admin/admin/business-wallets'
     | '/_admin/admin/channels'
@@ -662,8 +696,10 @@ export interface FileRouteTypes {
     | '/_admin/admin/deposits'
     | '/_admin/admin/feed'
     | '/_admin/admin/games'
+    | '/_admin/admin/login-history'
     | '/_admin/admin/matches'
     | '/_admin/admin/notifications'
+    | '/_admin/admin/online-users'
     | '/_admin/admin/pages'
     | '/_admin/admin/participants'
     | '/_admin/admin/premium'
@@ -1016,6 +1052,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAdminPagesRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/_admin/admin/online-users': {
+      id: '/_admin/admin/online-users'
+      path: '/admin/online-users'
+      fullPath: '/admin/online-users'
+      preLoaderRoute: typeof AdminAdminOnlineUsersRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
     '/_admin/admin/notifications': {
       id: '/_admin/admin/notifications'
       path: '/admin/notifications'
@@ -1028,6 +1071,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/matches'
       fullPath: '/admin/matches'
       preLoaderRoute: typeof AdminAdminMatchesRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/_admin/admin/login-history': {
+      id: '/_admin/admin/login-history'
+      path: '/admin/login-history'
+      fullPath: '/admin/login-history'
+      preLoaderRoute: typeof AdminAdminLoginHistoryRouteImport
       parentRoute: typeof AdminRouteRoute
     }
     '/_admin/admin/games': {
@@ -1079,6 +1129,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAdminBalancesRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/_admin/admin/backups': {
+      id: '/_admin/admin/backups'
+      path: '/admin/backups'
+      fullPath: '/admin/backups'
+      preLoaderRoute: typeof AdminAdminBackupsRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
     '/_admin/admin/apk': {
       id: '/_admin/admin/apk'
       path: '/admin/apk'
@@ -1105,6 +1162,7 @@ declare module '@tanstack/react-router' {
 
 interface AdminRouteRouteChildren {
   AdminAdminApkRoute: typeof AdminAdminApkRoute
+  AdminAdminBackupsRoute: typeof AdminAdminBackupsRoute
   AdminAdminBalancesRoute: typeof AdminAdminBalancesRoute
   AdminAdminBusinessWalletsRoute: typeof AdminAdminBusinessWalletsRoute
   AdminAdminChannelsRoute: typeof AdminAdminChannelsRoute
@@ -1112,8 +1170,10 @@ interface AdminRouteRouteChildren {
   AdminAdminDepositsRoute: typeof AdminAdminDepositsRoute
   AdminAdminFeedRoute: typeof AdminAdminFeedRoute
   AdminAdminGamesRoute: typeof AdminAdminGamesRoute
+  AdminAdminLoginHistoryRoute: typeof AdminAdminLoginHistoryRoute
   AdminAdminMatchesRoute: typeof AdminAdminMatchesRoute
   AdminAdminNotificationsRoute: typeof AdminAdminNotificationsRoute
+  AdminAdminOnlineUsersRoute: typeof AdminAdminOnlineUsersRoute
   AdminAdminPagesRoute: typeof AdminAdminPagesRoute
   AdminAdminParticipantsRoute: typeof AdminAdminParticipantsRoute
   AdminAdminPremiumRoute: typeof AdminAdminPremiumRoute
@@ -1132,6 +1192,7 @@ interface AdminRouteRouteChildren {
 
 const AdminRouteRouteChildren: AdminRouteRouteChildren = {
   AdminAdminApkRoute: AdminAdminApkRoute,
+  AdminAdminBackupsRoute: AdminAdminBackupsRoute,
   AdminAdminBalancesRoute: AdminAdminBalancesRoute,
   AdminAdminBusinessWalletsRoute: AdminAdminBusinessWalletsRoute,
   AdminAdminChannelsRoute: AdminAdminChannelsRoute,
@@ -1139,8 +1200,10 @@ const AdminRouteRouteChildren: AdminRouteRouteChildren = {
   AdminAdminDepositsRoute: AdminAdminDepositsRoute,
   AdminAdminFeedRoute: AdminAdminFeedRoute,
   AdminAdminGamesRoute: AdminAdminGamesRoute,
+  AdminAdminLoginHistoryRoute: AdminAdminLoginHistoryRoute,
   AdminAdminMatchesRoute: AdminAdminMatchesRoute,
   AdminAdminNotificationsRoute: AdminAdminNotificationsRoute,
+  AdminAdminOnlineUsersRoute: AdminAdminOnlineUsersRoute,
   AdminAdminPagesRoute: AdminAdminPagesRoute,
   AdminAdminParticipantsRoute: AdminAdminParticipantsRoute,
   AdminAdminPremiumRoute: AdminAdminPremiumRoute,

@@ -22,6 +22,9 @@ import {
   Crown,
   Mail,
   ShieldAlert,
+  History,
+  Activity,
+  Database,
 } from "lucide-react";
 
 export const ADMIN_NAV = [
@@ -48,6 +51,9 @@ export const ADMIN_NAV = [
   { label: "Referral Config", href: "/admin/referral-config", icon: Users2 },
   { label: "Templates", href: "/admin/templates", icon: Mail },
   { label: "Security", href: "/admin/security", icon: ShieldAlert },
+  { label: "Login History", href: "/admin/login-history", icon: History },
+  { label: "Online Users", href: "/admin/online-users", icon: Activity },
+  { label: "Backups", href: "/admin/backups", icon: Database },
   { label: "Site Settings", href: "/admin/settings", icon: Settings },
 ] as const;
 
