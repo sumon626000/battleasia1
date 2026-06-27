@@ -7,6 +7,8 @@ import { useAuth } from "@/hooks/use-auth";
 import { useProfile } from "@/hooks/use-profile";
 import { supabase } from "@/integrations/supabase/client";
 import { CoinIcon } from "@/components/site/CoinIcon";
+import depositBg from "@/assets/pubg-airdrop.jpg";
+import withdrawBg from "@/assets/pubg-vehicle-chase.jpg";
 
 export const Route = createFileRoute("/_authenticated/dashboard/wallet")({
   head: () => ({ meta: [{ title: "Wallet — Battle Asia" }] }),
@@ -221,7 +223,12 @@ export function DepositTab({ onDone }: { onDone: () => void }) {
   }
 
   return (
-    <section className="hud-panel p-5">
+    <section className="hud-panel relative overflow-hidden p-5">
+      <div
+        className="pointer-events-none absolute inset-0 -z-10 bg-cover bg-center opacity-20"
+        style={{ backgroundImage: `url(${depositBg})` }}
+      />
+      <div className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-br from-background/85 via-background/70 to-background/90" />
       <h2 className="font-hud text-sm font-bold uppercase tracking-widest text-gold">Buy BAC Coin</h2>
       <p className="mt-1 text-xs text-foreground/60">Send fiat to our business wallet, then submit the transaction ID below.</p>
 
@@ -330,7 +337,12 @@ export function WithdrawTab({
   }
 
   return (
-    <section className="hud-panel p-5">
+    <section className="hud-panel relative overflow-hidden p-5">
+      <div
+        className="pointer-events-none absolute inset-0 -z-10 bg-cover bg-center opacity-20"
+        style={{ backgroundImage: `url(${withdrawBg})` }}
+      />
+      <div className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-br from-background/85 via-background/70 to-background/90" />
       <h2 className="font-hud text-sm font-bold uppercase tracking-widest text-gold">Withdraw BAC</h2>
       <div className="mt-1 grid gap-1 text-xs text-foreground/60">
         <div>Available: <span className="font-mono font-bold text-foreground">{balance.toLocaleString()} BAC</span></div>
