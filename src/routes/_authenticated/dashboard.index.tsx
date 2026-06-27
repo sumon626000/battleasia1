@@ -124,20 +124,50 @@ function DashboardPage() {
       </section>
 
       <section className="grid gap-4 lg:grid-cols-2">
-        <div className="hud-panel p-5">
+        <div className="hud-panel relative overflow-hidden p-5">
+          <div
+            aria-hidden
+            className="absolute inset-0 -z-10 bg-cover bg-center opacity-20"
+            style={{ backgroundImage: `url(${vehicleImg})` }}
+          />
+          <div aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-t from-background via-background/85 to-transparent" />
           <h3 className="font-hud text-sm font-bold uppercase tracking-widest text-gold">
             Upcoming Matches
           </h3>
-          <p className="mt-2 font-mono text-xs text-foreground/60">
+          <p className="mt-2 font-mono text-xs text-foreground/70">
             No upcoming matches yet. Check the Play Matches page.
           </p>
         </div>
-        <div className="hud-panel p-5">
+        <div className="hud-panel relative overflow-hidden p-5">
+          <div
+            aria-hidden
+            className="absolute inset-0 -z-10 bg-cover bg-center opacity-20"
+            style={{ backgroundImage: `url(${sniperImg})` }}
+          />
+          <div aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-t from-background via-background/85 to-transparent" />
           <h3 className="font-hud text-sm font-bold uppercase tracking-widest text-gold">
             Recent Activity
           </h3>
-          <p className="mt-2 font-mono text-xs text-foreground/60">
+          <p className="mt-2 font-mono text-xs text-foreground/70">
             Your wallet and match history will appear here.
+          </p>
+        </div>
+      </section>
+
+      <section className="hud-panel relative overflow-hidden p-5 sm:p-6">
+        <div
+          aria-hidden
+          className="absolute inset-0 -z-10 bg-cover bg-center opacity-25"
+          style={{ backgroundImage: `url(${airdropImg})` }}
+        />
+        <div aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-r from-background via-background/70 to-transparent" />
+        <div className="max-w-md">
+          <p className="font-hud text-[10px] uppercase tracking-[0.3em] text-gold/80">Drop Zone</p>
+          <h3 className="mt-1 font-display text-xl font-bold uppercase tracking-wide">
+            Claim Your Loot
+          </h3>
+          <p className="mt-2 font-mono text-xs text-foreground/70">
+            Top up BAC Coin, join tournaments, and climb the leaderboard.
           </p>
         </div>
       </section>
