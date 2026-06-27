@@ -22,7 +22,7 @@ type Row = {
   login_at: string;
 };
 
-type ProfileLite = { user_id: string; username: string | null; email: string | null };
+type ProfileLite = { id: string; username: string | null; display_name: string | null };
 
 function AdminLoginHistoryPage() {
   const [search, setSearch] = useState("");
@@ -42,9 +42,9 @@ function AdminLoginHistoryPage() {
       if (ids.length) {
         const { data: profs } = await supabase
           .from("profiles")
-          .select("user_id, username, email")
-          .in("user_id", ids);
-        profMap = new Map((profs ?? []).map((p) => [p.user_id, p as ProfileLite]));
+          .select("id, username, display_name")
+          .in("id", ids);
+        profMap = new Map(((profs ?? []) as ProfileLite[]).map((p) => [p.id, p]));
       }
       return rows.map((r) => ({ ...r, profile: profMap.get(r.user_id) }));
     },
@@ -55,7 +55,7 @@ function AdminLoginHistoryPage() {
     const s = search.toLowerCase();
     return (
       r.profile?.username?.toLowerCase().includes(s) ||
-      r.profile?.email?.toLowerCase().includes(s) ||
+      r.profile?.display_name?.toLowerCase().includes(s) ||
       r.ip_address?.toLowerCase().includes(s) ||
       r.country_code?.toLowerCase().includes(s) ||
       r.browser?.toLowerCase().includes(s)
@@ -100,8 +100,8 @@ function AdminLoginHistoryPage() {
               <tr key={r.id} className="border-t border-border/30">
                 <td className="px-3 py-2 text-xs text-foreground/70">{new Date(r.login_at).toLocaleString()}</td>
                 <td className="px-3 py-2 text-xs">
-                  <div className="font-semibold text-foreground">{r.profile?.username ?? "—"}</div>
-                  <div className="text-[10px] text-foreground/50">{r.profile?.email ?? r.user_id.slice(0, 8)}</div>
+                  <div className="font-semibold text-foreground">{r.profile?.username ?? r.profile?.display_name ?? "—"}</div>
+                  <div className="text-[10px] text-foreground/50">{r.user_id.slice(0, 8)}</div>
                 </td>
                 <td className="px-3 py-2 font-mono text-[11px]">{r.ip_address ?? "—"}</td>
                 <td className="px-3 py-2 text-xs">{r.country_code ?? "—"} {r.country_name ? `(${r.country_name})` : ""}</td>

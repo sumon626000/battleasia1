@@ -63,9 +63,9 @@ export async function recordLoginEvent() {
     const token = getSessionToken();
     const geo = await fetchGeo();
     await supabase.rpc("record_login_event", {
-      _ip: geo.ip || null,
-      _country_code: geo.cc || null,
-      _country_name: geo.cn || null,
+      _ip: geo.ip || "",
+      _country_code: geo.cc || "",
+      _country_name: geo.cn || "",
       _browser: info.browser,
       _browser_version: info.browser_version,
       _os: info.os,

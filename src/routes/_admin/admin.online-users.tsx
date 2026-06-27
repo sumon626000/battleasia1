@@ -20,7 +20,7 @@ type Row = {
   expires_at: string;
 };
 
-type ProfileLite = { user_id: string; username: string | null; email: string | null };
+type ProfileLite = { id: string; username: string | null; display_name: string | null };
 
 function AdminOnlineUsersPage() {
   const qc = useQueryClient();
@@ -41,9 +41,9 @@ function AdminOnlineUsersPage() {
       if (ids.length) {
         const { data: profs } = await supabase
           .from("profiles")
-          .select("user_id, username, email")
-          .in("user_id", ids);
-        profMap = new Map((profs ?? []).map((p) => [p.user_id, p as ProfileLite]));
+          .select("id, username, display_name")
+          .in("id", ids);
+        profMap = new Map(((profs ?? []) as ProfileLite[]).map((p) => [p.id, p]));
       }
       return rows.map((r) => ({ ...r, profile: profMap.get(r.user_id) }));
     },
@@ -114,8 +114,8 @@ function AdminOnlineUsersPage() {
               <tr key={r.id} className="border-t border-border/30">
                 <td className="px-3 py-2"><span className="inline-block h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(16,185,129,0.7)]" /></td>
                 <td className="px-3 py-2 text-xs">
-                  <div className="font-semibold">{r.profile?.username ?? "—"}</div>
-                  <div className="text-[10px] text-foreground/50">{r.profile?.email ?? r.user_id.slice(0, 8)}</div>
+                  <div className="font-semibold">{r.profile?.username ?? r.profile?.display_name ?? "—"}</div>
+                  <div className="text-[10px] text-foreground/50">{r.user_id.slice(0, 8)}</div>
                 </td>
                 <td className="px-3 py-2 font-mono text-[11px]">{r.ip_address ?? "—"}</td>
                 <td className="px-3 py-2 text-xs">{r.country_code ?? "—"}</td>
