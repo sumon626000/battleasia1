@@ -53,11 +53,11 @@ export function DashboardTopbar({ profile, onOpenMobileNav }: Props) {
             <span className="hidden font-hud text-[10px] text-foreground/60 sm:inline">BAC</span>
           </div>
           <Link
-            to="/dashboard/wallet"
+            to="/dashboard/vault"
             className="hud-panel hidden items-center gap-2 px-3 py-1.5 transition hover:text-gold sm:flex"
           >
             <WalletIcon size={14} />
-            <span className="font-hud text-[11px] font-semibold uppercase">Wallet</span>
+            <span className="font-hud text-[11px] font-semibold uppercase">Vault</span>
           </Link>
           {profile?.is_premium && (
             <div className="hud-panel hidden items-center gap-1.5 border-gold/50 px-2.5 py-1.5 text-gold sm:flex">

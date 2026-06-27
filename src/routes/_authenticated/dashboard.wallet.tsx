@@ -170,7 +170,7 @@ function StatCard({ label, value, suffix }: { label: string; value: number; suff
 }
 
 /* ------------- DEPOSIT ------------- */
-function DepositTab({ onDone }: { onDone: () => void }) {
+export function DepositTab({ onDone }: { onDone: () => void }) {
   const qc = useQueryClient();
   const channels = useQuery({
     queryKey: ["payment-channels"],
@@ -285,7 +285,7 @@ function DepositTab({ onDone }: { onDone: () => void }) {
 }
 
 /* ------------- WITHDRAW ------------- */
-function WithdrawTab({
+export function WithdrawTab({
   balance, withdrawable, cfg, onDone,
 }: { balance: number; withdrawable: number; cfg: any; onDone: () => void }) {
   const qc = useQueryClient();
@@ -400,7 +400,7 @@ function WithdrawTab({
 }
 
 /* ------------- HISTORY ------------- */
-function HistoryTab({ userId }: { userId?: string }) {
+export function HistoryTab({ userId }: { userId?: string }) {
   const logs = useQuery({
     queryKey: ["balance-history", userId],
     enabled: !!userId,
