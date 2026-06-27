@@ -45,26 +45,27 @@ const PAYMENTS = ["bKash", "Nagad", "Rocket", "Upay", "Bank Transfer", "USDT TRC
 
 const HOW_TO_PLAY = [
   {
-    icon: User, color: "from-violet-500 to-purple-700", title: "SOLO MODE",
+    icon: User, color: "from-violet-500 to-purple-700", title: "SOLO MODE", bg: modeSoloBg,
     desc: "Play alone vs every other solo. Highest kills + rank wins.",
     points: ["Pay entry fee, get room ID", "Enter the match on time", "Top kills + rank = prize pool"],
   },
   {
-    icon: Users, color: "from-sky-500 to-blue-700", title: "DUO MODE",
+    icon: Users, color: "from-sky-500 to-blue-700", title: "DUO MODE", bg: modeDuoBg,
     desc: "Team up with a partner to dominate the lobby.",
     points: ["Invite or find a partner", "Both must join the room", "Combined kills count"],
   },
   {
-    icon: UsersRound, color: "from-amber-500 to-orange-600", title: "SQUAD MODE",
+    icon: UsersRound, color: "from-amber-500 to-orange-600", title: "SQUAD MODE", bg: modeSquadBg,
     desc: "Form a team of four and battle for the squad crown.",
     points: ["4-member squads only", "Squad leader pays entry", "Rewards split as configured"],
   },
   {
-    icon: Target, color: "from-rose-500 to-red-600", title: "TDM MODE",
+    icon: Target, color: "from-rose-500 to-red-600", title: "TDM MODE", bg: modeTdmBg,
     desc: "Fast-paced team deathmatch action.",
     points: ["4v4 quick deathmatch", "Per-kill rewards available", "Short rounds, high reward"],
   },
 ];
+
 
 const RULES = [
   { q: "No Hacks or Emulators", a: "Any use of third-party hacks, mods, ESP, aimbot, macros or emulators on mobile-only tournaments results in instant ban and forfeiture of all prizes and balances." },
