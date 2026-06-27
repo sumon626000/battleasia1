@@ -1632,6 +1632,14 @@ export type Database = {
       }
       archive_notification: { Args: { p_id: number }; Returns: undefined }
       buy_premium: { Args: { p_plan_id: number }; Returns: number }
+      close_support_ticket: {
+        Args: { p_ticket_id: number }
+        Returns: undefined
+      }
+      create_support_ticket: {
+        Args: { p_message: string; p_subject: string }
+        Returns: number
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -1643,6 +1651,11 @@ export type Database = {
       is_admin: { Args: never; Returns: boolean }
       join_match: { Args: { p_match_id: number }; Returns: number }
       mark_notifications_read: { Args: { p_ids?: number[] }; Returns: number }
+      mark_ticket_read: { Args: { p_ticket_id: number }; Returns: undefined }
+      send_support_message: {
+        Args: { p_message: string; p_ticket_id: number }
+        Returns: number
+      }
       submit_deposit: {
         Args: {
           p_bac_amount: number
