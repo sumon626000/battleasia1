@@ -165,11 +165,11 @@ function BattleAsiaLanding() {
     },
   });
 
-  const STATS = [
+  const STATS: Array<{ icon: any; value: string; label: string; isCoin?: boolean }> = [
     { icon: Users2,  value: pulse.data ? `${formatBAC(pulse.data.processed + pulse.data.ongoing)}` : "—", label: "TOTAL MATCHES" },
     { icon: Swords,  value: pulse.data ? formatBAC(pulse.data.ongoing) : "—", label: "LIVE MATCHES" },
     { icon: Trophy,  value: pulse.data ? `৳${formatBAC(pulse.data.totalWinnings)}` : "—", label: "TOTAL PAID OUT" },
-    { icon: Coins,   value: pulse.data ? formatBAC(pulse.data.processed) : "—", label: "PROCESSED MATCHES" },
+    { icon: null,    value: pulse.data ? formatBAC(pulse.data.processed) : "—", label: "PROCESSED MATCHES", isCoin: true },
   ];
 
   return (
