@@ -1,0 +1,1 @@
+INSERT INTO website_settings(key, value) VALUES ('google_login_enabled', 'false') ON CONFLICT (key) DO NOTHING;
