@@ -97,11 +97,9 @@
   font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+  clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
   box-shadow: var(--shadow-gold);
   transition: transform 0.25s cubic-bezier(.2,.8,.2,1), box-shadow 0.25s ease, filter 0.25s ease;
-}
-@utility btn-gold {
   &::before {
     content: "";
     position: absolute;
@@ -110,7 +108,6 @@
     transform: translateX(-120%);
     transition: transform 0.7s cubic-bezier(.2,.8,.2,1);
     pointer-events: none;
-    z-index: 1;
   }
   &:hover {
     filter: brightness(1.1);
@@ -133,10 +130,8 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
   background: color-mix(in oklab, var(--gold) 6%, transparent);
-  clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+  clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
   transition: all 0.25s cubic-bezier(.2,.8,.2,1);
-}
-@utility btn-outline-gold {
   &::before {
     content: "";
     position: absolute;
@@ -156,6 +151,7 @@
   &:hover::before { transform: translateX(120%); }
   &:active { transform: translateY(0); }
 }
+
 
 
 @utility text-gold { color: var(--gold); }
