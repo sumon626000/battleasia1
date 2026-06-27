@@ -21,6 +21,8 @@ function MatchDetailPage() {
   const { profile } = useProfile(user?.id);
   const navigate = useNavigate();
   const qc = useQueryClient();
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [joining, setJoining] = useState(false);
 
   const match = useQuery({
     queryKey: ["match", id],
