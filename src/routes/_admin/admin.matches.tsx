@@ -356,10 +356,12 @@ function EditorModal({
 
 const inp = "w-full rounded border border-border/60 bg-secondary/40 px-3 py-2 font-mono text-sm outline-none focus:border-gold";
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
+function Field({ label, required, children }: { label: string; required?: boolean; children: React.ReactNode }) {
   return (
     <label className="flex flex-col gap-1">
-      <span className="font-hud text-[10px] uppercase tracking-widest text-foreground/60">{label}</span>
+      <span className="font-hud text-[10px] uppercase tracking-widest text-foreground/60">
+        {label}{required ? <span className="ml-1 text-destructive">*</span> : <span className="ml-1 text-foreground/30">(optional)</span>}
+      </span>
       {children}
     </label>
   );
