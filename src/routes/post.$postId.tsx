@@ -6,6 +6,7 @@ import { SiteShell } from "@/components/site/SiteShell";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { CommentsThread } from "@/components/feed/CommentsThread";
+import { SignedImage, SignedVideo } from "@/components/feed/SignedMedia";
 
 type Post = {
   id: string;
