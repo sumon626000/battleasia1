@@ -3,7 +3,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Search, ShieldCheck, ShieldOff, Coins, UserX, UserCheck, X } from "lucide-react";
+import { Search, ShieldCheck, ShieldOff, Coins, UserX, UserCheck, X, Download } from "lucide-react";
+import { exportRowsAsCSV } from "@/lib/csv";
+
 
 export const Route = createFileRoute("/_admin/admin/users")({
   component: AdminUsers,
@@ -253,15 +255,39 @@ function AdminUsers() {
             Manage operatives, roles, and access
           </p>
         </div>
-        <div className="relative">
-          <Search className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-foreground/40" />
-          <input
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-            placeholder="Search username / PUBG ID"
-            className="rounded border border-border bg-background pl-8 pr-3 py-1.5 font-hud text-sm w-64"
-          />
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => {
+              const rows = (data ?? []).map((u) => ({
+                id: u.id,
+                username: u.username ?? "",
+                in_game_username: u.in_game_username ?? "",
+                pubg_id: u.pubg_id ?? "",
+                country_code: u.country_code ?? "",
+                bac_balance: Number(u.bac_coin_balance ?? 0),
+                role: u.roles?.[0]?.role ?? "user",
+                is_premium: !!u.is_premium,
+                is_suspended: !!u.is_suspended,
+                created_at: u.created_at,
+              }));
+              if (!rows.length) return;
+              exportRowsAsCSV(`users-${Date.now()}`, rows);
+            }}
+            className="inline-flex items-center gap-1 rounded border border-border/70 px-3 py-1.5 font-hud text-[10px] uppercase tracking-widest text-foreground/70 hover:border-gold hover:text-gold"
+          >
+            <Download className="h-3 w-3" /> CSV
+          </button>
+          <div className="relative">
+            <Search className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-foreground/40" />
+            <input
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              placeholder="Search username / PUBG ID"
+              className="rounded border border-border bg-background pl-8 pr-3 py-1.5 font-hud text-sm w-64"
+            />
+          </div>
         </div>
+
       </div>
 
       <div className="hud-panel overflow-x-auto rounded-md border border-border/70 bg-card/40">
