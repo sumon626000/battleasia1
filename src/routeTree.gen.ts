@@ -18,6 +18,7 @@ import { Route as AuthenticatedDashboardRouteImport } from './routes/_authentica
 import { Route as AuthenticatedDashboardWalletRouteImport } from './routes/_authenticated/dashboard.wallet'
 import { Route as AuthenticatedDashboardShopRouteImport } from './routes/_authenticated/dashboard.shop'
 import { Route as AuthenticatedDashboardProfileRouteImport } from './routes/_authenticated/dashboard.profile'
+import { Route as AuthenticatedDashboardMyMatchesRouteImport } from './routes/_authenticated/dashboard.my-matches'
 import { Route as AuthenticatedDashboardMatchesRouteImport } from './routes/_authenticated/dashboard.matches'
 import { Route as AuthenticatedDashboardMatchesMatchIdRouteImport } from './routes/_authenticated/dashboard.matches.$matchId'
 
@@ -68,6 +69,12 @@ const AuthenticatedDashboardProfileRoute =
     path: '/profile',
     getParentRoute: () => AuthenticatedDashboardRoute,
   } as any)
+const AuthenticatedDashboardMyMatchesRoute =
+  AuthenticatedDashboardMyMatchesRouteImport.update({
+    id: '/my-matches',
+    path: '/my-matches',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
 const AuthenticatedDashboardMatchesRoute =
   AuthenticatedDashboardMatchesRouteImport.update({
     id: '/matches',
@@ -88,6 +95,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/email/verify': typeof EmailVerifyRoute
   '/dashboard/matches': typeof AuthenticatedDashboardMatchesRouteWithChildren
+  '/dashboard/my-matches': typeof AuthenticatedDashboardMyMatchesRoute
   '/dashboard/profile': typeof AuthenticatedDashboardProfileRoute
   '/dashboard/shop': typeof AuthenticatedDashboardShopRoute
   '/dashboard/wallet': typeof AuthenticatedDashboardWalletRoute
@@ -100,6 +108,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/email/verify': typeof EmailVerifyRoute
   '/dashboard/matches': typeof AuthenticatedDashboardMatchesRouteWithChildren
+  '/dashboard/my-matches': typeof AuthenticatedDashboardMyMatchesRoute
   '/dashboard/profile': typeof AuthenticatedDashboardProfileRoute
   '/dashboard/shop': typeof AuthenticatedDashboardShopRoute
   '/dashboard/wallet': typeof AuthenticatedDashboardWalletRoute
@@ -114,6 +123,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/email/verify': typeof EmailVerifyRoute
   '/_authenticated/dashboard/matches': typeof AuthenticatedDashboardMatchesRouteWithChildren
+  '/_authenticated/dashboard/my-matches': typeof AuthenticatedDashboardMyMatchesRoute
   '/_authenticated/dashboard/profile': typeof AuthenticatedDashboardProfileRoute
   '/_authenticated/dashboard/shop': typeof AuthenticatedDashboardShopRoute
   '/_authenticated/dashboard/wallet': typeof AuthenticatedDashboardWalletRoute
@@ -128,6 +138,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/email/verify'
     | '/dashboard/matches'
+    | '/dashboard/my-matches'
     | '/dashboard/profile'
     | '/dashboard/shop'
     | '/dashboard/wallet'
@@ -140,6 +151,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/email/verify'
     | '/dashboard/matches'
+    | '/dashboard/my-matches'
     | '/dashboard/profile'
     | '/dashboard/shop'
     | '/dashboard/wallet'
@@ -153,6 +165,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard'
     | '/email/verify'
     | '/_authenticated/dashboard/matches'
+    | '/_authenticated/dashboard/my-matches'
     | '/_authenticated/dashboard/profile'
     | '/_authenticated/dashboard/shop'
     | '/_authenticated/dashboard/wallet'
@@ -232,6 +245,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardProfileRouteImport
       parentRoute: typeof AuthenticatedDashboardRoute
     }
+    '/_authenticated/dashboard/my-matches': {
+      id: '/_authenticated/dashboard/my-matches'
+      path: '/my-matches'
+      fullPath: '/dashboard/my-matches'
+      preLoaderRoute: typeof AuthenticatedDashboardMyMatchesRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
     '/_authenticated/dashboard/matches': {
       id: '/_authenticated/dashboard/matches'
       path: '/matches'
@@ -266,6 +286,7 @@ const AuthenticatedDashboardMatchesRouteWithChildren =
 
 interface AuthenticatedDashboardRouteChildren {
   AuthenticatedDashboardMatchesRoute: typeof AuthenticatedDashboardMatchesRouteWithChildren
+  AuthenticatedDashboardMyMatchesRoute: typeof AuthenticatedDashboardMyMatchesRoute
   AuthenticatedDashboardProfileRoute: typeof AuthenticatedDashboardProfileRoute
   AuthenticatedDashboardShopRoute: typeof AuthenticatedDashboardShopRoute
   AuthenticatedDashboardWalletRoute: typeof AuthenticatedDashboardWalletRoute
@@ -275,6 +296,7 @@ const AuthenticatedDashboardRouteChildren: AuthenticatedDashboardRouteChildren =
   {
     AuthenticatedDashboardMatchesRoute:
       AuthenticatedDashboardMatchesRouteWithChildren,
+    AuthenticatedDashboardMyMatchesRoute: AuthenticatedDashboardMyMatchesRoute,
     AuthenticatedDashboardProfileRoute: AuthenticatedDashboardProfileRoute,
     AuthenticatedDashboardShopRoute: AuthenticatedDashboardShopRoute,
     AuthenticatedDashboardWalletRoute: AuthenticatedDashboardWalletRoute,
