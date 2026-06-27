@@ -20,9 +20,12 @@ import { Route as AuthenticatedDashboardShopRouteImport } from './routes/_authen
 import { Route as AuthenticatedDashboardReferralsRouteImport } from './routes/_authenticated/dashboard.referrals'
 import { Route as AuthenticatedDashboardProfileRouteImport } from './routes/_authenticated/dashboard.profile'
 import { Route as AuthenticatedDashboardPremiumRouteImport } from './routes/_authenticated/dashboard.premium'
+import { Route as AuthenticatedDashboardNotificationsRouteImport } from './routes/_authenticated/dashboard.notifications'
 import { Route as AuthenticatedDashboardMyMatchesRouteImport } from './routes/_authenticated/dashboard.my-matches'
 import { Route as AuthenticatedDashboardMatchesRouteImport } from './routes/_authenticated/dashboard.matches'
+import { Route as AuthenticatedDashboardFeedRouteImport } from './routes/_authenticated/dashboard.feed'
 import { Route as AuthenticatedDashboardMatchesMatchIdRouteImport } from './routes/_authenticated/dashboard.matches.$matchId'
+import { Route as AuthenticatedDashboardFeedPostIdRouteImport } from './routes/_authenticated/dashboard.feed.$postId'
 
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
@@ -83,6 +86,12 @@ const AuthenticatedDashboardPremiumRoute =
     path: '/premium',
     getParentRoute: () => AuthenticatedDashboardRoute,
   } as any)
+const AuthenticatedDashboardNotificationsRoute =
+  AuthenticatedDashboardNotificationsRouteImport.update({
+    id: '/notifications',
+    path: '/notifications',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
 const AuthenticatedDashboardMyMatchesRoute =
   AuthenticatedDashboardMyMatchesRouteImport.update({
     id: '/my-matches',
@@ -95,11 +104,23 @@ const AuthenticatedDashboardMatchesRoute =
     path: '/matches',
     getParentRoute: () => AuthenticatedDashboardRoute,
   } as any)
+const AuthenticatedDashboardFeedRoute =
+  AuthenticatedDashboardFeedRouteImport.update({
+    id: '/feed',
+    path: '/feed',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
 const AuthenticatedDashboardMatchesMatchIdRoute =
   AuthenticatedDashboardMatchesMatchIdRouteImport.update({
     id: '/$matchId',
     path: '/$matchId',
     getParentRoute: () => AuthenticatedDashboardMatchesRoute,
+  } as any)
+const AuthenticatedDashboardFeedPostIdRoute =
+  AuthenticatedDashboardFeedPostIdRouteImport.update({
+    id: '/$postId',
+    path: '/$postId',
+    getParentRoute: () => AuthenticatedDashboardFeedRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
@@ -108,13 +129,16 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/email/verify': typeof EmailVerifyRoute
+  '/dashboard/feed': typeof AuthenticatedDashboardFeedRouteWithChildren
   '/dashboard/matches': typeof AuthenticatedDashboardMatchesRouteWithChildren
   '/dashboard/my-matches': typeof AuthenticatedDashboardMyMatchesRoute
+  '/dashboard/notifications': typeof AuthenticatedDashboardNotificationsRoute
   '/dashboard/premium': typeof AuthenticatedDashboardPremiumRoute
   '/dashboard/profile': typeof AuthenticatedDashboardProfileRoute
   '/dashboard/referrals': typeof AuthenticatedDashboardReferralsRoute
   '/dashboard/shop': typeof AuthenticatedDashboardShopRoute
   '/dashboard/wallet': typeof AuthenticatedDashboardWalletRoute
+  '/dashboard/feed/$postId': typeof AuthenticatedDashboardFeedPostIdRoute
   '/dashboard/matches/$matchId': typeof AuthenticatedDashboardMatchesMatchIdRoute
 }
 export interface FileRoutesByTo {
@@ -123,13 +147,16 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/email/verify': typeof EmailVerifyRoute
+  '/dashboard/feed': typeof AuthenticatedDashboardFeedRouteWithChildren
   '/dashboard/matches': typeof AuthenticatedDashboardMatchesRouteWithChildren
   '/dashboard/my-matches': typeof AuthenticatedDashboardMyMatchesRoute
+  '/dashboard/notifications': typeof AuthenticatedDashboardNotificationsRoute
   '/dashboard/premium': typeof AuthenticatedDashboardPremiumRoute
   '/dashboard/profile': typeof AuthenticatedDashboardProfileRoute
   '/dashboard/referrals': typeof AuthenticatedDashboardReferralsRoute
   '/dashboard/shop': typeof AuthenticatedDashboardShopRoute
   '/dashboard/wallet': typeof AuthenticatedDashboardWalletRoute
+  '/dashboard/feed/$postId': typeof AuthenticatedDashboardFeedPostIdRoute
   '/dashboard/matches/$matchId': typeof AuthenticatedDashboardMatchesMatchIdRoute
 }
 export interface FileRoutesById {
@@ -140,13 +167,16 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/email/verify': typeof EmailVerifyRoute
+  '/_authenticated/dashboard/feed': typeof AuthenticatedDashboardFeedRouteWithChildren
   '/_authenticated/dashboard/matches': typeof AuthenticatedDashboardMatchesRouteWithChildren
   '/_authenticated/dashboard/my-matches': typeof AuthenticatedDashboardMyMatchesRoute
+  '/_authenticated/dashboard/notifications': typeof AuthenticatedDashboardNotificationsRoute
   '/_authenticated/dashboard/premium': typeof AuthenticatedDashboardPremiumRoute
   '/_authenticated/dashboard/profile': typeof AuthenticatedDashboardProfileRoute
   '/_authenticated/dashboard/referrals': typeof AuthenticatedDashboardReferralsRoute
   '/_authenticated/dashboard/shop': typeof AuthenticatedDashboardShopRoute
   '/_authenticated/dashboard/wallet': typeof AuthenticatedDashboardWalletRoute
+  '/_authenticated/dashboard/feed/$postId': typeof AuthenticatedDashboardFeedPostIdRoute
   '/_authenticated/dashboard/matches/$matchId': typeof AuthenticatedDashboardMatchesMatchIdRoute
 }
 export interface FileRouteTypes {
@@ -157,13 +187,16 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/dashboard'
     | '/email/verify'
+    | '/dashboard/feed'
     | '/dashboard/matches'
     | '/dashboard/my-matches'
+    | '/dashboard/notifications'
     | '/dashboard/premium'
     | '/dashboard/profile'
     | '/dashboard/referrals'
     | '/dashboard/shop'
     | '/dashboard/wallet'
+    | '/dashboard/feed/$postId'
     | '/dashboard/matches/$matchId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -172,13 +205,16 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/dashboard'
     | '/email/verify'
+    | '/dashboard/feed'
     | '/dashboard/matches'
     | '/dashboard/my-matches'
+    | '/dashboard/notifications'
     | '/dashboard/premium'
     | '/dashboard/profile'
     | '/dashboard/referrals'
     | '/dashboard/shop'
     | '/dashboard/wallet'
+    | '/dashboard/feed/$postId'
     | '/dashboard/matches/$matchId'
   id:
     | '__root__'
@@ -188,13 +224,16 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/_authenticated/dashboard'
     | '/email/verify'
+    | '/_authenticated/dashboard/feed'
     | '/_authenticated/dashboard/matches'
     | '/_authenticated/dashboard/my-matches'
+    | '/_authenticated/dashboard/notifications'
     | '/_authenticated/dashboard/premium'
     | '/_authenticated/dashboard/profile'
     | '/_authenticated/dashboard/referrals'
     | '/_authenticated/dashboard/shop'
     | '/_authenticated/dashboard/wallet'
+    | '/_authenticated/dashboard/feed/$postId'
     | '/_authenticated/dashboard/matches/$matchId'
   fileRoutesById: FileRoutesById
 }
@@ -285,6 +324,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardPremiumRouteImport
       parentRoute: typeof AuthenticatedDashboardRoute
     }
+    '/_authenticated/dashboard/notifications': {
+      id: '/_authenticated/dashboard/notifications'
+      path: '/notifications'
+      fullPath: '/dashboard/notifications'
+      preLoaderRoute: typeof AuthenticatedDashboardNotificationsRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
     '/_authenticated/dashboard/my-matches': {
       id: '/_authenticated/dashboard/my-matches'
       path: '/my-matches'
@@ -299,6 +345,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardMatchesRouteImport
       parentRoute: typeof AuthenticatedDashboardRoute
     }
+    '/_authenticated/dashboard/feed': {
+      id: '/_authenticated/dashboard/feed'
+      path: '/feed'
+      fullPath: '/dashboard/feed'
+      preLoaderRoute: typeof AuthenticatedDashboardFeedRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
     '/_authenticated/dashboard/matches/$matchId': {
       id: '/_authenticated/dashboard/matches/$matchId'
       path: '/$matchId'
@@ -306,8 +359,30 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardMatchesMatchIdRouteImport
       parentRoute: typeof AuthenticatedDashboardMatchesRoute
     }
+    '/_authenticated/dashboard/feed/$postId': {
+      id: '/_authenticated/dashboard/feed/$postId'
+      path: '/$postId'
+      fullPath: '/dashboard/feed/$postId'
+      preLoaderRoute: typeof AuthenticatedDashboardFeedPostIdRouteImport
+      parentRoute: typeof AuthenticatedDashboardFeedRoute
+    }
   }
 }
+
+interface AuthenticatedDashboardFeedRouteChildren {
+  AuthenticatedDashboardFeedPostIdRoute: typeof AuthenticatedDashboardFeedPostIdRoute
+}
+
+const AuthenticatedDashboardFeedRouteChildren: AuthenticatedDashboardFeedRouteChildren =
+  {
+    AuthenticatedDashboardFeedPostIdRoute:
+      AuthenticatedDashboardFeedPostIdRoute,
+  }
+
+const AuthenticatedDashboardFeedRouteWithChildren =
+  AuthenticatedDashboardFeedRoute._addFileChildren(
+    AuthenticatedDashboardFeedRouteChildren,
+  )
 
 interface AuthenticatedDashboardMatchesRouteChildren {
   AuthenticatedDashboardMatchesMatchIdRoute: typeof AuthenticatedDashboardMatchesMatchIdRoute
@@ -325,8 +400,10 @@ const AuthenticatedDashboardMatchesRouteWithChildren =
   )
 
 interface AuthenticatedDashboardRouteChildren {
+  AuthenticatedDashboardFeedRoute: typeof AuthenticatedDashboardFeedRouteWithChildren
   AuthenticatedDashboardMatchesRoute: typeof AuthenticatedDashboardMatchesRouteWithChildren
   AuthenticatedDashboardMyMatchesRoute: typeof AuthenticatedDashboardMyMatchesRoute
+  AuthenticatedDashboardNotificationsRoute: typeof AuthenticatedDashboardNotificationsRoute
   AuthenticatedDashboardPremiumRoute: typeof AuthenticatedDashboardPremiumRoute
   AuthenticatedDashboardProfileRoute: typeof AuthenticatedDashboardProfileRoute
   AuthenticatedDashboardReferralsRoute: typeof AuthenticatedDashboardReferralsRoute
@@ -336,9 +413,13 @@ interface AuthenticatedDashboardRouteChildren {
 
 const AuthenticatedDashboardRouteChildren: AuthenticatedDashboardRouteChildren =
   {
+    AuthenticatedDashboardFeedRoute:
+      AuthenticatedDashboardFeedRouteWithChildren,
     AuthenticatedDashboardMatchesRoute:
       AuthenticatedDashboardMatchesRouteWithChildren,
     AuthenticatedDashboardMyMatchesRoute: AuthenticatedDashboardMyMatchesRoute,
+    AuthenticatedDashboardNotificationsRoute:
+      AuthenticatedDashboardNotificationsRoute,
     AuthenticatedDashboardPremiumRoute: AuthenticatedDashboardPremiumRoute,
     AuthenticatedDashboardProfileRoute: AuthenticatedDashboardProfileRoute,
     AuthenticatedDashboardReferralsRoute: AuthenticatedDashboardReferralsRoute,
