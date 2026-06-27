@@ -45,12 +45,12 @@ export function DashboardTopbar({ profile, onOpenMobileNav }: Props) {
         </div>
 
         <div className="flex min-w-0 items-center justify-center gap-2 sm:gap-3">
-          <div className="hud-panel flex items-center gap-2 px-3 py-1.5">
-            <CoinIcon size={16} />
-            <span className="font-mono text-xs font-bold tabular-nums text-gold">
+          <div className="hud-panel flex items-center gap-2.5 px-3.5 py-2">
+            <CoinIcon size={24} />
+            <span className="font-mono text-base font-bold tabular-nums text-gold sm:text-lg">
               {balance.toLocaleString()}
             </span>
-            <span className="hidden font-hud text-[10px] text-foreground/60 sm:inline">BAC</span>
+            <span className="hidden font-hud text-[11px] font-semibold text-foreground/70 sm:inline">BAC</span>
           </div>
           <Link
             to="/dashboard/vault"
