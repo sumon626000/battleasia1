@@ -1,8 +1,8 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
-import { Trophy, Target, Swords, Calendar, UserPlus, UserCheck, Ban, Grid3x3, Image as ImageIcon, Video, Heart, MessageCircle } from "lucide-react";
+import { Trophy, Target, Swords, Calendar, UserPlus, UserCheck, Ban, Grid3x3, Image as ImageIcon, Video, Heart, MessageCircle, Send } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -29,6 +29,7 @@ function PublicProfilePage() {
   const { username } = Route.useParams();
   const { user } = useAuth();
   const qc = useQueryClient();
+  const navigate = useNavigate();
   const [busy, setBusy] = useState(false);
 
   const q = useQuery({
@@ -110,6 +111,36 @@ function PublicProfilePage() {
     }
   }
 
+  async function startMessage() {
+    if (!user || !q.data) return toast.error("Sign in to message");
+    setBusy(true);
+    try {
+      const a = user.id < q.data.profile.id ? user.id : q.data.profile.id;
+      const b = user.id < q.data.profile.id ? q.data.profile.id : user.id;
+      const { data: existing } = await supabase
+        .from("direct_threads")
+        .select("id")
+        .eq("user_a", a)
+        .eq("user_b", b)
+        .maybeSingle();
+      let id = existing?.id;
+      if (!id) {
+        const { data, error } = await supabase
+          .from("direct_threads")
+          .insert({ user_a: a, user_b: b, last_message_at: new Date().toISOString() })
+          .select("id")
+          .single();
+        if (error) throw error;
+        id = data.id;
+      }
+      navigate({ to: "/dashboard/messages/$threadId", params: { threadId: id! } });
+    } catch (e: any) {
+      toast.error(e.message || "Could not start chat");
+    } finally {
+      setBusy(false);
+    }
+  }
+
   if (q.isLoading) return <div className="p-12 text-center text-foreground/60">Loading…</div>;
   if (!q.data) return null;
   const { profile, stats, posts, followerCount, followingCount, isFollowing, isBlocked } = q.data;
@@ -157,6 +188,14 @@ function PublicProfilePage() {
                 {isFollowing ? <UserCheck size={14} /> : <UserPlus size={14} />}
                 {isFollowing ? "Following" : "Follow"}
               </button>
+              {!isBlocked && (
+                <button
+                  onClick={startMessage}
+                  disabled={busy}
+                  className="flex items-center gap-1.5 px-3 py-2 rounded border border-border text-foreground/80 hover:text-gold hover:border-gold font-hud text-xs uppercase tracking-widest transition"
+                >
+                  <Send size={14} /> Message
+                </button>)}
               <button
                 onClick={toggleBlock}
                 disabled={busy}

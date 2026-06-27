@@ -15,6 +15,7 @@ import {
   Settings,
   BarChart3,
   ShieldCheck,
+  MessageSquare,
 } from "lucide-react";
 import { useT } from "@/lib/i18n";
 import { useIsAdmin } from "@/hooks/use-is-admin";
@@ -29,6 +30,7 @@ export const DASH_NAV = [
   { key: "dash.referrals", href: "/dashboard/referrals", icon: Users },
   { key: "dash.premium", href: "/dashboard/premium", icon: Crown },
   { key: "dash.feed", href: "/dashboard/feed", icon: Newspaper },
+  { key: "dash.messages", href: "/dashboard/messages", icon: MessageSquare },
   { key: "dash.notifications", href: "/dashboard/notifications", icon: Bell },
   { key: "dash.support", href: "/dashboard/support", icon: LifeBuoy },
   { key: "dash.profile", href: "/dashboard/profile", icon: UserIcon },
