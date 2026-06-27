@@ -100,7 +100,10 @@ function LeaderboardPage() {
         ))}
       </div>
 
+      {q.data && q.data.length > 0 && <Podium rows={q.data.slice(0, 3)} metric={metric} />}
+
       <div className="hud-panel overflow-hidden">
+
         <table className="w-full text-sm">
           <thead className="bg-secondary/40 text-xs uppercase text-foreground/60">
             <tr>
@@ -141,6 +144,46 @@ function LeaderboardPage() {
             )}
           </tbody>
         </table>
+      </div>
+    </div>
+  );
+}
+
+function Podium({ rows, metric }: { rows: LBRow[]; metric: "kills" | "prize" | "matches" }) {
+  const valueOf = (r: LBRow) =>
+    metric === "kills" ? r.total_kills : metric === "prize" ? r.total_prize.toLocaleString() : r.matches_played;
+  const label = metric === "kills" ? "KILLS" : metric === "prize" ? "BAC EARNED" : "MATCHES";
+  // Order: 2nd, 1st, 3rd (visual podium)
+  const order = [rows[1], rows[0], rows[2]].filter(Boolean);
+  const heights = ["h-28", "h-36", "h-24"];
+  const ranks = [2, 1, 3];
+  const colors = ["text-slate-300 border-slate-300/40", "text-gold border-gold/60", "text-amber-700 border-amber-700/40"];
+  // remap heights/colors based on rank
+  return (
+    <div className="hud-panel p-4">
+      <div className="mb-3 font-hud text-[10px] uppercase tracking-widest text-foreground/60">// TOP OPERATIVES — {label}</div>
+      <div className="grid grid-cols-3 items-end gap-3">
+        {order.map((r) => {
+          const actualRank = rows.indexOf(r) + 1;
+          const i = ranks.indexOf(actualRank);
+          return (
+            <div key={r.user_id} className="flex flex-col items-center">
+              <div className="relative">
+                {r.avatar_url ? (
+                  <img src={r.avatar_url} alt={r.username} className={`h-14 w-14 rounded-full border-2 object-cover ${colors[i].split(" ")[1]}`} />
+                ) : (
+                  <div className={`h-14 w-14 rounded-full border-2 bg-secondary ${colors[i].split(" ")[1]}`} />
+                )}
+                {actualRank === 1 && <Crown size={18} className="absolute -top-3 left-1/2 -translate-x-1/2 text-gold" />}
+              </div>
+              <div className="mt-1.5 max-w-full truncate font-display text-xs uppercase">{r.username}</div>
+              <div className={`font-mono text-sm font-bold ${colors[i].split(" ")[0]}`}>{valueOf(r)}</div>
+              <div className={`mt-2 flex w-full items-center justify-center rounded-t-sm border-x border-t bg-gradient-to-b from-gold/10 to-transparent ${heights[i]} ${colors[i].split(" ")[1]}`}>
+                <span className={`font-display text-3xl font-black ${colors[i].split(" ")[0]}`}>#{actualRank}</span>
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
