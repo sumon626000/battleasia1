@@ -140,9 +140,9 @@ export function StoriesRail() {
             {(() => {
               const s = groups[viewer.gi].stories[viewer.si];
               return s.media_type === "video" ? (
-                <video src={s.media_url} autoPlay playsInline className="h-full w-full object-contain" />
+                <SignedVideo src={s.media_url} autoPlay playsInline className="h-full w-full object-contain" />
               ) : (
-                <img src={s.media_url} alt="story" className="h-full w-full object-contain" />
+                <SignedImage src={s.media_url} alt="story" className="h-full w-full object-contain" />
               );
             })()}
 
