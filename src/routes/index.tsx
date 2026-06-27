@@ -6,6 +6,7 @@ import {
   Smartphone, Download, ChevronRight, Crosshair,
   Radio, Flame, Star, TrendingUp, Activity, Users2,
   User, Users, UsersRound, Crosshair as Target,
+  Crown, Medal, Award,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import {
