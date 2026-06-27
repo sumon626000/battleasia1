@@ -140,6 +140,45 @@ export type Database = {
         }
         Relationships: []
       }
+      backup_logs: {
+        Row: {
+          backup_type: string
+          completed_at: string | null
+          created_at: string
+          error_message: string | null
+          file_path: string | null
+          file_size_bytes: number | null
+          id: number
+          initiated_by_admin_id: string | null
+          started_at: string
+          status: string
+        }
+        Insert: {
+          backup_type?: string
+          completed_at?: string | null
+          created_at?: string
+          error_message?: string | null
+          file_path?: string | null
+          file_size_bytes?: number | null
+          id?: number
+          initiated_by_admin_id?: string | null
+          started_at?: string
+          status?: string
+        }
+        Update: {
+          backup_type?: string
+          completed_at?: string | null
+          created_at?: string
+          error_message?: string | null
+          file_path?: string | null
+          file_size_bytes?: number | null
+          id?: number
+          initiated_by_admin_id?: string | null
+          started_at?: string
+          status?: string
+        }
+        Relationships: []
+      }
       balance_logs: {
         Row: {
           admin_id: string | null
@@ -545,6 +584,54 @@ export type Database = {
         }
         Relationships: []
       }
+      login_history: {
+        Row: {
+          browser: string | null
+          browser_version: string | null
+          country_code: string | null
+          country_name: string | null
+          created_at: string
+          device: string | null
+          id: number
+          ip_address: string | null
+          login_at: string
+          os: string | null
+          platform: string | null
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          browser?: string | null
+          browser_version?: string | null
+          country_code?: string | null
+          country_name?: string | null
+          created_at?: string
+          device?: string | null
+          id?: number
+          ip_address?: string | null
+          login_at?: string
+          os?: string | null
+          platform?: string | null
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          browser?: string | null
+          browser_version?: string | null
+          country_code?: string | null
+          country_name?: string | null
+          created_at?: string
+          device?: string | null
+          id?: number
+          ip_address?: string | null
+          login_at?: string
+          os?: string | null
+          platform?: string | null
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       match_participants: {
         Row: {
           created_at: string
@@ -839,6 +926,51 @@ export type Database = {
           title?: string
           type?: string | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      online_sessions: {
+        Row: {
+          browser: string | null
+          country_code: string | null
+          created_at: string
+          device: string | null
+          expires_at: string
+          id: number
+          ip_address: string | null
+          last_seen_at: string
+          os: string | null
+          session_token: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          browser?: string | null
+          country_code?: string | null
+          created_at?: string
+          device?: string | null
+          expires_at?: string
+          id?: number
+          ip_address?: string | null
+          last_seen_at?: string
+          os?: string | null
+          session_token: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          browser?: string | null
+          country_code?: string | null
+          created_at?: string
+          device?: string | null
+          expires_at?: string
+          id?: number
+          ip_address?: string | null
+          last_seen_at?: string
+          os?: string | null
+          session_token?: string
+          user_agent?: string | null
+          user_id?: string
         }
         Relationships: []
       }
@@ -1648,6 +1780,8 @@ export type Database = {
       admin_delete_premium_plan: { Args: { p_id: number }; Returns: undefined }
       admin_delete_shop_category: { Args: { p_id: number }; Returns: undefined }
       admin_delete_shop_package: { Args: { p_id: number }; Returns: undefined }
+      admin_force_logout_all: { Args: never; Returns: number }
+      admin_force_logout_user: { Args: { _user_id: string }; Returns: number }
       admin_publish_match_result: {
         Args: {
           p_match_id: number
@@ -1765,11 +1899,30 @@ export type Database = {
         }
         Returns: boolean
       }
+      heartbeat_session: {
+        Args: { _session_token: string }
+        Returns: undefined
+      }
       increment_feed_view: { Args: { p_post_id: number }; Returns: undefined }
       is_admin: { Args: never; Returns: boolean }
       join_match: { Args: { p_match_id: number }; Returns: number }
       mark_notifications_read: { Args: { p_ids?: number[] }; Returns: number }
       mark_ticket_read: { Args: { p_ticket_id: number }; Returns: undefined }
+      record_login_event: {
+        Args: {
+          _browser: string
+          _browser_version: string
+          _country_code: string
+          _country_name: string
+          _device: string
+          _ip: string
+          _os: string
+          _platform: string
+          _session_token: string
+          _user_agent: string
+        }
+        Returns: undefined
+      }
       send_support_message: {
         Args: { p_message: string; p_ticket_id: number }
         Returns: number
