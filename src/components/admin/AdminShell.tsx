@@ -227,10 +227,20 @@ export function AdminShell({
             >
               <ArrowLeft size={14} /> Home
             </Link>
+            {onAdminSignOut ? (
+              <button
+                type="button"
+                onClick={onAdminSignOut}
+                className="flex items-center gap-1.5 rounded border border-destructive/60 px-2.5 py-1.5 font-hud text-[11px] sm:text-xs uppercase tracking-widest text-destructive hover:bg-destructive/10"
+              >
+                Sign Out
+              </button>
+            ) : null}
           </div>
 
         </div>
       </header>
+
 
       <div className="mx-auto flex max-w-[1600px]">
         <aside className="hidden w-64 shrink-0 border-r border-border/70 bg-card/40 lg:block">
