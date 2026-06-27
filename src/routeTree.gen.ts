@@ -39,6 +39,7 @@ import { Route as AdminAdminMatchesRouteImport } from './routes/_admin/admin.mat
 import { Route as AdminAdminGamesRouteImport } from './routes/_admin/admin.games'
 import { Route as AdminAdminFeedRouteImport } from './routes/_admin/admin.feed'
 import { Route as AdminAdminDepositsRouteImport } from './routes/_admin/admin.deposits'
+import { Route as AdminAdminChannelsRouteImport } from './routes/_admin/admin.channels'
 import { Route as AdminAdminBalancesRouteImport } from './routes/_admin/admin.balances'
 import { Route as AuthenticatedDashboardMatchesMatchIdRouteImport } from './routes/_authenticated/dashboard.matches.$matchId'
 import { Route as AuthenticatedDashboardFeedPostIdRouteImport } from './routes/_authenticated/dashboard.feed.$postId'
@@ -201,6 +202,11 @@ const AdminAdminDepositsRoute = AdminAdminDepositsRouteImport.update({
   path: '/admin/deposits',
   getParentRoute: () => AdminRouteRoute,
 } as any)
+const AdminAdminChannelsRoute = AdminAdminChannelsRouteImport.update({
+  id: '/admin/channels',
+  path: '/admin/channels',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
 const AdminAdminBalancesRoute = AdminAdminBalancesRouteImport.update({
   id: '/admin/balances',
   path: '/admin/balances',
@@ -227,6 +233,7 @@ export interface FileRoutesByFullPath {
   '/email/verify': typeof EmailVerifyRoute
   '/p/$slug': typeof PSlugRoute
   '/admin/balances': typeof AdminAdminBalancesRoute
+  '/admin/channels': typeof AdminAdminChannelsRoute
   '/admin/deposits': typeof AdminAdminDepositsRoute
   '/admin/feed': typeof AdminAdminFeedRoute
   '/admin/games': typeof AdminAdminGamesRoute
@@ -260,6 +267,7 @@ export interface FileRoutesByTo {
   '/email/verify': typeof EmailVerifyRoute
   '/p/$slug': typeof PSlugRoute
   '/admin/balances': typeof AdminAdminBalancesRoute
+  '/admin/channels': typeof AdminAdminChannelsRoute
   '/admin/deposits': typeof AdminAdminDepositsRoute
   '/admin/feed': typeof AdminAdminFeedRoute
   '/admin/games': typeof AdminAdminGamesRoute
@@ -296,6 +304,7 @@ export interface FileRoutesById {
   '/email/verify': typeof EmailVerifyRoute
   '/p/$slug': typeof PSlugRoute
   '/_admin/admin/balances': typeof AdminAdminBalancesRoute
+  '/_admin/admin/channels': typeof AdminAdminChannelsRoute
   '/_admin/admin/deposits': typeof AdminAdminDepositsRoute
   '/_admin/admin/feed': typeof AdminAdminFeedRoute
   '/_admin/admin/games': typeof AdminAdminGamesRoute
@@ -331,6 +340,7 @@ export interface FileRouteTypes {
     | '/email/verify'
     | '/p/$slug'
     | '/admin/balances'
+    | '/admin/channels'
     | '/admin/deposits'
     | '/admin/feed'
     | '/admin/games'
@@ -364,6 +374,7 @@ export interface FileRouteTypes {
     | '/email/verify'
     | '/p/$slug'
     | '/admin/balances'
+    | '/admin/channels'
     | '/admin/deposits'
     | '/admin/feed'
     | '/admin/games'
@@ -399,6 +410,7 @@ export interface FileRouteTypes {
     | '/email/verify'
     | '/p/$slug'
     | '/_admin/admin/balances'
+    | '/_admin/admin/channels'
     | '/_admin/admin/deposits'
     | '/_admin/admin/feed'
     | '/_admin/admin/games'
@@ -647,6 +659,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAdminDepositsRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/_admin/admin/channels': {
+      id: '/_admin/admin/channels'
+      path: '/admin/channels'
+      fullPath: '/admin/channels'
+      preLoaderRoute: typeof AdminAdminChannelsRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
     '/_admin/admin/balances': {
       id: '/_admin/admin/balances'
       path: '/admin/balances'
@@ -673,6 +692,7 @@ declare module '@tanstack/react-router' {
 
 interface AdminRouteRouteChildren {
   AdminAdminBalancesRoute: typeof AdminAdminBalancesRoute
+  AdminAdminChannelsRoute: typeof AdminAdminChannelsRoute
   AdminAdminDepositsRoute: typeof AdminAdminDepositsRoute
   AdminAdminFeedRoute: typeof AdminAdminFeedRoute
   AdminAdminGamesRoute: typeof AdminAdminGamesRoute
@@ -689,6 +709,7 @@ interface AdminRouteRouteChildren {
 
 const AdminRouteRouteChildren: AdminRouteRouteChildren = {
   AdminAdminBalancesRoute: AdminAdminBalancesRoute,
+  AdminAdminChannelsRoute: AdminAdminChannelsRoute,
   AdminAdminDepositsRoute: AdminAdminDepositsRoute,
   AdminAdminFeedRoute: AdminAdminFeedRoute,
   AdminAdminGamesRoute: AdminAdminGamesRoute,
