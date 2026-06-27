@@ -2,7 +2,6 @@ import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { ArrowLeft, ImagePlus, Loader2, X } from "lucide-react";
 import { toast } from "sonner";
-import { SiteShell } from "@/components/site/SiteShell";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 
