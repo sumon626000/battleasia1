@@ -89,6 +89,36 @@ export type Database = {
         }
         Relationships: []
       }
+      admin_totp_secrets: {
+        Row: {
+          created_at: string
+          enabled: boolean
+          last_verified_at: string | null
+          recovery_codes: string[]
+          secret: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          enabled?: boolean
+          last_verified_at?: string | null
+          recovery_codes?: string[]
+          secret: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          enabled?: boolean
+          last_verified_at?: string | null
+          recovery_codes?: string[]
+          secret?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       apk_versions: {
         Row: {
           apk_file_url: string
@@ -1088,6 +1118,7 @@ export type Database = {
         Row: {
           avatar_url: string | null
           bac_coin_balance: number
+          bio: string | null
           country: string | null
           country_code: string | null
           cover_url: string | null
@@ -1105,6 +1136,7 @@ export type Database = {
           pubg_id: string | null
           referral_code: string | null
           referred_by: string | null
+          social_links: Json
           suspension_reason: string | null
           updated_at: string
           username: string | null
@@ -1112,6 +1144,7 @@ export type Database = {
         Insert: {
           avatar_url?: string | null
           bac_coin_balance?: number
+          bio?: string | null
           country?: string | null
           country_code?: string | null
           cover_url?: string | null
@@ -1129,6 +1162,7 @@ export type Database = {
           pubg_id?: string | null
           referral_code?: string | null
           referred_by?: string | null
+          social_links?: Json
           suspension_reason?: string | null
           updated_at?: string
           username?: string | null
@@ -1136,6 +1170,7 @@ export type Database = {
         Update: {
           avatar_url?: string | null
           bac_coin_balance?: number
+          bio?: string | null
           country?: string | null
           country_code?: string | null
           cover_url?: string | null
@@ -1153,6 +1188,7 @@ export type Database = {
           pubg_id?: string | null
           referral_code?: string | null
           referred_by?: string | null
+          social_links?: Json
           suspension_reason?: string | null
           updated_at?: string
           username?: string | null
