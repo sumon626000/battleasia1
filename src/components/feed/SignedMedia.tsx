@@ -2,17 +2,56 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
 const cache = new Map<string, string>();
+// Pending sign requests batched per tick to reduce round-trips.
+let pending: { path: string; raw: string; resolve: (url: string) => void }[] = [];
+let flushTimer: ReturnType<typeof setTimeout> | null = null;
 
 function extractPath(url: string): string | null {
   const m = url.match(/\/social-media\/(.+?)(?:\?|$)/);
   return m ? m[1] : null;
 }
 
+function scheduleFlush() {
+  if (flushTimer) return;
+  flushTimer = setTimeout(async () => {
+    const batch = pending;
+    pending = [];
+    flushTimer = null;
+    if (!batch.length) return;
+    // Dedupe by path
+    const unique = Array.from(new Set(batch.map((b) => b.path)));
+    try {
+      const { data } = await supabase.storage
+        .from("social-media")
+        .createSignedUrls(unique, 60 * 60 * 24 * 30);
+      const map: Record<string, string> = {};
+      (data ?? []).forEach((d: any) => { if (d?.path && d?.signedUrl) map[d.path] = d.signedUrl; });
+      batch.forEach((b) => {
+        const signed = map[b.path];
+        if (signed) {
+          cache.set(b.raw, signed);
+          b.resolve(signed);
+        } else {
+          b.resolve(b.raw);
+        }
+      });
+    } catch {
+      batch.forEach((b) => b.resolve(b.raw));
+    }
+  }, 16);
+}
+
+function requestSign(raw: string, path: string): Promise<string> {
+  return new Promise((resolve) => {
+    pending.push({ raw, path, resolve });
+    scheduleFlush();
+  });
+}
+
 export function useSignedMediaUrl(rawUrl: string | null | undefined): string | null {
   const [url, setUrl] = useState<string | null>(() => {
     if (!rawUrl) return null;
     if (cache.has(rawUrl)) return cache.get(rawUrl)!;
-    // Already a signed URL? Use it directly.
     if (rawUrl.includes("/object/sign/") || rawUrl.includes("token=")) return rawUrl;
     return null;
   });
@@ -28,11 +67,7 @@ export function useSignedMediaUrl(rawUrl: string | null | undefined): string | n
     const path = extractPath(rawUrl);
     if (!path) { setUrl(rawUrl); return; }
     let cancelled = false;
-    supabase.storage.from("social-media").createSignedUrl(path, 60 * 60 * 24 * 30).then(({ data, error }) => {
-      if (cancelled || error || !data) return;
-      cache.set(rawUrl, data.signedUrl);
-      setUrl(data.signedUrl);
-    });
+    requestSign(rawUrl, path).then((u) => { if (!cancelled) setUrl(u); });
     return () => { cancelled = true; };
   }, [rawUrl]);
 
@@ -41,12 +76,12 @@ export function useSignedMediaUrl(rawUrl: string | null | undefined): string | n
 
 export function SignedImage({ src, ...rest }: React.ImgHTMLAttributes<HTMLImageElement> & { src: string | null }) {
   const url = useSignedMediaUrl(src);
-  if (!url) return <div className="h-64 w-full animate-pulse bg-card/40" />;
-  return <img src={url} {...rest} />;
+  if (!url) return <div className="aspect-square w-full animate-pulse bg-card/40" />;
+  return <img src={url} decoding="async" {...rest} />;
 }
 
 export function SignedVideo({ src, ...rest }: React.VideoHTMLAttributes<HTMLVideoElement> & { src: string | null }) {
   const url = useSignedMediaUrl(src);
-  if (!url) return <div className="h-64 w-full animate-pulse bg-card/40" />;
-  return <video src={url} {...rest} />;
+  if (!url) return <div className="aspect-square w-full animate-pulse bg-card/40" />;
+  return <video src={url} preload="metadata" playsInline {...rest} />;
 }
