@@ -1228,6 +1228,27 @@ export type Database = {
         }
         Relationships: []
       }
+      rate_limit_hits: {
+        Row: {
+          action_key: string
+          created_at: string
+          id: number
+          user_id: string
+        }
+        Insert: {
+          action_key: string
+          created_at?: string
+          id?: number
+          user_id: string
+        }
+        Update: {
+          action_key?: string
+          created_at?: string
+          id?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
       referral_configs: {
         Row: {
           deposit_commission: number
@@ -1957,6 +1978,10 @@ export type Database = {
       admin_unsuspend_user: { Args: { p_user_id: string }; Returns: undefined }
       archive_notification: { Args: { p_id: number }; Returns: undefined }
       buy_premium: { Args: { p_plan_id: number }; Returns: number }
+      check_rate_limit: {
+        Args: { _action: string; _max: number; _window_secs: number }
+        Returns: undefined
+      }
       close_support_ticket: {
         Args: { p_ticket_id: number }
         Returns: undefined

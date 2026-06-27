@@ -66,6 +66,7 @@ import { Route as AdminAdminMatchesRouteImport } from './routes/_admin/admin.mat
 import { Route as AdminAdminLoginHistoryRouteImport } from './routes/_admin/admin.login-history'
 import { Route as AdminAdminGamesRouteImport } from './routes/_admin/admin.games'
 import { Route as AdminAdminFeedRouteImport } from './routes/_admin/admin.feed'
+import { Route as AdminAdminEmailSetupRouteImport } from './routes/_admin/admin.email-setup'
 import { Route as AdminAdminDepositsRouteImport } from './routes/_admin/admin.deposits'
 import { Route as AdminAdminCoinRatesRouteImport } from './routes/_admin/admin.coin-rates'
 import { Route as AdminAdminChannelsRouteImport } from './routes/_admin/admin.channels'
@@ -375,6 +376,11 @@ const AdminAdminFeedRoute = AdminAdminFeedRouteImport.update({
   path: '/admin/feed',
   getParentRoute: () => AdminRouteRoute,
 } as any)
+const AdminAdminEmailSetupRoute = AdminAdminEmailSetupRouteImport.update({
+  id: '/admin/email-setup',
+  path: '/admin/email-setup',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
 const AdminAdminDepositsRoute = AdminAdminDepositsRouteImport.update({
   id: '/admin/deposits',
   path: '/admin/deposits',
@@ -458,6 +464,7 @@ export interface FileRoutesByFullPath {
   '/admin/channels': typeof AdminAdminChannelsRoute
   '/admin/coin-rates': typeof AdminAdminCoinRatesRoute
   '/admin/deposits': typeof AdminAdminDepositsRoute
+  '/admin/email-setup': typeof AdminAdminEmailSetupRoute
   '/admin/feed': typeof AdminAdminFeedRoute
   '/admin/games': typeof AdminAdminGamesRoute
   '/admin/login-history': typeof AdminAdminLoginHistoryRoute
@@ -524,6 +531,7 @@ export interface FileRoutesByTo {
   '/admin/channels': typeof AdminAdminChannelsRoute
   '/admin/coin-rates': typeof AdminAdminCoinRatesRoute
   '/admin/deposits': typeof AdminAdminDepositsRoute
+  '/admin/email-setup': typeof AdminAdminEmailSetupRoute
   '/admin/feed': typeof AdminAdminFeedRoute
   '/admin/games': typeof AdminAdminGamesRoute
   '/admin/login-history': typeof AdminAdminLoginHistoryRoute
@@ -594,6 +602,7 @@ export interface FileRoutesById {
   '/_admin/admin/channels': typeof AdminAdminChannelsRoute
   '/_admin/admin/coin-rates': typeof AdminAdminCoinRatesRoute
   '/_admin/admin/deposits': typeof AdminAdminDepositsRoute
+  '/_admin/admin/email-setup': typeof AdminAdminEmailSetupRoute
   '/_admin/admin/feed': typeof AdminAdminFeedRoute
   '/_admin/admin/games': typeof AdminAdminGamesRoute
   '/_admin/admin/login-history': typeof AdminAdminLoginHistoryRoute
@@ -663,6 +672,7 @@ export interface FileRouteTypes {
     | '/admin/channels'
     | '/admin/coin-rates'
     | '/admin/deposits'
+    | '/admin/email-setup'
     | '/admin/feed'
     | '/admin/games'
     | '/admin/login-history'
@@ -729,6 +739,7 @@ export interface FileRouteTypes {
     | '/admin/channels'
     | '/admin/coin-rates'
     | '/admin/deposits'
+    | '/admin/email-setup'
     | '/admin/feed'
     | '/admin/games'
     | '/admin/login-history'
@@ -798,6 +809,7 @@ export interface FileRouteTypes {
     | '/_admin/admin/channels'
     | '/_admin/admin/coin-rates'
     | '/_admin/admin/deposits'
+    | '/_admin/admin/email-setup'
     | '/_admin/admin/feed'
     | '/_admin/admin/games'
     | '/_admin/admin/login-history'
@@ -1261,6 +1273,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAdminFeedRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/_admin/admin/email-setup': {
+      id: '/_admin/admin/email-setup'
+      path: '/admin/email-setup'
+      fullPath: '/admin/email-setup'
+      preLoaderRoute: typeof AdminAdminEmailSetupRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
     '/_admin/admin/deposits': {
       id: '/_admin/admin/deposits'
       path: '/admin/deposits'
@@ -1343,6 +1362,7 @@ interface AdminRouteRouteChildren {
   AdminAdminChannelsRoute: typeof AdminAdminChannelsRoute
   AdminAdminCoinRatesRoute: typeof AdminAdminCoinRatesRoute
   AdminAdminDepositsRoute: typeof AdminAdminDepositsRoute
+  AdminAdminEmailSetupRoute: typeof AdminAdminEmailSetupRoute
   AdminAdminFeedRoute: typeof AdminAdminFeedRoute
   AdminAdminGamesRoute: typeof AdminAdminGamesRoute
   AdminAdminLoginHistoryRoute: typeof AdminAdminLoginHistoryRoute
@@ -1377,6 +1397,7 @@ const AdminRouteRouteChildren: AdminRouteRouteChildren = {
   AdminAdminChannelsRoute: AdminAdminChannelsRoute,
   AdminAdminCoinRatesRoute: AdminAdminCoinRatesRoute,
   AdminAdminDepositsRoute: AdminAdminDepositsRoute,
+  AdminAdminEmailSetupRoute: AdminAdminEmailSetupRoute,
   AdminAdminFeedRoute: AdminAdminFeedRoute,
   AdminAdminGamesRoute: AdminAdminGamesRoute,
   AdminAdminLoginHistoryRoute: AdminAdminLoginHistoryRoute,
