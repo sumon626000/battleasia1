@@ -216,16 +216,16 @@ function BattleAsiaLanding() {
             <div className="relative mt-3 h-28 w-28 drop-shadow-[0_0_30px_rgba(212,175,55,0.45)]">
               <img loading="lazy" decoding="async" src={bacCoin} alt="BAC Coin" width={224} height={224} className="h-full w-full object-contain" />
             </div>
-            <h3 className="font-display mt-1 text-2xl font-bold text-gold">BAC COIN</h3>
+            <h3 className="font-display mt-1 text-2xl font-bold text-gold">{t("home.bacCoin")}</h3>
             <p className="text-sm text-muted-foreground">
-              The Official Currency of<br />Battle Asia Ecosystem
+              {t("home.bacDesc")}
             </p>
             <div className="my-3 flex w-full items-center gap-3">
               <span className="hud-divider flex-1" />
               <span className="font-mono-tab inline-flex items-center gap-1 text-[10px] tracking-widest text-gold">1 BAC = 1 <CoinIcon size={10} /></span>
               <span className="hud-divider flex-1" />
             </div>
-            <button className="btn-gold w-full px-6 py-2.5 text-sm">BUY NOW</button>
+            <button className="btn-gold w-full px-6 py-2.5 text-sm">{t("home.buyNow")}</button>
           </div>
         </div>
         <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-gold/50 to-transparent" />
