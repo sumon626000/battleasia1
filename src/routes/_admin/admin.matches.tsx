@@ -278,10 +278,10 @@ function EditorModal({
         </div>
 
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-          <Field label="Match Name"><input className={inp} value={draft.match_name ?? ""} onChange={(e) => upd({ match_name: e.target.value })} /></Field>
-          <Field label="Map"><input className={inp} value={draft.map_name ?? ""} onChange={(e) => upd({ map_name: e.target.value })} /></Field>
-          <Field label="Schedule (local)"><input type="datetime-local" className={inp} value={draft.schedule_at ?? ""} onChange={(e) => upd({ schedule_at: e.target.value })} /></Field>
-          <Field label="Total Players"><input type="number" className={inp} value={draft.total_players ?? 0} onChange={(e) => upd({ total_players: Number(e.target.value) })} /></Field>
+          <Field label="Match Name" required><input className={inp} value={draft.match_name ?? ""} onChange={(e) => upd({ match_name: e.target.value })} /></Field>
+          <Field label="Map" required><input className={inp} value={draft.map_name ?? ""} onChange={(e) => upd({ map_name: e.target.value })} /></Field>
+          <Field label="Schedule (local)" required><input type="datetime-local" className={inp} value={draft.schedule_at ?? ""} onChange={(e) => upd({ schedule_at: e.target.value })} /></Field>
+          <Field label="Total Players" required><input type="number" className={inp} value={draft.total_players ?? 0} onChange={(e) => upd({ total_players: Number(e.target.value) })} /></Field>
 
           <Select label="Status" value={draft.status} options={STATUS} onChange={(v) => upd({ status: v })} />
           <Select label="Match Type" value={draft.match_type} options={MATCH_TYPE} onChange={(v) => upd({ match_type: v })} />
