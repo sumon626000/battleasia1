@@ -1,13 +1,24 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Smartphone, Plus, Pencil, Trash2, Download } from "lucide-react";
+import { Smartphone, Plus, Pencil, Trash2, Download, Upload, Loader2 } from "lucide-react";
 
 export const Route = createFileRoute("/_admin/admin/apk")({
   component: AdminApkPage,
 });
+
+const BUCKET = "apk-files";
+
+function formatSize(b: number) {
+  if (!b) return "0 B";
+  const u = ["B", "KB", "MB", "GB"];
+  let i = 0;
+  let n = b;
+  while (n >= 1024 && i < u.length - 1) { n /= 1024; i++; }
+  return `${n.toFixed(1)} ${u[i]}`;
+}
 
 type Apk = {
   id: number;
@@ -25,6 +36,8 @@ type Apk = {
 function AdminApkPage() {
   const qc = useQueryClient();
   const [editing, setEditing] = useState<Partial<Apk> | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const fileRef = useRef<HTMLInputElement | null>(null);
 
   const q = useQuery({
     queryKey: ["admin-apk"],
@@ -65,6 +78,37 @@ function AdminApkPage() {
     toast.success("Saved");
     setEditing(null);
     qc.invalidateQueries({ queryKey: ["admin-apk"] });
+  }
+
+  async function uploadApk(file: File) {
+    if (!file.name.toLowerCase().endsWith(".apk")) {
+      toast.error("Only .apk files are allowed");
+      return;
+    }
+    setUploading(true);
+    try {
+      const path = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, "_")}`;
+      const { error: upErr } = await supabase.storage.from(BUCKET).upload(path, file, {
+        contentType: "application/vnd.android.package-archive",
+        upsert: false,
+      });
+      if (upErr) throw upErr;
+      // private bucket — generate a long-lived signed URL (1 year)
+      const { data: signed, error: sErr } = await supabase.storage
+        .from(BUCKET)
+        .createSignedUrl(path, 60 * 60 * 24 * 365);
+      if (sErr) throw sErr;
+      setEditing((e) => ({
+        ...(e ?? { app_name: "BattleAsia", is_active: true, force_update: false }),
+        apk_file_url: signed.signedUrl,
+        file_size_bytes: file.size,
+      }));
+      toast.success("APK uploaded — fill version & save");
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setUploading(false);
+    }
   }
 
   async function remove(id: number) {
@@ -140,7 +184,30 @@ function AdminApkPage() {
               <Field label="Version Code"><input type="number" className="hud-input" value={editing.version_code ?? 0} onChange={(e) => setEditing({ ...editing, version_code: Number(e.target.value) })} /></Field>
               <Field label="Size (bytes)"><input type="number" className="hud-input" value={editing.file_size_bytes ?? 0} onChange={(e) => setEditing({ ...editing, file_size_bytes: Number(e.target.value) })} /></Field>
             </div>
-            <Field label="APK File URL"><input className="hud-input" value={editing.apk_file_url ?? ""} onChange={(e) => setEditing({ ...editing, apk_file_url: e.target.value })} /></Field>
+            <div className="rounded border border-dashed border-gold/40 bg-gold/5 p-3">
+              <div className="font-hud text-[10px] uppercase tracking-widest text-muted-foreground mb-2">Upload .apk File</div>
+              <input
+                ref={fileRef}
+                type="file"
+                accept=".apk,application/vnd.android.package-archive"
+                className="hidden"
+                onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadApk(f); e.target.value = ""; }}
+              />
+              <button
+                type="button"
+                onClick={() => fileRef.current?.click()}
+                disabled={uploading}
+                className="flex w-full items-center justify-center gap-2 rounded border border-gold/60 bg-gold/10 px-3 py-2 font-hud text-xs uppercase tracking-widest text-gold hover:bg-gold/20 disabled:opacity-50"
+              >
+                {uploading ? <><Loader2 size={14} className="animate-spin" /> Uploading…</> : <><Upload size={14} /> Choose APK File</>}
+              </button>
+              {editing.apk_file_url && (
+                <div className="mt-2 truncate font-mono text-[10px] text-muted-foreground">
+                  ✓ {formatSize(editing.file_size_bytes ?? 0)} — link saved
+                </div>
+              )}
+            </div>
+            <Field label="APK File URL (auto-filled or paste)"><input className="hud-input" value={editing.apk_file_url ?? ""} onChange={(e) => setEditing({ ...editing, apk_file_url: e.target.value })} /></Field>
             <Field label="Changelog"><textarea rows={4} className="hud-input" value={editing.changelog ?? ""} onChange={(e) => setEditing({ ...editing, changelog: e.target.value })} /></Field>
             <div className="flex gap-4">
               <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={editing.is_active ?? false} onChange={(e) => setEditing({ ...editing, is_active: e.target.checked })} /> Active</label>
