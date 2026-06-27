@@ -330,12 +330,42 @@ function ProfilePage() {
 
   const initials = (profile?.in_game_username || profile?.username || "PL").slice(0, 2).toUpperCase();
   const balance = Number(profile?.bac_coin_balance ?? 0);
+  const coverUrl = (profile as { cover_url?: string | null } | null)?.cover_url ?? null;
 
   return (
     <div className="space-y-5">
       {/* Header */}
       <div className="hud-panel relative overflow-hidden p-5 sm:p-6">
-        <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-center sm:gap-6">
+        {/* Cover image */}
+        <div
+          className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-gold/10 to-transparent"
+          style={
+            coverUrl
+              ? {
+                  backgroundImage: `linear-gradient(to bottom, rgba(8,10,14,0.35), rgba(8,10,14,0.95)), url(${coverUrl})`,
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                }
+              : undefined
+          }
+        />
+        <button
+          type="button"
+          onClick={() => coverInputRef.current?.click()}
+          disabled={uploadingCover}
+          className="absolute right-3 top-3 z-10 inline-flex items-center gap-1 rounded-sm border border-gold/60 bg-background/80 px-2 py-1 font-hud text-[10px] uppercase tracking-widest text-gold backdrop-blur transition hover:bg-gold hover:text-background disabled:opacity-60"
+        >
+          {uploadingCover ? <Loader2 size={12} className="animate-spin" /> : <ImagePlus size={12} />}
+          {coverUrl ? "Change Cover" : "Add Cover"}
+        </button>
+        <input
+          ref={coverInputRef}
+          type="file"
+          accept="image/png,image/jpeg,image/webp"
+          hidden
+          onChange={onCoverChange}
+        />
+        <div className="relative z-[1] flex flex-col items-center gap-4 pt-12 sm:flex-row sm:items-center sm:gap-6 sm:pt-16">
           <div className="relative">
             <div className="grid h-24 w-24 place-items-center overflow-hidden rounded-md border-2 border-gold/60 bg-gold/10 sm:h-28 sm:w-28">
               {profile?.avatar_url ? (
