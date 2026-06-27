@@ -104,10 +104,11 @@
     content: "";
     position: absolute;
     inset: 0;
-    background: linear-gradient(120deg, transparent 30%, oklch(1 0 0 / 0.55) 50%, transparent 70%);
+    background: linear-gradient(120deg, transparent 35%, oklch(1 0 0 / 0.5) 50%, transparent 65%);
     transform: translateX(-120%);
-    transition: transform 0.7s cubic-bezier(.2,.8,.2,1);
+    animation: btn-shine 3.6s ease-in-out infinite;
     pointer-events: none;
+    will-change: transform;
   }
   &:hover {
     filter: brightness(1.1);
@@ -116,7 +117,8 @@
                 0 12px 36px -6px color-mix(in oklab, var(--gold) 70%, transparent),
                 inset 0 1px 0 oklch(1 0 0 / 0.35);
   }
-  &:hover::before { transform: translateX(120%); }
+  &:hover::before { animation-duration: 1.4s; }
+
   &:active { transform: translateY(0); }
 }
 
