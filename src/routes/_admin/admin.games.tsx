@@ -20,6 +20,7 @@ type Game = {
   status: "active" | "inactive";
   coming_soon: boolean;
   sort_order: number;
+  live_stream_url: string | null;
   deleted_at: string | null;
 };
 
