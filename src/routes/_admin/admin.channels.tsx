@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { ImageUploader } from "@/components/admin/ImageUploader";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -147,11 +148,13 @@ function AdminChannelsPage() {
                 onChange={(e) => setEditing({ ...editing, description: e.target.value })}
               />
             </Field>
-            <Field label="Icon URL">
-              <input
-                className="hud-input"
-                value={editing.icon_url ?? ""}
-                onChange={(e) => setEditing({ ...editing, icon_url: e.target.value })}
+            <Field label="Icon">
+              <ImageUploader
+                value={editing.icon_url}
+                onChange={(u) => setEditing({ ...editing, icon_url: u })}
+                folder="channels"
+                aspect="1/1"
+                maxSize={512}
               />
             </Field>
             <div className="grid grid-cols-2 gap-3">

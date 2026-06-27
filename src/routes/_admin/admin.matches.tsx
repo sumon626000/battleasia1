@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { ImageUploader } from "@/components/admin/ImageUploader";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -295,8 +296,8 @@ function EditorModal({
 
           <Field label="Sponsor"><input className={inp} value={draft.sponsor ?? ""} onChange={(e) => upd({ sponsor: e.target.value })} /></Field>
           <Field label="Match URL"><input className={inp} value={draft.match_url ?? ""} onChange={(e) => upd({ match_url: e.target.value })} /></Field>
-          <Field label="Banner URL"><input className={inp} value={draft.banner_image_url ?? ""} onChange={(e) => upd({ banner_image_url: e.target.value })} placeholder="Pick from library below or paste URL" /></Field>
-          <Field label="Map Image URL"><input className={inp} value={draft.map_image_url ?? ""} onChange={(e) => upd({ map_image_url: e.target.value })} /></Field>
+          <Field label="Banner Image"><ImageUploader value={draft.banner_image_url} onChange={(u) => upd({ banner_image_url: u })} folder="match-banners" aspect="16/9" /></Field>
+          <Field label="Map Image"><ImageUploader value={draft.map_image_url} onChange={(u) => upd({ map_image_url: u })} folder="match-maps" aspect="16/9" /></Field>
 
           <label className="flex items-center gap-2 font-hud text-xs uppercase tracking-widest text-foreground/80">
             <input type="checkbox" checked={!!draft.premium_only} onChange={(e) => upd({ premium_only: e.target.checked })} />

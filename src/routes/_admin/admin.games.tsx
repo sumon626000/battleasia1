@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { ImageUploader } from "@/components/admin/ImageUploader";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -161,8 +162,8 @@ function AdminGamesPage() {
               <Field label="Package Name">
                 <input value={editing.package_name ?? ""} onChange={(e) => setEditing({ ...editing, package_name: e.target.value })} className="w-full rounded border border-border/60 bg-background/60 px-3 py-2 font-hud text-sm" />
               </Field>
-              <Field label="Image URL">
-                <input value={editing.image_url ?? ""} onChange={(e) => setEditing({ ...editing, image_url: e.target.value })} className="w-full rounded border border-border/60 bg-background/60 px-3 py-2 font-hud text-sm" />
+              <Field label="Image">
+                <ImageUploader value={editing.image_url} onChange={(u) => setEditing({ ...editing, image_url: u })} folder="games" aspect="1/1" maxSize={512} />
               </Field>
               <Field label="ID Prefix">
                 <input value={editing.id_prefix ?? ""} onChange={(e) => setEditing({ ...editing, id_prefix: e.target.value })} className="w-full rounded border border-border/60 bg-background/60 px-3 py-2 font-hud text-sm" />
