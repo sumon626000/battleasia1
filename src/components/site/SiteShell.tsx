@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { SiteHeader } from "./SiteHeader";
 import { SiteTicker } from "./SiteTicker";
 import { SiteFooter } from "./SiteFooter";
+import { AnnouncementBar } from "./AnnouncementBar";
 
 export function SiteShell({ children }: { children: ReactNode }) {
   return (
@@ -12,6 +13,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
         <div className="absolute -right-24 top-[40%] h-80 w-80 rounded-full bg-gold/10 blur-[140px]" />
       </div>
 
+      <AnnouncementBar />
       <SiteHeader />
       <SiteTicker />
       <main className="flex-1">{children}</main>
@@ -19,3 +21,4 @@ export function SiteShell({ children }: { children: ReactNode }) {
     </div>
   );
 }
+
