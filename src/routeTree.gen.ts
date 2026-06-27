@@ -28,9 +28,12 @@ import { Route as AuthenticatedDashboardNotificationsRouteImport } from './route
 import { Route as AuthenticatedDashboardMyMatchesRouteImport } from './routes/_authenticated/dashboard.my-matches'
 import { Route as AuthenticatedDashboardMatchesRouteImport } from './routes/_authenticated/dashboard.matches'
 import { Route as AuthenticatedDashboardFeedRouteImport } from './routes/_authenticated/dashboard.feed'
+import { Route as AdminAdminWithdrawalsRouteImport } from './routes/_admin/admin.withdrawals'
 import { Route as AdminAdminUsersRouteImport } from './routes/_admin/admin.users'
+import { Route as AdminAdminShopRouteImport } from './routes/_admin/admin.shop'
 import { Route as AdminAdminResultsRouteImport } from './routes/_admin/admin.results'
 import { Route as AdminAdminMatchesRouteImport } from './routes/_admin/admin.matches'
+import { Route as AdminAdminDepositsRouteImport } from './routes/_admin/admin.deposits'
 import { Route as AuthenticatedDashboardMatchesMatchIdRouteImport } from './routes/_authenticated/dashboard.matches.$matchId'
 import { Route as AuthenticatedDashboardFeedPostIdRouteImport } from './routes/_authenticated/dashboard.feed.$postId'
 
@@ -137,9 +140,19 @@ const AuthenticatedDashboardFeedRoute =
     path: '/feed',
     getParentRoute: () => AuthenticatedDashboardRoute,
   } as any)
+const AdminAdminWithdrawalsRoute = AdminAdminWithdrawalsRouteImport.update({
+  id: '/admin/withdrawals',
+  path: '/admin/withdrawals',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
 const AdminAdminUsersRoute = AdminAdminUsersRouteImport.update({
   id: '/admin/users',
   path: '/admin/users',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminAdminShopRoute = AdminAdminShopRouteImport.update({
+  id: '/admin/shop',
+  path: '/admin/shop',
   getParentRoute: () => AdminRouteRoute,
 } as any)
 const AdminAdminResultsRoute = AdminAdminResultsRouteImport.update({
@@ -150,6 +163,11 @@ const AdminAdminResultsRoute = AdminAdminResultsRouteImport.update({
 const AdminAdminMatchesRoute = AdminAdminMatchesRouteImport.update({
   id: '/admin/matches',
   path: '/admin/matches',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminAdminDepositsRoute = AdminAdminDepositsRouteImport.update({
+  id: '/admin/deposits',
+  path: '/admin/deposits',
   getParentRoute: () => AdminRouteRoute,
 } as any)
 const AuthenticatedDashboardMatchesMatchIdRoute =
@@ -172,9 +190,12 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/email/verify': typeof EmailVerifyRoute
   '/p/$slug': typeof PSlugRoute
+  '/admin/deposits': typeof AdminAdminDepositsRoute
   '/admin/matches': typeof AdminAdminMatchesRoute
   '/admin/results': typeof AdminAdminResultsRoute
+  '/admin/shop': typeof AdminAdminShopRoute
   '/admin/users': typeof AdminAdminUsersRoute
+  '/admin/withdrawals': typeof AdminAdminWithdrawalsRoute
   '/dashboard/feed': typeof AuthenticatedDashboardFeedRouteWithChildren
   '/dashboard/matches': typeof AuthenticatedDashboardMatchesRouteWithChildren
   '/dashboard/my-matches': typeof AuthenticatedDashboardMyMatchesRoute
@@ -196,9 +217,12 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/email/verify': typeof EmailVerifyRoute
   '/p/$slug': typeof PSlugRoute
+  '/admin/deposits': typeof AdminAdminDepositsRoute
   '/admin/matches': typeof AdminAdminMatchesRoute
   '/admin/results': typeof AdminAdminResultsRoute
+  '/admin/shop': typeof AdminAdminShopRoute
   '/admin/users': typeof AdminAdminUsersRoute
+  '/admin/withdrawals': typeof AdminAdminWithdrawalsRoute
   '/dashboard/feed': typeof AuthenticatedDashboardFeedRouteWithChildren
   '/dashboard/matches': typeof AuthenticatedDashboardMatchesRouteWithChildren
   '/dashboard/my-matches': typeof AuthenticatedDashboardMyMatchesRoute
@@ -223,9 +247,12 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/email/verify': typeof EmailVerifyRoute
   '/p/$slug': typeof PSlugRoute
+  '/_admin/admin/deposits': typeof AdminAdminDepositsRoute
   '/_admin/admin/matches': typeof AdminAdminMatchesRoute
   '/_admin/admin/results': typeof AdminAdminResultsRoute
+  '/_admin/admin/shop': typeof AdminAdminShopRoute
   '/_admin/admin/users': typeof AdminAdminUsersRoute
+  '/_admin/admin/withdrawals': typeof AdminAdminWithdrawalsRoute
   '/_authenticated/dashboard/feed': typeof AuthenticatedDashboardFeedRouteWithChildren
   '/_authenticated/dashboard/matches': typeof AuthenticatedDashboardMatchesRouteWithChildren
   '/_authenticated/dashboard/my-matches': typeof AuthenticatedDashboardMyMatchesRoute
@@ -249,9 +276,12 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/email/verify'
     | '/p/$slug'
+    | '/admin/deposits'
     | '/admin/matches'
     | '/admin/results'
+    | '/admin/shop'
     | '/admin/users'
+    | '/admin/withdrawals'
     | '/dashboard/feed'
     | '/dashboard/matches'
     | '/dashboard/my-matches'
@@ -273,9 +303,12 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/email/verify'
     | '/p/$slug'
+    | '/admin/deposits'
     | '/admin/matches'
     | '/admin/results'
+    | '/admin/shop'
     | '/admin/users'
+    | '/admin/withdrawals'
     | '/dashboard/feed'
     | '/dashboard/matches'
     | '/dashboard/my-matches'
@@ -299,9 +332,12 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard'
     | '/email/verify'
     | '/p/$slug'
+    | '/_admin/admin/deposits'
     | '/_admin/admin/matches'
     | '/_admin/admin/results'
+    | '/_admin/admin/shop'
     | '/_admin/admin/users'
+    | '/_admin/admin/withdrawals'
     | '/_authenticated/dashboard/feed'
     | '/_authenticated/dashboard/matches'
     | '/_authenticated/dashboard/my-matches'
@@ -462,11 +498,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardFeedRouteImport
       parentRoute: typeof AuthenticatedDashboardRoute
     }
+    '/_admin/admin/withdrawals': {
+      id: '/_admin/admin/withdrawals'
+      path: '/admin/withdrawals'
+      fullPath: '/admin/withdrawals'
+      preLoaderRoute: typeof AdminAdminWithdrawalsRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
     '/_admin/admin/users': {
       id: '/_admin/admin/users'
       path: '/admin/users'
       fullPath: '/admin/users'
       preLoaderRoute: typeof AdminAdminUsersRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/_admin/admin/shop': {
+      id: '/_admin/admin/shop'
+      path: '/admin/shop'
+      fullPath: '/admin/shop'
+      preLoaderRoute: typeof AdminAdminShopRouteImport
       parentRoute: typeof AdminRouteRoute
     }
     '/_admin/admin/results': {
@@ -481,6 +531,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/matches'
       fullPath: '/admin/matches'
       preLoaderRoute: typeof AdminAdminMatchesRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/_admin/admin/deposits': {
+      id: '/_admin/admin/deposits'
+      path: '/admin/deposits'
+      fullPath: '/admin/deposits'
+      preLoaderRoute: typeof AdminAdminDepositsRouteImport
       parentRoute: typeof AdminRouteRoute
     }
     '/_authenticated/dashboard/matches/$matchId': {
@@ -501,16 +558,22 @@ declare module '@tanstack/react-router' {
 }
 
 interface AdminRouteRouteChildren {
+  AdminAdminDepositsRoute: typeof AdminAdminDepositsRoute
   AdminAdminMatchesRoute: typeof AdminAdminMatchesRoute
   AdminAdminResultsRoute: typeof AdminAdminResultsRoute
+  AdminAdminShopRoute: typeof AdminAdminShopRoute
   AdminAdminUsersRoute: typeof AdminAdminUsersRoute
+  AdminAdminWithdrawalsRoute: typeof AdminAdminWithdrawalsRoute
   AdminAdminIndexRoute: typeof AdminAdminIndexRoute
 }
 
 const AdminRouteRouteChildren: AdminRouteRouteChildren = {
+  AdminAdminDepositsRoute: AdminAdminDepositsRoute,
   AdminAdminMatchesRoute: AdminAdminMatchesRoute,
   AdminAdminResultsRoute: AdminAdminResultsRoute,
+  AdminAdminShopRoute: AdminAdminShopRoute,
   AdminAdminUsersRoute: AdminAdminUsersRoute,
+  AdminAdminWithdrawalsRoute: AdminAdminWithdrawalsRoute,
   AdminAdminIndexRoute: AdminAdminIndexRoute,
 }
 
