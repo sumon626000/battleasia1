@@ -11,6 +11,7 @@ interface Props {
 export function DashboardMobileDrawer({ open, onClose }: Props) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const navigate = useNavigate();
+  const { t } = useT();
   if (!open) return null;
   return (
     <div className="fixed inset-0 z-[60] lg:hidden">
