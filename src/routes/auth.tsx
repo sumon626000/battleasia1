@@ -16,6 +16,8 @@ import {
   type RegisterValues,
 } from "@/lib/auth-validation";
 import { LegalModal } from "@/components/site/LegalModal";
+import { CountryCodeSelect } from "@/components/site/CountryCodeSelect";
+import { GameServerSelect } from "@/components/site/GameServerSelect";
 
 const searchSchema = z.object({
   ref: z.string().trim().optional(),
@@ -297,22 +299,20 @@ function RegisterForm({
         error={errors.in_game_username?.message}
       />
 
-      <div className="grid grid-cols-3 gap-3">
-        <Field
+      <div className="grid grid-cols-[7.5rem_minmax(0,1fr)] gap-3">
+        <CountryCodeSelect
           label="CODE"
-          placeholder="+880"
-          {...register("country_code")}
+          value={watch("country_code") ?? ""}
+          onChange={(v) => setValue("country_code", v, { shouldValidate: true })}
           error={errors.country_code?.message}
         />
-        <div className="col-span-2">
-          <Field
-            label="MOBILE NUMBER"
-            placeholder="17XXXXXXXX"
-            inputMode="numeric"
-            {...register("mobile_number")}
-            error={errors.mobile_number?.message}
-          />
-        </div>
+        <Field
+          label="MOBILE NUMBER"
+          placeholder="17XXXXXXXX"
+          inputMode="numeric"
+          {...register("mobile_number")}
+          error={errors.mobile_number?.message}
+        />
       </div>
 
       <div className="grid grid-cols-2 gap-3">
@@ -323,11 +323,17 @@ function RegisterForm({
           {...register("pubg_id")}
           error={errors.pubg_id?.message}
         />
-        <SelectField
+        <GameServerSelect
           label="GAME SERVER"
           value={watch("game_server")}
           onChange={(v) => setValue("game_server", v as RegisterValues["game_server"], { shouldValidate: true })}
-          options={GAME_SERVERS}
+          options={[
+            { value: "Europe", label: "Europe", hint: "EU" },
+            { value: "Asia", label: "Asia", hint: "AS" },
+            { value: "SouthAmerica", label: "South America", hint: "SA" },
+            { value: "MiddleEast", label: "Middle East", hint: "ME" },
+            { value: "KRJP", label: "Korea / Japan", hint: "KR · JP" },
+          ]}
           error={errors.game_server?.message}
         />
       </div>
