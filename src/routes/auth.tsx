@@ -400,13 +400,11 @@ type FieldProps = React.InputHTMLAttributes<HTMLInputElement> & {
   error?: string;
 };
 
-const Field = ((): React.ForwardRefExoticComponent<
-  FieldProps & React.RefAttributes<HTMLInputElement>
-> => {
-  const C = (
-    { label, error, className, ...rest }: FieldProps,
-    ref: React.Ref<HTMLInputElement>,
-  ) => (
+const Field = forwardRef<HTMLInputElement, FieldProps>(function Field(
+  { label, error, className, ...rest },
+  ref,
+) {
+  return (
     <label className="block">
       <span className="font-mono text-[10px] font-semibold tracking-widest text-muted-foreground">
         {label}
@@ -421,11 +419,7 @@ const Field = ((): React.ForwardRefExoticComponent<
       {error && <p className="mt-1 text-[11px] text-destructive">{error}</p>}
     </label>
   );
-  return Object.assign(
-    (require("react") as typeof import("react")).forwardRef(C),
-    { displayName: "Field" },
-  );
-})();
+});
 
 function PasswordField({
   label,
