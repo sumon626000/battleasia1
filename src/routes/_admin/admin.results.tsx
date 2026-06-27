@@ -154,7 +154,43 @@ function AdminResultsPage() {
     if (data?.signedUrl) {
       setImageUrl(data.signedUrl);
       toast.success("Image uploaded");
+  }
+
+  function importCsv(text: string) {
+    if (!detail) return;
+    const lines = text.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
+    if (lines.length === 0) return toast.error("Empty CSV");
+    // Build lookup by pubg_id and in_game_username (case-insensitive)
+    const byPubg = new Map<string, string>();
+    const byName = new Map<string, string>();
+    for (const p of detail.participants) {
+      const pr = detail.profMap.get(p.user_id);
+      if (pr?.pubg_id) byPubg.set(String(pr.pubg_id).trim().toLowerCase(), p.user_id);
+      if (pr?.in_game_username) byName.set(pr.in_game_username.trim().toLowerCase(), p.user_id);
+      if (pr?.username) byName.set(pr.username.trim().toLowerCase(), p.user_id);
     }
+    const next = { ...rows };
+    let matched = 0;
+    let skipped = 0;
+    const startIdx = /^(pubg|player|name|id|user)/i.test(lines[0]) ? 1 : 0;
+    for (let i = startIdx; i < lines.length; i++) {
+      const cols = lines[i].split(/[,\t;]/).map((c) => c.trim());
+      if (cols.length < 2) { skipped++; continue; }
+      const key = cols[0].toLowerCase();
+      const uid = byPubg.get(key) || byName.get(key);
+      if (!uid) { skipped++; continue; }
+      const rank = cols[1] || "";
+      const kills = cols[2] || "0";
+      next[uid] = { rank, kills };
+      matched++;
+    }
+    setRows(next);
+    toast.success(`Imported ${matched} row(s)${skipped ? `, skipped ${skipped}` : ""}`);
+  }
+
+  async function importCsvFile(file: File) {
+    const text = await file.text();
+    importCsv(text);
   }
 
   return (
