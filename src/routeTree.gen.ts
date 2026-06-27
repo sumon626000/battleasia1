@@ -28,12 +28,14 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as UUsernameRouteImport } from './routes/u.$username'
 import { Route as PSlugRouteImport } from './routes/p.$slug'
 import { Route as EmailVerifyRouteImport } from './routes/email.verify'
+import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AdminAdminIndexRouteImport } from './routes/_admin/admin.index'
 import { Route as AuthenticatedDashboardWalletRouteImport } from './routes/_authenticated/dashboard.wallet'
 import { Route as AuthenticatedDashboardSupportRouteImport } from './routes/_authenticated/dashboard.support'
 import { Route as AuthenticatedDashboardStatisticsRouteImport } from './routes/_authenticated/dashboard.statistics'
 import { Route as AuthenticatedDashboardShopRouteImport } from './routes/_authenticated/dashboard.shop'
+import { Route as AuthenticatedDashboardSettingsRouteImport } from './routes/_authenticated/dashboard.settings'
 import { Route as AuthenticatedDashboardReferralsRouteImport } from './routes/_authenticated/dashboard.referrals'
 import { Route as AuthenticatedDashboardProfileRouteImport } from './routes/_authenticated/dashboard.profile'
 import { Route as AuthenticatedDashboardPremiumRouteImport } from './routes/_authenticated/dashboard.premium'
@@ -69,6 +71,7 @@ import { Route as AdminAdminBusinessWalletsRouteImport } from './routes/_admin/a
 import { Route as AdminAdminBalancesRouteImport } from './routes/_admin/admin.balances'
 import { Route as AdminAdminBackupsRouteImport } from './routes/_admin/admin.backups'
 import { Route as AdminAdminApkRouteImport } from './routes/_admin/admin.apk'
+import { Route as AdminAdminAccountDeletionsRouteImport } from './routes/_admin/admin.account-deletions'
 import { Route as AuthenticatedDashboardMatchesMatchIdRouteImport } from './routes/_authenticated/dashboard.matches.$matchId'
 import { Route as AuthenticatedDashboardFeedPostIdRouteImport } from './routes/_authenticated/dashboard.feed.$postId'
 
@@ -165,6 +168,11 @@ const EmailVerifyRoute = EmailVerifyRouteImport.update({
   path: '/email/verify',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthCallbackRoute = AuthCallbackRouteImport.update({
+  id: '/callback',
+  path: '/callback',
+  getParentRoute: () => AuthRoute,
+} as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -197,6 +205,12 @@ const AuthenticatedDashboardShopRoute =
   AuthenticatedDashboardShopRouteImport.update({
     id: '/shop',
     path: '/shop',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
+const AuthenticatedDashboardSettingsRoute =
+  AuthenticatedDashboardSettingsRouteImport.update({
+    id: '/settings',
+    path: '/settings',
     getParentRoute: () => AuthenticatedDashboardRoute,
   } as any)
 const AuthenticatedDashboardReferralsRoute =
@@ -384,6 +398,12 @@ const AdminAdminApkRoute = AdminAdminApkRouteImport.update({
   path: '/admin/apk',
   getParentRoute: () => AdminRouteRoute,
 } as any)
+const AdminAdminAccountDeletionsRoute =
+  AdminAdminAccountDeletionsRouteImport.update({
+    id: '/admin/account-deletions',
+    path: '/admin/account-deletions',
+    getParentRoute: () => AdminRouteRoute,
+  } as any)
 const AuthenticatedDashboardMatchesMatchIdRoute =
   AuthenticatedDashboardMatchesMatchIdRouteImport.update({
     id: '/$matchId',
@@ -401,7 +421,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/apk': typeof ApkRoute
-  '/auth': typeof AuthRoute
+  '/auth': typeof AuthRouteWithChildren
   '/forgot-password': typeof ForgotPasswordRoute
   '/leaderboard': typeof LeaderboardRoute
   '/matches': typeof MatchesRoute
@@ -413,9 +433,11 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/support': typeof SupportRoute
   '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
+  '/auth/callback': typeof AuthCallbackRoute
   '/email/verify': typeof EmailVerifyRoute
   '/p/$slug': typeof PSlugRoute
   '/u/$username': typeof UUsernameRoute
+  '/admin/account-deletions': typeof AdminAdminAccountDeletionsRoute
   '/admin/apk': typeof AdminAdminApkRoute
   '/admin/backups': typeof AdminAdminBackupsRoute
   '/admin/balances': typeof AdminAdminBalancesRoute
@@ -451,6 +473,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/premium': typeof AuthenticatedDashboardPremiumRoute
   '/dashboard/profile': typeof AuthenticatedDashboardProfileRoute
   '/dashboard/referrals': typeof AuthenticatedDashboardReferralsRoute
+  '/dashboard/settings': typeof AuthenticatedDashboardSettingsRoute
   '/dashboard/shop': typeof AuthenticatedDashboardShopRoute
   '/dashboard/statistics': typeof AuthenticatedDashboardStatisticsRoute
   '/dashboard/support': typeof AuthenticatedDashboardSupportRoute
@@ -463,7 +486,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/apk': typeof ApkRoute
-  '/auth': typeof AuthRoute
+  '/auth': typeof AuthRouteWithChildren
   '/forgot-password': typeof ForgotPasswordRoute
   '/leaderboard': typeof LeaderboardRoute
   '/matches': typeof MatchesRoute
@@ -475,9 +498,11 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/support': typeof SupportRoute
   '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
+  '/auth/callback': typeof AuthCallbackRoute
   '/email/verify': typeof EmailVerifyRoute
   '/p/$slug': typeof PSlugRoute
   '/u/$username': typeof UUsernameRoute
+  '/admin/account-deletions': typeof AdminAdminAccountDeletionsRoute
   '/admin/apk': typeof AdminAdminApkRoute
   '/admin/backups': typeof AdminAdminBackupsRoute
   '/admin/balances': typeof AdminAdminBalancesRoute
@@ -513,6 +538,7 @@ export interface FileRoutesByTo {
   '/dashboard/premium': typeof AuthenticatedDashboardPremiumRoute
   '/dashboard/profile': typeof AuthenticatedDashboardProfileRoute
   '/dashboard/referrals': typeof AuthenticatedDashboardReferralsRoute
+  '/dashboard/settings': typeof AuthenticatedDashboardSettingsRoute
   '/dashboard/shop': typeof AuthenticatedDashboardShopRoute
   '/dashboard/statistics': typeof AuthenticatedDashboardStatisticsRoute
   '/dashboard/support': typeof AuthenticatedDashboardSupportRoute
@@ -528,7 +554,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/apk': typeof ApkRoute
-  '/auth': typeof AuthRoute
+  '/auth': typeof AuthRouteWithChildren
   '/forgot-password': typeof ForgotPasswordRoute
   '/leaderboard': typeof LeaderboardRoute
   '/matches': typeof MatchesRoute
@@ -540,9 +566,11 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/support': typeof SupportRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRouteWithChildren
+  '/auth/callback': typeof AuthCallbackRoute
   '/email/verify': typeof EmailVerifyRoute
   '/p/$slug': typeof PSlugRoute
   '/u/$username': typeof UUsernameRoute
+  '/_admin/admin/account-deletions': typeof AdminAdminAccountDeletionsRoute
   '/_admin/admin/apk': typeof AdminAdminApkRoute
   '/_admin/admin/backups': typeof AdminAdminBackupsRoute
   '/_admin/admin/balances': typeof AdminAdminBalancesRoute
@@ -578,6 +606,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard/premium': typeof AuthenticatedDashboardPremiumRoute
   '/_authenticated/dashboard/profile': typeof AuthenticatedDashboardProfileRoute
   '/_authenticated/dashboard/referrals': typeof AuthenticatedDashboardReferralsRoute
+  '/_authenticated/dashboard/settings': typeof AuthenticatedDashboardSettingsRoute
   '/_authenticated/dashboard/shop': typeof AuthenticatedDashboardShopRoute
   '/_authenticated/dashboard/statistics': typeof AuthenticatedDashboardStatisticsRoute
   '/_authenticated/dashboard/support': typeof AuthenticatedDashboardSupportRoute
@@ -604,9 +633,11 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/support'
     | '/dashboard'
+    | '/auth/callback'
     | '/email/verify'
     | '/p/$slug'
     | '/u/$username'
+    | '/admin/account-deletions'
     | '/admin/apk'
     | '/admin/backups'
     | '/admin/balances'
@@ -642,6 +673,7 @@ export interface FileRouteTypes {
     | '/dashboard/premium'
     | '/dashboard/profile'
     | '/dashboard/referrals'
+    | '/dashboard/settings'
     | '/dashboard/shop'
     | '/dashboard/statistics'
     | '/dashboard/support'
@@ -666,9 +698,11 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/support'
     | '/dashboard'
+    | '/auth/callback'
     | '/email/verify'
     | '/p/$slug'
     | '/u/$username'
+    | '/admin/account-deletions'
     | '/admin/apk'
     | '/admin/backups'
     | '/admin/balances'
@@ -704,6 +738,7 @@ export interface FileRouteTypes {
     | '/dashboard/premium'
     | '/dashboard/profile'
     | '/dashboard/referrals'
+    | '/dashboard/settings'
     | '/dashboard/shop'
     | '/dashboard/statistics'
     | '/dashboard/support'
@@ -730,9 +765,11 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/support'
     | '/_authenticated/dashboard'
+    | '/auth/callback'
     | '/email/verify'
     | '/p/$slug'
     | '/u/$username'
+    | '/_admin/admin/account-deletions'
     | '/_admin/admin/apk'
     | '/_admin/admin/backups'
     | '/_admin/admin/balances'
@@ -768,6 +805,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard/premium'
     | '/_authenticated/dashboard/profile'
     | '/_authenticated/dashboard/referrals'
+    | '/_authenticated/dashboard/settings'
     | '/_authenticated/dashboard/shop'
     | '/_authenticated/dashboard/statistics'
     | '/_authenticated/dashboard/support'
@@ -783,7 +821,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
   ApkRoute: typeof ApkRoute
-  AuthRoute: typeof AuthRoute
+  AuthRoute: typeof AuthRouteWithChildren
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   LeaderboardRoute: typeof LeaderboardRoute
   MatchesRoute: typeof MatchesRoute
@@ -934,6 +972,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EmailVerifyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth/callback': {
+      id: '/auth/callback'
+      path: '/callback'
+      fullPath: '/auth/callback'
+      preLoaderRoute: typeof AuthCallbackRouteImport
+      parentRoute: typeof AuthRoute
+    }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
       path: '/dashboard'
@@ -974,6 +1019,13 @@ declare module '@tanstack/react-router' {
       path: '/shop'
       fullPath: '/dashboard/shop'
       preLoaderRoute: typeof AuthenticatedDashboardShopRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
+    '/_authenticated/dashboard/settings': {
+      id: '/_authenticated/dashboard/settings'
+      path: '/settings'
+      fullPath: '/dashboard/settings'
+      preLoaderRoute: typeof AuthenticatedDashboardSettingsRouteImport
       parentRoute: typeof AuthenticatedDashboardRoute
     }
     '/_authenticated/dashboard/referrals': {
@@ -1221,6 +1273,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAdminApkRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/_admin/admin/account-deletions': {
+      id: '/_admin/admin/account-deletions'
+      path: '/admin/account-deletions'
+      fullPath: '/admin/account-deletions'
+      preLoaderRoute: typeof AdminAdminAccountDeletionsRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
     '/_authenticated/dashboard/matches/$matchId': {
       id: '/_authenticated/dashboard/matches/$matchId'
       path: '/$matchId'
@@ -1239,6 +1298,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AdminRouteRouteChildren {
+  AdminAdminAccountDeletionsRoute: typeof AdminAdminAccountDeletionsRoute
   AdminAdminApkRoute: typeof AdminAdminApkRoute
   AdminAdminBackupsRoute: typeof AdminAdminBackupsRoute
   AdminAdminBalancesRoute: typeof AdminAdminBalancesRoute
@@ -1271,6 +1331,7 @@ interface AdminRouteRouteChildren {
 }
 
 const AdminRouteRouteChildren: AdminRouteRouteChildren = {
+  AdminAdminAccountDeletionsRoute: AdminAdminAccountDeletionsRoute,
   AdminAdminApkRoute: AdminAdminApkRoute,
   AdminAdminBackupsRoute: AdminAdminBackupsRoute,
   AdminAdminBalancesRoute: AdminAdminBalancesRoute,
@@ -1344,6 +1405,7 @@ interface AuthenticatedDashboardRouteChildren {
   AuthenticatedDashboardPremiumRoute: typeof AuthenticatedDashboardPremiumRoute
   AuthenticatedDashboardProfileRoute: typeof AuthenticatedDashboardProfileRoute
   AuthenticatedDashboardReferralsRoute: typeof AuthenticatedDashboardReferralsRoute
+  AuthenticatedDashboardSettingsRoute: typeof AuthenticatedDashboardSettingsRoute
   AuthenticatedDashboardShopRoute: typeof AuthenticatedDashboardShopRoute
   AuthenticatedDashboardStatisticsRoute: typeof AuthenticatedDashboardStatisticsRoute
   AuthenticatedDashboardSupportRoute: typeof AuthenticatedDashboardSupportRoute
@@ -1362,6 +1424,7 @@ const AuthenticatedDashboardRouteChildren: AuthenticatedDashboardRouteChildren =
     AuthenticatedDashboardPremiumRoute: AuthenticatedDashboardPremiumRoute,
     AuthenticatedDashboardProfileRoute: AuthenticatedDashboardProfileRoute,
     AuthenticatedDashboardReferralsRoute: AuthenticatedDashboardReferralsRoute,
+    AuthenticatedDashboardSettingsRoute: AuthenticatedDashboardSettingsRoute,
     AuthenticatedDashboardShopRoute: AuthenticatedDashboardShopRoute,
     AuthenticatedDashboardStatisticsRoute:
       AuthenticatedDashboardStatisticsRoute,
@@ -1385,13 +1448,23 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
+interface AuthRouteChildren {
+  AuthCallbackRoute: typeof AuthCallbackRoute
+}
+
+const AuthRouteChildren: AuthRouteChildren = {
+  AuthCallbackRoute: AuthCallbackRoute,
+}
+
+const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRouteRoute: AdminRouteRouteWithChildren,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AboutRoute: AboutRoute,
   ApkRoute: ApkRoute,
-  AuthRoute: AuthRoute,
+  AuthRoute: AuthRouteWithChildren,
   ForgotPasswordRoute: ForgotPasswordRoute,
   LeaderboardRoute: LeaderboardRoute,
   MatchesRoute: MatchesRoute,

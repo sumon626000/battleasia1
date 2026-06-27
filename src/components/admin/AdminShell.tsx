@@ -12,6 +12,8 @@ import {
   Shield,
   Gamepad2,
   Users2,
+  UserX,
+
   ArrowLeft,
   Coins,
   Banknote,
@@ -30,6 +32,8 @@ import {
 export const ADMIN_NAV = [
   { label: "Overview", href: "/admin", icon: LayoutDashboard },
   { label: "Users", href: "/admin/users", icon: Users },
+  { label: "Deletion Requests", href: "/admin/account-deletions", icon: UserX },
+
   { label: "Games", href: "/admin/games", icon: Gamepad2 },
   { label: "Matches", href: "/admin/matches", icon: Swords },
   { label: "Results", href: "/admin/results", icon: Trophy },
