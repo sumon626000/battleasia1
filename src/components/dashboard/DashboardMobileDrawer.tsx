@@ -1,6 +1,7 @@
 import { useNavigate, useRouterState } from "@tanstack/react-router";
 import { X } from "lucide-react";
 import { DASH_NAV } from "./DashboardSidebar";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   open: boolean;
@@ -10,6 +11,7 @@ interface Props {
 export function DashboardMobileDrawer({ open, onClose }: Props) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const navigate = useNavigate();
+  const { t } = useT();
   if (!open) return null;
   return (
     <div className="fixed inset-0 z-[60] lg:hidden">
@@ -49,7 +51,7 @@ export function DashboardMobileDrawer({ open, onClose }: Props) {
                 }`}
               >
                 <Icon size={16} />
-                {item.label}
+                {t(item.key)}
               </button>
             );
           })}

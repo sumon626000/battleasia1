@@ -11,6 +11,7 @@ import {
   Accordion, AccordionContent, AccordionItem, AccordionTrigger,
 } from "@/components/ui/accordion";
 import { CoinIcon } from "@/components/site/CoinIcon";
+import { useT } from "@/lib/i18n";
 import heroSoldier from "@/assets/hero-soldier.jpg";
 import phoneApp from "@/assets/phone-app.jpg";
 import bacCoin from "@/assets/battleasia-coin.png";
@@ -80,6 +81,7 @@ function shortName(s: string | null | undefined, fallback = "Player") {
 }
 
 function BattleAsiaLanding() {
+  const { t } = useT();
   /* ---------- LIVE DATA ---------- */
   const pulse = useQuery({
     queryKey: ["home", "pulse"],
@@ -167,10 +169,10 @@ function BattleAsiaLanding() {
   });
 
   const STATS: Array<{ icon: any; value: string; label: string; isCoin?: boolean; valueCoin?: boolean }> = [
-    { icon: Users2,  value: pulse.data ? `${formatBAC(pulse.data.processed + pulse.data.ongoing)}` : "—", label: "TOTAL MATCHES" },
-    { icon: Swords,  value: pulse.data ? formatBAC(pulse.data.ongoing) : "—", label: "LIVE MATCHES" },
-    { icon: Trophy,  value: pulse.data ? formatBAC(pulse.data.totalWinnings) : "—", label: "TOTAL PAID OUT", valueCoin: true },
-    { icon: null,    value: pulse.data ? formatBAC(pulse.data.processed) : "—", label: "PROCESSED MATCHES", isCoin: true },
+    { icon: Users2,  value: pulse.data ? `${formatBAC(pulse.data.processed + pulse.data.ongoing)}` : "—", label: t("home.totalMatches") },
+    { icon: Swords,  value: pulse.data ? formatBAC(pulse.data.ongoing) : "—", label: t("home.liveMatches") },
+    { icon: Trophy,  value: pulse.data ? formatBAC(pulse.data.totalWinnings) : "—", label: t("home.paidOut"), valueCoin: true },
+    { icon: null,    value: pulse.data ? formatBAC(pulse.data.processed) : "—", label: t("home.processed"), isCoin: true },
   ];
 
   return (
@@ -192,19 +194,19 @@ function BattleAsiaLanding() {
               </span>
             </h1>
             <p className="mt-4 font-hud text-sm font-semibold tracking-[0.3em] text-foreground/85 sm:text-base">
-              OFFICIAL MOBILE TOURNAMENT ARENA
+              {t("home.tagline")}
             </p>
             <div className="mt-6 flex items-center gap-3">
               <span className="h-px w-10 bg-gold/60" />
               <p className="font-hud text-base font-bold tracking-[0.25em] text-gold sm:text-lg">
-                COMPETE · WIN · EARN BAC
+                {t("home.slogan")}
               </p>
             </div>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link to="/auth" className="btn-gold inline-flex items-center gap-2 px-8 py-3 text-sm sm:text-base">
-                JOIN NOW <ChevronRight size={16} />
+                {t("home.joinNow")} <ChevronRight size={16} />
               </Link>
-              <button className="btn-outline-gold px-8 py-3 text-sm sm:text-base">APK DOWNLOAD</button>
+              <button className="btn-outline-gold px-8 py-3 text-sm sm:text-base">{t("home.apkDownload")}</button>
             </div>
           </div>
 
@@ -214,16 +216,16 @@ function BattleAsiaLanding() {
             <div className="relative mt-3 h-28 w-28 drop-shadow-[0_0_30px_rgba(212,175,55,0.45)]">
               <img loading="lazy" decoding="async" src={bacCoin} alt="BAC Coin" width={224} height={224} className="h-full w-full object-contain" />
             </div>
-            <h3 className="font-display mt-1 text-2xl font-bold text-gold">BAC COIN</h3>
+            <h3 className="font-display mt-1 text-2xl font-bold text-gold">{t("home.bacCoin")}</h3>
             <p className="text-sm text-muted-foreground">
-              The Official Currency of<br />Battle Asia Ecosystem
+              {t("home.bacDesc")}
             </p>
             <div className="my-3 flex w-full items-center gap-3">
               <span className="hud-divider flex-1" />
               <span className="font-mono-tab inline-flex items-center gap-1 text-[10px] tracking-widest text-gold">1 BAC = 1 <CoinIcon size={10} /></span>
               <span className="hud-divider flex-1" />
             </div>
-            <button className="btn-gold w-full px-6 py-2.5 text-sm">BUY NOW</button>
+            <button className="btn-gold w-full px-6 py-2.5 text-sm">{t("home.buyNow")}</button>
           </div>
         </div>
         <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-gold/50 to-transparent" />
@@ -244,7 +246,7 @@ function BattleAsiaLanding() {
               </p>
             </div>
             <div className="text-right">
-              <div className="font-hud text-[10px] tracking-[0.3em] text-muted-foreground">PLATFORM TOTAL WINNINGS</div>
+              <div className="font-hud text-[10px] tracking-[0.3em] text-muted-foreground">{t("home.totalWinnings")}</div>
               <div className="font-display font-mono-tab mt-1 inline-flex items-center gap-2 text-3xl font-bold text-gold sm:text-4xl">
                 <CoinIcon size={28} />
                 {pulse.data ? formatBAC(pulse.data.totalWinnings) : "—"}
@@ -287,10 +289,10 @@ function BattleAsiaLanding() {
             </div>
             <div className="flex flex-wrap gap-3">
               <Link to="/matches" className="btn-gold inline-flex items-center gap-2 px-6 py-3 text-sm">
-                BROWSE MATCHES <ChevronRight size={16} />
+                {t("home.browseMatches")} <ChevronRight size={16} />
               </Link>
               <Link to="/apk" className="btn-outline-gold inline-flex items-center gap-2 px-6 py-3 text-sm">
-                <Download size={14} /> GET APK
+                <Download size={14} /> {t("home.getApk")}
               </Link>
             </div>
           </div>
@@ -483,9 +485,9 @@ function BattleAsiaLanding() {
       {/* ============ PAYMENTS ============ */}
       <section className="mx-auto max-w-7xl px-4 pb-14 sm:px-6">
         <div className="mb-6 flex items-center gap-4">
-          <h2 className="font-display text-xl font-bold tracking-wider">PAYMENT METHODS</h2>
+          <h2 className="font-display text-xl font-bold tracking-wider">{t("home.paymentMethods")}</h2>
           <span className="hud-divider flex-1" />
-          <span className="font-hud text-[10px] tracking-[0.2em] text-muted-foreground">SECURE · INSTANT</span>
+          <span className="font-hud text-[10px] tracking-[0.2em] text-muted-foreground">{t("common.secure")} · {t("home.pulse")}</span>
         </div>
         <div className="grid grid-cols-3 gap-3 sm:grid-cols-6">
           {PAYMENTS.map((p) => (
@@ -501,14 +503,14 @@ function BattleAsiaLanding() {
         <div aria-hidden className="absolute inset-0 bg-grid-hud opacity-30" />
         <div className="relative mx-auto flex max-w-7xl flex-col items-center justify-between gap-5 px-4 py-10 sm:px-6 md:flex-row">
           <div>
-            <div className="font-hud text-[10px] tracking-[0.3em] text-gold">// READY TO DROP</div>
+            <div className="font-hud text-[10px] tracking-[0.3em] text-gold">// {t("home.readyToDrop")}</div>
             <h3 className="font-display mt-2 text-2xl font-bold sm:text-3xl">
-              YOUR FIRST MATCH IS <span className="text-gold">ONE TAP AWAY</span>
+              {t("home.firstMatch")}
             </h3>
           </div>
           <div className="flex gap-3">
-            <Link to="/auth" className="btn-gold px-7 py-3 text-sm">JOIN FREE</Link>
-            <button className="btn-outline-gold px-7 py-3 text-sm">EXPLORE</button>
+            <Link to="/auth" className="btn-gold px-7 py-3 text-sm">{t("home.joinFree")}</Link>
+            <Link to="/matches" className="btn-outline-gold px-7 py-3 text-sm">{t("home.explore")}</Link>
           </div>
         </div>
       </section>
