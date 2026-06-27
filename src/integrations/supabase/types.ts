@@ -1634,6 +1634,7 @@ export type Database = {
         Returns: boolean
       }
       is_admin: { Args: never; Returns: boolean }
+      join_match: { Args: { p_match_id: number }; Returns: number }
       submit_deposit: {
         Args: {
           p_bac_amount: number
