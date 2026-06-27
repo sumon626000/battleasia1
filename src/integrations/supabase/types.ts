@@ -1555,6 +1555,27 @@ export type Database = {
         Returns: boolean
       }
       is_admin: { Args: never; Returns: boolean }
+      submit_deposit: {
+        Args: {
+          p_bac_amount: number
+          p_business_wallet_id: number
+          p_currency: string
+          p_fiat_amount: number
+          p_payment_channel_id: number
+          p_sender: string
+          p_transaction_id: string
+        }
+        Returns: number
+      }
+      submit_withdrawal: {
+        Args: {
+          p_bac: number
+          p_currency: string
+          p_payment_channel_id: number
+          p_wallet_address: string
+        }
+        Returns: number
+      }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
