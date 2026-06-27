@@ -13,6 +13,8 @@ import {
   Save,
   Copy,
   Crown,
+  ImagePlus,
+  Link2,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
@@ -64,12 +66,24 @@ function ProfilePage() {
   const { user } = useAuth();
   const { profile } = useProfile(user?.id);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const [uploadingCover, setUploadingCover] = useState(false);
   const [savingProfile, setSavingProfile] = useState(false);
+  const [savingSocial, setSavingSocial] = useState(false);
   const [changingPw, setChangingPw] = useState(false);
   const [submittingDelete, setSubmittingDelete] = useState(false);
   const [deleteReason, setDeleteReason] = useState("");
   const [hasPendingDelete, setHasPendingDelete] = useState(false);
+  const [bio, setBio] = useState("");
+  const [social, setSocial] = useState({
+    facebook: "",
+    twitter: "",
+    instagram: "",
+    youtube: "",
+    discord: "",
+    website: "",
+  });
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const coverInputRef = useRef<HTMLInputElement>(null);
 
   const emailConfirmed = !!user?.email_confirmed_at;
 
@@ -111,6 +125,16 @@ function ProfilePage() {
       mobile_number: profile.mobile_number ?? "",
       pubg_id: profile.pubg_id ?? "",
       game_server: (profile.game_server as ProfileUpdateValues["game_server"]) ?? "Asia",
+    });
+    setBio((profile as { bio?: string | null }).bio ?? "");
+    const sl = ((profile as { social_links?: Record<string, string> }).social_links ?? {}) as Record<string, string>;
+    setSocial({
+      facebook: sl.facebook ?? "",
+      twitter: sl.twitter ?? "",
+      instagram: sl.instagram ?? "",
+      youtube: sl.youtube ?? "",
+      discord: sl.discord ?? "",
+      website: sl.website ?? "",
     });
   }, [profile, resetProfile]);
 
@@ -167,6 +191,64 @@ function ProfilePage() {
     } finally {
       setUploadingAvatar(false);
       if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  }
+
+  async function onCoverChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+    if (!/^image\/(png|jpe?g|webp)$/.test(file.type)) {
+      toast.error("Please choose a PNG, JPG or WEBP image");
+      return;
+    }
+    if (file.size > 8 * 1024 * 1024) {
+      toast.error("Cover must be 8MB or less");
+      return;
+    }
+    setUploadingCover(true);
+    try {
+      const ext = file.name.split(".").pop()?.toLowerCase() || "png";
+      const path = `${user.id}/cover-${Date.now()}.${ext}`;
+      const { error: upErr } = await supabase.storage
+        .from("covers")
+        .upload(path, file, { upsert: true, contentType: file.type });
+      if (upErr) throw upErr;
+      const { data: signed, error: signErr } = await supabase.storage
+        .from("covers")
+        .createSignedUrl(path, 60 * 60 * 24 * 365);
+      if (signErr || !signed) throw signErr || new Error("Failed to sign URL");
+      const { error: profErr } = await supabase
+        .from("profiles")
+        .update({ cover_url: signed.signedUrl })
+        .eq("id", user.id);
+      if (profErr) throw profErr;
+      toast.success("Cover updated");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Cover upload failed");
+    } finally {
+      setUploadingCover(false);
+      if (coverInputRef.current) coverInputRef.current.value = "";
+    }
+  }
+
+  async function onSaveSocial() {
+    if (!user) return;
+    setSavingSocial(true);
+    try {
+      const cleaned = Object.fromEntries(
+        Object.entries(social).filter(([, v]) => v.trim().length > 0),
+      );
+      const { error } = await supabase
+        .from("profiles")
+        .update({ bio: bio.trim() || null, social_links: cleaned })
+        .eq("id", user.id);
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+      toast.success("Social profile updated");
+    } finally {
+      setSavingSocial(false);
     }
   }
 
@@ -248,12 +330,42 @@ function ProfilePage() {
 
   const initials = (profile?.in_game_username || profile?.username || "PL").slice(0, 2).toUpperCase();
   const balance = Number(profile?.bac_coin_balance ?? 0);
+  const coverUrl = (profile as { cover_url?: string | null } | null)?.cover_url ?? null;
 
   return (
     <div className="space-y-5">
       {/* Header */}
       <div className="hud-panel relative overflow-hidden p-5 sm:p-6">
-        <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-center sm:gap-6">
+        {/* Cover image */}
+        <div
+          className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-gold/10 to-transparent"
+          style={
+            coverUrl
+              ? {
+                  backgroundImage: `linear-gradient(to bottom, rgba(8,10,14,0.35), rgba(8,10,14,0.95)), url(${coverUrl})`,
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                }
+              : undefined
+          }
+        />
+        <button
+          type="button"
+          onClick={() => coverInputRef.current?.click()}
+          disabled={uploadingCover}
+          className="absolute right-3 top-3 z-10 inline-flex items-center gap-1 rounded-sm border border-gold/60 bg-background/80 px-2 py-1 font-hud text-[10px] uppercase tracking-widest text-gold backdrop-blur transition hover:bg-gold hover:text-background disabled:opacity-60"
+        >
+          {uploadingCover ? <Loader2 size={12} className="animate-spin" /> : <ImagePlus size={12} />}
+          {coverUrl ? "Change Cover" : "Add Cover"}
+        </button>
+        <input
+          ref={coverInputRef}
+          type="file"
+          accept="image/png,image/jpeg,image/webp"
+          hidden
+          onChange={onCoverChange}
+        />
+        <div className="relative z-[1] flex flex-col items-center gap-4 pt-12 sm:flex-row sm:items-center sm:gap-6 sm:pt-16">
           <div className="relative">
             <div className="grid h-24 w-24 place-items-center overflow-hidden rounded-md border-2 border-gold/60 bg-gold/10 sm:h-28 sm:w-28">
               {profile?.avatar_url ? (
@@ -406,6 +518,59 @@ function ProfilePage() {
       </SectionCard>
 
       {/* Password */}
+      <SectionCard title="Bio & Social Links" desc="Tell other players about yourself and link your channels.">
+        <div className="grid gap-4">
+          <label className="block">
+            <span className="font-mono text-[10px] font-semibold tracking-widest text-muted-foreground">BIO</span>
+            <textarea
+              value={bio}
+              onChange={(e) => setBio(e.target.value)}
+              rows={3}
+              maxLength={280}
+              placeholder="A short tagline shown on your public profile"
+              className="mt-1 w-full rounded-md border border-border bg-background/80 px-3 py-2 text-sm outline-none transition focus:border-gold focus:ring-1 focus:ring-gold/50"
+            />
+            <div className="mt-1 text-right text-[10px] text-foreground/50">{bio.length}/280</div>
+          </label>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {(
+              [
+                ["facebook", "Facebook URL"],
+                ["twitter", "X / Twitter URL"],
+                ["instagram", "Instagram URL"],
+                ["youtube", "YouTube URL"],
+                ["discord", "Discord invite / tag"],
+                ["website", "Website URL"],
+              ] as const
+            ).map(([key, label]) => (
+              <label key={key} className="block">
+                <span className="font-mono text-[10px] font-semibold tracking-widest text-muted-foreground">{label}</span>
+                <div className="relative mt-1">
+                  <Link2 size={13} className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-foreground/40" />
+                  <input
+                    value={social[key]}
+                    onChange={(e) => setSocial((s) => ({ ...s, [key]: e.target.value }))}
+                    placeholder="https://…"
+                    className="w-full rounded-md border border-border bg-background/80 px-3 py-2.5 pl-8 text-sm outline-none transition focus:border-gold focus:ring-1 focus:ring-gold/50"
+                  />
+                </div>
+              </label>
+            ))}
+          </div>
+          <div>
+            <button
+              type="button"
+              onClick={onSaveSocial}
+              disabled={savingSocial}
+              className="btn-gold inline-flex items-center gap-2 px-5 py-2.5 font-hud text-sm font-bold uppercase tracking-wider disabled:opacity-60"
+            >
+              {savingSocial ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
+              Save Social Profile
+            </button>
+          </div>
+        </div>
+      </SectionCard>
+
       <SectionCard title="Change Password" desc="Use a strong, unique password you don't use elsewhere.">
         <form onSubmit={handlePw(onChangePassword)} className="grid gap-4 sm:grid-cols-2">
           <Field

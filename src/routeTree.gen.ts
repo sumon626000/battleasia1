@@ -32,6 +32,7 @@ import { Route as AuthenticatedDashboardRouteImport } from './routes/_authentica
 import { Route as AdminAdminIndexRouteImport } from './routes/_admin/admin.index'
 import { Route as AuthenticatedDashboardWalletRouteImport } from './routes/_authenticated/dashboard.wallet'
 import { Route as AuthenticatedDashboardSupportRouteImport } from './routes/_authenticated/dashboard.support'
+import { Route as AuthenticatedDashboardStatisticsRouteImport } from './routes/_authenticated/dashboard.statistics'
 import { Route as AuthenticatedDashboardShopRouteImport } from './routes/_authenticated/dashboard.shop'
 import { Route as AuthenticatedDashboardReferralsRouteImport } from './routes/_authenticated/dashboard.referrals'
 import { Route as AuthenticatedDashboardProfileRouteImport } from './routes/_authenticated/dashboard.profile'
@@ -43,6 +44,7 @@ import { Route as AuthenticatedDashboardFeedRouteImport } from './routes/_authen
 import { Route as AdminAdminWithdrawalsRouteImport } from './routes/_admin/admin.withdrawals'
 import { Route as AdminAdminWithdrawConfigRouteImport } from './routes/_admin/admin.withdraw-config'
 import { Route as AdminAdminUsersRouteImport } from './routes/_admin/admin.users'
+import { Route as AdminAdminTwoFactorRouteImport } from './routes/_admin/admin.two-factor'
 import { Route as AdminAdminTemplatesRouteImport } from './routes/_admin/admin.templates'
 import { Route as AdminAdminSupportRouteImport } from './routes/_admin/admin.support'
 import { Route as AdminAdminShopRouteImport } from './routes/_admin/admin.shop'
@@ -184,6 +186,12 @@ const AuthenticatedDashboardSupportRoute =
     path: '/support',
     getParentRoute: () => AuthenticatedDashboardRoute,
   } as any)
+const AuthenticatedDashboardStatisticsRoute =
+  AuthenticatedDashboardStatisticsRouteImport.update({
+    id: '/statistics',
+    path: '/statistics',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
 const AuthenticatedDashboardShopRoute =
   AuthenticatedDashboardShopRouteImport.update({
     id: '/shop',
@@ -246,6 +254,11 @@ const AdminAdminWithdrawConfigRoute =
 const AdminAdminUsersRoute = AdminAdminUsersRouteImport.update({
   id: '/admin/users',
   path: '/admin/users',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminAdminTwoFactorRoute = AdminAdminTwoFactorRouteImport.update({
+  id: '/admin/two-factor',
+  path: '/admin/two-factor',
   getParentRoute: () => AdminRouteRoute,
 } as any)
 const AdminAdminTemplatesRoute = AdminAdminTemplatesRouteImport.update({
@@ -420,6 +433,7 @@ export interface FileRoutesByFullPath {
   '/admin/shop': typeof AdminAdminShopRoute
   '/admin/support': typeof AdminAdminSupportRoute
   '/admin/templates': typeof AdminAdminTemplatesRoute
+  '/admin/two-factor': typeof AdminAdminTwoFactorRoute
   '/admin/users': typeof AdminAdminUsersRoute
   '/admin/withdraw-config': typeof AdminAdminWithdrawConfigRoute
   '/admin/withdrawals': typeof AdminAdminWithdrawalsRoute
@@ -431,6 +445,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/profile': typeof AuthenticatedDashboardProfileRoute
   '/dashboard/referrals': typeof AuthenticatedDashboardReferralsRoute
   '/dashboard/shop': typeof AuthenticatedDashboardShopRoute
+  '/dashboard/statistics': typeof AuthenticatedDashboardStatisticsRoute
   '/dashboard/support': typeof AuthenticatedDashboardSupportRoute
   '/dashboard/wallet': typeof AuthenticatedDashboardWalletRoute
   '/admin/': typeof AdminAdminIndexRoute
@@ -479,6 +494,7 @@ export interface FileRoutesByTo {
   '/admin/shop': typeof AdminAdminShopRoute
   '/admin/support': typeof AdminAdminSupportRoute
   '/admin/templates': typeof AdminAdminTemplatesRoute
+  '/admin/two-factor': typeof AdminAdminTwoFactorRoute
   '/admin/users': typeof AdminAdminUsersRoute
   '/admin/withdraw-config': typeof AdminAdminWithdrawConfigRoute
   '/admin/withdrawals': typeof AdminAdminWithdrawalsRoute
@@ -490,6 +506,7 @@ export interface FileRoutesByTo {
   '/dashboard/profile': typeof AuthenticatedDashboardProfileRoute
   '/dashboard/referrals': typeof AuthenticatedDashboardReferralsRoute
   '/dashboard/shop': typeof AuthenticatedDashboardShopRoute
+  '/dashboard/statistics': typeof AuthenticatedDashboardStatisticsRoute
   '/dashboard/support': typeof AuthenticatedDashboardSupportRoute
   '/dashboard/wallet': typeof AuthenticatedDashboardWalletRoute
   '/admin': typeof AdminAdminIndexRoute
@@ -541,6 +558,7 @@ export interface FileRoutesById {
   '/_admin/admin/shop': typeof AdminAdminShopRoute
   '/_admin/admin/support': typeof AdminAdminSupportRoute
   '/_admin/admin/templates': typeof AdminAdminTemplatesRoute
+  '/_admin/admin/two-factor': typeof AdminAdminTwoFactorRoute
   '/_admin/admin/users': typeof AdminAdminUsersRoute
   '/_admin/admin/withdraw-config': typeof AdminAdminWithdrawConfigRoute
   '/_admin/admin/withdrawals': typeof AdminAdminWithdrawalsRoute
@@ -552,6 +570,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard/profile': typeof AuthenticatedDashboardProfileRoute
   '/_authenticated/dashboard/referrals': typeof AuthenticatedDashboardReferralsRoute
   '/_authenticated/dashboard/shop': typeof AuthenticatedDashboardShopRoute
+  '/_authenticated/dashboard/statistics': typeof AuthenticatedDashboardStatisticsRoute
   '/_authenticated/dashboard/support': typeof AuthenticatedDashboardSupportRoute
   '/_authenticated/dashboard/wallet': typeof AuthenticatedDashboardWalletRoute
   '/_admin/admin/': typeof AdminAdminIndexRoute
@@ -602,6 +621,7 @@ export interface FileRouteTypes {
     | '/admin/shop'
     | '/admin/support'
     | '/admin/templates'
+    | '/admin/two-factor'
     | '/admin/users'
     | '/admin/withdraw-config'
     | '/admin/withdrawals'
@@ -613,6 +633,7 @@ export interface FileRouteTypes {
     | '/dashboard/profile'
     | '/dashboard/referrals'
     | '/dashboard/shop'
+    | '/dashboard/statistics'
     | '/dashboard/support'
     | '/dashboard/wallet'
     | '/admin/'
@@ -661,6 +682,7 @@ export interface FileRouteTypes {
     | '/admin/shop'
     | '/admin/support'
     | '/admin/templates'
+    | '/admin/two-factor'
     | '/admin/users'
     | '/admin/withdraw-config'
     | '/admin/withdrawals'
@@ -672,6 +694,7 @@ export interface FileRouteTypes {
     | '/dashboard/profile'
     | '/dashboard/referrals'
     | '/dashboard/shop'
+    | '/dashboard/statistics'
     | '/dashboard/support'
     | '/dashboard/wallet'
     | '/admin'
@@ -722,6 +745,7 @@ export interface FileRouteTypes {
     | '/_admin/admin/shop'
     | '/_admin/admin/support'
     | '/_admin/admin/templates'
+    | '/_admin/admin/two-factor'
     | '/_admin/admin/users'
     | '/_admin/admin/withdraw-config'
     | '/_admin/admin/withdrawals'
@@ -733,6 +757,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard/profile'
     | '/_authenticated/dashboard/referrals'
     | '/_authenticated/dashboard/shop'
+    | '/_authenticated/dashboard/statistics'
     | '/_authenticated/dashboard/support'
     | '/_authenticated/dashboard/wallet'
     | '/_admin/admin/'
@@ -925,6 +950,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardSupportRouteImport
       parentRoute: typeof AuthenticatedDashboardRoute
     }
+    '/_authenticated/dashboard/statistics': {
+      id: '/_authenticated/dashboard/statistics'
+      path: '/statistics'
+      fullPath: '/dashboard/statistics'
+      preLoaderRoute: typeof AuthenticatedDashboardStatisticsRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
     '/_authenticated/dashboard/shop': {
       id: '/_authenticated/dashboard/shop'
       path: '/shop'
@@ -1000,6 +1032,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/users'
       fullPath: '/admin/users'
       preLoaderRoute: typeof AdminAdminUsersRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/_admin/admin/two-factor': {
+      id: '/_admin/admin/two-factor'
+      path: '/admin/two-factor'
+      fullPath: '/admin/two-factor'
+      preLoaderRoute: typeof AdminAdminTwoFactorRouteImport
       parentRoute: typeof AdminRouteRoute
     }
     '/_admin/admin/templates': {
@@ -1204,6 +1243,7 @@ interface AdminRouteRouteChildren {
   AdminAdminShopRoute: typeof AdminAdminShopRoute
   AdminAdminSupportRoute: typeof AdminAdminSupportRoute
   AdminAdminTemplatesRoute: typeof AdminAdminTemplatesRoute
+  AdminAdminTwoFactorRoute: typeof AdminAdminTwoFactorRoute
   AdminAdminUsersRoute: typeof AdminAdminUsersRoute
   AdminAdminWithdrawConfigRoute: typeof AdminAdminWithdrawConfigRoute
   AdminAdminWithdrawalsRoute: typeof AdminAdminWithdrawalsRoute
@@ -1234,6 +1274,7 @@ const AdminRouteRouteChildren: AdminRouteRouteChildren = {
   AdminAdminShopRoute: AdminAdminShopRoute,
   AdminAdminSupportRoute: AdminAdminSupportRoute,
   AdminAdminTemplatesRoute: AdminAdminTemplatesRoute,
+  AdminAdminTwoFactorRoute: AdminAdminTwoFactorRoute,
   AdminAdminUsersRoute: AdminAdminUsersRoute,
   AdminAdminWithdrawConfigRoute: AdminAdminWithdrawConfigRoute,
   AdminAdminWithdrawalsRoute: AdminAdminWithdrawalsRoute,
@@ -1283,6 +1324,7 @@ interface AuthenticatedDashboardRouteChildren {
   AuthenticatedDashboardProfileRoute: typeof AuthenticatedDashboardProfileRoute
   AuthenticatedDashboardReferralsRoute: typeof AuthenticatedDashboardReferralsRoute
   AuthenticatedDashboardShopRoute: typeof AuthenticatedDashboardShopRoute
+  AuthenticatedDashboardStatisticsRoute: typeof AuthenticatedDashboardStatisticsRoute
   AuthenticatedDashboardSupportRoute: typeof AuthenticatedDashboardSupportRoute
   AuthenticatedDashboardWalletRoute: typeof AuthenticatedDashboardWalletRoute
 }
@@ -1300,6 +1342,8 @@ const AuthenticatedDashboardRouteChildren: AuthenticatedDashboardRouteChildren =
     AuthenticatedDashboardProfileRoute: AuthenticatedDashboardProfileRoute,
     AuthenticatedDashboardReferralsRoute: AuthenticatedDashboardReferralsRoute,
     AuthenticatedDashboardShopRoute: AuthenticatedDashboardShopRoute,
+    AuthenticatedDashboardStatisticsRoute:
+      AuthenticatedDashboardStatisticsRoute,
     AuthenticatedDashboardSupportRoute: AuthenticatedDashboardSupportRoute,
     AuthenticatedDashboardWalletRoute: AuthenticatedDashboardWalletRoute,
   }
