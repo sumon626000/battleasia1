@@ -17,9 +17,7 @@ export const Route = createFileRoute("/feed")({
   }),
   component: FeedPage,
   errorComponent: ({ error }) => (
-    <SiteShell>
-      <div className="mx-auto max-w-2xl p-6 font-hud text-sm text-red-400">{error.message}</div>
-    </SiteShell>
+    <div className="mx-auto max-w-2xl p-6 font-hud text-sm text-red-400">{error.message}</div>
   ),
 });
 
