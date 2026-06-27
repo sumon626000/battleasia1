@@ -3,7 +3,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2, Ban, Trophy, Search } from "lucide-react";
+import { Plus, Pencil, Trash2, Ban, Trophy, Search, Check } from "lucide-react";
+import { MATCH_BANNERS } from "@/lib/match-banners";
 
 export const Route = createFileRoute("/_admin/admin/matches")({
   component: AdminMatchesPage,
@@ -294,7 +295,7 @@ function EditorModal({
 
           <Field label="Sponsor"><input className={inp} value={draft.sponsor ?? ""} onChange={(e) => upd({ sponsor: e.target.value })} /></Field>
           <Field label="Match URL"><input className={inp} value={draft.match_url ?? ""} onChange={(e) => upd({ match_url: e.target.value })} /></Field>
-          <Field label="Banner URL"><input className={inp} value={draft.banner_image_url ?? ""} onChange={(e) => upd({ banner_image_url: e.target.value })} /></Field>
+          <Field label="Banner URL"><input className={inp} value={draft.banner_image_url ?? ""} onChange={(e) => upd({ banner_image_url: e.target.value })} placeholder="Pick from library below or paste URL" /></Field>
           <Field label="Map Image URL"><input className={inp} value={draft.map_image_url ?? ""} onChange={(e) => upd({ map_image_url: e.target.value })} /></Field>
 
           <label className="flex items-center gap-2 font-hud text-xs uppercase tracking-widest text-foreground/80">
