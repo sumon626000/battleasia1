@@ -237,7 +237,7 @@ function PostFormModal({
       p_cover_image_url: form.cover_image_url || null,
       p_status: form.status,
       p_premium_only: form.premium_only,
-    });
+    } as never);
     setSaving(false);
     if (error) toast.error(error.message);
     else {
