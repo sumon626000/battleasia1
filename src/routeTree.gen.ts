@@ -17,6 +17,7 @@ import { Route as EmailVerifyRouteImport } from './routes/email.verify'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedDashboardWalletRouteImport } from './routes/_authenticated/dashboard.wallet'
 import { Route as AuthenticatedDashboardShopRouteImport } from './routes/_authenticated/dashboard.shop'
+import { Route as AuthenticatedDashboardReferralsRouteImport } from './routes/_authenticated/dashboard.referrals'
 import { Route as AuthenticatedDashboardProfileRouteImport } from './routes/_authenticated/dashboard.profile'
 import { Route as AuthenticatedDashboardMyMatchesRouteImport } from './routes/_authenticated/dashboard.my-matches'
 import { Route as AuthenticatedDashboardMatchesRouteImport } from './routes/_authenticated/dashboard.matches'
@@ -63,6 +64,12 @@ const AuthenticatedDashboardShopRoute =
     path: '/shop',
     getParentRoute: () => AuthenticatedDashboardRoute,
   } as any)
+const AuthenticatedDashboardReferralsRoute =
+  AuthenticatedDashboardReferralsRouteImport.update({
+    id: '/referrals',
+    path: '/referrals',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
 const AuthenticatedDashboardProfileRoute =
   AuthenticatedDashboardProfileRouteImport.update({
     id: '/profile',
@@ -97,6 +104,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/matches': typeof AuthenticatedDashboardMatchesRouteWithChildren
   '/dashboard/my-matches': typeof AuthenticatedDashboardMyMatchesRoute
   '/dashboard/profile': typeof AuthenticatedDashboardProfileRoute
+  '/dashboard/referrals': typeof AuthenticatedDashboardReferralsRoute
   '/dashboard/shop': typeof AuthenticatedDashboardShopRoute
   '/dashboard/wallet': typeof AuthenticatedDashboardWalletRoute
   '/dashboard/matches/$matchId': typeof AuthenticatedDashboardMatchesMatchIdRoute
@@ -110,6 +118,7 @@ export interface FileRoutesByTo {
   '/dashboard/matches': typeof AuthenticatedDashboardMatchesRouteWithChildren
   '/dashboard/my-matches': typeof AuthenticatedDashboardMyMatchesRoute
   '/dashboard/profile': typeof AuthenticatedDashboardProfileRoute
+  '/dashboard/referrals': typeof AuthenticatedDashboardReferralsRoute
   '/dashboard/shop': typeof AuthenticatedDashboardShopRoute
   '/dashboard/wallet': typeof AuthenticatedDashboardWalletRoute
   '/dashboard/matches/$matchId': typeof AuthenticatedDashboardMatchesMatchIdRoute
@@ -125,6 +134,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard/matches': typeof AuthenticatedDashboardMatchesRouteWithChildren
   '/_authenticated/dashboard/my-matches': typeof AuthenticatedDashboardMyMatchesRoute
   '/_authenticated/dashboard/profile': typeof AuthenticatedDashboardProfileRoute
+  '/_authenticated/dashboard/referrals': typeof AuthenticatedDashboardReferralsRoute
   '/_authenticated/dashboard/shop': typeof AuthenticatedDashboardShopRoute
   '/_authenticated/dashboard/wallet': typeof AuthenticatedDashboardWalletRoute
   '/_authenticated/dashboard/matches/$matchId': typeof AuthenticatedDashboardMatchesMatchIdRoute
@@ -140,6 +150,7 @@ export interface FileRouteTypes {
     | '/dashboard/matches'
     | '/dashboard/my-matches'
     | '/dashboard/profile'
+    | '/dashboard/referrals'
     | '/dashboard/shop'
     | '/dashboard/wallet'
     | '/dashboard/matches/$matchId'
@@ -153,6 +164,7 @@ export interface FileRouteTypes {
     | '/dashboard/matches'
     | '/dashboard/my-matches'
     | '/dashboard/profile'
+    | '/dashboard/referrals'
     | '/dashboard/shop'
     | '/dashboard/wallet'
     | '/dashboard/matches/$matchId'
@@ -167,6 +179,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard/matches'
     | '/_authenticated/dashboard/my-matches'
     | '/_authenticated/dashboard/profile'
+    | '/_authenticated/dashboard/referrals'
     | '/_authenticated/dashboard/shop'
     | '/_authenticated/dashboard/wallet'
     | '/_authenticated/dashboard/matches/$matchId'
@@ -238,6 +251,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardShopRouteImport
       parentRoute: typeof AuthenticatedDashboardRoute
     }
+    '/_authenticated/dashboard/referrals': {
+      id: '/_authenticated/dashboard/referrals'
+      path: '/referrals'
+      fullPath: '/dashboard/referrals'
+      preLoaderRoute: typeof AuthenticatedDashboardReferralsRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
     '/_authenticated/dashboard/profile': {
       id: '/_authenticated/dashboard/profile'
       path: '/profile'
@@ -288,6 +308,7 @@ interface AuthenticatedDashboardRouteChildren {
   AuthenticatedDashboardMatchesRoute: typeof AuthenticatedDashboardMatchesRouteWithChildren
   AuthenticatedDashboardMyMatchesRoute: typeof AuthenticatedDashboardMyMatchesRoute
   AuthenticatedDashboardProfileRoute: typeof AuthenticatedDashboardProfileRoute
+  AuthenticatedDashboardReferralsRoute: typeof AuthenticatedDashboardReferralsRoute
   AuthenticatedDashboardShopRoute: typeof AuthenticatedDashboardShopRoute
   AuthenticatedDashboardWalletRoute: typeof AuthenticatedDashboardWalletRoute
 }
@@ -298,6 +319,7 @@ const AuthenticatedDashboardRouteChildren: AuthenticatedDashboardRouteChildren =
       AuthenticatedDashboardMatchesRouteWithChildren,
     AuthenticatedDashboardMyMatchesRoute: AuthenticatedDashboardMyMatchesRoute,
     AuthenticatedDashboardProfileRoute: AuthenticatedDashboardProfileRoute,
+    AuthenticatedDashboardReferralsRoute: AuthenticatedDashboardReferralsRoute,
     AuthenticatedDashboardShopRoute: AuthenticatedDashboardShopRoute,
     AuthenticatedDashboardWalletRoute: AuthenticatedDashboardWalletRoute,
   }
