@@ -12,6 +12,10 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { CoinIcon } from "@/components/site/CoinIcon";
+import squadHero from "@/assets/pubg-squad-action.jpg";
+import sniperImg from "@/assets/pubg-sniper-rooftop.jpg";
+import vehicleImg from "@/assets/pubg-vehicle-chase.jpg";
+import airdropImg from "@/assets/pubg-airdrop.jpg";
 
 export const Route = createFileRoute("/_authenticated/dashboard/")({
   head: () => ({
@@ -43,21 +47,30 @@ function DashboardPage() {
   return (
     <div className="space-y-5">
       <section className="hud-panel relative overflow-hidden p-5 sm:p-6">
-        <div className="absolute inset-0 -z-10 bg-grid-hud opacity-30" />
+        <div
+          aria-hidden
+          className="absolute inset-0 -z-10 bg-cover bg-center opacity-30"
+          style={{ backgroundImage: `url(${squadHero})` }}
+        />
+        <div
+          aria-hidden
+          className="absolute inset-0 -z-10 bg-gradient-to-r from-background via-background/80 to-background/40"
+        />
+        <div aria-hidden className="absolute inset-0 -z-10 bg-grid-hud opacity-20" />
         <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4">
           <div className="min-w-0">
-            <p className="font-hud text-xs uppercase tracking-[0.25em] text-foreground/60">
+            <p className="font-hud text-xs uppercase tracking-[0.25em] text-gold/80">
               Welcome back, Operator
             </p>
             <h1 className="mt-1 truncate font-display text-2xl font-bold tracking-wide sm:text-3xl">
               {name}
             </h1>
-            <p className="mt-1 font-mono text-[11px] text-foreground/50">
+            <p className="mt-1 font-mono text-[11px] text-foreground/60">
               PUBG ID: {profile?.pubg_id ?? "—"} · Server: {profile?.game_server ?? "—"}
             </p>
           </div>
           <div className="hidden sm:block">
-            <TrendingUp className="h-12 w-12 text-gold/40" />
+            <TrendingUp className="h-12 w-12 text-gold/60" />
           </div>
         </div>
       </section>
@@ -111,20 +124,50 @@ function DashboardPage() {
       </section>
 
       <section className="grid gap-4 lg:grid-cols-2">
-        <div className="hud-panel p-5">
+        <div className="hud-panel relative overflow-hidden p-5">
+          <div
+            aria-hidden
+            className="absolute inset-0 -z-10 bg-cover bg-center opacity-20"
+            style={{ backgroundImage: `url(${vehicleImg})` }}
+          />
+          <div aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-t from-background via-background/85 to-transparent" />
           <h3 className="font-hud text-sm font-bold uppercase tracking-widest text-gold">
             Upcoming Matches
           </h3>
-          <p className="mt-2 font-mono text-xs text-foreground/60">
+          <p className="mt-2 font-mono text-xs text-foreground/70">
             No upcoming matches yet. Check the Play Matches page.
           </p>
         </div>
-        <div className="hud-panel p-5">
+        <div className="hud-panel relative overflow-hidden p-5">
+          <div
+            aria-hidden
+            className="absolute inset-0 -z-10 bg-cover bg-center opacity-20"
+            style={{ backgroundImage: `url(${sniperImg})` }}
+          />
+          <div aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-t from-background via-background/85 to-transparent" />
           <h3 className="font-hud text-sm font-bold uppercase tracking-widest text-gold">
             Recent Activity
           </h3>
-          <p className="mt-2 font-mono text-xs text-foreground/60">
+          <p className="mt-2 font-mono text-xs text-foreground/70">
             Your wallet and match history will appear here.
+          </p>
+        </div>
+      </section>
+
+      <section className="hud-panel relative overflow-hidden p-5 sm:p-6">
+        <div
+          aria-hidden
+          className="absolute inset-0 -z-10 bg-cover bg-center opacity-25"
+          style={{ backgroundImage: `url(${airdropImg})` }}
+        />
+        <div aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-r from-background via-background/70 to-transparent" />
+        <div className="max-w-md">
+          <p className="font-hud text-[10px] uppercase tracking-[0.3em] text-gold/80">Drop Zone</p>
+          <h3 className="mt-1 font-display text-xl font-bold uppercase tracking-wide">
+            Claim Your Loot
+          </h3>
+          <p className="mt-2 font-mono text-xs text-foreground/70">
+            Top up BAC Coin, join tournaments, and climb the leaderboard.
           </p>
         </div>
       </section>
