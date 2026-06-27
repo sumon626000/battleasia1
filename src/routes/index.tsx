@@ -251,10 +251,10 @@ function BattleAsiaLanding() {
           </div>
 
           <div className="relative mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
-            {STATS.map(({ icon: Icon, value, label }) => (
+            {STATS.map(({ icon: Icon, value, label, isCoin }) => (
               <div key={label} className="flex items-center gap-3 rounded-sm border border-border/60 bg-background/40 p-3">
                 <div className="grid h-10 w-10 shrink-0 place-items-center rounded-md bg-gold/10 text-gold ring-1 ring-gold/30">
-                  <Icon size={18} />
+                  {isCoin ? <CoinIcon size={20} /> : <Icon size={18} />}
                 </div>
                 <div className="min-w-0">
                   <div className="font-display font-mono-tab truncate text-lg font-bold leading-none">{value}</div>
