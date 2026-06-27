@@ -267,8 +267,36 @@ function BattleAsiaLanding() {
         </div>
       </section>
 
+      {/* ============ PLAY NOW BANNER ============ */}
+      <section className="mx-auto max-w-7xl px-4 pb-6 sm:px-6">
+        <div className="hud-panel hud-bracket relative overflow-hidden p-6 sm:p-8">
+          <div aria-hidden className="absolute inset-0 bg-grid-hud opacity-20" />
+          <div aria-hidden className="absolute -right-12 -top-12 h-48 w-48 rounded-full bg-gold/10 blur-3xl" />
+          <div className="relative grid gap-5 lg:grid-cols-[1fr,auto] lg:items-center">
+            <div>
+              <div className="chip-tag mb-3"><Flame size={12} /> PLAY NOW</div>
+              <h2 className="font-display text-3xl font-bold sm:text-4xl">
+                JUMP INTO A <span className="text-gold">LIVE BATTLE</span>
+              </h2>
+              <p className="mt-2 max-w-2xl text-sm text-muted-foreground sm:text-base">
+                New matches start every hour. Solo, Duo, Squad and TDM lobbies — pay entry in BAC, claim the prize pool.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-3">
+              <Link to="/matches" className="btn-gold inline-flex items-center gap-2 px-6 py-3 text-sm">
+                BROWSE MATCHES <ChevronRight size={16} />
+              </Link>
+              <Link to="/apk" className="btn-outline-gold inline-flex items-center gap-2 px-6 py-3 text-sm">
+                <Download size={14} /> GET APK
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ============ TOP PROFIT + TOP PLAYERS ============ */}
       <section className="mx-auto grid max-w-7xl gap-5 px-4 pb-10 sm:px-6 lg:grid-cols-2">
+
         <LeaderCard
           tag="EARNINGS" icon={TrendingUp} title="TOP PROFIT" highlight="GENERATORS"
           loading={topProfit.isLoading}
