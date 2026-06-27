@@ -1638,8 +1638,8 @@ export type Database = {
         Args: { p_match_id: number; p_reason: string }
         Returns: number
       }
-      admin_delete_feed_category: { Args: { p_id: string }; Returns: undefined }
-      admin_delete_feed_post: { Args: { p_id: string }; Returns: undefined }
+      admin_delete_feed_category: { Args: { p_id: number }; Returns: undefined }
+      admin_delete_feed_post: { Args: { p_id: number }; Returns: undefined }
       admin_delete_match: { Args: { p_match_id: number }; Returns: undefined }
       admin_delete_shop_category: { Args: { p_id: number }; Returns: undefined }
       admin_delete_shop_package: { Args: { p_id: number }; Returns: undefined }
@@ -1670,29 +1670,20 @@ export type Database = {
         Returns: undefined
       }
       admin_save_feed_category: {
-        Args: {
-          p_id: string
-          p_is_active?: boolean
-          p_name: string
-          p_slug: string
-          p_sort_order?: number
-        }
-        Returns: string
+        Args: { p_id: number; p_name: string; p_slug: string }
+        Returns: number
       }
       admin_save_feed_post: {
         Args: {
-          p_body: string
-          p_category_id: string
-          p_cover_url: string
-          p_excerpt: string
-          p_id: string
-          p_is_pinned: boolean
-          p_is_published: boolean
-          p_published_at: string
-          p_slug: string
+          p_category_id: number
+          p_cover_image_url: string
+          p_description_html: string
+          p_id: number
+          p_premium_only: boolean
+          p_status: string
           p_title: string
         }
-        Returns: string
+        Returns: number
       }
       admin_save_match: {
         Args: { p_match_id: number; p_payload: Json }
@@ -1724,8 +1715,7 @@ export type Database = {
       }
       admin_send_notification: {
         Args: {
-          p_body: string
-          p_link?: string
+          p_message: string
           p_target: string
           p_title: string
           p_type?: string
