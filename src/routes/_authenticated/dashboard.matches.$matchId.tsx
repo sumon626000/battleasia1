@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -6,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { useProfile } from "@/hooks/use-profile";
 import { CoinIcon } from "@/components/site/CoinIcon";
+import { ConfirmModal } from "@/components/site/ConfirmModal";
 
 export const Route = createFileRoute("/_authenticated/dashboard/matches/$matchId")({
   head: () => ({ meta: [{ title: "Match Details — Battle Asia" }] }),
