@@ -51,7 +51,7 @@ export type Database = {
         Row: {
           action: string
           admin_id: string
-          admin_name: string
+          admin_name: string | null
           created_at: string
           id: number
           ip_address: string | null
@@ -64,7 +64,7 @@ export type Database = {
         Insert: {
           action: string
           admin_id: string
-          admin_name: string
+          admin_name?: string | null
           created_at?: string
           id?: number
           ip_address?: string | null
@@ -77,7 +77,7 @@ export type Database = {
         Update: {
           action?: string
           admin_id?: string
-          admin_name?: string
+          admin_name?: string | null
           created_at?: string
           id?: number
           ip_address?: string | null
