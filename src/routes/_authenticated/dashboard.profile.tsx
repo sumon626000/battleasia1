@@ -13,7 +13,8 @@ import {
   Save,
   Copy,
   Crown,
-} from "lucide-react";
+  ImagePlus,
+  Link2,
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { useProfile } from "@/hooks/use-profile";
