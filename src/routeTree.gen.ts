@@ -33,6 +33,7 @@ import { Route as AuthenticatedDashboardRouteImport } from './routes/_authentica
 import { Route as AuthenticatedDashboardIndexRouteImport } from './routes/_authenticated/dashboard.index'
 import { Route as AdminAdminIndexRouteImport } from './routes/_admin/admin.index'
 import { Route as AuthenticatedDashboardWalletRouteImport } from './routes/_authenticated/dashboard.wallet'
+import { Route as AuthenticatedDashboardVaultRouteImport } from './routes/_authenticated/dashboard.vault'
 import { Route as AuthenticatedDashboardSupportRouteImport } from './routes/_authenticated/dashboard.support'
 import { Route as AuthenticatedDashboardStatisticsRouteImport } from './routes/_authenticated/dashboard.statistics'
 import { Route as AuthenticatedDashboardShopRouteImport } from './routes/_authenticated/dashboard.shop'
@@ -196,6 +197,12 @@ const AuthenticatedDashboardWalletRoute =
   AuthenticatedDashboardWalletRouteImport.update({
     id: '/wallet',
     path: '/wallet',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
+const AuthenticatedDashboardVaultRoute =
+  AuthenticatedDashboardVaultRouteImport.update({
+    id: '/vault',
+    path: '/vault',
     getParentRoute: () => AuthenticatedDashboardRoute,
   } as any)
 const AuthenticatedDashboardSupportRoute =
@@ -498,6 +505,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/shop': typeof AuthenticatedDashboardShopRoute
   '/dashboard/statistics': typeof AuthenticatedDashboardStatisticsRoute
   '/dashboard/support': typeof AuthenticatedDashboardSupportRoute
+  '/dashboard/vault': typeof AuthenticatedDashboardVaultRoute
   '/dashboard/wallet': typeof AuthenticatedDashboardWalletRoute
   '/admin/': typeof AdminAdminIndexRoute
   '/dashboard/': typeof AuthenticatedDashboardIndexRoute
@@ -565,6 +573,7 @@ export interface FileRoutesByTo {
   '/dashboard/shop': typeof AuthenticatedDashboardShopRoute
   '/dashboard/statistics': typeof AuthenticatedDashboardStatisticsRoute
   '/dashboard/support': typeof AuthenticatedDashboardSupportRoute
+  '/dashboard/vault': typeof AuthenticatedDashboardVaultRoute
   '/dashboard/wallet': typeof AuthenticatedDashboardWalletRoute
   '/admin': typeof AdminAdminIndexRoute
   '/dashboard': typeof AuthenticatedDashboardIndexRoute
@@ -636,6 +645,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard/shop': typeof AuthenticatedDashboardShopRoute
   '/_authenticated/dashboard/statistics': typeof AuthenticatedDashboardStatisticsRoute
   '/_authenticated/dashboard/support': typeof AuthenticatedDashboardSupportRoute
+  '/_authenticated/dashboard/vault': typeof AuthenticatedDashboardVaultRoute
   '/_authenticated/dashboard/wallet': typeof AuthenticatedDashboardWalletRoute
   '/_admin/admin/': typeof AdminAdminIndexRoute
   '/_authenticated/dashboard/': typeof AuthenticatedDashboardIndexRoute
@@ -706,6 +716,7 @@ export interface FileRouteTypes {
     | '/dashboard/shop'
     | '/dashboard/statistics'
     | '/dashboard/support'
+    | '/dashboard/vault'
     | '/dashboard/wallet'
     | '/admin/'
     | '/dashboard/'
@@ -773,6 +784,7 @@ export interface FileRouteTypes {
     | '/dashboard/shop'
     | '/dashboard/statistics'
     | '/dashboard/support'
+    | '/dashboard/vault'
     | '/dashboard/wallet'
     | '/admin'
     | '/dashboard'
@@ -843,6 +855,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard/shop'
     | '/_authenticated/dashboard/statistics'
     | '/_authenticated/dashboard/support'
+    | '/_authenticated/dashboard/vault'
     | '/_authenticated/dashboard/wallet'
     | '/_admin/admin/'
     | '/_authenticated/dashboard/'
@@ -1040,6 +1053,13 @@ declare module '@tanstack/react-router' {
       path: '/wallet'
       fullPath: '/dashboard/wallet'
       preLoaderRoute: typeof AuthenticatedDashboardWalletRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
+    '/_authenticated/dashboard/vault': {
+      id: '/_authenticated/dashboard/vault'
+      path: '/vault'
+      fullPath: '/dashboard/vault'
+      preLoaderRoute: typeof AuthenticatedDashboardVaultRouteImport
       parentRoute: typeof AuthenticatedDashboardRoute
     }
     '/_authenticated/dashboard/support': {
@@ -1469,6 +1489,7 @@ interface AuthenticatedDashboardRouteChildren {
   AuthenticatedDashboardShopRoute: typeof AuthenticatedDashboardShopRoute
   AuthenticatedDashboardStatisticsRoute: typeof AuthenticatedDashboardStatisticsRoute
   AuthenticatedDashboardSupportRoute: typeof AuthenticatedDashboardSupportRoute
+  AuthenticatedDashboardVaultRoute: typeof AuthenticatedDashboardVaultRoute
   AuthenticatedDashboardWalletRoute: typeof AuthenticatedDashboardWalletRoute
   AuthenticatedDashboardIndexRoute: typeof AuthenticatedDashboardIndexRoute
 }
@@ -1490,6 +1511,7 @@ const AuthenticatedDashboardRouteChildren: AuthenticatedDashboardRouteChildren =
     AuthenticatedDashboardStatisticsRoute:
       AuthenticatedDashboardStatisticsRoute,
     AuthenticatedDashboardSupportRoute: AuthenticatedDashboardSupportRoute,
+    AuthenticatedDashboardVaultRoute: AuthenticatedDashboardVaultRoute,
     AuthenticatedDashboardWalletRoute: AuthenticatedDashboardWalletRoute,
     AuthenticatedDashboardIndexRoute: AuthenticatedDashboardIndexRoute,
   }

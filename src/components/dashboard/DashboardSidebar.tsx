@@ -2,7 +2,7 @@ import { useNavigate, useRouterState } from "@tanstack/react-router";
 import {
   LayoutDashboard,
   Swords,
-  Wallet,
+  Vault,
   Trophy,
   ShoppingBag,
   Users,
@@ -21,8 +21,8 @@ export const DASH_NAV = [
   { key: "dash.playMatches", href: "/dashboard/matches", icon: Swords },
   { key: "dash.matches", href: "/dashboard/my-matches", icon: Trophy },
   { key: "dash.statistics", href: "/dashboard/statistics", icon: BarChart3 },
-  { key: "dash.wallet", href: "/dashboard/wallet", icon: Wallet },
   { key: "dash.shop", href: "/dashboard/shop", icon: ShoppingBag },
+  { key: "dash.vault", href: "/dashboard/vault", icon: Vault },
   { key: "dash.referrals", href: "/dashboard/referrals", icon: Users },
   { key: "dash.premium", href: "/dashboard/premium", icon: Crown },
   { key: "dash.feed", href: "/dashboard/feed", icon: Newspaper },

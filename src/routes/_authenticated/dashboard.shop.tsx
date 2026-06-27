@@ -1,8 +1,8 @@
 import { useMemo, useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Copy, Tag, CheckCircle2, XCircle, Clock, ShoppingBag, Sparkles } from "lucide-react";
+import { Copy, Tag, CheckCircle2, XCircle, Clock, ShoppingBag, Sparkles, Vault as VaultIcon } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import { CoinIcon } from "@/components/site/CoinIcon";
@@ -20,6 +20,7 @@ type Pkg = {
 
 function ShopPage() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [activeCat, setActiveCat] = useState<number | "all">("all");
   const [buying, setBuying] = useState<Pkg | null>(null);
 
@@ -60,6 +61,18 @@ function ShopPage() {
           </div>
           <ShoppingBag className="text-gold" size={36} />
         </div>
+
+        <button
+          type="button"
+          onClick={() => navigate({ to: "/dashboard/vault" })}
+          className="btn-gold mt-5 flex w-full items-center justify-center gap-2 px-5 py-3 text-sm sm:w-auto"
+        >
+          <VaultIcon size={16} />
+          GET BAC COIN · DEPOSIT / WITHDRAW
+        </button>
+        <p className="mt-2 font-hud text-[10px] uppercase tracking-widest text-foreground/50">
+          Secured by password re-verification
+        </p>
       </section>
 
       {/* Category filter */}
