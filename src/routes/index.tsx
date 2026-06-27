@@ -12,6 +12,7 @@ import {
   Accordion, AccordionContent, AccordionItem, AccordionTrigger,
 } from "@/components/ui/accordion";
 import { CoinIcon } from "@/components/site/CoinIcon";
+import { ApkIcon } from "@/components/site/ApkIcon";
 import { useT } from "@/lib/i18n";
 import heroSoldier from "@/assets/hero-soldier.jpg";
 import phoneApp from "@/assets/phone-app.jpg";
