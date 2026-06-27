@@ -13,6 +13,9 @@ import {
   Gamepad2,
   Users2,
   ArrowLeft,
+  Coins,
+  Banknote,
+  Settings2,
 } from "lucide-react";
 
 export const ADMIN_NAV = [
@@ -26,6 +29,10 @@ export const ADMIN_NAV = [
   { label: "Deposits", href: "/admin/deposits", icon: Wallet },
   { label: "Withdrawals", href: "/admin/withdrawals", icon: Wallet },
   { label: "Balances", href: "/admin/balances", icon: Wallet },
+  { label: "Channels", href: "/admin/channels", icon: Banknote },
+  { label: "Business Wallets", href: "/admin/business-wallets", icon: Wallet },
+  { label: "Coin Rates", href: "/admin/coin-rates", icon: Coins },
+  { label: "Withdraw Config", href: "/admin/withdraw-config", icon: Settings2 },
   { label: "Feed", href: "/admin/feed", icon: Newspaper },
   { label: "Notifications", href: "/admin/notifications", icon: Bell },
   { label: "Support", href: "/admin/support", icon: LifeBuoy },

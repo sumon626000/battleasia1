@@ -29,6 +29,7 @@ import { Route as AuthenticatedDashboardMyMatchesRouteImport } from './routes/_a
 import { Route as AuthenticatedDashboardMatchesRouteImport } from './routes/_authenticated/dashboard.matches'
 import { Route as AuthenticatedDashboardFeedRouteImport } from './routes/_authenticated/dashboard.feed'
 import { Route as AdminAdminWithdrawalsRouteImport } from './routes/_admin/admin.withdrawals'
+import { Route as AdminAdminWithdrawConfigRouteImport } from './routes/_admin/admin.withdraw-config'
 import { Route as AdminAdminUsersRouteImport } from './routes/_admin/admin.users'
 import { Route as AdminAdminSupportRouteImport } from './routes/_admin/admin.support'
 import { Route as AdminAdminShopRouteImport } from './routes/_admin/admin.shop'
@@ -39,6 +40,9 @@ import { Route as AdminAdminMatchesRouteImport } from './routes/_admin/admin.mat
 import { Route as AdminAdminGamesRouteImport } from './routes/_admin/admin.games'
 import { Route as AdminAdminFeedRouteImport } from './routes/_admin/admin.feed'
 import { Route as AdminAdminDepositsRouteImport } from './routes/_admin/admin.deposits'
+import { Route as AdminAdminCoinRatesRouteImport } from './routes/_admin/admin.coin-rates'
+import { Route as AdminAdminChannelsRouteImport } from './routes/_admin/admin.channels'
+import { Route as AdminAdminBusinessWalletsRouteImport } from './routes/_admin/admin.business-wallets'
 import { Route as AdminAdminBalancesRouteImport } from './routes/_admin/admin.balances'
 import { Route as AuthenticatedDashboardMatchesMatchIdRouteImport } from './routes/_authenticated/dashboard.matches.$matchId'
 import { Route as AuthenticatedDashboardFeedPostIdRouteImport } from './routes/_authenticated/dashboard.feed.$postId'
@@ -151,6 +155,12 @@ const AdminAdminWithdrawalsRoute = AdminAdminWithdrawalsRouteImport.update({
   path: '/admin/withdrawals',
   getParentRoute: () => AdminRouteRoute,
 } as any)
+const AdminAdminWithdrawConfigRoute =
+  AdminAdminWithdrawConfigRouteImport.update({
+    id: '/admin/withdraw-config',
+    path: '/admin/withdraw-config',
+    getParentRoute: () => AdminRouteRoute,
+  } as any)
 const AdminAdminUsersRoute = AdminAdminUsersRouteImport.update({
   id: '/admin/users',
   path: '/admin/users',
@@ -201,6 +211,22 @@ const AdminAdminDepositsRoute = AdminAdminDepositsRouteImport.update({
   path: '/admin/deposits',
   getParentRoute: () => AdminRouteRoute,
 } as any)
+const AdminAdminCoinRatesRoute = AdminAdminCoinRatesRouteImport.update({
+  id: '/admin/coin-rates',
+  path: '/admin/coin-rates',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminAdminChannelsRoute = AdminAdminChannelsRouteImport.update({
+  id: '/admin/channels',
+  path: '/admin/channels',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminAdminBusinessWalletsRoute =
+  AdminAdminBusinessWalletsRouteImport.update({
+    id: '/admin/business-wallets',
+    path: '/admin/business-wallets',
+    getParentRoute: () => AdminRouteRoute,
+  } as any)
 const AdminAdminBalancesRoute = AdminAdminBalancesRouteImport.update({
   id: '/admin/balances',
   path: '/admin/balances',
@@ -227,6 +253,9 @@ export interface FileRoutesByFullPath {
   '/email/verify': typeof EmailVerifyRoute
   '/p/$slug': typeof PSlugRoute
   '/admin/balances': typeof AdminAdminBalancesRoute
+  '/admin/business-wallets': typeof AdminAdminBusinessWalletsRoute
+  '/admin/channels': typeof AdminAdminChannelsRoute
+  '/admin/coin-rates': typeof AdminAdminCoinRatesRoute
   '/admin/deposits': typeof AdminAdminDepositsRoute
   '/admin/feed': typeof AdminAdminFeedRoute
   '/admin/games': typeof AdminAdminGamesRoute
@@ -237,6 +266,7 @@ export interface FileRoutesByFullPath {
   '/admin/shop': typeof AdminAdminShopRoute
   '/admin/support': typeof AdminAdminSupportRoute
   '/admin/users': typeof AdminAdminUsersRoute
+  '/admin/withdraw-config': typeof AdminAdminWithdrawConfigRoute
   '/admin/withdrawals': typeof AdminAdminWithdrawalsRoute
   '/dashboard/feed': typeof AuthenticatedDashboardFeedRouteWithChildren
   '/dashboard/matches': typeof AuthenticatedDashboardMatchesRouteWithChildren
@@ -260,6 +290,9 @@ export interface FileRoutesByTo {
   '/email/verify': typeof EmailVerifyRoute
   '/p/$slug': typeof PSlugRoute
   '/admin/balances': typeof AdminAdminBalancesRoute
+  '/admin/business-wallets': typeof AdminAdminBusinessWalletsRoute
+  '/admin/channels': typeof AdminAdminChannelsRoute
+  '/admin/coin-rates': typeof AdminAdminCoinRatesRoute
   '/admin/deposits': typeof AdminAdminDepositsRoute
   '/admin/feed': typeof AdminAdminFeedRoute
   '/admin/games': typeof AdminAdminGamesRoute
@@ -270,6 +303,7 @@ export interface FileRoutesByTo {
   '/admin/shop': typeof AdminAdminShopRoute
   '/admin/support': typeof AdminAdminSupportRoute
   '/admin/users': typeof AdminAdminUsersRoute
+  '/admin/withdraw-config': typeof AdminAdminWithdrawConfigRoute
   '/admin/withdrawals': typeof AdminAdminWithdrawalsRoute
   '/dashboard/feed': typeof AuthenticatedDashboardFeedRouteWithChildren
   '/dashboard/matches': typeof AuthenticatedDashboardMatchesRouteWithChildren
@@ -296,6 +330,9 @@ export interface FileRoutesById {
   '/email/verify': typeof EmailVerifyRoute
   '/p/$slug': typeof PSlugRoute
   '/_admin/admin/balances': typeof AdminAdminBalancesRoute
+  '/_admin/admin/business-wallets': typeof AdminAdminBusinessWalletsRoute
+  '/_admin/admin/channels': typeof AdminAdminChannelsRoute
+  '/_admin/admin/coin-rates': typeof AdminAdminCoinRatesRoute
   '/_admin/admin/deposits': typeof AdminAdminDepositsRoute
   '/_admin/admin/feed': typeof AdminAdminFeedRoute
   '/_admin/admin/games': typeof AdminAdminGamesRoute
@@ -306,6 +343,7 @@ export interface FileRoutesById {
   '/_admin/admin/shop': typeof AdminAdminShopRoute
   '/_admin/admin/support': typeof AdminAdminSupportRoute
   '/_admin/admin/users': typeof AdminAdminUsersRoute
+  '/_admin/admin/withdraw-config': typeof AdminAdminWithdrawConfigRoute
   '/_admin/admin/withdrawals': typeof AdminAdminWithdrawalsRoute
   '/_authenticated/dashboard/feed': typeof AuthenticatedDashboardFeedRouteWithChildren
   '/_authenticated/dashboard/matches': typeof AuthenticatedDashboardMatchesRouteWithChildren
@@ -331,6 +369,9 @@ export interface FileRouteTypes {
     | '/email/verify'
     | '/p/$slug'
     | '/admin/balances'
+    | '/admin/business-wallets'
+    | '/admin/channels'
+    | '/admin/coin-rates'
     | '/admin/deposits'
     | '/admin/feed'
     | '/admin/games'
@@ -341,6 +382,7 @@ export interface FileRouteTypes {
     | '/admin/shop'
     | '/admin/support'
     | '/admin/users'
+    | '/admin/withdraw-config'
     | '/admin/withdrawals'
     | '/dashboard/feed'
     | '/dashboard/matches'
@@ -364,6 +406,9 @@ export interface FileRouteTypes {
     | '/email/verify'
     | '/p/$slug'
     | '/admin/balances'
+    | '/admin/business-wallets'
+    | '/admin/channels'
+    | '/admin/coin-rates'
     | '/admin/deposits'
     | '/admin/feed'
     | '/admin/games'
@@ -374,6 +419,7 @@ export interface FileRouteTypes {
     | '/admin/shop'
     | '/admin/support'
     | '/admin/users'
+    | '/admin/withdraw-config'
     | '/admin/withdrawals'
     | '/dashboard/feed'
     | '/dashboard/matches'
@@ -399,6 +445,9 @@ export interface FileRouteTypes {
     | '/email/verify'
     | '/p/$slug'
     | '/_admin/admin/balances'
+    | '/_admin/admin/business-wallets'
+    | '/_admin/admin/channels'
+    | '/_admin/admin/coin-rates'
     | '/_admin/admin/deposits'
     | '/_admin/admin/feed'
     | '/_admin/admin/games'
@@ -409,6 +458,7 @@ export interface FileRouteTypes {
     | '/_admin/admin/shop'
     | '/_admin/admin/support'
     | '/_admin/admin/users'
+    | '/_admin/admin/withdraw-config'
     | '/_admin/admin/withdrawals'
     | '/_authenticated/dashboard/feed'
     | '/_authenticated/dashboard/matches'
@@ -577,6 +627,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAdminWithdrawalsRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/_admin/admin/withdraw-config': {
+      id: '/_admin/admin/withdraw-config'
+      path: '/admin/withdraw-config'
+      fullPath: '/admin/withdraw-config'
+      preLoaderRoute: typeof AdminAdminWithdrawConfigRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
     '/_admin/admin/users': {
       id: '/_admin/admin/users'
       path: '/admin/users'
@@ -647,6 +704,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAdminDepositsRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/_admin/admin/coin-rates': {
+      id: '/_admin/admin/coin-rates'
+      path: '/admin/coin-rates'
+      fullPath: '/admin/coin-rates'
+      preLoaderRoute: typeof AdminAdminCoinRatesRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/_admin/admin/channels': {
+      id: '/_admin/admin/channels'
+      path: '/admin/channels'
+      fullPath: '/admin/channels'
+      preLoaderRoute: typeof AdminAdminChannelsRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/_admin/admin/business-wallets': {
+      id: '/_admin/admin/business-wallets'
+      path: '/admin/business-wallets'
+      fullPath: '/admin/business-wallets'
+      preLoaderRoute: typeof AdminAdminBusinessWalletsRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
     '/_admin/admin/balances': {
       id: '/_admin/admin/balances'
       path: '/admin/balances'
@@ -673,6 +751,9 @@ declare module '@tanstack/react-router' {
 
 interface AdminRouteRouteChildren {
   AdminAdminBalancesRoute: typeof AdminAdminBalancesRoute
+  AdminAdminBusinessWalletsRoute: typeof AdminAdminBusinessWalletsRoute
+  AdminAdminChannelsRoute: typeof AdminAdminChannelsRoute
+  AdminAdminCoinRatesRoute: typeof AdminAdminCoinRatesRoute
   AdminAdminDepositsRoute: typeof AdminAdminDepositsRoute
   AdminAdminFeedRoute: typeof AdminAdminFeedRoute
   AdminAdminGamesRoute: typeof AdminAdminGamesRoute
@@ -683,12 +764,16 @@ interface AdminRouteRouteChildren {
   AdminAdminShopRoute: typeof AdminAdminShopRoute
   AdminAdminSupportRoute: typeof AdminAdminSupportRoute
   AdminAdminUsersRoute: typeof AdminAdminUsersRoute
+  AdminAdminWithdrawConfigRoute: typeof AdminAdminWithdrawConfigRoute
   AdminAdminWithdrawalsRoute: typeof AdminAdminWithdrawalsRoute
   AdminAdminIndexRoute: typeof AdminAdminIndexRoute
 }
 
 const AdminRouteRouteChildren: AdminRouteRouteChildren = {
   AdminAdminBalancesRoute: AdminAdminBalancesRoute,
+  AdminAdminBusinessWalletsRoute: AdminAdminBusinessWalletsRoute,
+  AdminAdminChannelsRoute: AdminAdminChannelsRoute,
+  AdminAdminCoinRatesRoute: AdminAdminCoinRatesRoute,
   AdminAdminDepositsRoute: AdminAdminDepositsRoute,
   AdminAdminFeedRoute: AdminAdminFeedRoute,
   AdminAdminGamesRoute: AdminAdminGamesRoute,
@@ -699,6 +784,7 @@ const AdminRouteRouteChildren: AdminRouteRouteChildren = {
   AdminAdminShopRoute: AdminAdminShopRoute,
   AdminAdminSupportRoute: AdminAdminSupportRoute,
   AdminAdminUsersRoute: AdminAdminUsersRoute,
+  AdminAdminWithdrawConfigRoute: AdminAdminWithdrawConfigRoute,
   AdminAdminWithdrawalsRoute: AdminAdminWithdrawalsRoute,
   AdminAdminIndexRoute: AdminAdminIndexRoute,
 }
