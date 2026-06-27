@@ -11,17 +11,15 @@ export const Route = createFileRoute("/_admin/admin/games")({
 
 type Game = {
   id: number;
-  name: string;
-  slug: string | null;
+  game_name: string;
   package_name: string | null;
   image_url: string | null;
   id_prefix: string | null;
   can_create_match: boolean;
-  is_active: boolean;
+  status: "active" | "inactive";
   coming_soon: boolean;
   sort_order: number;
   deleted_at: string | null;
-  created_at: string;
 };
 
 function AdminGamesPage() {
@@ -43,18 +41,17 @@ function AdminGamesPage() {
 
   async function save() {
     if (!editing) return;
+    if (!editing.game_name) return toast.error("Name required");
     const payload = {
-      name: editing.name ?? "",
-      slug: editing.slug ?? null,
+      game_name: editing.game_name,
       package_name: editing.package_name ?? null,
       image_url: editing.image_url ?? null,
       id_prefix: editing.id_prefix ?? null,
       can_create_match: editing.can_create_match ?? true,
-      is_active: editing.is_active ?? true,
+      status: (editing.status ?? "active") as "active" | "inactive",
       coming_soon: editing.coming_soon ?? false,
       sort_order: editing.sort_order ?? 0,
     };
-    if (!payload.name) return toast.error("Name required");
     const { error } = editing.id
       ? await supabase.from("games").update(payload).eq("id", editing.id)
       : await supabase.from("games").insert(payload);
@@ -66,7 +63,10 @@ function AdminGamesPage() {
 
   async function softDelete(id: number) {
     if (!confirm("Delete this game?")) return;
-    const { error } = await supabase.from("games").update({ deleted_at: new Date().toISOString(), is_active: false }).eq("id", id);
+    const { error } = await supabase
+      .from("games")
+      .update({ deleted_at: new Date().toISOString(), status: "inactive" as const })
+      .eq("id", id);
     if (error) return toast.error(error.message);
     toast.success("Deleted");
     qc.invalidateQueries({ queryKey: ["admin-games"] });
@@ -112,7 +112,7 @@ function AdminGamesPage() {
                     <div className="h-10 w-10 rounded border border-border/60 bg-card/60" />
                   )}
                 </td>
-                <td className="p-2 font-display">{g.name}</td>
+                <td className="p-2 font-display">{g.game_name}</td>
                 <td className="p-2 font-hud text-[11px] text-foreground/70">{g.package_name}</td>
                 <td className="p-2 font-hud text-[11px] text-foreground/70">{g.id_prefix}</td>
                 <td className="p-2 text-center">
@@ -121,8 +121,8 @@ function AdminGamesPage() {
                   </span>
                 </td>
                 <td className="p-2 text-center">
-                  <span className={`rounded px-2 py-0.5 text-[10px] uppercase ${g.is_active ? "bg-emerald-500/20 text-emerald-400" : "bg-destructive/20 text-destructive"}`}>
-                    {g.is_active ? "Active" : "Inactive"}
+                  <span className={`rounded px-2 py-0.5 text-[10px] uppercase ${g.status === "active" ? "bg-emerald-500/20 text-emerald-400" : "bg-destructive/20 text-destructive"}`}>
+                    {g.status}
                   </span>
                 </td>
                 <td className="p-2 text-center">
@@ -156,26 +156,28 @@ function AdminGamesPage() {
             </h2>
             <div className="grid gap-3">
               <Field label="Name">
-                <input value={editing.name ?? ""} onChange={(e) => setEditing({ ...editing, name: e.target.value })} className="input-hud" />
-              </Field>
-              <Field label="Slug">
-                <input value={editing.slug ?? ""} onChange={(e) => setEditing({ ...editing, slug: e.target.value })} className="input-hud" />
+                <input value={editing.game_name ?? ""} onChange={(e) => setEditing({ ...editing, game_name: e.target.value })} className="w-full rounded border border-border/60 bg-background/60 px-3 py-2 font-hud text-sm" />
               </Field>
               <Field label="Package Name">
-                <input value={editing.package_name ?? ""} onChange={(e) => setEditing({ ...editing, package_name: e.target.value })} className="input-hud" />
+                <input value={editing.package_name ?? ""} onChange={(e) => setEditing({ ...editing, package_name: e.target.value })} className="w-full rounded border border-border/60 bg-background/60 px-3 py-2 font-hud text-sm" />
               </Field>
               <Field label="Image URL">
-                <input value={editing.image_url ?? ""} onChange={(e) => setEditing({ ...editing, image_url: e.target.value })} className="input-hud" />
+                <input value={editing.image_url ?? ""} onChange={(e) => setEditing({ ...editing, image_url: e.target.value })} className="w-full rounded border border-border/60 bg-background/60 px-3 py-2 font-hud text-sm" />
               </Field>
               <Field label="ID Prefix">
-                <input value={editing.id_prefix ?? ""} onChange={(e) => setEditing({ ...editing, id_prefix: e.target.value })} className="input-hud" />
+                <input value={editing.id_prefix ?? ""} onChange={(e) => setEditing({ ...editing, id_prefix: e.target.value })} className="w-full rounded border border-border/60 bg-background/60 px-3 py-2 font-hud text-sm" />
               </Field>
               <Field label="Sort Order">
-                <input type="number" value={editing.sort_order ?? 0} onChange={(e) => setEditing({ ...editing, sort_order: Number(e.target.value) })} className="input-hud" />
+                <input type="number" value={editing.sort_order ?? 0} onChange={(e) => setEditing({ ...editing, sort_order: Number(e.target.value) })} className="w-full rounded border border-border/60 bg-background/60 px-3 py-2 font-hud text-sm" />
+              </Field>
+              <Field label="Status">
+                <select value={editing.status ?? "active"} onChange={(e) => setEditing({ ...editing, status: e.target.value as "active" | "inactive" })} className="w-full rounded border border-border/60 bg-background/60 px-3 py-2 font-hud text-sm">
+                  <option value="active">Active</option>
+                  <option value="inactive">Inactive</option>
+                </select>
               </Field>
               <div className="flex flex-wrap gap-4">
                 <Checkbox label="Can Create Match" checked={editing.can_create_match ?? true} onChange={(v) => setEditing({ ...editing, can_create_match: v })} />
-                <Checkbox label="Active" checked={editing.is_active ?? true} onChange={(v) => setEditing({ ...editing, is_active: v })} />
                 <Checkbox label="Coming Soon" checked={editing.coming_soon ?? false} onChange={(v) => setEditing({ ...editing, coming_soon: v })} />
               </div>
             </div>
@@ -206,7 +208,7 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 function Checkbox({ label, checked, onChange }: { label: string; checked: boolean; onChange: (v: boolean) => void }) {
   return (
     <label className="inline-flex items-center gap-2 font-hud text-xs uppercase tracking-wider">
-      <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} className="accent-[color:var(--color-gold)]" />
+      <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} />
       {label}
     </label>
   );

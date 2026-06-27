@@ -53,7 +53,7 @@ function AdminBalancesPage() {
         .order("created_at", { ascending: false })
         .limit(500);
       if (typeFilter !== "all") req = req.eq("type", typeFilter as "deposit");
-      if (handler !== "all") req = req.eq("handled_by", handler);
+      if (handler !== "all") req = req.eq("handled_by", handler as "admin" | "system");
       if (from) req = req.gte("created_at", from);
       if (to) req = req.lte("created_at", `${to}T23:59:59`);
       const { data, error } = await req;

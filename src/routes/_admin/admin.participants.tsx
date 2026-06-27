@@ -36,7 +36,7 @@ function AdminParticipantsPage() {
         .select("*, matches:matches!match_participants_match_id_fkey(match_name), profiles:profiles!match_participants_user_id_fkey(username, pubg_id)")
         .order("created_at", { ascending: false })
         .limit(500);
-      if (status !== "all") req = req.eq("status", status);
+      if (status !== "all") req = req.eq("status", status as "joined" | "completed" | "refunded" | "cancelled");
       if (from) req = req.gte("created_at", from);
       if (to) req = req.lte("created_at", `${to}T23:59:59`);
       const { data, error } = await req;
