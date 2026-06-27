@@ -289,10 +289,10 @@ function BattleAsiaLanding() {
             </div>
             <div className="flex flex-wrap gap-3">
               <Link to="/matches" className="btn-gold inline-flex items-center gap-2 px-6 py-3 text-sm">
-                BROWSE MATCHES <ChevronRight size={16} />
+                {t("home.browseMatches")} <ChevronRight size={16} />
               </Link>
               <Link to="/apk" className="btn-outline-gold inline-flex items-center gap-2 px-6 py-3 text-sm">
-                <Download size={14} /> GET APK
+                <Download size={14} /> {t("home.getApk")}
               </Link>
             </div>
           </div>
