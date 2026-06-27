@@ -116,9 +116,20 @@ function FeedPage() {
     const ch = supabase
       .channel("feed-posts")
       .on("postgres_changes", { event: "INSERT", schema: "public", table: "social_posts" }, () => load())
+      .on("postgres_changes", { event: "UPDATE", schema: "public", table: "social_posts" }, (payload) => {
+        const n = payload.new as any;
+        setPosts((prev) => prev.map((p) => (p.id === n.id ? { ...p, likes_count: n.likes_count, comments_count: n.comments_count } : p)));
+      })
+      .on("postgres_changes", { event: "DELETE", schema: "public", table: "social_posts" }, (payload) => {
+        const o = payload.old as any;
+        setPosts((prev) => prev.filter((p) => p.id !== o.id));
+      })
       .subscribe();
+    const onVis = () => { if (document.visibilityState === "visible") load(); };
+    document.addEventListener("visibilitychange", onVis);
     return () => {
       supabase.removeChannel(ch);
+      document.removeEventListener("visibilitychange", onVis);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.id]);
