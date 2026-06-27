@@ -39,6 +39,7 @@ import { Route as AdminAdminMatchesRouteImport } from './routes/_admin/admin.mat
 import { Route as AdminAdminGamesRouteImport } from './routes/_admin/admin.games'
 import { Route as AdminAdminFeedRouteImport } from './routes/_admin/admin.feed'
 import { Route as AdminAdminDepositsRouteImport } from './routes/_admin/admin.deposits'
+import { Route as AdminAdminCoinRatesRouteImport } from './routes/_admin/admin.coin-rates'
 import { Route as AdminAdminChannelsRouteImport } from './routes/_admin/admin.channels'
 import { Route as AdminAdminBusinessWalletsRouteImport } from './routes/_admin/admin.business-wallets'
 import { Route as AdminAdminBalancesRouteImport } from './routes/_admin/admin.balances'
@@ -203,6 +204,11 @@ const AdminAdminDepositsRoute = AdminAdminDepositsRouteImport.update({
   path: '/admin/deposits',
   getParentRoute: () => AdminRouteRoute,
 } as any)
+const AdminAdminCoinRatesRoute = AdminAdminCoinRatesRouteImport.update({
+  id: '/admin/coin-rates',
+  path: '/admin/coin-rates',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
 const AdminAdminChannelsRoute = AdminAdminChannelsRouteImport.update({
   id: '/admin/channels',
   path: '/admin/channels',
@@ -242,6 +248,7 @@ export interface FileRoutesByFullPath {
   '/admin/balances': typeof AdminAdminBalancesRoute
   '/admin/business-wallets': typeof AdminAdminBusinessWalletsRoute
   '/admin/channels': typeof AdminAdminChannelsRoute
+  '/admin/coin-rates': typeof AdminAdminCoinRatesRoute
   '/admin/deposits': typeof AdminAdminDepositsRoute
   '/admin/feed': typeof AdminAdminFeedRoute
   '/admin/games': typeof AdminAdminGamesRoute
@@ -277,6 +284,7 @@ export interface FileRoutesByTo {
   '/admin/balances': typeof AdminAdminBalancesRoute
   '/admin/business-wallets': typeof AdminAdminBusinessWalletsRoute
   '/admin/channels': typeof AdminAdminChannelsRoute
+  '/admin/coin-rates': typeof AdminAdminCoinRatesRoute
   '/admin/deposits': typeof AdminAdminDepositsRoute
   '/admin/feed': typeof AdminAdminFeedRoute
   '/admin/games': typeof AdminAdminGamesRoute
@@ -315,6 +323,7 @@ export interface FileRoutesById {
   '/_admin/admin/balances': typeof AdminAdminBalancesRoute
   '/_admin/admin/business-wallets': typeof AdminAdminBusinessWalletsRoute
   '/_admin/admin/channels': typeof AdminAdminChannelsRoute
+  '/_admin/admin/coin-rates': typeof AdminAdminCoinRatesRoute
   '/_admin/admin/deposits': typeof AdminAdminDepositsRoute
   '/_admin/admin/feed': typeof AdminAdminFeedRoute
   '/_admin/admin/games': typeof AdminAdminGamesRoute
@@ -352,6 +361,7 @@ export interface FileRouteTypes {
     | '/admin/balances'
     | '/admin/business-wallets'
     | '/admin/channels'
+    | '/admin/coin-rates'
     | '/admin/deposits'
     | '/admin/feed'
     | '/admin/games'
@@ -387,6 +397,7 @@ export interface FileRouteTypes {
     | '/admin/balances'
     | '/admin/business-wallets'
     | '/admin/channels'
+    | '/admin/coin-rates'
     | '/admin/deposits'
     | '/admin/feed'
     | '/admin/games'
@@ -424,6 +435,7 @@ export interface FileRouteTypes {
     | '/_admin/admin/balances'
     | '/_admin/admin/business-wallets'
     | '/_admin/admin/channels'
+    | '/_admin/admin/coin-rates'
     | '/_admin/admin/deposits'
     | '/_admin/admin/feed'
     | '/_admin/admin/games'
@@ -672,6 +684,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAdminDepositsRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/_admin/admin/coin-rates': {
+      id: '/_admin/admin/coin-rates'
+      path: '/admin/coin-rates'
+      fullPath: '/admin/coin-rates'
+      preLoaderRoute: typeof AdminAdminCoinRatesRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
     '/_admin/admin/channels': {
       id: '/_admin/admin/channels'
       path: '/admin/channels'
@@ -714,6 +733,7 @@ interface AdminRouteRouteChildren {
   AdminAdminBalancesRoute: typeof AdminAdminBalancesRoute
   AdminAdminBusinessWalletsRoute: typeof AdminAdminBusinessWalletsRoute
   AdminAdminChannelsRoute: typeof AdminAdminChannelsRoute
+  AdminAdminCoinRatesRoute: typeof AdminAdminCoinRatesRoute
   AdminAdminDepositsRoute: typeof AdminAdminDepositsRoute
   AdminAdminFeedRoute: typeof AdminAdminFeedRoute
   AdminAdminGamesRoute: typeof AdminAdminGamesRoute
@@ -732,6 +752,7 @@ const AdminRouteRouteChildren: AdminRouteRouteChildren = {
   AdminAdminBalancesRoute: AdminAdminBalancesRoute,
   AdminAdminBusinessWalletsRoute: AdminAdminBusinessWalletsRoute,
   AdminAdminChannelsRoute: AdminAdminChannelsRoute,
+  AdminAdminCoinRatesRoute: AdminAdminCoinRatesRoute,
   AdminAdminDepositsRoute: AdminAdminDepositsRoute,
   AdminAdminFeedRoute: AdminAdminFeedRoute,
   AdminAdminGamesRoute: AdminAdminGamesRoute,
