@@ -35,6 +35,7 @@ import { Route as AdminAdminSupportRouteImport } from './routes/_admin/admin.sup
 import { Route as AdminAdminShopRouteImport } from './routes/_admin/admin.shop'
 import { Route as AdminAdminSettingsRouteImport } from './routes/_admin/admin.settings'
 import { Route as AdminAdminResultsRouteImport } from './routes/_admin/admin.results'
+import { Route as AdminAdminReferralConfigRouteImport } from './routes/_admin/admin.referral-config'
 import { Route as AdminAdminPremiumRouteImport } from './routes/_admin/admin.premium'
 import { Route as AdminAdminParticipantsRouteImport } from './routes/_admin/admin.participants'
 import { Route as AdminAdminPagesRouteImport } from './routes/_admin/admin.pages'
@@ -190,6 +191,12 @@ const AdminAdminResultsRoute = AdminAdminResultsRouteImport.update({
   path: '/admin/results',
   getParentRoute: () => AdminRouteRoute,
 } as any)
+const AdminAdminReferralConfigRoute =
+  AdminAdminReferralConfigRouteImport.update({
+    id: '/admin/referral-config',
+    path: '/admin/referral-config',
+    getParentRoute: () => AdminRouteRoute,
+  } as any)
 const AdminAdminPremiumRoute = AdminAdminPremiumRouteImport.update({
   id: '/admin/premium',
   path: '/admin/premium',
@@ -289,6 +296,7 @@ export interface FileRoutesByFullPath {
   '/admin/pages': typeof AdminAdminPagesRoute
   '/admin/participants': typeof AdminAdminParticipantsRoute
   '/admin/premium': typeof AdminAdminPremiumRoute
+  '/admin/referral-config': typeof AdminAdminReferralConfigRoute
   '/admin/results': typeof AdminAdminResultsRoute
   '/admin/settings': typeof AdminAdminSettingsRoute
   '/admin/shop': typeof AdminAdminShopRoute
@@ -330,6 +338,7 @@ export interface FileRoutesByTo {
   '/admin/pages': typeof AdminAdminPagesRoute
   '/admin/participants': typeof AdminAdminParticipantsRoute
   '/admin/premium': typeof AdminAdminPremiumRoute
+  '/admin/referral-config': typeof AdminAdminReferralConfigRoute
   '/admin/results': typeof AdminAdminResultsRoute
   '/admin/settings': typeof AdminAdminSettingsRoute
   '/admin/shop': typeof AdminAdminShopRoute
@@ -374,6 +383,7 @@ export interface FileRoutesById {
   '/_admin/admin/pages': typeof AdminAdminPagesRoute
   '/_admin/admin/participants': typeof AdminAdminParticipantsRoute
   '/_admin/admin/premium': typeof AdminAdminPremiumRoute
+  '/_admin/admin/referral-config': typeof AdminAdminReferralConfigRoute
   '/_admin/admin/results': typeof AdminAdminResultsRoute
   '/_admin/admin/settings': typeof AdminAdminSettingsRoute
   '/_admin/admin/shop': typeof AdminAdminShopRoute
@@ -417,6 +427,7 @@ export interface FileRouteTypes {
     | '/admin/pages'
     | '/admin/participants'
     | '/admin/premium'
+    | '/admin/referral-config'
     | '/admin/results'
     | '/admin/settings'
     | '/admin/shop'
@@ -458,6 +469,7 @@ export interface FileRouteTypes {
     | '/admin/pages'
     | '/admin/participants'
     | '/admin/premium'
+    | '/admin/referral-config'
     | '/admin/results'
     | '/admin/settings'
     | '/admin/shop'
@@ -501,6 +513,7 @@ export interface FileRouteTypes {
     | '/_admin/admin/pages'
     | '/_admin/admin/participants'
     | '/_admin/admin/premium'
+    | '/_admin/admin/referral-config'
     | '/_admin/admin/results'
     | '/_admin/admin/settings'
     | '/_admin/admin/shop'
@@ -717,6 +730,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAdminResultsRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/_admin/admin/referral-config': {
+      id: '/_admin/admin/referral-config'
+      path: '/admin/referral-config'
+      fullPath: '/admin/referral-config'
+      preLoaderRoute: typeof AdminAdminReferralConfigRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
     '/_admin/admin/premium': {
       id: '/_admin/admin/premium'
       path: '/admin/premium'
@@ -839,6 +859,7 @@ interface AdminRouteRouteChildren {
   AdminAdminPagesRoute: typeof AdminAdminPagesRoute
   AdminAdminParticipantsRoute: typeof AdminAdminParticipantsRoute
   AdminAdminPremiumRoute: typeof AdminAdminPremiumRoute
+  AdminAdminReferralConfigRoute: typeof AdminAdminReferralConfigRoute
   AdminAdminResultsRoute: typeof AdminAdminResultsRoute
   AdminAdminSettingsRoute: typeof AdminAdminSettingsRoute
   AdminAdminShopRoute: typeof AdminAdminShopRoute
@@ -863,6 +884,7 @@ const AdminRouteRouteChildren: AdminRouteRouteChildren = {
   AdminAdminPagesRoute: AdminAdminPagesRoute,
   AdminAdminParticipantsRoute: AdminAdminParticipantsRoute,
   AdminAdminPremiumRoute: AdminAdminPremiumRoute,
+  AdminAdminReferralConfigRoute: AdminAdminReferralConfigRoute,
   AdminAdminResultsRoute: AdminAdminResultsRoute,
   AdminAdminSettingsRoute: AdminAdminSettingsRoute,
   AdminAdminShopRoute: AdminAdminShopRoute,
