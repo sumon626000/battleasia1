@@ -510,23 +510,32 @@ function BattleAsiaLanding() {
           <div className="mx-auto mt-3 h-0.5 w-20 bg-gradient-to-r from-transparent via-gold to-transparent" />
         </div>
         <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {HOW_TO_PLAY.map(({ icon: Icon, color, title, desc, points }) => (
-            <div key={title} className="hud-panel hud-bracket flex flex-col p-6">
-              <div className={`relative mx-auto grid h-16 w-16 place-items-center rounded-full bg-gradient-to-br ${color} text-white shadow-lg`}>
-                <Icon size={26} />
+          {HOW_TO_PLAY.map(({ icon: Icon, color, title, desc, points, bg }) => (
+            <div key={title} className="hud-panel hud-bracket relative flex flex-col overflow-hidden p-6">
+              <div
+                aria-hidden
+                className="pointer-events-none absolute inset-0 bg-cover bg-center opacity-30 transition-opacity duration-500 group-hover:opacity-45"
+                style={{ backgroundImage: `url(${bg})` }}
+              />
+              <div aria-hidden className="pointer-events-none absolute inset-0 bg-gradient-to-b from-background/60 via-background/85 to-background/95" />
+              <div className="relative">
+                <div className={`relative mx-auto grid h-16 w-16 place-items-center rounded-full bg-gradient-to-br ${color} text-white shadow-lg ring-2 ring-background/50`}>
+                  <Icon size={26} />
+                </div>
+                <h3 className="font-display mt-4 text-center text-lg font-bold tracking-wider drop-shadow-[0_1px_8px_rgba(0,0,0,0.8)]">{title}</h3>
+                <p className="mt-2 text-center text-xs text-muted-foreground">{desc}</p>
+                <ul className="mt-4 space-y-2 text-xs text-foreground/90">
+                  {points.map((p) => (
+                    <li key={p} className="flex gap-2">
+                      <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-gold" />
+                      <span>{p}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
-              <h3 className="font-display mt-4 text-center text-lg font-bold tracking-wider">{title}</h3>
-              <p className="mt-2 text-center text-xs text-muted-foreground">{desc}</p>
-              <ul className="mt-4 space-y-2 text-xs text-foreground/85">
-                {points.map((p) => (
-                  <li key={p} className="flex gap-2">
-                    <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-gold" />
-                    <span>{p}</span>
-                  </li>
-                ))}
-              </ul>
             </div>
           ))}
+
         </div>
       </section>
 
