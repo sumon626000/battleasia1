@@ -1,0 +1,1 @@
+ALTER TABLE public.admin_action_logs ALTER COLUMN target_id TYPE text USING target_id::text;

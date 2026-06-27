@@ -58,7 +58,7 @@ export type Database = {
           module: string
           new_value: Json | null
           old_value: Json | null
-          target_id: number | null
+          target_id: string | null
           target_type: string | null
         }
         Insert: {
@@ -71,7 +71,7 @@ export type Database = {
           module: string
           new_value?: Json | null
           old_value?: Json | null
-          target_id?: number | null
+          target_id?: string | null
           target_type?: string | null
         }
         Update: {
@@ -84,7 +84,7 @@ export type Database = {
           module?: string
           new_value?: Json | null
           old_value?: Json | null
-          target_id?: number | null
+          target_id?: string | null
           target_type?: string | null
         }
         Relationships: []
@@ -1630,6 +1630,22 @@ export type Database = {
         Args: { p_parent?: number; p_post_id: number; p_text: string }
         Returns: number
       }
+      admin_adjust_balance: {
+        Args: { p_delta: number; p_note: string; p_user_id: string }
+        Returns: number
+      }
+      admin_set_user_role: {
+        Args: {
+          p_role: Database["public"]["Enums"]["app_role"]
+          p_user_id: string
+        }
+        Returns: undefined
+      }
+      admin_suspend_user: {
+        Args: { p_reason: string; p_user_id: string }
+        Returns: undefined
+      }
+      admin_unsuspend_user: { Args: { p_user_id: string }; Returns: undefined }
       archive_notification: { Args: { p_id: number }; Returns: undefined }
       buy_premium: { Args: { p_plan_id: number }; Returns: number }
       close_support_ticket: {
