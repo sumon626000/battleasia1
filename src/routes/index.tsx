@@ -482,12 +482,7 @@ function BattleAsiaLanding() {
             </div>
           </div>
           <div className="grid grid-cols-2 gap-3">
-            {[
-              { v: "500K+", k: "Active Players" },
-              { v: "2M+", k: "Prize Money", coin: true },
-              { v: "15+", k: "Games Supported" },
-              { v: "24/7", k: "Tournaments" },
-            ].map((c) => (
+            {ABOUT_CARDS.map((c) => (
               <div key={c.k} className="hud-panel grid place-items-center p-5 text-center">
                 <div className="font-display inline-flex items-center gap-1 text-3xl font-bold text-gold">
                   {c.coin && <CoinIcon size={22} />}{c.v}
