@@ -53,9 +53,11 @@ const DICTS: Record<Lang, Dict> = {
     "footer.terms": "Terms", "footer.privacy": "Privacy", "footer.refund": "Refund",
     "footer.rights": "ALL RIGHTS RESERVED",
     // Dashboard
-    "dash.overview": "Overview", "dash.profile": "Profile", "dash.wallet": "Wallet",
-    "dash.matches": "My Matches", "dash.statistics": "Statistics", "dash.referrals": "Referrals",
+    "dash.overview": "Dashboard", "dash.profile": "Profile", "dash.wallet": "Wallet",
+    "dash.matches": "My Matches", "dash.playMatches": "Play Matches",
+    "dash.statistics": "My Statistics", "dash.referrals": "Referrals",
     "dash.notifications": "Notifications", "dash.settings": "Settings", "dash.premium": "Premium",
+    "dash.shop": "Shop", "dash.feed": "News & Feed", "dash.support": "Support", "dash.home": "Home", "dash.play": "Play",
     "dash.balance": "Balance", "dash.withdrawable": "Withdrawable",
     "dash.deposit": "Deposit", "dash.withdraw": "Withdraw", "dash.history": "History",
     "dash.amount": "Amount", "dash.status": "Status",
