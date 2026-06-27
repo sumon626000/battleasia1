@@ -126,6 +126,16 @@ function ProfilePage() {
       pubg_id: profile.pubg_id ?? "",
       game_server: (profile.game_server as ProfileUpdateValues["game_server"]) ?? "Asia",
     });
+    setBio((profile as { bio?: string | null }).bio ?? "");
+    const sl = ((profile as { social_links?: Record<string, string> }).social_links ?? {}) as Record<string, string>;
+    setSocial({
+      facebook: sl.facebook ?? "",
+      twitter: sl.twitter ?? "",
+      instagram: sl.instagram ?? "",
+      youtube: sl.youtube ?? "",
+      discord: sl.discord ?? "",
+      website: sl.website ?? "",
+    });
   }, [profile, resetProfile]);
 
   // Check pending delete request
