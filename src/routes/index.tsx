@@ -643,6 +643,8 @@ function BattleAsiaLanding() {
 
       {/* ============ CTA BAND ============ */}
       <section className="relative overflow-hidden border-y border-gold/30 bg-gradient-to-r from-card via-background to-card">
+        <img loading="lazy" decoding="async" src={pubgSquadAction} alt="" aria-hidden width={1792} height={896} className="absolute inset-0 h-full w-full object-cover opacity-30" />
+        <div aria-hidden className="absolute inset-0 bg-gradient-to-r from-background via-background/70 to-background/40" />
         <div aria-hidden className="absolute inset-0 bg-grid-hud opacity-30" />
         <div className="relative mx-auto flex max-w-7xl flex-col items-center justify-between gap-5 px-4 py-10 sm:px-6 md:flex-row">
           <div>
