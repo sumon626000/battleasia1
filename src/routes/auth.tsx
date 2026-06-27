@@ -9,7 +9,6 @@ import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import {
-  GAME_SERVERS,
   loginSchema,
   registerSchema,
   type LoginValues,
