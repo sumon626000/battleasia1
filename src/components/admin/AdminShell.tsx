@@ -44,6 +44,10 @@ export const ADMIN_NAV = [
   { label: "Support", href: "/admin/support", icon: LifeBuoy },
   { label: "Pages", href: "/admin/pages", icon: FileText },
   { label: "APK Manager", href: "/admin/apk", icon: Smartphone },
+  { label: "Premium", href: "/admin/premium", icon: Crown },
+  { label: "Referral Config", href: "/admin/referral-config", icon: Users2 },
+  { label: "Templates", href: "/admin/templates", icon: Mail },
+  { label: "Security", href: "/admin/security", icon: ShieldAlert },
   { label: "Site Settings", href: "/admin/settings", icon: Settings },
 ] as const;
 
