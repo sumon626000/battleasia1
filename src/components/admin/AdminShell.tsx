@@ -39,6 +39,9 @@ export const ADMIN_NAV = [
   { label: "Feed", href: "/admin/feed", icon: Newspaper },
   { label: "Notifications", href: "/admin/notifications", icon: Bell },
   { label: "Support", href: "/admin/support", icon: LifeBuoy },
+  { label: "Pages", href: "/admin/pages", icon: FileText },
+  { label: "APK Manager", href: "/admin/apk", icon: Smartphone },
+  { label: "Site Settings", href: "/admin/settings", icon: Settings },
 ] as const;
 
 export function AdminShell({ children }: { children: React.ReactNode }) {
