@@ -111,6 +111,36 @@ function PublicProfilePage() {
     }
   }
 
+  async function startMessage() {
+    if (!user || !q.data) return toast.error("Sign in to message");
+    setBusy(true);
+    try {
+      const a = user.id < q.data.profile.id ? user.id : q.data.profile.id;
+      const b = user.id < q.data.profile.id ? q.data.profile.id : user.id;
+      const { data: existing } = await supabase
+        .from("direct_threads")
+        .select("id")
+        .eq("user_a", a)
+        .eq("user_b", b)
+        .maybeSingle();
+      let id = existing?.id;
+      if (!id) {
+        const { data, error } = await supabase
+          .from("direct_threads")
+          .insert({ user_a: a, user_b: b, last_message_at: new Date().toISOString() })
+          .select("id")
+          .single();
+        if (error) throw error;
+        id = data.id;
+      }
+      navigate({ to: "/dashboard/messages/$threadId", params: { threadId: id! } });
+    } catch (e: any) {
+      toast.error(e.message || "Could not start chat");
+    } finally {
+      setBusy(false);
+    }
+  }
+
   if (q.isLoading) return <div className="p-12 text-center text-foreground/60">Loading…</div>;
   if (!q.data) return null;
   const { profile, stats, posts, followerCount, followingCount, isFollowing, isBlocked } = q.data;
