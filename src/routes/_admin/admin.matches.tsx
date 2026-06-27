@@ -38,6 +38,7 @@ type Match = {
   map_image_url: string | null;
   sponsor: string | null;
   match_url: string | null;
+  live_stream_url: string | null;
   platform_fee_pct: number;
   result_applied: boolean;
   deleted_at: string | null;
@@ -302,6 +303,7 @@ function EditorModal({
 
           <Field label="Sponsor"><input className={inp} value={draft.sponsor ?? ""} onChange={(e) => upd({ sponsor: e.target.value })} /></Field>
           <Field label="Match URL"><input className={inp} value={draft.match_url ?? ""} onChange={(e) => upd({ match_url: e.target.value })} /></Field>
+          <Field label="Live Stream URL (YouTube)"><input className={inp} value={draft.live_stream_url ?? ""} onChange={(e) => upd({ live_stream_url: e.target.value })} placeholder="https://youtube.com/watch?v=…" /></Field>
           <Field label="Banner Image"><ImageUploader value={draft.banner_image_url} onChange={(u) => upd({ banner_image_url: u })} folder="match-banners" aspect="16/9" /></Field>
           <Field label="Map Image"><ImageUploader value={draft.map_image_url} onChange={(u) => upd({ map_image_url: u })} folder="match-maps" aspect="16/9" /></Field>
 

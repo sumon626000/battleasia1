@@ -830,6 +830,7 @@ export type Database = {
           game_mode: Database["public"]["Enums"]["match_game_mode"]
           id: number
           kill_rate_type: Database["public"]["Enums"]["match_kill_rate_type"]
+          live_stream_url: string | null
           map_image_url: string | null
           map_name: string
           match_name: string
@@ -865,6 +866,7 @@ export type Database = {
           game_mode: Database["public"]["Enums"]["match_game_mode"]
           id?: number
           kill_rate_type?: Database["public"]["Enums"]["match_kill_rate_type"]
+          live_stream_url?: string | null
           map_image_url?: string | null
           map_name: string
           match_name: string
@@ -900,6 +902,7 @@ export type Database = {
           game_mode?: Database["public"]["Enums"]["match_game_mode"]
           id?: number
           kill_rate_type?: Database["public"]["Enums"]["match_kill_rate_type"]
+          live_stream_url?: string | null
           map_image_url?: string | null
           map_name?: string
           match_name?: string
