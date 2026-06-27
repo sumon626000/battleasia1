@@ -31,6 +31,7 @@ import { Route as AuthenticatedDashboardFeedRouteImport } from './routes/_authen
 import { Route as AdminAdminWithdrawalsRouteImport } from './routes/_admin/admin.withdrawals'
 import { Route as AdminAdminWithdrawConfigRouteImport } from './routes/_admin/admin.withdraw-config'
 import { Route as AdminAdminUsersRouteImport } from './routes/_admin/admin.users'
+import { Route as AdminAdminTemplatesRouteImport } from './routes/_admin/admin.templates'
 import { Route as AdminAdminSupportRouteImport } from './routes/_admin/admin.support'
 import { Route as AdminAdminShopRouteImport } from './routes/_admin/admin.shop'
 import { Route as AdminAdminSettingsRouteImport } from './routes/_admin/admin.settings'
@@ -171,6 +172,11 @@ const AdminAdminUsersRoute = AdminAdminUsersRouteImport.update({
   path: '/admin/users',
   getParentRoute: () => AdminRouteRoute,
 } as any)
+const AdminAdminTemplatesRoute = AdminAdminTemplatesRouteImport.update({
+  id: '/admin/templates',
+  path: '/admin/templates',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
 const AdminAdminSupportRoute = AdminAdminSupportRouteImport.update({
   id: '/admin/support',
   path: '/admin/support',
@@ -301,6 +307,7 @@ export interface FileRoutesByFullPath {
   '/admin/settings': typeof AdminAdminSettingsRoute
   '/admin/shop': typeof AdminAdminShopRoute
   '/admin/support': typeof AdminAdminSupportRoute
+  '/admin/templates': typeof AdminAdminTemplatesRoute
   '/admin/users': typeof AdminAdminUsersRoute
   '/admin/withdraw-config': typeof AdminAdminWithdrawConfigRoute
   '/admin/withdrawals': typeof AdminAdminWithdrawalsRoute
@@ -343,6 +350,7 @@ export interface FileRoutesByTo {
   '/admin/settings': typeof AdminAdminSettingsRoute
   '/admin/shop': typeof AdminAdminShopRoute
   '/admin/support': typeof AdminAdminSupportRoute
+  '/admin/templates': typeof AdminAdminTemplatesRoute
   '/admin/users': typeof AdminAdminUsersRoute
   '/admin/withdraw-config': typeof AdminAdminWithdrawConfigRoute
   '/admin/withdrawals': typeof AdminAdminWithdrawalsRoute
@@ -388,6 +396,7 @@ export interface FileRoutesById {
   '/_admin/admin/settings': typeof AdminAdminSettingsRoute
   '/_admin/admin/shop': typeof AdminAdminShopRoute
   '/_admin/admin/support': typeof AdminAdminSupportRoute
+  '/_admin/admin/templates': typeof AdminAdminTemplatesRoute
   '/_admin/admin/users': typeof AdminAdminUsersRoute
   '/_admin/admin/withdraw-config': typeof AdminAdminWithdrawConfigRoute
   '/_admin/admin/withdrawals': typeof AdminAdminWithdrawalsRoute
@@ -432,6 +441,7 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/admin/shop'
     | '/admin/support'
+    | '/admin/templates'
     | '/admin/users'
     | '/admin/withdraw-config'
     | '/admin/withdrawals'
@@ -474,6 +484,7 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/admin/shop'
     | '/admin/support'
+    | '/admin/templates'
     | '/admin/users'
     | '/admin/withdraw-config'
     | '/admin/withdrawals'
@@ -518,6 +529,7 @@ export interface FileRouteTypes {
     | '/_admin/admin/settings'
     | '/_admin/admin/shop'
     | '/_admin/admin/support'
+    | '/_admin/admin/templates'
     | '/_admin/admin/users'
     | '/_admin/admin/withdraw-config'
     | '/_admin/admin/withdrawals'
@@ -702,6 +714,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAdminUsersRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/_admin/admin/templates': {
+      id: '/_admin/admin/templates'
+      path: '/admin/templates'
+      fullPath: '/admin/templates'
+      preLoaderRoute: typeof AdminAdminTemplatesRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
     '/_admin/admin/support': {
       id: '/_admin/admin/support'
       path: '/admin/support'
@@ -864,6 +883,7 @@ interface AdminRouteRouteChildren {
   AdminAdminSettingsRoute: typeof AdminAdminSettingsRoute
   AdminAdminShopRoute: typeof AdminAdminShopRoute
   AdminAdminSupportRoute: typeof AdminAdminSupportRoute
+  AdminAdminTemplatesRoute: typeof AdminAdminTemplatesRoute
   AdminAdminUsersRoute: typeof AdminAdminUsersRoute
   AdminAdminWithdrawConfigRoute: typeof AdminAdminWithdrawConfigRoute
   AdminAdminWithdrawalsRoute: typeof AdminAdminWithdrawalsRoute
@@ -889,6 +909,7 @@ const AdminRouteRouteChildren: AdminRouteRouteChildren = {
   AdminAdminSettingsRoute: AdminAdminSettingsRoute,
   AdminAdminShopRoute: AdminAdminShopRoute,
   AdminAdminSupportRoute: AdminAdminSupportRoute,
+  AdminAdminTemplatesRoute: AdminAdminTemplatesRoute,
   AdminAdminUsersRoute: AdminAdminUsersRoute,
   AdminAdminWithdrawConfigRoute: AdminAdminWithdrawConfigRoute,
   AdminAdminWithdrawalsRoute: AdminAdminWithdrawalsRoute,
