@@ -159,7 +159,17 @@
 
 
 
+@keyframes btn-shine {
+  0%   { transform: translateX(-120%); }
+  60%  { transform: translateX(120%); }
+  100% { transform: translateX(120%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .btn-gold::before, .btn-outline-gold::before { animation: none; }
+}
+
 @utility text-gold { color: var(--gold); }
+
 @utility bg-gold { background-color: var(--gold); }
 @utility ring-gold { --tw-ring-color: var(--gold); }
 
