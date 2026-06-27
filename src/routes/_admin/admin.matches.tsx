@@ -304,6 +304,32 @@ function EditorModal({
           </label>
         </div>
 
+        <div className="mt-4">
+          <div className="mb-2 font-hud text-[10px] uppercase tracking-widest text-foreground/70">Banner Library — Click to Select</div>
+          <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-6">
+            {MATCH_BANNERS.map((b) => {
+              const active = draft.banner_image_url === b.url;
+              return (
+                <button
+                  type="button"
+                  key={b.url}
+                  onClick={() => upd({ banner_image_url: b.url })}
+                  title={b.label}
+                  className={`group relative aspect-video overflow-hidden rounded border transition ${active ? "border-gold ring-2 ring-gold/60" : "border-border/60 hover:border-gold/60"}`}
+                >
+                  <img loading="lazy" decoding="async" src={b.url} alt={b.label} className="h-full w-full object-cover transition group-hover:scale-105" />
+                  <span className="absolute inset-x-0 bottom-0 bg-black/60 px-1 py-0.5 text-[9px] font-hud uppercase tracking-wider text-white truncate">{b.label}</span>
+                  {active && (
+                    <span className="absolute right-1 top-1 grid h-5 w-5 place-items-center rounded-full bg-gold text-black">
+                      <Check className="h-3 w-3" />
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
         <div className="mt-3 grid grid-cols-1 gap-3">
           <Field label="Public Description"><textarea className={`${inp} h-20`} value={draft.description ?? ""} onChange={(e) => upd({ description: e.target.value })} /></Field>
           <Field label="Prize Description"><textarea className={`${inp} h-20`} value={draft.prize_description ?? ""} onChange={(e) => upd({ prize_description: e.target.value })} /></Field>
