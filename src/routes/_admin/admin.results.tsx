@@ -154,7 +154,10 @@ function AdminResultsPage() {
     if (data?.signedUrl) {
       setImageUrl(data.signedUrl);
       toast.success("Image uploaded");
+    }
   }
+
+
 
   function importCsv(text: string) {
     if (!detail) return;
