@@ -17,7 +17,7 @@ const DICTS: Record<Lang, Dict> = {
   en: {
     // Navigation
     "nav.home": "HOME", "nav.matches": "MATCHES", "nav.leaderboard": "LEADERBOARD",
-    "nav.shop": "SHOP", "nav.premium": "PREMIUM", "nav.news": "NEWS", "nav.about": "ABOUT",
+    "nav.feed": "FEED", "nav.shop": "SHOP", "nav.premium": "PREMIUM", "nav.news": "NEWS", "nav.about": "ABOUT",
     "nav.tournaments": "Tournaments", "nav.results": "Results", "nav.wallet": "Wallet",
     "nav.support": "Support", "nav.contact": "Contact",
     // Auth
@@ -90,7 +90,7 @@ const DICTS: Record<Lang, Dict> = {
   },
   bn: {
     "nav.home": "হোম", "nav.matches": "ম্যাচ", "nav.leaderboard": "লিডারবোর্ড",
-    "nav.shop": "শপ", "nav.premium": "প্রিমিয়াম", "nav.news": "নিউজ", "nav.about": "পরিচিতি",
+    "nav.feed": "ফিড", "nav.shop": "শপ", "nav.premium": "প্রিমিয়াম", "nav.news": "নিউজ", "nav.about": "পরিচিতি",
     "nav.tournaments": "টুর্নামেন্ট", "nav.results": "ফলাফল", "nav.wallet": "ওয়ালেট",
     "nav.support": "সাপোর্ট", "nav.contact": "যোগাযোগ",
     "auth.login": "লগইন", "auth.register": "রেজিস্টার", "auth.dashboard": "ড্যাশবোর্ড",
@@ -156,7 +156,7 @@ const DICTS: Record<Lang, Dict> = {
   },
   hi: {
     "nav.home": "होम", "nav.matches": "मैच", "nav.leaderboard": "लीडरबोर्ड",
-    "nav.shop": "शॉप", "nav.premium": "प्रीमियम", "nav.news": "समाचार", "nav.about": "परिचय",
+    "nav.feed": "फ़ीड", "nav.shop": "शॉप", "nav.premium": "प्रीमियम", "nav.news": "समाचार", "nav.about": "परिचय",
     "nav.tournaments": "टूर्नामेंट", "nav.results": "नतीजे", "nav.wallet": "वॉलेट",
     "nav.support": "सपोर्ट", "nav.contact": "संपर्क",
     "auth.login": "लॉगिन", "auth.register": "रजिस्टर", "auth.dashboard": "डैशबोर्ड",
@@ -222,7 +222,7 @@ const DICTS: Record<Lang, Dict> = {
   },
   ur: {
     "nav.home": "ہوم", "nav.matches": "میچز", "nav.leaderboard": "لیڈربورڈ",
-    "nav.shop": "شاپ", "nav.premium": "پریمیم", "nav.news": "خبریں", "nav.about": "تعارف",
+    "nav.feed": "فیڈ", "nav.shop": "شاپ", "nav.premium": "پریمیم", "nav.news": "خبریں", "nav.about": "تعارف",
     "nav.tournaments": "ٹورنامنٹس", "nav.results": "نتائج", "nav.wallet": "والیٹ",
     "nav.support": "سپورٹ", "nav.contact": "رابطہ",
     "auth.login": "لاگ ان", "auth.register": "رجسٹر", "auth.dashboard": "ڈیش بورڈ",
@@ -288,7 +288,7 @@ const DICTS: Record<Lang, Dict> = {
   },
   ar: {
     "nav.home": "الرئيسية", "nav.matches": "المباريات", "nav.leaderboard": "المتصدرين",
-    "nav.shop": "المتجر", "nav.premium": "بريميوم", "nav.news": "الأخبار", "nav.about": "حول",
+    "nav.feed": "المنشورات", "nav.shop": "المتجر", "nav.premium": "بريميوم", "nav.news": "الأخبار", "nav.about": "حول",
     "nav.tournaments": "البطولات", "nav.results": "النتائج", "nav.wallet": "المحفظة",
     "nav.support": "الدعم", "nav.contact": "اتصل",
     "auth.login": "تسجيل الدخول", "auth.register": "تسجيل", "auth.dashboard": "لوحة التحكم",
