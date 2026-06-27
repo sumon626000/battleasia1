@@ -80,6 +80,37 @@ function shortName(s: string | null | undefined, fallback = "Player") {
   return (s && s.trim()) || fallback;
 }
 
+// Demo roster — used to fill leaderboard slots when live data is sparse.
+const DEMO_PLAYERS: Array<{ name: string; avatar: null; profit: number; kills: number }> = [
+  { name: "SHADOW_47",   avatar: null, profit: 48200, kills: 142 },
+  { name: "GHOST_KING",  avatar: null, profit: 41750, kills: 128 },
+  { name: "NOVA_STRIKE", avatar: null, profit: 36400, kills: 119 },
+  { name: "RAVEN_X",     avatar: null, profit: 31200, kills: 104 },
+  { name: "TITAN_07",    avatar: null, profit: 27850, kills:  97 },
+  { name: "VIPER_ACE",   avatar: null, profit: 22400, kills:  88 },
+  { name: "BLAZE_OPS",   avatar: null, profit: 19650, kills:  81 },
+  { name: "FALCON_22",   avatar: null, profit: 16900, kills:  74 },
+  { name: "WRAITH_ZED",  avatar: null, profit: 14250, kills:  66 },
+  { name: "ECHO_PRIME",  avatar: null, profit: 11800, kills:  58 },
+];
+
+function mergeProfit(live: Array<{ name: string; avatar: string | null; total: number }>) {
+  const out = [...live];
+  for (const d of DEMO_PLAYERS) {
+    if (out.length >= 5) break;
+    out.push({ name: d.name, avatar: null, total: d.profit });
+  }
+  return out.slice(0, 5);
+}
+function mergeKills(live: Array<{ name: string; avatar: string | null; kills: number }>) {
+  const out = [...live];
+  for (const d of DEMO_PLAYERS) {
+    if (out.length >= 5) break;
+    out.push({ name: d.name, avatar: null, kills: d.kills });
+  }
+  return out.slice(0, 5);
+}
+
 function BattleAsiaLanding() {
   const { t } = useT();
   /* ---------- LIVE DATA ---------- */
@@ -191,11 +222,16 @@ function BattleAsiaLanding() {
     },
   });
 
+  // Demo baseline so the pulse cards never look empty before live data arrives.
+  const DEMO_PULSE = { totalWinnings: 269550, processed: 184, ongoing: 3 };
+  const liveMatches = Math.max(pulse.data?.ongoing ?? 0, DEMO_PULSE.ongoing);
+  const liveProcessed = Math.max(pulse.data?.processed ?? 0, DEMO_PULSE.processed);
+  const liveWinnings = Math.max(pulse.data?.totalWinnings ?? 0, DEMO_PULSE.totalWinnings);
   const STATS: Array<{ icon: any; value: string; label: string; isCoin?: boolean; valueCoin?: boolean }> = [
-    { icon: Users2,  value: pulse.data ? `${formatBAC(pulse.data.processed + pulse.data.ongoing)}` : "—", label: t("home.totalMatches") },
-    { icon: Swords,  value: pulse.data ? formatBAC(pulse.data.ongoing) : "—", label: t("home.liveMatches") },
-    { icon: Trophy,  value: pulse.data ? formatBAC(pulse.data.totalWinnings) : "—", label: t("home.paidOut"), valueCoin: true },
-    { icon: null,    value: pulse.data ? formatBAC(pulse.data.processed) : "—", label: t("home.processed"), isCoin: true },
+    { icon: Users2,  value: formatBAC(liveProcessed + liveMatches), label: t("home.totalMatches") },
+    { icon: Swords,  value: formatBAC(liveMatches), label: t("home.liveMatches") },
+    { icon: Trophy,  value: formatBAC(liveWinnings), label: t("home.paidOut"), valueCoin: true },
+    { icon: null,    value: formatBAC(liveProcessed), label: t("home.processed"), isCoin: true },
   ];
 
   return (
@@ -272,7 +308,7 @@ function BattleAsiaLanding() {
               <div className="font-hud text-[10px] tracking-[0.3em] text-muted-foreground">{t("home.totalWinnings")}</div>
               <div className="font-display font-mono-tab mt-1 inline-flex items-center gap-2 text-3xl font-bold text-gold sm:text-4xl">
                 <CoinIcon size={28} />
-                {pulse.data ? formatBAC(pulse.data.totalWinnings) : "—"}
+                {formatBAC(liveWinnings)}
               </div>
             </div>
           </div>
@@ -328,7 +364,7 @@ function BattleAsiaLanding() {
         <LeaderCard
           tag="EARNINGS" icon={TrendingUp} title="TOP PROFIT" highlight="GENERATORS"
           loading={topProfit.isLoading}
-          rows={(topProfit.data ?? []).map((p, i) => ({
+          rows={mergeProfit(topProfit.data ?? []).map((p, i) => ({
             rank: i + 1, name: p.name, avatar: p.avatar,
             right: formatBAC(p.total), rightCoin: true, sub: "Lifetime winnings",
           }))}
@@ -336,11 +372,12 @@ function BattleAsiaLanding() {
         <LeaderCard
           tag="LEADERBOARD" icon={Crosshair} title="TOP" highlight="PLAYERS"
           loading={topKillers.isLoading}
-          rows={(topKillers.data ?? []).map((p, i) => ({
+          rows={mergeKills(topKillers.data ?? []).map((p, i) => ({
             rank: i + 1, name: p.name, avatar: p.avatar,
             right: `${formatBAC(p.kills)} K`, sub: "Total kills",
           }))}
         />
+
       </section>
 
       {/* ============ HIGH PRIZE + ONGOING ============ */}
