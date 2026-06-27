@@ -12,6 +12,8 @@ import {
   Shield,
   Gamepad2,
   Users2,
+  UserX,
+
   ArrowLeft,
   Coins,
   Banknote,
