@@ -36,7 +36,7 @@ function AdminPremiumPage() {
   async function save() {
     if (!editing) return;
     const { error } = await supabase.rpc("admin_save_premium_plan", {
-      p_id: editing.id ?? null,
+      p_id: (editing.id ?? null) as number,
       p_duration_days: Number(editing.duration_days ?? 30),
       p_price_bac: Number(editing.price_bac ?? 0),
       p_benefits_text: editing.benefits_text ?? "",
