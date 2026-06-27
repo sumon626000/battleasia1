@@ -51,7 +51,7 @@ export function DashboardMobileDrawer({ open, onClose }: Props) {
                 }`}
               >
                 <Icon size={16} />
-                {item.label}
+                {t(item.key)}
               </button>
             );
           })}
