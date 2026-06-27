@@ -486,7 +486,7 @@ function BattleAsiaLanding() {
         <MatchStrip title="HIGH-PRIZE" highlight="BATTLES" tag="TOP" icon={Flame}
           loading={highPrize.isLoading}
           empty="No high-prize battles right now."
-          items={mergeMatches(highPrize.data ?? [], DEMO_HIGH_PRIZE).map((m: any) => ({
+          items={(highPrize.data ?? []).map((m: any) => ({
             id: m.id, name: m.match_name, mode: m.player_mode, map: m.map_name,
             value: formatBAC(Number(m.rank_1_prize_bac)),
             valueLabel: "RANK 1 PRIZE",
@@ -495,7 +495,7 @@ function BattleAsiaLanding() {
         <MatchStrip title="ONGOING" highlight="MATCHES" tag="LIVE" icon={Radio}
           loading={ongoingMatches.isLoading}
           empty="No ongoing matches right now. Check back soon."
-          items={mergeMatches(ongoingMatches.data ?? [], DEMO_ONGOING).map((m: any) => ({
+          items={(ongoingMatches.data ?? []).map((m: any) => ({
             id: m.id, name: m.match_name, mode: m.player_mode, map: m.map_name,
             value: formatBAC(Number(m.rank_1_prize_bac)),
             valueLabel: "TOP PRIZE",
