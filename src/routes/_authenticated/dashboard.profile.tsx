@@ -15,6 +15,7 @@ import {
   Crown,
   ImagePlus,
   Link2,
+} from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { useProfile } from "@/hooks/use-profile";
