@@ -113,7 +113,7 @@ export function CountryCodeSelect({ label = "COUNTRY", value, onChange, error }:
                       active ? "bg-gold/15 text-gold" : "text-foreground/85"
                     }`}
                   >
-                    <span className="text-xl leading-none">{flagEmoji(c.iso2)}</span>
+                    <FlagImg iso2={c.iso2} size={22} />
                     <span className="min-w-0 flex-1">
                       <span className="block truncate font-semibold">{c.name}</span>
                       <span className="block font-mono text-[11px] text-foreground/55">
