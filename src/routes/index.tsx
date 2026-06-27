@@ -91,6 +91,9 @@ function BattleAsiaLanding() {
         supabase.from("matches").select("id", { count: "exact", head: true }).eq("status", "Complete"),
         supabase.from("matches").select("id", { count: "exact", head: true }).in("status", ["Active", "Ongoing"]),
       ]);
+      if (winnings.error) throw winnings.error;
+      if (processed.error) throw processed.error;
+      if (ongoing.error) throw ongoing.error;
       const total = (winnings.data ?? []).reduce((s, r: any) => s + Number(r.prize_bac ?? 0), 0);
       return {
         totalWinnings: total,
@@ -100,18 +103,32 @@ function BattleAsiaLanding() {
     },
   });
 
+  async function fetchProfilesMap(userIds: string[]) {
+    if (!userIds.length) return new Map<string, any>();
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("id, in_game_username, username, avatar_url")
+      .in("id", userIds);
+    if (error) throw error;
+    return new Map((data ?? []).map((p: any) => [p.id, p]));
+  }
+
   const topProfit = useQuery({
     queryKey: ["home", "top-profit"],
     queryFn: async () => {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from("match_participants")
-        .select("user_id, prize_bac, profiles:user_id(in_game_username, username, avatar_url)")
+        .select("user_id, prize_bac")
         .gt("prize_bac", 0);
+      if (error) throw error;
+      const ids = Array.from(new Set((data ?? []).map((r: any) => r.user_id)));
+      const profiles = await fetchProfilesMap(ids);
       const agg = new Map<string, { name: string; avatar: string | null; total: number }>();
       (data ?? []).forEach((r: any) => {
+        const p = profiles.get(r.user_id);
         const cur = agg.get(r.user_id) ?? {
-          name: shortName(r.profiles?.in_game_username ?? r.profiles?.username),
-          avatar: r.profiles?.avatar_url ?? null,
+          name: shortName(p?.in_game_username ?? p?.username),
+          avatar: p?.avatar_url ?? null,
           total: 0,
         };
         cur.total += Number(r.prize_bac ?? 0);
@@ -124,15 +141,19 @@ function BattleAsiaLanding() {
   const topKillers = useQuery({
     queryKey: ["home", "top-kills"],
     queryFn: async () => {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from("match_participants")
-        .select("user_id, kills, profiles:user_id(in_game_username, username, avatar_url)")
+        .select("user_id, kills")
         .gt("kills", 0);
+      if (error) throw error;
+      const ids = Array.from(new Set((data ?? []).map((r: any) => r.user_id)));
+      const profiles = await fetchProfilesMap(ids);
       const agg = new Map<string, { name: string; avatar: string | null; kills: number }>();
       (data ?? []).forEach((r: any) => {
+        const p = profiles.get(r.user_id);
         const cur = agg.get(r.user_id) ?? {
-          name: shortName(r.profiles?.in_game_username ?? r.profiles?.username),
-          avatar: r.profiles?.avatar_url ?? null,
+          name: shortName(p?.in_game_username ?? p?.username),
+          avatar: p?.avatar_url ?? null,
           kills: 0,
         };
         cur.kills += Number(r.kills ?? 0);
@@ -145,12 +166,13 @@ function BattleAsiaLanding() {
   const highPrize = useQuery({
     queryKey: ["home", "high-prize"],
     queryFn: async () => {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from("matches")
         .select("id, match_name, map_name, player_mode, schedule_at, rank_1_prize_bac, total_players, banner_image_url")
         .in("status", ["Upcoming", "Active"])
         .order("rank_1_prize_bac", { ascending: false })
         .limit(6);
+      if (error) throw error;
       return data ?? [];
     },
   });
@@ -158,12 +180,13 @@ function BattleAsiaLanding() {
   const ongoingMatches = useQuery({
     queryKey: ["home", "ongoing"],
     queryFn: async () => {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from("matches")
         .select("id, match_name, map_name, player_mode, rank_1_prize_bac")
         .in("status", ["Active", "Ongoing"])
         .order("schedule_at", { ascending: true })
         .limit(6);
+      if (error) throw error;
       return data ?? [];
     },
   });
