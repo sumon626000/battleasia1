@@ -83,6 +83,7 @@ import { Route as AdminAdminBalancesRouteImport } from './routes/_admin/admin.ba
 import { Route as AdminAdminBackupsRouteImport } from './routes/_admin/admin.backups'
 import { Route as AdminAdminApkRouteImport } from './routes/_admin/admin.apk'
 import { Route as AdminAdminAccountDeletionsRouteImport } from './routes/_admin/admin.account-deletions'
+import { Route as AuthenticatedDashboardStoryNewRouteImport } from './routes/_authenticated/dashboard.story.new'
 import { Route as AuthenticatedDashboardMessagesThreadIdRouteImport } from './routes/_authenticated/dashboard.messages.$threadId'
 import { Route as AuthenticatedDashboardMatchesMatchIdRouteImport } from './routes/_authenticated/dashboard.matches.$matchId'
 import { Route as AuthenticatedDashboardFeedPostIdRouteImport } from './routes/_authenticated/dashboard.feed.$postId'
@@ -475,6 +476,12 @@ const AdminAdminAccountDeletionsRoute =
     path: '/admin/account-deletions',
     getParentRoute: () => AdminRouteRoute,
   } as any)
+const AuthenticatedDashboardStoryNewRoute =
+  AuthenticatedDashboardStoryNewRouteImport.update({
+    id: '/story/new',
+    path: '/story/new',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
 const AuthenticatedDashboardMessagesThreadIdRoute =
   AuthenticatedDashboardMessagesThreadIdRouteImport.update({
     id: '/$threadId',
@@ -570,6 +577,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/feed/$postId': typeof AuthenticatedDashboardFeedPostIdRoute
   '/dashboard/matches/$matchId': typeof AuthenticatedDashboardMatchesMatchIdRoute
   '/dashboard/messages/$threadId': typeof AuthenticatedDashboardMessagesThreadIdRoute
+  '/dashboard/story/new': typeof AuthenticatedDashboardStoryNewRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -646,6 +654,7 @@ export interface FileRoutesByTo {
   '/dashboard/feed/$postId': typeof AuthenticatedDashboardFeedPostIdRoute
   '/dashboard/matches/$matchId': typeof AuthenticatedDashboardMatchesMatchIdRoute
   '/dashboard/messages/$threadId': typeof AuthenticatedDashboardMessagesThreadIdRoute
+  '/dashboard/story/new': typeof AuthenticatedDashboardStoryNewRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -726,6 +735,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard/feed/$postId': typeof AuthenticatedDashboardFeedPostIdRoute
   '/_authenticated/dashboard/matches/$matchId': typeof AuthenticatedDashboardMatchesMatchIdRoute
   '/_authenticated/dashboard/messages/$threadId': typeof AuthenticatedDashboardMessagesThreadIdRoute
+  '/_authenticated/dashboard/story/new': typeof AuthenticatedDashboardStoryNewRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -805,6 +815,7 @@ export interface FileRouteTypes {
     | '/dashboard/feed/$postId'
     | '/dashboard/matches/$matchId'
     | '/dashboard/messages/$threadId'
+    | '/dashboard/story/new'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -881,6 +892,7 @@ export interface FileRouteTypes {
     | '/dashboard/feed/$postId'
     | '/dashboard/matches/$matchId'
     | '/dashboard/messages/$threadId'
+    | '/dashboard/story/new'
   id:
     | '__root__'
     | '/'
@@ -960,6 +972,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard/feed/$postId'
     | '/_authenticated/dashboard/matches/$matchId'
     | '/_authenticated/dashboard/messages/$threadId'
+    | '/_authenticated/dashboard/story/new'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -1506,6 +1519,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAdminAccountDeletionsRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/_authenticated/dashboard/story/new': {
+      id: '/_authenticated/dashboard/story/new'
+      path: '/story/new'
+      fullPath: '/dashboard/story/new'
+      preLoaderRoute: typeof AuthenticatedDashboardStoryNewRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
     '/_authenticated/dashboard/messages/$threadId': {
       id: '/_authenticated/dashboard/messages/$threadId'
       path: '/$threadId'
@@ -1666,6 +1686,7 @@ interface AuthenticatedDashboardRouteChildren {
   AuthenticatedDashboardVaultRoute: typeof AuthenticatedDashboardVaultRoute
   AuthenticatedDashboardWalletRoute: typeof AuthenticatedDashboardWalletRoute
   AuthenticatedDashboardIndexRoute: typeof AuthenticatedDashboardIndexRoute
+  AuthenticatedDashboardStoryNewRoute: typeof AuthenticatedDashboardStoryNewRoute
 }
 
 const AuthenticatedDashboardRouteChildren: AuthenticatedDashboardRouteChildren =
@@ -1691,6 +1712,7 @@ const AuthenticatedDashboardRouteChildren: AuthenticatedDashboardRouteChildren =
     AuthenticatedDashboardVaultRoute: AuthenticatedDashboardVaultRoute,
     AuthenticatedDashboardWalletRoute: AuthenticatedDashboardWalletRoute,
     AuthenticatedDashboardIndexRoute: AuthenticatedDashboardIndexRoute,
+    AuthenticatedDashboardStoryNewRoute: AuthenticatedDashboardStoryNewRoute,
   }
 
 const AuthenticatedDashboardRouteWithChildren =
