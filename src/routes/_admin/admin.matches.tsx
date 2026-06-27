@@ -97,6 +97,12 @@ function AdminMatchesPage() {
 
   async function save() {
     if (!editing) return;
+    const missing: string[] = [];
+    if (!editing.match_name?.trim()) missing.push("Match Name");
+    if (!editing.map_name?.trim()) missing.push("Map");
+    if (!editing.schedule_at) missing.push("Schedule");
+    if (!editing.total_players || editing.total_players <= 0) missing.push("Total Players");
+    if (missing.length) return toast.error(`Required field missing: ${missing.join(", ")}`);
     const payload: Record<string, unknown> = { ...editing };
     if (payload.schedule_at && typeof payload.schedule_at === "string") {
       payload.schedule_at = new Date(payload.schedule_at).toISOString();
