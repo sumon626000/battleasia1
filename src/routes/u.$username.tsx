@@ -133,8 +133,12 @@ function PublicProfilePage() {
             <p className="text-sm text-foreground/70">{profile.display_name}</p>
             <div className="flex gap-5 text-sm pt-1">
               <span><b className="text-gold font-display">{posts.length}</b> <span className="text-foreground/60 text-xs uppercase">Posts</span></span>
-              <span><b className="text-gold font-display">{followerCount}</b> <span className="text-foreground/60 text-xs uppercase">Followers</span></span>
-              <span><b className="text-gold font-display">{followingCount}</b> <span className="text-foreground/60 text-xs uppercase">Following</span></span>
+              <Link to="/u/$username/followers" params={{ username: profile.username }} className="hover:text-gold transition">
+                <b className="text-gold font-display">{followerCount}</b> <span className="text-foreground/60 text-xs uppercase">Followers</span>
+              </Link>
+              <Link to="/u/$username/following" params={{ username: profile.username }} className="hover:text-gold transition">
+                <b className="text-gold font-display">{followingCount}</b> <span className="text-foreground/60 text-xs uppercase">Following</span>
+              </Link>
             </div>
             <div className="flex flex-wrap gap-4 text-xs text-foreground/60 font-hud uppercase tracking-widest pt-1">
               {profile.country_code && <span>{profile.country_code}</span>}

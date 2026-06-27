@@ -33,6 +33,8 @@ import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedDashboardIndexRouteImport } from './routes/_authenticated/dashboard.index'
 import { Route as AdminAdminIndexRouteImport } from './routes/_admin/admin.index'
+import { Route as UUsernameFollowingRouteImport } from './routes/u.$username.following'
+import { Route as UUsernameFollowersRouteImport } from './routes/u.$username.followers'
 import { Route as AuthenticatedFeedNewRouteImport } from './routes/_authenticated/feed.new'
 import { Route as AuthenticatedDashboardWalletRouteImport } from './routes/_authenticated/dashboard.wallet'
 import { Route as AuthenticatedDashboardVaultRouteImport } from './routes/_authenticated/dashboard.vault'
@@ -199,6 +201,16 @@ const AdminAdminIndexRoute = AdminAdminIndexRouteImport.update({
   id: '/admin/',
   path: '/admin/',
   getParentRoute: () => AdminRouteRoute,
+} as any)
+const UUsernameFollowingRoute = UUsernameFollowingRouteImport.update({
+  id: '/following',
+  path: '/following',
+  getParentRoute: () => UUsernameRoute,
+} as any)
+const UUsernameFollowersRoute = UUsernameFollowersRouteImport.update({
+  id: '/followers',
+  path: '/followers',
+  getParentRoute: () => UUsernameRoute,
 } as any)
 const AuthenticatedFeedNewRoute = AuthenticatedFeedNewRouteImport.update({
   id: '/feed/new',
@@ -475,7 +487,7 @@ export interface FileRoutesByFullPath {
   '/auth/callback': typeof AuthCallbackRoute
   '/email/verify': typeof EmailVerifyRoute
   '/p/$slug': typeof PSlugRoute
-  '/u/$username': typeof UUsernameRoute
+  '/u/$username': typeof UUsernameRouteWithChildren
   '/admin/account-deletions': typeof AdminAdminAccountDeletionsRoute
   '/admin/apk': typeof AdminAdminApkRoute
   '/admin/backups': typeof AdminAdminBackupsRoute
@@ -521,6 +533,8 @@ export interface FileRoutesByFullPath {
   '/dashboard/vault': typeof AuthenticatedDashboardVaultRoute
   '/dashboard/wallet': typeof AuthenticatedDashboardWalletRoute
   '/feed/new': typeof AuthenticatedFeedNewRoute
+  '/u/$username/followers': typeof UUsernameFollowersRoute
+  '/u/$username/following': typeof UUsernameFollowingRoute
   '/admin/': typeof AdminAdminIndexRoute
   '/dashboard/': typeof AuthenticatedDashboardIndexRoute
   '/dashboard/feed/$postId': typeof AuthenticatedDashboardFeedPostIdRoute
@@ -545,7 +559,7 @@ export interface FileRoutesByTo {
   '/auth/callback': typeof AuthCallbackRoute
   '/email/verify': typeof EmailVerifyRoute
   '/p/$slug': typeof PSlugRoute
-  '/u/$username': typeof UUsernameRoute
+  '/u/$username': typeof UUsernameRouteWithChildren
   '/admin/account-deletions': typeof AdminAdminAccountDeletionsRoute
   '/admin/apk': typeof AdminAdminApkRoute
   '/admin/backups': typeof AdminAdminBackupsRoute
@@ -591,6 +605,8 @@ export interface FileRoutesByTo {
   '/dashboard/vault': typeof AuthenticatedDashboardVaultRoute
   '/dashboard/wallet': typeof AuthenticatedDashboardWalletRoute
   '/feed/new': typeof AuthenticatedFeedNewRoute
+  '/u/$username/followers': typeof UUsernameFollowersRoute
+  '/u/$username/following': typeof UUsernameFollowingRoute
   '/admin': typeof AdminAdminIndexRoute
   '/dashboard': typeof AuthenticatedDashboardIndexRoute
   '/dashboard/feed/$postId': typeof AuthenticatedDashboardFeedPostIdRoute
@@ -619,7 +635,7 @@ export interface FileRoutesById {
   '/auth/callback': typeof AuthCallbackRoute
   '/email/verify': typeof EmailVerifyRoute
   '/p/$slug': typeof PSlugRoute
-  '/u/$username': typeof UUsernameRoute
+  '/u/$username': typeof UUsernameRouteWithChildren
   '/_admin/admin/account-deletions': typeof AdminAdminAccountDeletionsRoute
   '/_admin/admin/apk': typeof AdminAdminApkRoute
   '/_admin/admin/backups': typeof AdminAdminBackupsRoute
@@ -665,6 +681,8 @@ export interface FileRoutesById {
   '/_authenticated/dashboard/vault': typeof AuthenticatedDashboardVaultRoute
   '/_authenticated/dashboard/wallet': typeof AuthenticatedDashboardWalletRoute
   '/_authenticated/feed/new': typeof AuthenticatedFeedNewRoute
+  '/u/$username/followers': typeof UUsernameFollowersRoute
+  '/u/$username/following': typeof UUsernameFollowingRoute
   '/_admin/admin/': typeof AdminAdminIndexRoute
   '/_authenticated/dashboard/': typeof AuthenticatedDashboardIndexRoute
   '/_authenticated/dashboard/feed/$postId': typeof AuthenticatedDashboardFeedPostIdRoute
@@ -738,6 +756,8 @@ export interface FileRouteTypes {
     | '/dashboard/vault'
     | '/dashboard/wallet'
     | '/feed/new'
+    | '/u/$username/followers'
+    | '/u/$username/following'
     | '/admin/'
     | '/dashboard/'
     | '/dashboard/feed/$postId'
@@ -808,6 +828,8 @@ export interface FileRouteTypes {
     | '/dashboard/vault'
     | '/dashboard/wallet'
     | '/feed/new'
+    | '/u/$username/followers'
+    | '/u/$username/following'
     | '/admin'
     | '/dashboard'
     | '/dashboard/feed/$postId'
@@ -881,6 +903,8 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard/vault'
     | '/_authenticated/dashboard/wallet'
     | '/_authenticated/feed/new'
+    | '/u/$username/followers'
+    | '/u/$username/following'
     | '/_admin/admin/'
     | '/_authenticated/dashboard/'
     | '/_authenticated/dashboard/feed/$postId'
@@ -907,7 +931,7 @@ export interface RootRouteChildren {
   SupportRoute: typeof SupportRoute
   EmailVerifyRoute: typeof EmailVerifyRoute
   PSlugRoute: typeof PSlugRoute
-  UUsernameRoute: typeof UUsernameRoute
+  UUsernameRoute: typeof UUsernameRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -1079,6 +1103,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/'
       preLoaderRoute: typeof AdminAdminIndexRouteImport
       parentRoute: typeof AdminRouteRoute
+    }
+    '/u/$username/following': {
+      id: '/u/$username/following'
+      path: '/following'
+      fullPath: '/u/$username/following'
+      preLoaderRoute: typeof UUsernameFollowingRouteImport
+      parentRoute: typeof UUsernameRoute
+    }
+    '/u/$username/followers': {
+      id: '/u/$username/followers'
+      path: '/followers'
+      fullPath: '/u/$username/followers'
+      preLoaderRoute: typeof UUsernameFollowersRouteImport
+      parentRoute: typeof UUsernameRoute
     }
     '/_authenticated/feed/new': {
       id: '/_authenticated/feed/new'
@@ -1583,6 +1621,20 @@ const AuthRouteChildren: AuthRouteChildren = {
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
+interface UUsernameRouteChildren {
+  UUsernameFollowersRoute: typeof UUsernameFollowersRoute
+  UUsernameFollowingRoute: typeof UUsernameFollowingRoute
+}
+
+const UUsernameRouteChildren: UUsernameRouteChildren = {
+  UUsernameFollowersRoute: UUsernameFollowersRoute,
+  UUsernameFollowingRoute: UUsernameFollowingRoute,
+}
+
+const UUsernameRouteWithChildren = UUsernameRoute._addFileChildren(
+  UUsernameRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRouteRoute: AdminRouteRouteWithChildren,
@@ -1603,7 +1655,7 @@ const rootRouteChildren: RootRouteChildren = {
   SupportRoute: SupportRoute,
   EmailVerifyRoute: EmailVerifyRoute,
   PSlugRoute: PSlugRoute,
-  UUsernameRoute: UUsernameRoute,
+  UUsernameRoute: UUsernameRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
