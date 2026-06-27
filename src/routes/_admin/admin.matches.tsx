@@ -3,7 +3,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2, Ban, Trophy, Search } from "lucide-react";
+import { Plus, Pencil, Trash2, Ban, Trophy, Search, Check } from "lucide-react";
+import { MATCH_BANNERS } from "@/lib/match-banners";
 
 export const Route = createFileRoute("/_admin/admin/matches")({
   component: AdminMatchesPage,
@@ -294,13 +295,39 @@ function EditorModal({
 
           <Field label="Sponsor"><input className={inp} value={draft.sponsor ?? ""} onChange={(e) => upd({ sponsor: e.target.value })} /></Field>
           <Field label="Match URL"><input className={inp} value={draft.match_url ?? ""} onChange={(e) => upd({ match_url: e.target.value })} /></Field>
-          <Field label="Banner URL"><input className={inp} value={draft.banner_image_url ?? ""} onChange={(e) => upd({ banner_image_url: e.target.value })} /></Field>
+          <Field label="Banner URL"><input className={inp} value={draft.banner_image_url ?? ""} onChange={(e) => upd({ banner_image_url: e.target.value })} placeholder="Pick from library below or paste URL" /></Field>
           <Field label="Map Image URL"><input className={inp} value={draft.map_image_url ?? ""} onChange={(e) => upd({ map_image_url: e.target.value })} /></Field>
 
           <label className="flex items-center gap-2 font-hud text-xs uppercase tracking-widest text-foreground/80">
             <input type="checkbox" checked={!!draft.premium_only} onChange={(e) => upd({ premium_only: e.target.checked })} />
             Premium Only
           </label>
+        </div>
+
+        <div className="mt-4">
+          <div className="mb-2 font-hud text-[10px] uppercase tracking-widest text-foreground/70">Banner Library — Click to Select</div>
+          <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-6">
+            {MATCH_BANNERS.map((b) => {
+              const active = draft.banner_image_url === b.url;
+              return (
+                <button
+                  type="button"
+                  key={b.url}
+                  onClick={() => upd({ banner_image_url: b.url })}
+                  title={b.label}
+                  className={`group relative aspect-video overflow-hidden rounded border transition ${active ? "border-gold ring-2 ring-gold/60" : "border-border/60 hover:border-gold/60"}`}
+                >
+                  <img loading="lazy" decoding="async" src={b.url} alt={b.label} className="h-full w-full object-cover transition group-hover:scale-105" />
+                  <span className="absolute inset-x-0 bottom-0 bg-black/60 px-1 py-0.5 text-[9px] font-hud uppercase tracking-wider text-white truncate">{b.label}</span>
+                  {active && (
+                    <span className="absolute right-1 top-1 grid h-5 w-5 place-items-center rounded-full bg-gold text-black">
+                      <Check className="h-3 w-3" />
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         <div className="mt-3 grid grid-cols-1 gap-3">
