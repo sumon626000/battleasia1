@@ -182,6 +182,25 @@ function MatchesPage() {
         </div>
       </section>
 
+      {selectedGame?.live_stream_url && (
+        <a
+          href={selectedGame.live_stream_url}
+          target="_blank"
+          rel="noreferrer"
+          className="hud-panel flex items-center justify-between gap-3 border-red-500/60 bg-red-600/10 p-3 transition hover:bg-red-600/20"
+        >
+          <div className="flex items-center gap-2">
+            <span className="inline-flex items-center gap-1 rounded-sm bg-red-600 px-2 py-0.5 font-hud text-[10px] font-bold uppercase tracking-widest text-white animate-pulse">
+              <PlayCircle size={11} /> LIVE
+            </span>
+            <span className="font-hud text-xs uppercase tracking-widest text-red-400">
+              {selectedGame.game_name} live stream now
+            </span>
+          </div>
+          <span className="font-hud text-[10px] uppercase tracking-widest text-red-400">WATCH →</span>
+        </a>
+      )}
+
       <div className="hud-panel grid gap-2 p-3 sm:grid-cols-3">
         <FilterGroup label="STATUS" value={status} onChange={(v) => setStatus(v as Status)}
           options={[["all","All"],["Upcoming","Upcoming"],["Ongoing","Live"],["Complete","Complete"]]} />
