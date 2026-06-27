@@ -100,17 +100,33 @@ function MatchesPage() {
             const disabled = g.coming_soon || g.status !== "active";
             const inner = (
               <>
-                <div className="aspect-[4/3] overflow-hidden bg-background/60">
+                <div className="relative aspect-[4/3] overflow-hidden bg-background/60">
                   {g.image_url ? (
                     <img src={g.image_url} alt={g.game_name} className={`h-full w-full object-cover transition group-hover:scale-105 ${disabled ? "grayscale" : ""}`} />
                   ) : (
                     <div className="flex h-full items-center justify-center text-foreground/30"><Gamepad2 size={48} /></div>
                   )}
+                  {g.live_stream_url && !disabled && (
+                    <span className="absolute left-2 top-2 inline-flex items-center gap-1 rounded-sm bg-red-600 px-1.5 py-0.5 font-hud text-[9px] font-bold uppercase tracking-widest text-white shadow-lg shadow-red-600/40 animate-pulse">
+                      <PlayCircle size={10} /> LIVE
+                    </span>
+                  )}
                 </div>
                 <div className="p-3">
                   <div className="font-display text-sm font-bold uppercase tracking-wide truncate">{g.game_name}</div>
-                  <div className="mt-1 font-hud text-[10px] uppercase tracking-widest text-gold">
-                    {disabled ? (<span className="text-foreground/50 inline-flex items-center gap-1"><Lock size={10}/> COMING SOON</span>) : "ENTER →"}
+                  <div className="mt-1 flex items-center justify-between gap-2 font-hud text-[10px] uppercase tracking-widest text-gold">
+                    <span>{disabled ? (<span className="text-foreground/50 inline-flex items-center gap-1"><Lock size={10}/> COMING SOON</span>) : "ENTER →"}</span>
+                    {g.live_stream_url && !disabled && (
+                      <a
+                        href={g.live_stream_url}
+                        target="_blank"
+                        rel="noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        className="inline-flex items-center gap-1 rounded-sm border border-red-500/60 bg-red-600/20 px-1.5 py-0.5 text-red-400 hover:bg-red-600/40"
+                      >
+                        <PlayCircle size={10} /> WATCH
+                      </a>
+                    )}
                   </div>
                 </div>
               </>
