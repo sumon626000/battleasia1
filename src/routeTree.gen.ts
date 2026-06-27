@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as MatchesRouteImport } from './routes/matches'
+import { Route as LeaderboardRouteImport } from './routes/leaderboard'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AdminRouteRouteImport } from './routes/_admin/route'
@@ -63,6 +64,11 @@ const ResetPasswordRoute = ResetPasswordRouteImport.update({
 const MatchesRoute = MatchesRouteImport.update({
   id: '/matches',
   path: '/matches',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LeaderboardRoute = LeaderboardRouteImport.update({
+  id: '/leaderboard',
+  path: '/leaderboard',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -297,6 +303,7 @@ const AuthenticatedDashboardFeedPostIdRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/leaderboard': typeof LeaderboardRoute
   '/matches': typeof MatchesRoute
   '/reset-password': typeof ResetPasswordRoute
   '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
@@ -342,6 +349,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/leaderboard': typeof LeaderboardRoute
   '/matches': typeof MatchesRoute
   '/reset-password': typeof ResetPasswordRoute
   '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
@@ -390,6 +398,7 @@ export interface FileRoutesById {
   '/_admin': typeof AdminRouteRouteWithChildren
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/leaderboard': typeof LeaderboardRoute
   '/matches': typeof MatchesRoute
   '/reset-password': typeof ResetPasswordRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRouteWithChildren
@@ -437,6 +446,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/leaderboard'
     | '/matches'
     | '/reset-password'
     | '/dashboard'
@@ -482,6 +492,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/leaderboard'
     | '/matches'
     | '/reset-password'
     | '/dashboard'
@@ -529,6 +540,7 @@ export interface FileRouteTypes {
     | '/_admin'
     | '/_authenticated'
     | '/auth'
+    | '/leaderboard'
     | '/matches'
     | '/reset-password'
     | '/_authenticated/dashboard'
@@ -577,6 +589,7 @@ export interface RootRouteChildren {
   AdminRouteRoute: typeof AdminRouteRouteWithChildren
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  LeaderboardRoute: typeof LeaderboardRoute
   MatchesRoute: typeof MatchesRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   EmailVerifyRoute: typeof EmailVerifyRoute
@@ -597,6 +610,13 @@ declare module '@tanstack/react-router' {
       path: '/matches'
       fullPath: '/matches'
       preLoaderRoute: typeof MatchesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/leaderboard': {
+      id: '/leaderboard'
+      path: '/leaderboard'
+      fullPath: '/leaderboard'
+      preLoaderRoute: typeof LeaderboardRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -1042,6 +1062,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRouteRoute: AdminRouteRouteWithChildren,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  LeaderboardRoute: LeaderboardRoute,
   MatchesRoute: MatchesRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   EmailVerifyRoute: EmailVerifyRoute,
