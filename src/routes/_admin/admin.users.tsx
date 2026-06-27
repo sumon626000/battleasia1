@@ -27,7 +27,7 @@ async function fetchUsers(q: string) {
   let query = supabase
     .from("profiles")
     .select(
-      "id, username, in_game_username, pubg_id, country_code, bac_coin_balance, is_premium, is_suspended, suspension_reason, created_at, roles:user_roles(role)"
+      "id, username, in_game_username, pubg_id, country_code, bac_coin_balance, is_premium, is_suspended, suspension_reason, created_at"
     )
     .order("created_at", { ascending: false })
     .limit(100);
@@ -39,7 +39,19 @@ async function fetchUsers(q: string) {
   }
   const { data, error } = await query;
   if (error) throw error;
-  return (data ?? []) as Row[];
+  const ids = (data ?? []).map((r) => r.id);
+  const roleMap = new Map<string, string>();
+  if (ids.length) {
+    const { data: roles } = await supabase
+      .from("user_roles")
+      .select("user_id, role")
+      .in("user_id", ids);
+    (roles ?? []).forEach((r) => roleMap.set(r.user_id, r.role));
+  }
+  return (data ?? []).map((r) => ({
+    ...r,
+    roles: roleMap.has(r.id) ? [{ role: roleMap.get(r.id)! }] : [],
+  })) as Row[];
 }
 
 function ActionModal({
