@@ -25,7 +25,7 @@ export const Route = createFileRoute("/_authenticated/dashboard/referrals")({
 
 function ReferralsPage() {
   const { user } = useAuth();
-  const { profile } = useProfile();
+  const { profile } = useProfile(user?.id);
   const [copied, setCopied] = useState<"code" | "link" | null>(null);
 
   const refCode = profile?.referral_code ?? "";
