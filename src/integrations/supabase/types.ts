@@ -641,6 +641,7 @@ export type Database = {
           id: number
           id_prefix: string | null
           image_url: string | null
+          live_stream_url: string | null
           package_name: string | null
           sort_order: number
           status: Database["public"]["Enums"]["entity_status"]
@@ -655,6 +656,7 @@ export type Database = {
           id?: number
           id_prefix?: string | null
           image_url?: string | null
+          live_stream_url?: string | null
           package_name?: string | null
           sort_order?: number
           status?: Database["public"]["Enums"]["entity_status"]
@@ -669,6 +671,7 @@ export type Database = {
           id?: number
           id_prefix?: string | null
           image_url?: string | null
+          live_stream_url?: string | null
           package_name?: string | null
           sort_order?: number
           status?: Database["public"]["Enums"]["entity_status"]
