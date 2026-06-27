@@ -15,7 +15,7 @@ type Post = {
 };
 type Comment = {
   id: number; comment_text: string; created_at: string; user_id: string;
-  profiles?: { username: string | null; avatar_url: string | null } | null;
+  username?: string | null;
 };
 
 function PostDetail() {
@@ -32,9 +32,16 @@ function PostDetail() {
     const { data } = await supabase.from("feed_posts").select("*").eq("id", id).maybeSingle();
     setPost(data as Post);
     const { data: cs } = await supabase.from("feed_comments")
-      .select("id,comment_text,created_at,user_id, profiles:profiles!feed_comments_user_id_fkey(username,avatar_url)")
+      .select("id,comment_text,created_at,user_id")
       .eq("post_id", id).is("deleted_at", null).order("created_at", { ascending: false }).limit(100);
-    setComments((cs as unknown as Comment[]) ?? []);
+    const rows = (cs as Comment[]) ?? [];
+    const ids = Array.from(new Set(rows.map((r) => r.user_id)));
+    if (ids.length) {
+      const { data: profs } = await supabase.from("profiles").select("id,username").in("id", ids);
+      const map = new Map((profs ?? []).map((p) => [p.id, p.username]));
+      rows.forEach((r) => { r.username = map.get(r.user_id) ?? null; });
+    }
+    setComments(rows);
     if (user) {
       const { data: like } = await supabase.from("feed_likes").select("id").eq("post_id", id).eq("user_id", user.id).maybeSingle();
       setLiked(!!like);
@@ -116,7 +123,7 @@ function PostDetail() {
           {comments.map((c) => (
             <div key={c.id} className="rounded-md border border-border/60 bg-background/40 p-3">
               <div className="mb-1 flex items-center gap-2 font-mono text-[10px] uppercase tracking-wider text-foreground/60">
-                <span className="text-gold">{c.profiles?.username ?? "operative"}</span>
+                <span className="text-gold">{c.username ?? "operative"}</span>
                 <span>·</span>
                 <span>{new Date(c.created_at).toLocaleString()}</span>
               </div>
