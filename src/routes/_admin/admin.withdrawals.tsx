@@ -3,7 +3,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Check, X, AlertTriangle } from "lucide-react";
+import { Check, X, AlertTriangle, Download } from "lucide-react";
+import { exportRowsAsCSV } from "@/lib/csv";
+
 
 export const Route = createFileRoute("/_admin/admin/withdrawals")({
   component: AdminWithdrawalsPage,
@@ -73,14 +75,41 @@ function AdminWithdrawalsPage() {
         <p className="font-hud text-xs uppercase tracking-widest text-foreground/60">Approve payouts or reject & refund held BAC</p>
       </div>
 
-      <div className="flex gap-2">
-        {["Pending", "Approved", "Rejected", "all"].map((s) => (
-          <button key={s} onClick={() => setStatusFilter(s)}
-            className={`rounded border px-3 py-1 font-hud text-[10px] uppercase tracking-widest ${
-              statusFilter === s ? "border-gold/60 bg-gold/10 text-gold" : "border-border/60 text-foreground/60"
-            }`}>{s}</button>
-        ))}
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div className="flex gap-2">
+          {["Pending", "Approved", "Rejected", "all"].map((s) => (
+            <button key={s} onClick={() => setStatusFilter(s)}
+              className={`rounded border px-3 py-1 font-hud text-[10px] uppercase tracking-widest ${
+                statusFilter === s ? "border-gold/60 bg-gold/10 text-gold" : "border-border/60 text-foreground/60"
+              }`}>{s}</button>
+          ))}
+        </div>
+        <button
+          onClick={() => {
+            const rows = (data?.rows ?? []).map((w) => ({
+              id: w.id,
+              user: data?.profMap.get(w.user_id)?.in_game_username ?? w.user_id,
+              bac_amount: w.bac_amount,
+              fee_bac: w.fee_bac,
+              net_bac: Number(w.bac_amount) - Number(w.fee_bac ?? 0),
+              fiat_amount: w.fiat_amount ?? "",
+              final_payout: w.final_payout_amount ?? "",
+              currency: w.currency,
+              wallet_address: w.wallet_address,
+              status: w.status,
+              cancel_reason: w.cancel_reason ?? "",
+              flagged: data?.alertIds.has(w.id) ?? false,
+              created_at: w.created_at,
+            }));
+            if (!rows.length) return;
+            exportRowsAsCSV(`withdrawals-${statusFilter}-${Date.now()}`, rows);
+          }}
+          className="inline-flex items-center gap-1 rounded border border-border/70 px-3 py-1 font-hud text-[10px] uppercase tracking-widest text-foreground/70 hover:border-gold hover:text-gold"
+        >
+          <Download className="h-3 w-3" /> Export CSV
+        </button>
       </div>
+
 
       <div className="hud-panel overflow-x-auto rounded-md border border-border/70 bg-card/40">
         <table className="w-full min-w-[860px] text-sm">
