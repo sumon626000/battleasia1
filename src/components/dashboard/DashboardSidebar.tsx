@@ -61,6 +61,12 @@ export const DASH_GROUPS: DashGroup[] = [
     items: [
       { key: "dash.socialFeed", href: "/feed", icon: Newspaper },
       { key: "dash.messages", href: "/dashboard/messages", icon: MessageSquare },
+    ],
+  },
+  {
+    label: "Referrals",
+    icon: Users,
+    items: [
       { key: "dash.referrals", href: "/dashboard/referrals", icon: Users },
     ],
   },
