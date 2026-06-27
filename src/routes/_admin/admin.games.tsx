@@ -53,6 +53,7 @@ function AdminGamesPage() {
       status: (editing.status ?? "active") as "active" | "inactive",
       coming_soon: editing.coming_soon ?? false,
       sort_order: editing.sort_order ?? 0,
+      live_stream_url: editing.live_stream_url ?? null,
     };
     const { error } = editing.id
       ? await supabase.from("games").update(payload).eq("id", editing.id)
