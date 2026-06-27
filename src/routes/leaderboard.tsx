@@ -22,7 +22,33 @@ type LBRow = {
   username: string;
   avatar_url: string | null;
   country_code: string | null;
+  demo?: boolean;
 };
+
+const DEMO_LB: LBRow[] = [
+  { user_id: "demo-1",  username: "SHADOW_47",   avatar_url: null, country_code: "BD", total_kills: 412, total_prize: 148200, matches_played: 96, demo: true },
+  { user_id: "demo-2",  username: "GHOST_KING",  avatar_url: null, country_code: "IN", total_kills: 388, total_prize: 132750, matches_played: 91, demo: true },
+  { user_id: "demo-3",  username: "NOVA_STRIKE", avatar_url: null, country_code: "PK", total_kills: 356, total_prize: 119400, matches_played: 88, demo: true },
+  { user_id: "demo-4",  username: "RAVEN_X",     avatar_url: null, country_code: "NP", total_kills: 321, total_prize: 101200, matches_played: 82, demo: true },
+  { user_id: "demo-5",  username: "TITAN_07",    avatar_url: null, country_code: "LK", total_kills: 297, total_prize: 87850,  matches_played: 77, demo: true },
+  { user_id: "demo-6",  username: "VIPER_ACE",   avatar_url: null, country_code: "MY", total_kills: 268, total_prize: 72400,  matches_played: 71, demo: true },
+  { user_id: "demo-7",  username: "BLAZE_OPS",   avatar_url: null, country_code: "ID", total_kills: 241, total_prize: 59650,  matches_played: 64, demo: true },
+  { user_id: "demo-8",  username: "FALCON_22",   avatar_url: null, country_code: "TH", total_kills: 216, total_prize: 46900,  matches_played: 58, demo: true },
+  { user_id: "demo-9",  username: "WRAITH_ZED",  avatar_url: null, country_code: "VN", total_kills: 188, total_prize: 34250,  matches_played: 51, demo: true },
+  { user_id: "demo-10", username: "ECHO_PRIME",  avatar_url: null, country_code: "PH", total_kills: 162, total_prize: 21800,  matches_played: 44, demo: true },
+];
+
+function fillDemo(rows: LBRow[], metric: "kills" | "prize" | "matches"): LBRow[] {
+  const have = new Set(rows.map((r) => r.username.toUpperCase()));
+  const merged = [...rows, ...DEMO_LB.filter((d) => !have.has(d.username.toUpperCase()))];
+  merged.sort((a, b) =>
+    metric === "kills" ? b.total_kills - a.total_kills :
+    metric === "prize" ? b.total_prize - a.total_prize :
+    b.matches_played - a.matches_played
+  );
+  return merged;
+}
+
 
 function LeaderboardPage() {
   const [metric, setMetric] = useState<"kills" | "prize" | "matches">("kills");
