@@ -136,8 +136,8 @@ function AdminResultsPage() {
     const { error, data } = await supabase.rpc("admin_publish_match_result", {
       p_match_id: detail.match.id,
       p_results: results as never,
-      p_result_description: description || null,
-      p_result_image_url: imageUrl || null,
+      p_result_description: (description || undefined) as never,
+      p_result_image_url: (imageUrl || undefined) as never,
     });
     if (error) return toast.error(error.message);
     toast.success(`Published — ${data} row(s) processed.`);

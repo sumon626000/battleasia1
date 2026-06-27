@@ -41,7 +41,7 @@ type Match = {
   deleted_at: string | null;
 };
 
-const STATUS = ["Upcoming", "Active", "Completed", "Cancelled"] as const;
+const STATUS = ["Upcoming", "Active", "Ongoing", "Complete", "Cancelled"] as const;
 const MATCH_TYPE = ["Free", "Paid", "Sponsored"] as const;
 const GAME_MODE = ["Classic", "Arcade", "EvoGround", "Arena", "TDM"] as const;
 const PLAYER_MODE = ["Solo", "Duo", "Squad"] as const;
@@ -79,7 +79,7 @@ function AdminMatchesPage() {
     queryKey: ["admin-matches", statusFilter],
     queryFn: async () => {
       let query = supabase.from("matches").select("*").is("deleted_at", null).order("schedule_at", { ascending: false }).limit(200);
-      if (statusFilter !== "all") query = query.eq("status", statusFilter as Match["status"]);
+      if (statusFilter !== "all") query = query.eq("status", statusFilter as never);
       const { data, error } = await query;
       if (error) throw error;
       return data as Match[];
@@ -103,7 +103,7 @@ function AdminMatchesPage() {
     delete (payload as { result_applied?: boolean }).result_applied;
     delete (payload as { deleted_at?: string | null }).deleted_at;
     const { error } = await supabase.rpc("admin_save_match", {
-      p_match_id: editing.id ?? null,
+      p_match_id: (editing.id ?? null) as never,
       p_payload: payload as never,
     });
     if (error) return toast.error(error.message);
