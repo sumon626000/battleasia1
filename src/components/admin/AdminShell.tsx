@@ -207,12 +207,22 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
               Command Center
             </span>
           </div>
-          <Link
-            to="/dashboard"
-            className="flex shrink-0 items-center gap-2 rounded border border-border/70 px-2.5 py-1.5 font-hud text-[11px] sm:text-xs uppercase tracking-widest text-foreground/70 hover:border-gold hover:text-gold"
-          >
-            <ArrowLeft size={14} /> Exit
-          </Link>
+          <div className="flex shrink-0 items-center gap-2">
+            <Link
+              to="/dashboard"
+              className="flex items-center gap-1.5 rounded border border-gold/60 bg-gold/10 px-2.5 py-1.5 font-hud text-[11px] sm:text-xs uppercase tracking-widest text-gold hover:bg-gold/20"
+              title="Go to User Dashboard"
+            >
+              <LayoutDashboard size={14} /> <span className="hidden sm:inline">User</span> Dashboard
+            </Link>
+            <Link
+              to="/"
+              className="hidden sm:flex items-center gap-1.5 rounded border border-border/70 px-2.5 py-1.5 font-hud text-[11px] sm:text-xs uppercase tracking-widest text-foreground/70 hover:border-gold hover:text-gold"
+            >
+              <ArrowLeft size={14} /> Home
+            </Link>
+          </div>
+
         </div>
       </header>
 
