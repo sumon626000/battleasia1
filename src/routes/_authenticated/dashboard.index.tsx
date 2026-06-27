@@ -12,6 +12,10 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { CoinIcon } from "@/components/site/CoinIcon";
+import squadHero from "@/assets/pubg-squad-action.jpg";
+import sniperImg from "@/assets/pubg-sniper-rooftop.jpg";
+import vehicleImg from "@/assets/pubg-vehicle-chase.jpg";
+import airdropImg from "@/assets/pubg-airdrop.jpg";
 
 export const Route = createFileRoute("/_authenticated/dashboard/")({
   head: () => ({
