@@ -36,6 +36,8 @@ type Apk = {
 function AdminApkPage() {
   const qc = useQueryClient();
   const [editing, setEditing] = useState<Partial<Apk> | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const fileRef = useRef<HTMLInputElement | null>(null);
 
   const q = useQuery({
     queryKey: ["admin-apk"],
