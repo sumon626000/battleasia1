@@ -77,6 +77,17 @@ const RULES = [
 function formatBAC(n: number) {
   return new Intl.NumberFormat("en-IN", { maximumFractionDigits: 2 }).format(n);
 }
+function formatCompact(n: number): string {
+  if (n >= 1_000_000) {
+    const v = n / 1_000_000;
+    return (v >= 10 ? v.toFixed(0) : v.toFixed(1).replace(/\.0$/, "")) + "M+";
+  }
+  if (n >= 1_000) {
+    const v = n / 1_000;
+    return (v >= 10 ? v.toFixed(0) : v.toFixed(1).replace(/\.0$/, "")) + "K+";
+  }
+  return n.toLocaleString();
+}
 function shortName(s: string | null | undefined, fallback = "Player") {
   return (s && s.trim()) || fallback;
 }
