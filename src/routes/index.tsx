@@ -292,22 +292,6 @@ function BattleAsiaLanding() {
       </section>
 
       {/* FOOTER */}
-      <footer className="bg-card/50">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-4 py-6 sm:px-6 md:flex-row">
-          <p className="font-hud text-xs tracking-wider text-muted-foreground">© 2025 BATTLE ASIA · ALL RIGHTS RESERVED</p>
-          <nav className="font-hud flex flex-wrap items-center justify-center gap-4 text-xs text-muted-foreground">
-            <a href="#" className="hover:text-gold">TERMS</a>
-            <a href="#" className="hover:text-gold">PRIVACY</a>
-            <a href="#" className="hover:text-gold">RULES</a>
-            <a href="#" className="hover:text-gold">ABOUT</a>
-          </nav>
-          <div className="flex items-center gap-3 text-gold">
-            <a href="#" aria-label="Telegram" className="grid h-9 w-9 place-items-center rounded-md bg-secondary ring-1 ring-gold/30 hover:bg-gold hover:text-background"><Send size={14} /></a>
-            <a href="#" aria-label="Facebook" className="grid h-9 w-9 place-items-center rounded-md bg-secondary ring-1 ring-gold/30 hover:bg-gold hover:text-background"><Facebook size={14} /></a>
-            <a href="#" aria-label="Twitter"  className="grid h-9 w-9 place-items-center rounded-md bg-secondary ring-1 ring-gold/30 hover:bg-gold hover:text-background"><Twitter  size={14} /></a>
-          </div>
-        </div>
-      </footer>
-    </div>
+    </>
   );
 }
