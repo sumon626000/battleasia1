@@ -202,13 +202,16 @@ function PostCard({ post, onLike }: { post: Post; onLike: () => void }) {
             onClick={onLike}
             className={`inline-flex items-center gap-1.5 transition ${post.liked_by_me ? "text-red-400" : "text-foreground/70 hover:text-red-400"}`}
           >
-            <Heart size={16} fill={post.liked_by_me ? "currentColor" : "none"} />
+            <LikeBurst active={!!post.liked_by_me} />
             <span className="font-bold">{post.likes_count}</span>
           </button>
-          <span className="inline-flex items-center gap-1.5 text-foreground/70">
+          <button
+            onClick={() => setShowComments((v) => !v)}
+            className={`inline-flex items-center gap-1.5 transition ${showComments ? "text-gold" : "text-foreground/70 hover:text-gold"}`}
+          >
             <MessageCircle size={16} />
             <span className="font-bold">{post.comments_count}</span>
-          </span>
+          </button>
           {post.media_type ? (
             <span className="ml-auto inline-flex items-center gap-1 text-foreground/40">
               <ImageIcon size={12} /> {post.media_type}
@@ -216,6 +219,7 @@ function PostCard({ post, onLike }: { post: Post; onLike: () => void }) {
           ) : null}
         </div>
       </div>
+      {showComments && <CommentsThread postId={post.id} />}
     </li>
   );
 }
