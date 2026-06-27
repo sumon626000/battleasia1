@@ -409,6 +409,8 @@ function BattleAsiaLanding() {
       {/* ============ PLAY NOW BANNER ============ */}
       <section className="mx-auto max-w-7xl px-4 pb-6 sm:px-6">
         <div className="hud-panel hud-bracket relative overflow-hidden p-6 sm:p-8">
+          <img loading="lazy" decoding="async" src={pubgVehicleChase} alt="" aria-hidden width={1792} height={896} className="absolute inset-0 h-full w-full object-cover opacity-25" />
+          <div aria-hidden className="absolute inset-0 bg-gradient-to-r from-background via-background/80 to-background/30" />
           <div aria-hidden className="absolute inset-0 bg-grid-hud opacity-20" />
           <div aria-hidden className="absolute -right-12 -top-12 h-48 w-48 rounded-full bg-gold/10 blur-3xl" />
           <div className="relative grid gap-5 lg:grid-cols-[1fr,auto] lg:items-center">
