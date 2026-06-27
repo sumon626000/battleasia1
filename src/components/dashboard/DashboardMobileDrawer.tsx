@@ -37,7 +37,7 @@ export function DashboardMobileDrawer({ open, onClose }: Props) {
               <Link
                 key={item.href}
                 to={item.href}
-                onClick={onClose}
+                onClick={() => setTimeout(onClose, 0)}
                 className={`flex items-center gap-3 rounded-md border px-3 py-2.5 font-hud text-sm font-semibold uppercase tracking-wide transition ${
                   active
                     ? "border-gold/60 bg-gold/10 text-gold"
