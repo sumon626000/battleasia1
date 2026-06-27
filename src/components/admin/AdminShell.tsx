@@ -55,8 +55,10 @@ export const ADMIN_NAV = [
   { label: "Online Users", href: "/admin/online-users", icon: Activity },
   { label: "Backups", href: "/admin/backups", icon: Database },
   { label: "Two-Factor", href: "/admin/two-factor", icon: ShieldAlert },
+  { label: "SMTP / Email", href: "/admin/smtp", icon: Mail },
   { label: "Site Settings", href: "/admin/settings", icon: Settings },
 ] as const;
+
 
 export function AdminShell({ children }: { children: React.ReactNode }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
