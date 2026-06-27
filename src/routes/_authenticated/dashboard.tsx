@@ -2,7 +2,6 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/use-auth";
 import { useProfile } from "@/hooks/use-profile";
 import {
-  Coins,
   Trophy,
   Swords,
   Users,
@@ -12,6 +11,7 @@ import {
   Crown,
   ArrowRight,
 } from "lucide-react";
+import { CoinIcon } from "@/components/site/CoinIcon";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
