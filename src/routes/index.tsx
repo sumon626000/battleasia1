@@ -80,6 +80,37 @@ function shortName(s: string | null | undefined, fallback = "Player") {
   return (s && s.trim()) || fallback;
 }
 
+// Demo roster — used to fill leaderboard slots when live data is sparse.
+const DEMO_PLAYERS: Array<{ name: string; avatar: null; profit: number; kills: number }> = [
+  { name: "SHADOW_47",   avatar: null, profit: 48200, kills: 142 },
+  { name: "GHOST_KING",  avatar: null, profit: 41750, kills: 128 },
+  { name: "NOVA_STRIKE", avatar: null, profit: 36400, kills: 119 },
+  { name: "RAVEN_X",     avatar: null, profit: 31200, kills: 104 },
+  { name: "TITAN_07",    avatar: null, profit: 27850, kills:  97 },
+  { name: "VIPER_ACE",   avatar: null, profit: 22400, kills:  88 },
+  { name: "BLAZE_OPS",   avatar: null, profit: 19650, kills:  81 },
+  { name: "FALCON_22",   avatar: null, profit: 16900, kills:  74 },
+  { name: "WRAITH_ZED",  avatar: null, profit: 14250, kills:  66 },
+  { name: "ECHO_PRIME",  avatar: null, profit: 11800, kills:  58 },
+];
+
+function mergeProfit(live: Array<{ name: string; avatar: string | null; total: number }>) {
+  const out = [...live];
+  for (const d of DEMO_PLAYERS) {
+    if (out.length >= 5) break;
+    out.push({ name: d.name, avatar: null, total: d.profit });
+  }
+  return out.slice(0, 5);
+}
+function mergeKills(live: Array<{ name: string; avatar: string | null; kills: number }>) {
+  const out = [...live];
+  for (const d of DEMO_PLAYERS) {
+    if (out.length >= 5) break;
+    out.push({ name: d.name, avatar: null, kills: d.kills });
+  }
+  return out.slice(0, 5);
+}
+
 function BattleAsiaLanding() {
   const { t } = useT();
   /* ---------- LIVE DATA ---------- */
