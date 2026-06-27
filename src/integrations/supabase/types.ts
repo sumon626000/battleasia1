@@ -58,7 +58,7 @@ export type Database = {
           module: string
           new_value: Json | null
           old_value: Json | null
-          target_id: number | null
+          target_id: string | null
           target_type: string | null
         }
         Insert: {
@@ -71,7 +71,7 @@ export type Database = {
           module: string
           new_value?: Json | null
           old_value?: Json | null
-          target_id?: number | null
+          target_id?: string | null
           target_type?: string | null
         }
         Update: {
@@ -84,7 +84,7 @@ export type Database = {
           module?: string
           new_value?: Json | null
           old_value?: Json | null
-          target_id?: number | null
+          target_id?: string | null
           target_type?: string | null
         }
         Relationships: []
