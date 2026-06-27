@@ -15,6 +15,7 @@ import {
   Settings,
   BarChart3,
   ShieldCheck,
+  MessageSquare,
 } from "lucide-react";
 import { useT } from "@/lib/i18n";
 import { useIsAdmin } from "@/hooks/use-is-admin";
