@@ -17,24 +17,24 @@ import { SiteShell } from "@/components/site/SiteShell";
 function NotFoundComponent() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="max-w-md text-center">
-        <h1 className="text-7xl font-bold text-foreground">404</h1>
-        <h2 className="mt-4 text-xl font-semibold text-foreground">Page not found</h2>
-        <p className="mt-2 text-sm text-muted-foreground">
-          The page you're looking for doesn't exist or has been moved.
+      <div className="hud-panel max-w-md rounded-md border border-gold/40 bg-card/60 p-8 text-center">
+        <div className="font-display text-7xl font-bold tracking-widest text-gold">404</div>
+        <h2 className="mt-3 font-display text-xl uppercase tracking-[0.2em] text-foreground">
+          Signal Lost
+        </h2>
+        <p className="mt-2 font-hud text-xs uppercase tracking-widest text-foreground/60">
+          This sector is off the grid.
         </p>
         <div className="mt-6">
-          <Link
-            to="/"
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-          >
-            Go home
+          <Link to="/" className="btn-gold px-5 py-2 text-sm">
+            Return to Base
           </Link>
         </div>
       </div>
     </div>
   );
 }
+
 
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   console.error(error);

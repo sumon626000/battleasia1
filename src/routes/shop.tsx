@@ -16,33 +16,19 @@ export const Route = createFileRoute("/shop")({
   component: PublicShop,
 });
 
-type Pkg = {
-  id: string;
-  name: string;
-  description: string | null;
-  coin_amount: number | null;
-  bonus_coins: number | null;
-  price: number | null;
-  currency: string | null;
-  is_featured: boolean | null;
-  category_id: string | null;
-};
-type Cat = { id: string; name: string };
-
 async function fetchShop() {
   const [pkgs, cats] = await Promise.all([
     supabase
       .from("shop_packages")
-      .select("id,name,description,coin_amount,bonus_coins,price,currency,is_featured,category_id")
+      .select("id,title,bac_amount,price_value,price_currency,discount_percentage,image_url,category_id,sort_order")
       .eq("is_active", true)
-      .order("price", { ascending: true }),
-    supabase.from("shop_categories").select("id,name").eq("is_active", true),
+      .order("sort_order", { ascending: true }),
+    supabase.from("shop_categories").select("id,name"),
   ]);
   if (pkgs.error) throw pkgs.error;
-  return {
-    packages: (pkgs.data ?? []) as Pkg[],
-    categories: new Map(((cats.data ?? []) as Cat[]).map((c) => [c.id, c.name])),
-  };
+  const catMap = new Map<number, string>();
+  (cats.data ?? []).forEach((c) => catMap.set(c.id, c.name));
+  return { packages: pkgs.data ?? [], categories: catMap };
 }
 
 function PublicShop() {
@@ -66,48 +52,43 @@ function PublicShop() {
       )}
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {(data?.packages ?? []).map((p) => (
-          <div
-            key={p.id}
-            className={`hud-panel rounded-md border bg-card/40 p-5 transition hover:border-gold/60 ${
-              p.is_featured ? "border-gold/60" : "border-border/60"
-            }`}
-          >
-            {p.is_featured && (
-              <span className="mb-2 inline-block rounded bg-gold/20 px-2 py-0.5 font-hud text-[10px] uppercase tracking-widest text-gold">
-                Featured
-              </span>
-            )}
-            {p.category_id && data?.categories.get(p.category_id) && (
-              <div className="font-hud text-[10px] uppercase tracking-widest text-foreground/50">
-                {data.categories.get(p.category_id)}
-              </div>
-            )}
-            <h3 className="mt-1 font-display text-lg uppercase tracking-wide text-foreground">{p.name}</h3>
-            {p.description && (
-              <p className="mt-1 line-clamp-2 text-sm text-foreground/70">{p.description}</p>
-            )}
-            <div className="mt-4 flex items-center gap-2">
-              <CoinIcon className="h-6 w-6" />
-              <span className="font-mono text-xl tabular-nums text-gold">
-                {Number(p.coin_amount ?? 0).toLocaleString()}
-              </span>
-              {p.bonus_coins ? (
-                <span className="font-hud text-[11px] uppercase tracking-widest text-emerald-400">
-                  +{p.bonus_coins} bonus
+        {(data?.packages ?? []).map((p) => {
+          const discount = Number(p.discount_percentage ?? 0);
+          return (
+            <div
+              key={p.id}
+              className="hud-panel rounded-md border border-border/60 bg-card/40 p-5 transition hover:border-gold/60"
+            >
+              {p.category_id && data?.categories.get(p.category_id) && (
+                <div className="font-hud text-[10px] uppercase tracking-widest text-foreground/50">
+                  {data.categories.get(p.category_id)}
+                </div>
+              )}
+              <h3 className="mt-1 font-display text-lg uppercase tracking-wide text-foreground">
+                {p.title}
+              </h3>
+              <div className="mt-4 flex items-center gap-2">
+                <CoinIcon className="h-6 w-6" />
+                <span className="font-mono text-xl tabular-nums text-gold">
+                  {Number(p.bac_amount).toLocaleString()}
                 </span>
-              ) : null}
+                {discount > 0 && (
+                  <span className="font-hud text-[11px] uppercase tracking-widest text-emerald-400">
+                    -{discount}%
+                  </span>
+                )}
+              </div>
+              <div className="mt-3 flex items-center justify-between">
+                <span className="font-mono text-base">
+                  {p.price_currency} {Number(p.price_value).toLocaleString()}
+                </span>
+                <Link to="/auth" className="btn-outline-gold px-3 py-1.5 text-xs">
+                  <Lock className="mr-1 inline h-3 w-3" /> Sign in
+                </Link>
+              </div>
             </div>
-            <div className="mt-3 flex items-center justify-between">
-              <span className="font-mono text-base">
-                {p.currency ?? "USD"} {Number(p.price ?? 0).toLocaleString()}
-              </span>
-              <Link to="/auth" className="btn-outline-gold px-3 py-1.5 text-xs">
-                <Lock className="mr-1 inline h-3 w-3" /> Sign in
-              </Link>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

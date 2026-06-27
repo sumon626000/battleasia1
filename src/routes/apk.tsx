@@ -7,7 +7,7 @@ export const Route = createFileRoute("/apk")({
   head: () => ({
     meta: [
       { title: "Download APK — Battle Asia" },
-      { name: "description", content: "Download the Battle Asia mobile app (APK) for Android. Compete in tournaments on the go." },
+      { name: "description", content: "Download the Battle Asia mobile app (APK) for Android." },
       { property: "og:title", content: "Download Battle Asia APK" },
       { property: "og:description", content: "Official Android APK for Battle Asia." },
     ],
@@ -15,34 +15,24 @@ export const Route = createFileRoute("/apk")({
   component: ApkPage,
 });
 
-type Apk = {
-  id: string;
-  version: string;
-  version_code: number | null;
-  download_url: string;
-  changelog: string | null;
-  release_notes: string | null;
-  file_size_mb: number | null;
-  is_force_update: boolean | null;
-  released_at: string | null;
-  created_at: string;
-};
-
 async function fetchApk() {
   const { data, error } = await supabase
     .from("apk_versions")
-    .select("id,version,version_code,download_url,changelog,release_notes,file_size_mb,is_force_update,released_at,created_at")
+    .select("id,version_name,version_code,apk_file_url,changelog,file_size_bytes,force_update,created_at")
     .eq("is_active", true)
     .order("version_code", { ascending: false })
     .limit(10);
   if (error) throw error;
-  return (data ?? []) as Apk[];
+  return data ?? [];
 }
 
 function ApkPage() {
   const { data, isLoading } = useQuery({ queryKey: ["public-apk"], queryFn: fetchApk });
   const latest = data?.[0];
   const older = (data ?? []).slice(1);
+
+  const mb = (b: number | null) =>
+    b ? `${(Number(b) / (1024 * 1024)).toFixed(1)} MB` : null;
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
@@ -69,26 +59,24 @@ function ApkPage() {
                 Latest Build
               </div>
               <h2 className="font-display text-2xl uppercase tracking-wide text-foreground">
-                v{latest.version}
-                {latest.version_code ? (
-                  <span className="ml-2 font-mono text-sm text-foreground/50">({latest.version_code})</span>
-                ) : null}
+                v{latest.version_name}
+                <span className="ml-2 font-mono text-sm text-foreground/50">
+                  ({latest.version_code})
+                </span>
               </h2>
               <div className="mt-1 flex flex-wrap gap-3 font-mono text-[11px] text-foreground/60">
-                {latest.file_size_mb && <span>{latest.file_size_mb} MB</span>}
-                {latest.released_at && (
-                  <span className="inline-flex items-center gap-1">
-                    <Calendar className="h-3 w-3" />
-                    {new Date(latest.released_at).toLocaleDateString()}
-                  </span>
-                )}
-                {latest.is_force_update && (
+                {mb(latest.file_size_bytes) && <span>{mb(latest.file_size_bytes)}</span>}
+                <span className="inline-flex items-center gap-1">
+                  <Calendar className="h-3 w-3" />
+                  {new Date(latest.created_at).toLocaleDateString()}
+                </span>
+                {latest.force_update && (
                   <span className="rounded bg-destructive/20 px-1.5 text-destructive">Required</span>
                 )}
               </div>
             </div>
             <a
-              href={latest.download_url}
+              href={latest.apk_file_url}
               target="_blank"
               rel="noopener noreferrer"
               className="btn-gold inline-flex items-center gap-2 px-5 py-2.5 text-sm"
@@ -96,20 +84,20 @@ function ApkPage() {
               <Download className="h-4 w-4" /> Download APK
             </a>
           </div>
-          {(latest.release_notes || latest.changelog) && (
+          {latest.changelog && (
             <div className="mt-4 border-t border-border/40 pt-4">
               <div className="font-hud text-[10px] uppercase tracking-widest text-foreground/60">
-                Release Notes
+                Changelog
               </div>
               <p className="mt-2 whitespace-pre-line text-sm text-foreground/80">
-                {latest.release_notes || latest.changelog}
+                {latest.changelog}
               </p>
             </div>
           )}
           <div className="mt-4 flex items-start gap-2 rounded border border-border/40 bg-background/60 p-3">
             <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-emerald-400" />
             <p className="font-mono text-[11px] text-foreground/60">
-              Enable "Install from unknown sources" in Android settings before installing. Only download from official Battle Asia sources.
+              Enable "Install from unknown sources" on Android. Only download from official Battle Asia sources.
             </p>
           </div>
         </div>
@@ -127,14 +115,14 @@ function ApkPage() {
                 className="flex items-center justify-between rounded border border-border/40 bg-card/30 px-4 py-3"
               >
                 <div>
-                  <div className="font-display text-sm uppercase tracking-wide">v{a.version}</div>
+                  <div className="font-display text-sm uppercase tracking-wide">v{a.version_name}</div>
                   <div className="font-mono text-[10px] text-foreground/50">
-                    {a.released_at ? new Date(a.released_at).toLocaleDateString() : ""}
-                    {a.file_size_mb ? ` · ${a.file_size_mb} MB` : ""}
+                    {new Date(a.created_at).toLocaleDateString()}
+                    {mb(a.file_size_bytes) ? ` · ${mb(a.file_size_bytes)}` : ""}
                   </div>
                 </div>
                 <a
-                  href={a.download_url}
+                  href={a.apk_file_url}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="btn-outline-gold px-3 py-1.5 text-xs"
