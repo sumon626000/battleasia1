@@ -219,7 +219,7 @@ function MatchDetailPage() {
                   </Link>
                 </div>
               ) : (
-                <button onClick={join} className="btn-gold w-full">
+                <button onClick={() => setConfirmOpen(true)} className="btn-gold w-full">
                   {m.match_type === "Free" ? "JOIN FREE" : `JOIN — ${fee} BAC`}
                 </button>
               )}
@@ -233,6 +233,31 @@ function MatchDetailPage() {
           </div>
         </aside>
       </div>
+
+      <ConfirmModal
+        open={confirmOpen}
+        onClose={() => setConfirmOpen(false)}
+        onConfirm={join}
+        loading={joining}
+        tone="gold"
+        title={m.match_type === "Free" ? "Join Free Match?" : "Confirm Entry"}
+        confirmLabel={m.match_type === "Free" ? "Join Now" : `Pay ${fee} BAC`}
+        message={
+          <>
+            You're about to join <span className="font-bold text-foreground">{m.match_name}</span>.
+            {m.match_type === "Paid" && (
+              <> Entry fee <span className="font-bold text-gold">{fee} BAC</span> will be deducted from your wallet.</>
+            )}
+          </>
+        }
+      >
+        <div className="grid grid-cols-2 gap-2 rounded-sm border border-border/60 bg-background/40 p-3 text-xs">
+          <div><span className="text-foreground/50">Mode:</span> <span className="font-bold">{m.player_mode} · {m.game_mode}</span></div>
+          <div><span className="text-foreground/50">Map:</span> <span className="font-bold">{m.map_name ?? "—"}</span></div>
+          <div><span className="text-foreground/50">Start:</span> <span className="font-bold">{when ? when.toLocaleString() : "TBA"}</span></div>
+          <div><span className="text-foreground/50">Slots:</span> <span className="font-bold">{filled}/{total || "∞"}</span></div>
+        </div>
+      </ConfirmModal>
     </div>
   );
 }
