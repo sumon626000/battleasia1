@@ -54,6 +54,7 @@ export const ADMIN_NAV = [
   { label: "Login History", href: "/admin/login-history", icon: History },
   { label: "Online Users", href: "/admin/online-users", icon: Activity },
   { label: "Backups", href: "/admin/backups", icon: Database },
+  { label: "Two-Factor", href: "/admin/two-factor", icon: ShieldAlert },
   { label: "Site Settings", href: "/admin/settings", icon: Settings },
 ] as const;
 
