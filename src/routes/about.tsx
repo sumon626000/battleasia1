@@ -17,7 +17,7 @@ const STATS = [
   { label: "Active Players", value: "50K+", icon: Users },
   { label: "Tournaments Hosted", value: "10K+", icon: Trophy },
   { label: "Countries", value: "12", icon: Globe2 },
-  { label: "Prize Pool Paid", value: "৳5Cr+", icon: Zap },
+  { label: "Prize Pool Paid", value: "5M+ BAC", icon: Zap },
 ];
 
 const PILLARS = [
