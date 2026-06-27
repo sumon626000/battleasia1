@@ -20,6 +20,7 @@ type Game = {
   status: "active" | "inactive";
   coming_soon: boolean;
   sort_order: number;
+  live_stream_url: string | null;
   deleted_at: string | null;
 };
 
@@ -52,6 +53,7 @@ function AdminGamesPage() {
       status: (editing.status ?? "active") as "active" | "inactive",
       coming_soon: editing.coming_soon ?? false,
       sort_order: editing.sort_order ?? 0,
+      live_stream_url: editing.live_stream_url ?? null,
     };
     const { error } = editing.id
       ? await supabase.from("games").update(payload).eq("id", editing.id)
@@ -167,6 +169,9 @@ function AdminGamesPage() {
               </Field>
               <Field label="ID Prefix">
                 <input value={editing.id_prefix ?? ""} onChange={(e) => setEditing({ ...editing, id_prefix: e.target.value })} className="w-full rounded border border-border/60 bg-background/60 px-3 py-2 font-hud text-sm" />
+              </Field>
+              <Field label="Live Stream URL (YouTube)">
+                <input type="url" placeholder="https://youtube.com/..." value={editing.live_stream_url ?? ""} onChange={(e) => setEditing({ ...editing, live_stream_url: e.target.value })} className="w-full rounded border border-border/60 bg-background/60 px-3 py-2 font-hud text-sm" />
               </Field>
               <Field label="Sort Order">
                 <input type="number" value={editing.sort_order ?? 0} onChange={(e) => setEditing({ ...editing, sort_order: Number(e.target.value) })} className="w-full rounded border border-border/60 bg-background/60 px-3 py-2 font-hud text-sm" />

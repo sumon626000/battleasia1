@@ -3,7 +3,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
-import { Crown, Users, Map, Trophy, Clock, Filter, Sword, ArrowLeft, Gamepad2, Lock } from "lucide-react";
+import { Crown, Users, Map, Trophy, Clock, Filter, Sword, ArrowLeft, Gamepad2, Lock, PlayCircle } from "lucide-react";
 import { CoinIcon } from "@/components/site/CoinIcon";
 
 export const Route = createFileRoute("/_authenticated/dashboard/matches")({
@@ -29,7 +29,7 @@ function MatchesPage() {
     queryFn: async () => {
       const { data } = await supabase
         .from("games")
-        .select("id, game_name, image_url, status, coming_soon")
+        .select("id, game_name, image_url, status, coming_soon, live_stream_url")
         .is("deleted_at", null)
         .order("sort_order", { ascending: true, nullsFirst: false })
         .order("id");
@@ -100,17 +100,33 @@ function MatchesPage() {
             const disabled = g.coming_soon || g.status !== "active";
             const inner = (
               <>
-                <div className="aspect-[4/3] overflow-hidden bg-background/60">
+                <div className="relative aspect-[4/3] overflow-hidden bg-background/60">
                   {g.image_url ? (
                     <img src={g.image_url} alt={g.game_name} className={`h-full w-full object-cover transition group-hover:scale-105 ${disabled ? "grayscale" : ""}`} />
                   ) : (
                     <div className="flex h-full items-center justify-center text-foreground/30"><Gamepad2 size={48} /></div>
                   )}
+                  {g.live_stream_url && !disabled && (
+                    <span className="absolute left-2 top-2 inline-flex items-center gap-1 rounded-sm bg-red-600 px-1.5 py-0.5 font-hud text-[9px] font-bold uppercase tracking-widest text-white shadow-lg shadow-red-600/40 animate-pulse">
+                      <PlayCircle size={10} /> LIVE
+                    </span>
+                  )}
                 </div>
                 <div className="p-3">
                   <div className="font-display text-sm font-bold uppercase tracking-wide truncate">{g.game_name}</div>
-                  <div className="mt-1 font-hud text-[10px] uppercase tracking-widest text-gold">
-                    {disabled ? (<span className="text-foreground/50 inline-flex items-center gap-1"><Lock size={10}/> COMING SOON</span>) : "ENTER →"}
+                  <div className="mt-1 flex items-center justify-between gap-2 font-hud text-[10px] uppercase tracking-widest text-gold">
+                    <span>{disabled ? (<span className="text-foreground/50 inline-flex items-center gap-1"><Lock size={10}/> COMING SOON</span>) : "ENTER →"}</span>
+                    {g.live_stream_url && !disabled && (
+                      <a
+                        href={g.live_stream_url}
+                        target="_blank"
+                        rel="noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        className="inline-flex items-center gap-1 rounded-sm border border-red-500/60 bg-red-600/20 px-1.5 py-0.5 text-red-400 hover:bg-red-600/40"
+                      >
+                        <PlayCircle size={10} /> WATCH
+                      </a>
+                    )}
                   </div>
                 </div>
               </>
@@ -118,13 +134,16 @@ function MatchesPage() {
             return disabled ? (
               <div key={g.id} className="hud-panel group block overflow-hidden opacity-60 cursor-not-allowed">{inner}</div>
             ) : (
-              <button
+              <div
                 key={g.id}
+                role="button"
+                tabIndex={0}
                 onClick={() => navigate({ to: "/dashboard/matches", search: { game: g.id } })}
-                className="hud-panel group block overflow-hidden text-left transition hover:border-gold/60"
+                onKeyDown={(e) => { if (e.key === "Enter") navigate({ to: "/dashboard/matches", search: { game: g.id } }); }}
+                className="hud-panel group block overflow-hidden text-left transition hover:border-gold/60 cursor-pointer"
               >
                 {inner}
-              </button>
+              </div>
             );
           })}
           {games.isLoading && <div className="col-span-full py-8 text-center text-foreground/40">Loading games...</div>}
@@ -162,6 +181,25 @@ function MatchesPage() {
           )}
         </div>
       </section>
+
+      {selectedGame?.live_stream_url && (
+        <a
+          href={selectedGame.live_stream_url}
+          target="_blank"
+          rel="noreferrer"
+          className="hud-panel flex items-center justify-between gap-3 border-red-500/60 bg-red-600/10 p-3 transition hover:bg-red-600/20"
+        >
+          <div className="flex items-center gap-2">
+            <span className="inline-flex items-center gap-1 rounded-sm bg-red-600 px-2 py-0.5 font-hud text-[10px] font-bold uppercase tracking-widest text-white animate-pulse">
+              <PlayCircle size={11} /> LIVE
+            </span>
+            <span className="font-hud text-xs uppercase tracking-widest text-red-400">
+              {selectedGame.game_name} live stream now
+            </span>
+          </div>
+          <span className="font-hud text-[10px] uppercase tracking-widest text-red-400">WATCH →</span>
+        </a>
+      )}
 
       <div className="hud-panel grid gap-2 p-3 sm:grid-cols-3">
         <FilterGroup label="STATUS" value={status} onChange={(v) => setStatus(v as Status)}
