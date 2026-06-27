@@ -33,6 +33,7 @@ import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedDashboardIndexRouteImport } from './routes/_authenticated/dashboard.index'
 import { Route as AdminAdminIndexRouteImport } from './routes/_admin/admin.index'
+import { Route as AuthenticatedFeedNewRouteImport } from './routes/_authenticated/feed.new'
 import { Route as AuthenticatedDashboardWalletRouteImport } from './routes/_authenticated/dashboard.wallet'
 import { Route as AuthenticatedDashboardVaultRouteImport } from './routes/_authenticated/dashboard.vault'
 import { Route as AuthenticatedDashboardSupportRouteImport } from './routes/_authenticated/dashboard.support'
@@ -198,6 +199,11 @@ const AdminAdminIndexRoute = AdminAdminIndexRouteImport.update({
   id: '/admin/',
   path: '/admin/',
   getParentRoute: () => AdminRouteRoute,
+} as any)
+const AuthenticatedFeedNewRoute = AuthenticatedFeedNewRouteImport.update({
+  id: '/feed/new',
+  path: '/feed/new',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedDashboardWalletRoute =
   AuthenticatedDashboardWalletRouteImport.update({
@@ -514,6 +520,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/support': typeof AuthenticatedDashboardSupportRoute
   '/dashboard/vault': typeof AuthenticatedDashboardVaultRoute
   '/dashboard/wallet': typeof AuthenticatedDashboardWalletRoute
+  '/feed/new': typeof AuthenticatedFeedNewRoute
   '/admin/': typeof AdminAdminIndexRoute
   '/dashboard/': typeof AuthenticatedDashboardIndexRoute
   '/dashboard/feed/$postId': typeof AuthenticatedDashboardFeedPostIdRoute
@@ -583,6 +590,7 @@ export interface FileRoutesByTo {
   '/dashboard/support': typeof AuthenticatedDashboardSupportRoute
   '/dashboard/vault': typeof AuthenticatedDashboardVaultRoute
   '/dashboard/wallet': typeof AuthenticatedDashboardWalletRoute
+  '/feed/new': typeof AuthenticatedFeedNewRoute
   '/admin': typeof AdminAdminIndexRoute
   '/dashboard': typeof AuthenticatedDashboardIndexRoute
   '/dashboard/feed/$postId': typeof AuthenticatedDashboardFeedPostIdRoute
@@ -656,6 +664,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard/support': typeof AuthenticatedDashboardSupportRoute
   '/_authenticated/dashboard/vault': typeof AuthenticatedDashboardVaultRoute
   '/_authenticated/dashboard/wallet': typeof AuthenticatedDashboardWalletRoute
+  '/_authenticated/feed/new': typeof AuthenticatedFeedNewRoute
   '/_admin/admin/': typeof AdminAdminIndexRoute
   '/_authenticated/dashboard/': typeof AuthenticatedDashboardIndexRoute
   '/_authenticated/dashboard/feed/$postId': typeof AuthenticatedDashboardFeedPostIdRoute
@@ -728,6 +737,7 @@ export interface FileRouteTypes {
     | '/dashboard/support'
     | '/dashboard/vault'
     | '/dashboard/wallet'
+    | '/feed/new'
     | '/admin/'
     | '/dashboard/'
     | '/dashboard/feed/$postId'
@@ -797,6 +807,7 @@ export interface FileRouteTypes {
     | '/dashboard/support'
     | '/dashboard/vault'
     | '/dashboard/wallet'
+    | '/feed/new'
     | '/admin'
     | '/dashboard'
     | '/dashboard/feed/$postId'
@@ -869,6 +880,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard/support'
     | '/_authenticated/dashboard/vault'
     | '/_authenticated/dashboard/wallet'
+    | '/_authenticated/feed/new'
     | '/_admin/admin/'
     | '/_authenticated/dashboard/'
     | '/_authenticated/dashboard/feed/$postId'
@@ -1067,6 +1079,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/'
       preLoaderRoute: typeof AdminAdminIndexRouteImport
       parentRoute: typeof AdminRouteRoute
+    }
+    '/_authenticated/feed/new': {
+      id: '/_authenticated/feed/new'
+      path: '/feed/new'
+      fullPath: '/feed/new'
+      preLoaderRoute: typeof AuthenticatedFeedNewRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/dashboard/wallet': {
       id: '/_authenticated/dashboard/wallet'
@@ -1543,10 +1562,12 @@ const AuthenticatedDashboardRouteWithChildren =
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRouteWithChildren
+  AuthenticatedFeedNewRoute: typeof AuthenticatedFeedNewRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRouteWithChildren,
+  AuthenticatedFeedNewRoute: AuthenticatedFeedNewRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
