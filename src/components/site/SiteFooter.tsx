@@ -23,21 +23,20 @@ const COLS: { title: string; links: { label: string; href: string }[] }[] = [
   {
     title: "HELP",
     links: [
-      { label: "Support", href: "/support" },
-      { label: "FAQ", href: "/faq" },
-      { label: "Rules", href: "/rules" },
-      { label: "Contact", href: "/contact" },
+      { label: "Support", href: "/dashboard/support" },
+      { label: "About", href: "/p/about" },
+      { label: "Contact", href: "/p/contact" },
     ],
   },
   {
     title: "LEGAL",
     links: [
-      { label: "Terms", href: "/terms" },
-      { label: "Privacy", href: "/privacy" },
-      { label: "Refund", href: "/refund" },
-      { label: "Fair Play", href: "/fair-play" },
+      { label: "Terms", href: "/p/terms" },
+      { label: "Privacy", href: "/p/privacy" },
+      { label: "Refund", href: "/p/refund" },
     ],
   },
+
 ];
 
 export function SiteFooter() {
