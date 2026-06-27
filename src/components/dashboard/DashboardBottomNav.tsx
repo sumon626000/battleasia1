@@ -1,4 +1,4 @@
-import { Link, useRouterState } from "@tanstack/react-router";
+import { useNavigate, useRouterState } from "@tanstack/react-router";
 import { LayoutDashboard, Swords, Wallet, ShoppingBag, User as UserIcon } from "lucide-react";
 
 const BOTTOM = [
@@ -11,6 +11,7 @@ const BOTTOM = [
 
 export function DashboardBottomNav() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const navigate = useNavigate();
   return (
     <nav className="sticky bottom-0 z-40 border-t border-border/70 bg-background/95 backdrop-blur-xl lg:hidden">
       <ul className="grid grid-cols-5">
@@ -22,16 +23,17 @@ export function DashboardBottomNav() {
               : pathname.startsWith(item.href);
           return (
             <li key={item.href}>
-              <Link
-                to={item.href}
-                className={`flex flex-col items-center gap-0.5 py-2.5 font-hud text-[10px] font-semibold uppercase tracking-wide transition ${
+              <button
+                type="button"
+                onClick={() => navigate({ to: item.href })}
+                className={`flex w-full flex-col items-center gap-0.5 py-2.5 font-hud text-[10px] font-semibold uppercase tracking-wide transition ${
                   active ? "text-gold" : "text-foreground/60 hover:text-gold"
                 }`}
               >
                 <Icon size={18} />
                 <span>{item.label}</span>
                 {active && <span className="mt-0.5 h-0.5 w-6 bg-gold" />}
-              </Link>
+              </button>
             </li>
           );
         })}
