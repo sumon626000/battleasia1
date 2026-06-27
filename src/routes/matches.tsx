@@ -69,7 +69,7 @@ function PublicMatchesPage() {
           >
             <div className="relative h-32 bg-gradient-to-br from-secondary to-background overflow-hidden">
               {m.banner_image_url ? (
-                <img src={m.banner_image_url} alt={m.match_name} className="h-full w-full object-cover opacity-80 group-hover:scale-105 transition" />
+                <img loading="lazy" decoding="async" src={m.banner_image_url} alt={m.match_name} className="h-full w-full object-cover opacity-80 group-hover:scale-105 transition" />
               ) : (
                 <div className="absolute inset-0 bg-grid-hud opacity-30" />
               )}

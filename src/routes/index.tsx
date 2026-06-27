@@ -177,7 +177,7 @@ function BattleAsiaLanding() {
     <>
       {/* ============ HERO ============ */}
       <section className="relative overflow-hidden bg-grid-hud">
-        <img src={heroSoldier} alt="Battle Asia tournament hero" width={1280} height={768}
+        <img loading="lazy" decoding="async" src={heroSoldier} alt="Battle Asia tournament hero" width={1280} height={768}
           className="absolute inset-0 h-full w-full object-cover opacity-60" />
         <div className="absolute inset-0 bg-gradient-to-r from-background via-background/85 to-background/10" />
         <div className="absolute inset-0 bg-scanlines opacity-40" />
@@ -212,7 +212,7 @@ function BattleAsiaLanding() {
           <div className="hud-panel hud-bracket relative flex flex-col items-center gap-3 p-7 text-center lg:self-center">
             <div className="font-hud absolute left-3 top-3 text-[10px] tracking-[0.2em] text-muted-foreground">// CURRENCY_01</div>
             <div className="relative mt-3 h-28 w-28 drop-shadow-[0_0_30px_rgba(212,175,55,0.45)]">
-              <img src={bacCoin} alt="BAC Coin" width={224} height={224} className="h-full w-full object-contain" />
+              <img loading="lazy" decoding="async" src={bacCoin} alt="BAC Coin" width={224} height={224} className="h-full w-full object-contain" />
             </div>
             <h3 className="font-display mt-1 text-2xl font-bold text-gold">BAC COIN</h3>
             <p className="text-sm text-muted-foreground">
@@ -553,7 +553,7 @@ function LeaderCard({
                 "bg-secondary text-foreground"
               }`}>{r.rank}</span>
               {r.avatar ? (
-                <img src={r.avatar} alt={r.name} className="h-9 w-9 shrink-0 rounded-full object-cover ring-1 ring-border" />
+                <img loading="lazy" decoding="async" src={r.avatar} alt={r.name} className="h-9 w-9 shrink-0 rounded-full object-cover ring-1 ring-border" />
               ) : (
                 <div className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-secondary font-bold text-foreground/80">
                   {r.name.charAt(0).toUpperCase()}

@@ -78,7 +78,7 @@ function PostDetail() {
 
       <article className="hud-panel overflow-hidden">
         {post.cover_image_url && (
-          <div className="aspect-video w-full bg-secondary/40"><img src={post.cover_image_url} alt={post.title} className="h-full w-full object-cover" /></div>
+          <div className="aspect-video w-full bg-secondary/40"><img loading="lazy" decoding="async" src={post.cover_image_url} alt={post.title} className="h-full w-full object-cover" /></div>
         )}
         <div className="space-y-4 p-6">
           <div className="flex items-center gap-3 font-mono text-[10px] uppercase tracking-wider text-foreground/60">

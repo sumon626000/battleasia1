@@ -93,7 +93,7 @@ function PostCard({ post, category }: { post: Post; category?: string }) {
       className="group hud-panel block overflow-hidden transition hover:border-gold/60">
       {post.cover_image_url && (
         <div className="aspect-video w-full overflow-hidden bg-secondary/40">
-          <img src={post.cover_image_url} alt={post.title} className="h-full w-full object-cover transition group-hover:scale-105" />
+          <img loading="lazy" decoding="async" src={post.cover_image_url} alt={post.title} className="h-full w-full object-cover transition group-hover:scale-105" />
         </div>
       )}
       <div className="space-y-3 p-4">

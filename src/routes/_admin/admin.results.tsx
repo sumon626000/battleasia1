@@ -4,7 +4,7 @@ import { z } from "zod";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Trophy, Save, Upload } from "lucide-react";
+import { Trophy, Save, Upload, FileSpreadsheet } from "lucide-react";
 
 const search = z.object({ matchId: z.coerce.number().optional() });
 
@@ -44,6 +44,7 @@ function AdminResultsPage() {
   const [description, setDescription] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [rows, setRows] = useState<Record<string, { rank: string; kills: string }>>({});
+  const [csvText, setCsvText] = useState("");
 
   useEffect(() => { if (matchId) setSelectedId(matchId); }, [matchId]);
 
@@ -156,6 +157,45 @@ function AdminResultsPage() {
     }
   }
 
+
+
+  function importCsv(text: string) {
+    if (!detail) return;
+    const lines = text.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
+    if (lines.length === 0) return toast.error("Empty CSV");
+    // Build lookup by pubg_id and in_game_username (case-insensitive)
+    const byPubg = new Map<string, string>();
+    const byName = new Map<string, string>();
+    for (const p of detail.participants) {
+      const pr = detail.profMap.get(p.user_id);
+      if (pr?.pubg_id) byPubg.set(String(pr.pubg_id).trim().toLowerCase(), p.user_id);
+      if (pr?.in_game_username) byName.set(pr.in_game_username.trim().toLowerCase(), p.user_id);
+      if (pr?.username) byName.set(pr.username.trim().toLowerCase(), p.user_id);
+    }
+    const next = { ...rows };
+    let matched = 0;
+    let skipped = 0;
+    const startIdx = /^(pubg|player|name|id|user)/i.test(lines[0]) ? 1 : 0;
+    for (let i = startIdx; i < lines.length; i++) {
+      const cols = lines[i].split(/[,\t;]/).map((c) => c.trim());
+      if (cols.length < 2) { skipped++; continue; }
+      const key = cols[0].toLowerCase();
+      const uid = byPubg.get(key) || byName.get(key);
+      if (!uid) { skipped++; continue; }
+      const rank = cols[1] || "";
+      const kills = cols[2] || "0";
+      next[uid] = { rank, kills };
+      matched++;
+    }
+    setRows(next);
+    toast.success(`Imported ${matched} row(s)${skipped ? `, skipped ${skipped}` : ""}`);
+  }
+
+  async function importCsvFile(file: File) {
+    const text = await file.text();
+    importCsv(text);
+  }
+
   return (
     <div className="space-y-6">
       <div>
@@ -254,6 +294,35 @@ function AdminResultsPage() {
               </tbody>
             </table>
           </section>
+
+          {!detail.match.result_applied && (
+            <section className="hud-panel rounded-md border border-border/70 bg-card/40 p-4 space-y-3">
+              <div className="flex items-center justify-between gap-3 flex-wrap">
+                <h2 className="font-display text-sm uppercase tracking-widest text-gold flex items-center gap-2"><FileSpreadsheet size={14}/> Bulk Import (CSV)</h2>
+                <label className="flex cursor-pointer items-center gap-2 rounded border border-border/60 px-3 py-1.5 font-hud text-[10px] uppercase tracking-widest hover:border-gold hover:text-gold">
+                  <Upload size={12} /> Upload .csv
+                  <input type="file" accept=".csv,text/csv,text/plain" className="hidden" onChange={(e) => e.target.files && importCsvFile(e.target.files[0])} />
+                </label>
+              </div>
+              <p className="font-hud text-[10px] uppercase tracking-widest text-foreground/55">
+                Format per line: <span className="text-gold">pubg_id_or_username, rank, kills</span> — header row optional. Unmatched players are skipped.
+              </p>
+              <textarea
+                value={csvText}
+                onChange={(e) => setCsvText(e.target.value)}
+                placeholder={"pubg_id,rank,kills\n5123456789,1,12\n5123459999,2,7"}
+                className="h-24 w-full rounded border border-border/60 bg-secondary/40 px-3 py-2 font-mono text-xs outline-none focus:border-gold"
+              />
+              <div className="flex justify-end">
+                <button
+                  onClick={() => { importCsv(csvText); }}
+                  className="rounded border border-border/60 px-4 py-1.5 font-hud text-[10px] uppercase tracking-widest hover:border-gold hover:text-gold"
+                >
+                  Apply CSV to table
+                </button>
+              </div>
+            </section>
+          )}
 
           {!detail.match.result_applied && (
             <section className="hud-panel rounded-md border border-border/70 bg-card/40 p-4 space-y-3">

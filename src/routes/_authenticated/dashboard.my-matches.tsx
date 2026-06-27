@@ -174,7 +174,7 @@ function MatchRow({ p }: { p: any }) {
         <div className="flex items-center gap-4">
           <div className="hidden sm:block w-16 h-16 border border-border bg-muted/20 overflow-hidden shrink-0">
             {m.banner_image_url ? (
-              <img src={m.banner_image_url} alt="" className="w-full h-full object-cover" />
+              <img loading="lazy" decoding="async" src={m.banner_image_url} alt="" className="w-full h-full object-cover" />
             ) : (
               <div className="w-full h-full flex items-center justify-center text-muted-foreground">
                 <Trophy className="w-6 h-6" />
