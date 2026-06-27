@@ -366,6 +366,8 @@ function BattleAsiaLanding() {
       {/* ============ BATTLEASIA PULSE ============ */}
       <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
         <div className="hud-panel hud-bracket relative overflow-hidden p-6 sm:p-8">
+          <img loading="lazy" decoding="async" src={pubgSniperRooftop} alt="" aria-hidden width={1792} height={896} className="absolute inset-0 h-full w-full object-cover opacity-20" />
+          <div aria-hidden className="absolute inset-0 bg-gradient-to-r from-background via-background/85 to-background/40" />
           <div aria-hidden className="absolute inset-0 bg-grid-hud opacity-30" />
           <div className="relative grid gap-6 lg:grid-cols-[1fr,auto] lg:items-center">
             <div>
