@@ -32,7 +32,10 @@
   --color-gold-foreground: var(--gold-foreground);
   --color-success: var(--success);
   --color-live: var(--live);
-  --font-display: "Oswald", "Inter", sans-serif;
+  --font-display: "Oswald", "Rajdhani", "Inter", sans-serif;
+  --font-hud: "Rajdhani", "Oswald", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
 }
 
 :root {
@@ -205,28 +208,147 @@
 @utility bg-gold { background-color: var(--gold); }
 @utility ring-gold { --tw-ring-color: var(--gold); }
 
+@utility font-hud { font-family: var(--font-hud); letter-spacing: 0.06em; }
+@utility font-mono-tab { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+
 @utility card-dark {
-  background: var(--card);
+  position: relative;
+  background:
+    linear-gradient(180deg, color-mix(in oklab, var(--card) 92%, transparent), var(--card));
   border: 1px solid var(--border);
   border-radius: var(--radius);
   box-shadow: var(--shadow-card);
 }
 
+/* HUD panel: angled corner cut + bracket accents */
+@utility hud-panel {
+  position: relative;
+  background:
+    linear-gradient(180deg, color-mix(in oklab, var(--card) 88%, transparent), var(--card));
+  border: 1px solid color-mix(in oklab, var(--gold) 18%, var(--border));
+  clip-path: polygon(
+    0 0, calc(100% - 14px) 0, 100% 14px,
+    100% 100%, 14px 100%, 0 calc(100% - 14px)
+  );
+  box-shadow: var(--shadow-card),
+              inset 0 1px 0 oklch(1 0 0 / 0.04);
+}
+@utility hud-bracket {
+  position: relative;
+  &::before, &::after {
+    content: "";
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border: 2px solid var(--gold);
+    pointer-events: none;
+    transition: all 0.3s cubic-bezier(.2,.8,.2,1);
+  }
+  &::before { top: -1px; left: -1px; border-right: 0; border-bottom: 0; }
+  &::after  { bottom: -1px; right: -1px; border-left: 0; border-top: 0; }
+  &:hover::before, &:hover::after { width: 22px; height: 22px; }
+}
+
+/* Background motifs */
+@utility bg-grid-hud {
+  background-image:
+    linear-gradient(color-mix(in oklab, var(--gold) 7%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in oklab, var(--gold) 7%, transparent) 1px, transparent 1px);
+  background-size: 44px 44px;
+  background-position: -1px -1px;
+}
+@utility bg-scanlines {
+  background-image: repeating-linear-gradient(
+    180deg,
+    transparent 0 3px,
+    oklch(0 0 0 / 0.18) 3px 4px
+  );
+}
+
+/* Section divider line with amber notch */
+@utility hud-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, color-mix(in oklab, var(--gold) 60%, transparent), transparent);
+}
+
+@utility chip-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  font-family: var(--font-hud);
+  font-weight: 600;
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold);
+  background: color-mix(in oklab, var(--gold) 10%, transparent);
+  border: 1px solid color-mix(in oklab, var(--gold) 35%, transparent);
+  clip-path: polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%);
+}
+
 @utility badge-open {
-  background: var(--success);
-  color: white;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: color-mix(in oklab, var(--success) 18%, oklch(0 0 0 / 0.55));
+  color: oklch(0.96 0.06 145);
+  font-family: var(--font-hud);
   font-size: 0.7rem;
   font-weight: 700;
-  padding: 0.2rem 0.6rem;
-  border-radius: 0.25rem;
-  letter-spacing: 0.05em;
+  padding: 0.25rem 0.65rem;
+  border: 1px solid color-mix(in oklab, var(--success) 55%, transparent);
+  clip-path: polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
 }
 @utility badge-live {
-  background: var(--live);
-  color: white;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: color-mix(in oklab, var(--live) 22%, oklch(0 0 0 / 0.55));
+  color: oklch(0.97 0.08 28);
+  font-family: var(--font-hud);
   font-size: 0.7rem;
   font-weight: 700;
-  padding: 0.2rem 0.6rem;
-  border-radius: 0.25rem;
-  letter-spacing: 0.05em;
+  padding: 0.25rem 0.65rem;
+  border: 1px solid color-mix(in oklab, var(--live) 60%, transparent);
+  clip-path: polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  &::before {
+    content: "";
+    width: 6px; height: 6px; border-radius: 999px;
+    background: var(--live);
+    box-shadow: 0 0 0 0 color-mix(in oklab, var(--live) 70%, transparent);
+    animation: live-pulse 1.6s ease-out infinite;
+  }
 }
+@keyframes live-pulse {
+  0%   { box-shadow: 0 0 0 0 color-mix(in oklab, var(--live) 70%, transparent); }
+  70%  { box-shadow: 0 0 0 8px color-mix(in oklab, var(--live) 0%, transparent); }
+  100% { box-shadow: 0 0 0 0 color-mix(in oklab, var(--live) 0%, transparent); }
+}
+
+@utility ticker {
+  display: inline-flex;
+  gap: 2.5rem;
+  white-space: nowrap;
+  animation: ticker-slide 38s linear infinite;
+  will-change: transform;
+}
+@keyframes ticker-slide {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ticker { animation: none; }
+}
+
+@utility mask-fade {
+  mask-image: linear-gradient(90deg, transparent, black 8%, black 92%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, black 8%, black 92%, transparent);
+}
+
+
+
