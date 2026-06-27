@@ -65,8 +65,11 @@ function MatchDetailPage() {
   const insufficient = m?.match_type === "Paid" && fee > balance;
 
   async function join() {
+    setJoining(true);
     const { error } = await supabase.rpc("join_match", { p_match_id: id });
+    setJoining(false);
     if (error) return toast.error(error.message);
+    setConfirmOpen(false);
     toast.success("Joined! Good luck soldier.");
     qc.invalidateQueries({ queryKey: ["my-entry", id] });
     qc.invalidateQueries({ queryKey: ["match-participants", id] });
