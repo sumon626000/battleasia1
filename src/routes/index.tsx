@@ -246,7 +246,7 @@ function BattleAsiaLanding() {
               </p>
             </div>
             <div className="text-right">
-              <div className="font-hud text-[10px] tracking-[0.3em] text-muted-foreground">PLATFORM TOTAL WINNINGS</div>
+              <div className="font-hud text-[10px] tracking-[0.3em] text-muted-foreground">{t("home.totalWinnings")}</div>
               <div className="font-display font-mono-tab mt-1 inline-flex items-center gap-2 text-3xl font-bold text-gold sm:text-4xl">
                 <CoinIcon size={28} />
                 {pulse.data ? formatBAC(pulse.data.totalWinnings) : "—"}
