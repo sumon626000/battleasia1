@@ -29,7 +29,7 @@ function MatchesPage() {
     queryFn: async () => {
       const { data } = await supabase
         .from("games")
-        .select("id, game_name, image_url, status, coming_soon")
+        .select("id, game_name, image_url, status, coming_soon, live_stream_url")
         .is("deleted_at", null)
         .order("sort_order", { ascending: true, nullsFirst: false })
         .order("id");
