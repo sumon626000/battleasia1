@@ -1,8 +1,8 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
-import { Trophy, Target, Swords, Calendar, UserPlus, UserCheck, Ban, Grid3x3, Image as ImageIcon, Video, Heart, MessageCircle } from "lucide-react";
+import { Trophy, Target, Swords, Calendar, UserPlus, UserCheck, Ban, Grid3x3, Image as ImageIcon, Video, Heart, MessageCircle, Send } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
