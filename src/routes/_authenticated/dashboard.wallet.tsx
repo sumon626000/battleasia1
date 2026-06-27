@@ -7,6 +7,8 @@ import { useAuth } from "@/hooks/use-auth";
 import { useProfile } from "@/hooks/use-profile";
 import { supabase } from "@/integrations/supabase/client";
 import { CoinIcon } from "@/components/site/CoinIcon";
+import depositBg from "@/assets/pubg-airdrop.jpg";
+import withdrawBg from "@/assets/pubg-vehicle-chase.jpg";
 
 export const Route = createFileRoute("/_authenticated/dashboard/wallet")({
   head: () => ({ meta: [{ title: "Wallet — Battle Asia" }] }),
