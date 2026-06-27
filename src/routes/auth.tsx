@@ -204,20 +204,22 @@ function AuthPage() {
               <div className="h-px flex-1 bg-border" />
             </div>
 
-            <button
-              onClick={handleGoogle}
-              disabled={busy}
-              className="btn-outline-gold w-full justify-center py-3 text-sm disabled:opacity-60"
-            >
-              CONTINUE WITH GOOGLE
-            </button>
-
-            <p className="mt-5 text-center text-xs text-muted-foreground">
-              By continuing you agree to the{" "}
-              <button onClick={() => setLegal("terms")} className="text-gold hover:underline">
-                Terms
-              </button>{" "}
-              and{" "}
+            {googleEnabled ? (
+              <>
+                <div className="my-5 flex items-center gap-3">
+                  <div className="h-px flex-1 bg-border" />
+                  <span className="font-mono text-[10px] tracking-widest text-muted-foreground">OR</span>
+                  <div className="h-px flex-1 bg-border" />
+                </div>
+                <button
+                  onClick={handleGoogle}
+                  disabled={busy}
+                  className="btn-outline-gold w-full justify-center py-3 text-sm disabled:opacity-60"
+                >
+                  CONTINUE WITH GOOGLE
+                </button>
+              </>
+            ) : null}
               <button onClick={() => setLegal("privacy")} className="text-gold hover:underline">
                 Privacy Policy
               </button>
