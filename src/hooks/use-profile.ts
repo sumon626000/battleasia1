@@ -27,12 +27,14 @@ export function useProfile(userId: string | undefined) {
         setLoading(false);
       });
 
-    const channel = supabase
-      .channel(`profile-${userId}`)
+    const channel = supabase.channel(
+      `profile-${userId}-${Math.random().toString(36).slice(2, 10)}`,
+    );
+    channel
       .on(
-        "postgres_changes",
+        "postgres_changes" as any,
         { event: "UPDATE", schema: "public", table: "profiles", filter: `id=eq.${userId}` },
-        (payload) => {
+        (payload: any) => {
           setProfile(payload.new as Profile);
         },
       )
