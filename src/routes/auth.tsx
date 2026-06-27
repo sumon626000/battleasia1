@@ -66,7 +66,7 @@ function AuthPage() {
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate({ to: "/" });
+      if (data.session) navigate({ to: "/dashboard" });
     });
   }, [navigate]);
 
@@ -78,7 +78,7 @@ function AuthPage() {
     setBusy(false);
     if (result.error) return toast.error(result.error.message ?? "Google sign-in failed");
     if (result.redirected) return;
-    navigate({ to: "/" });
+    navigate({ to: "/dashboard" });
   }
 
   return (
@@ -189,7 +189,7 @@ function LoginForm({ busy, setBusy }: { busy: boolean; setBusy: (b: boolean) => 
       return toast.error(error.message);
     }
     toast.success("Welcome back, soldier");
-    navigate({ to: "/" });
+    navigate({ to: "/dashboard" });
   }
 
   async function handleForgot() {

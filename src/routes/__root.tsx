@@ -4,6 +4,7 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
@@ -124,13 +125,23 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const bareLayout =
+    pathname.startsWith("/dashboard") ||
+    pathname.startsWith("/auth") ||
+    pathname.startsWith("/email") ||
+    pathname.startsWith("/reset-password");
 
   return (
     <QueryClientProvider client={queryClient}>
-      <SiteShell>
-        {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+      {bareLayout ? (
         <Outlet />
-      </SiteShell>
+      ) : (
+        <SiteShell>
+          {/* Required: nested routes render here. */}
+          <Outlet />
+        </SiteShell>
+      )}
     </QueryClientProvider>
   );
 }
