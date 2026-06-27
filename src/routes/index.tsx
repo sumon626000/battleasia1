@@ -503,14 +503,14 @@ function BattleAsiaLanding() {
         <div aria-hidden className="absolute inset-0 bg-grid-hud opacity-30" />
         <div className="relative mx-auto flex max-w-7xl flex-col items-center justify-between gap-5 px-4 py-10 sm:px-6 md:flex-row">
           <div>
-            <div className="font-hud text-[10px] tracking-[0.3em] text-gold">// READY TO DROP</div>
+            <div className="font-hud text-[10px] tracking-[0.3em] text-gold">// {t("home.readyToDrop")}</div>
             <h3 className="font-display mt-2 text-2xl font-bold sm:text-3xl">
-              YOUR FIRST MATCH IS <span className="text-gold">ONE TAP AWAY</span>
+              {t("home.firstMatch")}
             </h3>
           </div>
           <div className="flex gap-3">
-            <Link to="/auth" className="btn-gold px-7 py-3 text-sm">JOIN FREE</Link>
-            <button className="btn-outline-gold px-7 py-3 text-sm">EXPLORE</button>
+            <Link to="/auth" className="btn-gold px-7 py-3 text-sm">{t("home.joinFree")}</Link>
+            <Link to="/matches" className="btn-outline-gold px-7 py-3 text-sm">{t("home.explore")}</Link>
           </div>
         </div>
       </section>
