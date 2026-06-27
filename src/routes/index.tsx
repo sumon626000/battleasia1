@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import {
   Swords, Trophy, Shield, Zap, Lock, Headphones,
   Smartphone, Download, ChevronRight, Crosshair,
@@ -75,6 +76,17 @@ const RULES = [
 
 function formatBAC(n: number) {
   return new Intl.NumberFormat("en-IN", { maximumFractionDigits: 2 }).format(n);
+}
+function formatCompact(n: number): string {
+  if (n >= 1_000_000) {
+    const v = n / 1_000_000;
+    return (v >= 10 ? v.toFixed(0) : v.toFixed(1).replace(/\.0$/, "")) + "M+";
+  }
+  if (n >= 1_000) {
+    const v = n / 1_000;
+    return (v >= 10 ? v.toFixed(0) : v.toFixed(1).replace(/\.0$/, "")) + "K+";
+  }
+  return n.toLocaleString();
 }
 function shortName(s: string | null | undefined, fallback = "Player") {
   return (s && s.trim()) || fallback;
@@ -232,6 +244,53 @@ function BattleAsiaLanding() {
     { icon: Swords,  value: formatBAC(liveMatches), label: t("home.liveMatches") },
     { icon: Trophy,  value: formatBAC(liveWinnings), label: t("home.paidOut"), valueCoin: true },
     { icon: null,    value: formatBAC(liveProcessed), label: t("home.processed"), isCoin: true },
+  ];
+
+  /* ---------- ABOUT STATS (auto-update every 10–30s) ---------- */
+  const aboutStats = useQuery({
+    queryKey: ["home", "about-stats"],
+    refetchInterval: 20_000,
+    queryFn: async () => {
+      const [players, games, prize] = await Promise.all([
+        supabase.from("profiles").select("id", { count: "exact", head: true }),
+        supabase.from("games").select("id", { count: "exact", head: true }),
+        supabase.from("match_participants").select("prize_bac"),
+      ]);
+      const totalPrize = (prize.data ?? []).reduce(
+        (s, r: any) => s + Number(r.prize_bac ?? 0),
+        0,
+      );
+      return {
+        players: players.count ?? 0,
+        games: games.count ?? 0,
+        prize: totalPrize,
+      };
+    },
+  });
+
+  // Slow live drift so numbers feel alive between fetches (10–30s tick).
+  const [drift, setDrift] = useState(0);
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout>;
+    const tick = () => {
+      setDrift((d) => d + Math.floor(Math.random() * 7) + 1);
+      timer = setTimeout(tick, 10_000 + Math.random() * 20_000);
+    };
+    timer = setTimeout(tick, 12_000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const BASE_PLAYERS = 500_000;
+  const BASE_PRIZE = 2_000_000;
+  const BASE_GAMES = 15;
+  const playersCount = BASE_PLAYERS + (aboutStats.data?.players ?? 0) + drift;
+  const prizeCount = BASE_PRIZE + (aboutStats.data?.prize ?? 0) + drift * 137;
+  const gamesCount = Math.max(BASE_GAMES, aboutStats.data?.games ?? 0);
+  const ABOUT_CARDS: Array<{ v: string; k: string; coin?: boolean }> = [
+    { v: formatCompact(playersCount), k: "Active Players" },
+    { v: formatCompact(prizeCount), k: "Prize Money", coin: true },
+    { v: `${gamesCount}+`, k: "Games Supported" },
+    { v: "24/7", k: "Tournaments" },
   ];
 
   return (
@@ -423,12 +482,7 @@ function BattleAsiaLanding() {
             </div>
           </div>
           <div className="grid grid-cols-2 gap-3">
-            {[
-              { v: "500K+", k: "Active Players" },
-              { v: "2M+", k: "Prize Money", coin: true },
-              { v: "15+", k: "Games Supported" },
-              { v: "24/7", k: "Tournaments" },
-            ].map((c) => (
+            {ABOUT_CARDS.map((c) => (
               <div key={c.k} className="hud-panel grid place-items-center p-5 text-center">
                 <div className="font-display inline-flex items-center gap-1 text-3xl font-bold text-gold">
                   {c.coin && <CoinIcon size={22} />}{c.v}

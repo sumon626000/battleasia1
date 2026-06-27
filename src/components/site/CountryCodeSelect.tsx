@@ -1,6 +1,22 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Search, ChevronDown } from "lucide-react";
-import { COUNTRIES, findByDial, flagEmoji } from "@/lib/countries";
+import { COUNTRIES, findByDial } from "@/lib/countries";
+
+function FlagImg({ iso2, size = 20 }: { iso2: string; size?: number }) {
+  const code = iso2.toLowerCase();
+  return (
+    <img
+      src={`https://flagcdn.com/w40/${code}.png`}
+      srcSet={`https://flagcdn.com/w80/${code}.png 2x`}
+      alt={iso2}
+      width={size}
+      height={Math.round((size * 3) / 4)}
+      className="inline-block shrink-0 rounded-[2px] object-cover shadow-sm ring-1 ring-black/20"
+      style={{ width: size, height: Math.round((size * 3) / 4) }}
+      loading="lazy"
+    />
+  );
+}
 
 interface Props {
   label?: string;
@@ -49,7 +65,7 @@ export function CountryCodeSelect({ label = "COUNTRY", value, onChange, error }:
         <span className="flex min-w-0 items-center gap-2">
           {selected ? (
             <>
-              <span className="text-lg leading-none">{flagEmoji(selected.iso2)}</span>
+              <FlagImg iso2={selected.iso2} size={22} />
               <span className="truncate font-mono text-xs font-bold text-gold">
                 {selected.dial}
               </span>
@@ -97,7 +113,7 @@ export function CountryCodeSelect({ label = "COUNTRY", value, onChange, error }:
                       active ? "bg-gold/15 text-gold" : "text-foreground/85"
                     }`}
                   >
-                    <span className="text-xl leading-none">{flagEmoji(c.iso2)}</span>
+                    <FlagImg iso2={c.iso2} size={22} />
                     <span className="min-w-0 flex-1">
                       <span className="block truncate font-semibold">{c.name}</span>
                       <span className="block font-mono text-[11px] text-foreground/55">
