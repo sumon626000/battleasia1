@@ -6,21 +6,23 @@ import logoShield from "@/assets/logo-shield.png";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import { LanguageSwitcher } from "@/components/site/LanguageSwitcher";
+import { useT } from "@/lib/i18n";
 
-const NAV: { label: string; href: string }[] = [
-  { label: "HOME", href: "/" },
-  { label: "MATCHES", href: "/matches" },
-  { label: "LEADERBOARD", href: "/leaderboard" },
-  { label: "SHOP", href: "/shop" },
-  { label: "PREMIUM", href: "/premium" },
-  { label: "NEWS", href: "/news" },
-  { label: "ABOUT", href: "/about" },
+const NAV_KEYS: { key: string; href: string }[] = [
+  { key: "nav.home", href: "/" },
+  { key: "nav.matches", href: "/matches" },
+  { key: "nav.leaderboard", href: "/leaderboard" },
+  { key: "nav.shop", href: "/shop" },
+  { key: "nav.premium", href: "/premium" },
+  { key: "nav.news", href: "/news" },
+  { key: "nav.about", href: "/about" },
 ];
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const { user, isAuthenticated } = useAuth();
   const navigate = useNavigate();
+  const { t } = useT();
 
   async function signOut() {
     await supabase.auth.signOut();
@@ -28,7 +30,7 @@ export function SiteHeader() {
     navigate({ to: "/" });
   }
 
-  const userBadge = user?.email?.split("@")[0]?.toUpperCase() ?? "PLAYER";
+  const userBadge = user?.email?.split("@")[0]?.toUpperCase() ?? t("common.player");
 
   return (
     <header className="sticky top-0 z-50 border-b border-border/70 bg-background/85 backdrop-blur-xl">
@@ -43,9 +45,9 @@ export function SiteHeader() {
           </span>
         </Link>
         <nav className="hidden items-center gap-7 lg:flex">
-          {NAV.map((n) => (
-            <a key={n.label} href={n.href} className="font-hud text-sm font-semibold text-foreground/75 transition hover:text-gold">
-              {n.label}
+          {NAV_KEYS.map((n) => (
+            <a key={n.key} href={n.href} className="font-hud text-sm font-semibold text-foreground/75 transition hover:text-gold">
+              {t(n.key)}
             </a>
           ))}
         </nav>
@@ -57,15 +59,15 @@ export function SiteHeader() {
                 <UserIcon size={14} className="text-gold" />
                 <span className="font-hud text-xs font-semibold tracking-wide">{userBadge}</span>
               </Link>
-              <Link to="/dashboard" className="btn-gold px-4 py-2 text-sm">DASHBOARD</Link>
+              <Link to="/dashboard" className="btn-gold px-4 py-2 text-sm">{t("auth.dashboard")}</Link>
               <button onClick={signOut} className="btn-outline-gold px-3 py-2 text-sm" aria-label="Sign out">
                 <LogOut size={14} />
               </button>
             </>
           ) : (
             <>
-              <Link to="/auth" className="btn-outline-gold px-5 py-2 text-sm">LOGIN</Link>
-              <Link to="/auth" className="btn-gold px-5 py-2 text-sm">REGISTER</Link>
+              <Link to="/auth" className="btn-outline-gold px-5 py-2 text-sm">{t("auth.login")}</Link>
+              <Link to="/auth" className="btn-gold px-5 py-2 text-sm">{t("auth.register")}</Link>
             </>
           )}
         </div>
@@ -79,20 +81,20 @@ export function SiteHeader() {
       {open && (
         <div className="border-t border-border bg-card lg:hidden">
           <div className="flex flex-col gap-1 px-4 py-3">
-            {NAV.map((n) => (
-              <a key={n.label} href={n.href} className="font-hud rounded px-2 py-2 text-sm font-semibold hover:bg-secondary hover:text-gold">
-                {n.label}
+            {NAV_KEYS.map((n) => (
+              <a key={n.key} href={n.href} className="font-hud rounded px-2 py-2 text-sm font-semibold hover:bg-secondary hover:text-gold">
+                {t(n.key)}
               </a>
             ))}
             {isAuthenticated ? (
               <div className="mt-2 grid grid-cols-1 gap-2">
-                <Link to="/dashboard" className="btn-gold py-2 text-center text-sm">DASHBOARD</Link>
-                <button onClick={signOut} className="btn-outline-gold py-2 text-center text-sm">LOGOUT</button>
+                <Link to="/dashboard" className="btn-gold py-2 text-center text-sm">{t("auth.dashboard")}</Link>
+                <button onClick={signOut} className="btn-outline-gold py-2 text-center text-sm">{t("auth.logout")}</button>
               </div>
             ) : (
               <div className="mt-2 grid grid-cols-2 gap-2">
-                <Link to="/auth" className="btn-outline-gold py-2 text-center text-sm">LOGIN</Link>
-                <Link to="/auth" className="btn-gold py-2 text-center text-sm">REGISTER</Link>
+                <Link to="/auth" className="btn-outline-gold py-2 text-center text-sm">{t("auth.login")}</Link>
+                <Link to="/auth" className="btn-gold py-2 text-center text-sm">{t("auth.register")}</Link>
               </div>
             )}
           </div>
