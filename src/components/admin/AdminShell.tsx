@@ -187,7 +187,13 @@ function NavBody({ onNavigate }: { onNavigate?: () => void }) {
   );
 }
 
-export function AdminShell({ children }: { children: React.ReactNode }) {
+export function AdminShell({
+  children,
+  onAdminSignOut,
+}: {
+  children: React.ReactNode;
+  onAdminSignOut?: () => void;
+}) {
   const [mobileOpen, setMobileOpen] = useState(false);
   return (
     <div className="min-h-screen bg-background">
