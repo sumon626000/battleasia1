@@ -80,6 +80,37 @@ function AdminApkPage() {
     qc.invalidateQueries({ queryKey: ["admin-apk"] });
   }
 
+  async function uploadApk(file: File) {
+    if (!file.name.toLowerCase().endsWith(".apk")) {
+      toast.error("Only .apk files are allowed");
+      return;
+    }
+    setUploading(true);
+    try {
+      const path = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, "_")}`;
+      const { error: upErr } = await supabase.storage.from(BUCKET).upload(path, file, {
+        contentType: "application/vnd.android.package-archive",
+        upsert: false,
+      });
+      if (upErr) throw upErr;
+      // private bucket — generate a long-lived signed URL (1 year)
+      const { data: signed, error: sErr } = await supabase.storage
+        .from(BUCKET)
+        .createSignedUrl(path, 60 * 60 * 24 * 365);
+      if (sErr) throw sErr;
+      setEditing((e) => ({
+        ...(e ?? { app_name: "BattleAsia", is_active: true, force_update: false }),
+        apk_file_url: signed.signedUrl,
+        file_size_bytes: file.size,
+      }));
+      toast.success("APK uploaded — fill version & save");
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setUploading(false);
+    }
+  }
+
   async function remove(id: number) {
     if (!confirm("Delete this version?")) return;
     const { error } = await supabase
