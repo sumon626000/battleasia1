@@ -1638,6 +1638,8 @@ export type Database = {
         Args: { p_match_id: number; p_reason: string }
         Returns: number
       }
+      admin_delete_feed_category: { Args: { p_id: string }; Returns: undefined }
+      admin_delete_feed_post: { Args: { p_id: string }; Returns: undefined }
       admin_delete_match: { Args: { p_match_id: number }; Returns: undefined }
       admin_delete_shop_category: { Args: { p_id: number }; Returns: undefined }
       admin_delete_shop_package: { Args: { p_id: number }; Returns: undefined }
@@ -1667,9 +1669,45 @@ export type Database = {
         }
         Returns: undefined
       }
+      admin_save_feed_category: {
+        Args: {
+          p_id: string
+          p_is_active?: boolean
+          p_name: string
+          p_slug: string
+          p_sort_order?: number
+        }
+        Returns: string
+      }
+      admin_save_feed_post: {
+        Args: {
+          p_body: string
+          p_category_id: string
+          p_cover_url: string
+          p_excerpt: string
+          p_id: string
+          p_is_pinned: boolean
+          p_is_published: boolean
+          p_published_at: string
+          p_slug: string
+          p_title: string
+        }
+        Returns: string
+      }
       admin_save_match: {
         Args: { p_match_id: number; p_payload: Json }
         Returns: number
+      }
+      admin_save_notification_template: {
+        Args: {
+          p_body: string
+          p_id: string
+          p_is_active: boolean
+          p_key: string
+          p_title: string
+          p_type: string
+        }
+        Returns: string
       }
       admin_save_shop_category: {
         Args: {
@@ -1682,6 +1720,17 @@ export type Database = {
       }
       admin_save_shop_package: {
         Args: { p_id: number; p_payload: Json }
+        Returns: number
+      }
+      admin_send_notification: {
+        Args: {
+          p_body: string
+          p_link?: string
+          p_target: string
+          p_title: string
+          p_type?: string
+          p_user_id: string
+        }
         Returns: number
       }
       admin_set_user_role: {
