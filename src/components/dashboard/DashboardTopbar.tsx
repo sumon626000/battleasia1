@@ -1,7 +1,8 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Bell, Coins, Wallet as WalletIcon, LogOut, Crown, Menu } from "lucide-react";
+import { Bell, Wallet as WalletIcon, LogOut, Crown, Menu } from "lucide-react";
 import { toast } from "sonner";
 import logoShield from "@/assets/logo-shield.png";
+import { CoinIcon } from "@/components/site/CoinIcon";
 import { supabase } from "@/integrations/supabase/client";
 import type { Profile } from "@/hooks/use-profile";
 
