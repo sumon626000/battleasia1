@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Smartphone, Download, ShieldCheck, Calendar } from "lucide-react";
+import { ApkIcon } from "@/components/site/ApkIcon";
 
 export const Route = createFileRoute("/apk")({
   head: () => ({

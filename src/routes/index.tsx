@@ -419,7 +419,7 @@ function BattleAsiaLanding() {
                 {t("home.browseMatches")} <ChevronRight size={16} />
               </Link>
               <Link to="/apk" className="btn-outline-gold inline-flex items-center gap-2 px-6 py-3 text-sm">
-                <Download size={14} /> {t("home.getApk")}
+                <ApkIcon size={16} /> {t("home.getApk")}
               </Link>
             </div>
           </div>
@@ -601,9 +601,9 @@ function BattleAsiaLanding() {
             <h3 className="font-display text-2xl font-bold leading-tight">DOWNLOAD<br /><span className="text-gold">OUR APP</span></h3>
             <p className="mt-2 text-sm text-muted-foreground">Get the Battle Asia App<br />for a better experience</p>
             <div className="mt-5 flex flex-col gap-2">
-              <button className="btn-gold inline-flex items-center justify-center gap-2 py-2.5 text-sm">
-                <Download size={16} /> DOWNLOAD APK
-              </button>
+              <Link to="/apk" className="btn-gold inline-flex items-center justify-center gap-2 py-2.5 text-sm">
+                <ApkIcon size={18} /> DOWNLOAD APK
+              </Link>
               <button className="btn-outline-gold inline-flex items-center justify-center gap-2 py-2.5 text-sm">
                 <Smartphone size={16} /> INSTALL PWA
               </button>
