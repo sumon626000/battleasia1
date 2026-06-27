@@ -66,12 +66,24 @@ function ProfilePage() {
   const { user } = useAuth();
   const { profile } = useProfile(user?.id);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const [uploadingCover, setUploadingCover] = useState(false);
   const [savingProfile, setSavingProfile] = useState(false);
+  const [savingSocial, setSavingSocial] = useState(false);
   const [changingPw, setChangingPw] = useState(false);
   const [submittingDelete, setSubmittingDelete] = useState(false);
   const [deleteReason, setDeleteReason] = useState("");
   const [hasPendingDelete, setHasPendingDelete] = useState(false);
+  const [bio, setBio] = useState("");
+  const [social, setSocial] = useState({
+    facebook: "",
+    twitter: "",
+    instagram: "",
+    youtube: "",
+    discord: "",
+    website: "",
+  });
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const coverInputRef = useRef<HTMLInputElement>(null);
 
   const emailConfirmed = !!user?.email_confirmed_at;
 
