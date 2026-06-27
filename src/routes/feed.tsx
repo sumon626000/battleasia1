@@ -160,6 +160,7 @@ function PostCard({ post, onLike }: { post: Post; onLike: () => void }) {
   const handle = post.author?.username || post.author?.full_name || "player";
   const initials = handle.slice(0, 2).toUpperCase();
   const time = new Date(post.created_at).toLocaleString();
+  const [showComments, setShowComments] = useState(false);
   return (
     <li className="overflow-hidden rounded-xl border border-border/70 bg-card/60 shadow-[0_0_0_1px_rgba(255,176,32,0.05)] backdrop-blur transition hover:border-gold/40">
       <div className="flex items-center gap-3 px-4 py-3">
