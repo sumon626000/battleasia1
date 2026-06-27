@@ -57,7 +57,7 @@ function PublicShop() {
           return (
             <div
               key={p.id}
-              className="hud-panel rounded-md border border-border/60 bg-card/40 p-5 transition hover:border-gold/60"
+              className="hud-panel group relative flex flex-col overflow-hidden rounded-md border border-border/60 bg-card/40 p-5 transition hover:border-gold/60"
             >
               {p.category_id && data?.categories.get(p.category_id) && (
                 <div className="font-hud text-[10px] uppercase tracking-widest text-foreground/50">
@@ -67,7 +67,21 @@ function PublicShop() {
               <h3 className="mt-1 font-display text-lg uppercase tracking-wide text-foreground">
                 {p.title}
               </h3>
-              <div className="mt-4 flex items-center gap-2">
+
+              {p.image_url && (
+                <div className="relative my-5 grid place-items-center">
+                  <div aria-hidden className="absolute h-32 w-32 rounded-full bg-gold/20 blur-3xl" />
+                  <img
+                    loading="lazy"
+                    decoding="async"
+                    src={p.image_url}
+                    alt={p.title}
+                    className="relative h-36 w-36 object-contain drop-shadow-[0_0_25px_rgba(245,193,66,0.35)] transition-transform duration-500 group-hover:scale-110 sm:h-44 sm:w-44"
+                  />
+                </div>
+              )}
+
+              <div className="mt-auto flex items-center gap-2">
                 <CoinIcon className="h-6 w-6" />
                 <span className="font-mono text-xl tabular-nums text-gold">
                   {Number(p.bac_amount).toLocaleString()}
@@ -87,6 +101,7 @@ function PublicShop() {
                 </Link>
               </div>
             </div>
+
           );
         })}
       </div>
