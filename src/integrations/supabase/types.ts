@@ -1562,7 +1562,7 @@ export type Database = {
           p_currency: string
           p_fiat_amount: number
           p_payment_channel_id: number
-          p_sender_number: string
+          p_sender: string
           p_transaction_id: string
         }
         Returns: number
