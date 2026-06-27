@@ -45,6 +45,7 @@ import { Route as AdminAdminCoinRatesRouteImport } from './routes/_admin/admin.c
 import { Route as AdminAdminChannelsRouteImport } from './routes/_admin/admin.channels'
 import { Route as AdminAdminBusinessWalletsRouteImport } from './routes/_admin/admin.business-wallets'
 import { Route as AdminAdminBalancesRouteImport } from './routes/_admin/admin.balances'
+import { Route as AdminAdminApkRouteImport } from './routes/_admin/admin.apk'
 import { Route as AuthenticatedDashboardMatchesMatchIdRouteImport } from './routes/_authenticated/dashboard.matches.$matchId'
 import { Route as AuthenticatedDashboardFeedPostIdRouteImport } from './routes/_authenticated/dashboard.feed.$postId'
 
@@ -238,6 +239,11 @@ const AdminAdminBalancesRoute = AdminAdminBalancesRouteImport.update({
   path: '/admin/balances',
   getParentRoute: () => AdminRouteRoute,
 } as any)
+const AdminAdminApkRoute = AdminAdminApkRouteImport.update({
+  id: '/admin/apk',
+  path: '/admin/apk',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
 const AuthenticatedDashboardMatchesMatchIdRoute =
   AuthenticatedDashboardMatchesMatchIdRouteImport.update({
     id: '/$matchId',
@@ -258,6 +264,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/email/verify': typeof EmailVerifyRoute
   '/p/$slug': typeof PSlugRoute
+  '/admin/apk': typeof AdminAdminApkRoute
   '/admin/balances': typeof AdminAdminBalancesRoute
   '/admin/business-wallets': typeof AdminAdminBusinessWalletsRoute
   '/admin/channels': typeof AdminAdminChannelsRoute
@@ -296,6 +303,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/email/verify': typeof EmailVerifyRoute
   '/p/$slug': typeof PSlugRoute
+  '/admin/apk': typeof AdminAdminApkRoute
   '/admin/balances': typeof AdminAdminBalancesRoute
   '/admin/business-wallets': typeof AdminAdminBusinessWalletsRoute
   '/admin/channels': typeof AdminAdminChannelsRoute
@@ -337,6 +345,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/email/verify': typeof EmailVerifyRoute
   '/p/$slug': typeof PSlugRoute
+  '/_admin/admin/apk': typeof AdminAdminApkRoute
   '/_admin/admin/balances': typeof AdminAdminBalancesRoute
   '/_admin/admin/business-wallets': typeof AdminAdminBusinessWalletsRoute
   '/_admin/admin/channels': typeof AdminAdminChannelsRoute
@@ -377,6 +386,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/email/verify'
     | '/p/$slug'
+    | '/admin/apk'
     | '/admin/balances'
     | '/admin/business-wallets'
     | '/admin/channels'
@@ -415,6 +425,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/email/verify'
     | '/p/$slug'
+    | '/admin/apk'
     | '/admin/balances'
     | '/admin/business-wallets'
     | '/admin/channels'
@@ -455,6 +466,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard'
     | '/email/verify'
     | '/p/$slug'
+    | '/_admin/admin/apk'
     | '/_admin/admin/balances'
     | '/_admin/admin/business-wallets'
     | '/_admin/admin/channels'
@@ -751,6 +763,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAdminBalancesRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/_admin/admin/apk': {
+      id: '/_admin/admin/apk'
+      path: '/admin/apk'
+      fullPath: '/admin/apk'
+      preLoaderRoute: typeof AdminAdminApkRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
     '/_authenticated/dashboard/matches/$matchId': {
       id: '/_authenticated/dashboard/matches/$matchId'
       path: '/$matchId'
@@ -769,6 +788,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AdminRouteRouteChildren {
+  AdminAdminApkRoute: typeof AdminAdminApkRoute
   AdminAdminBalancesRoute: typeof AdminAdminBalancesRoute
   AdminAdminBusinessWalletsRoute: typeof AdminAdminBusinessWalletsRoute
   AdminAdminChannelsRoute: typeof AdminAdminChannelsRoute
@@ -790,6 +810,7 @@ interface AdminRouteRouteChildren {
 }
 
 const AdminRouteRouteChildren: AdminRouteRouteChildren = {
+  AdminAdminApkRoute: AdminAdminApkRoute,
   AdminAdminBalancesRoute: AdminAdminBalancesRoute,
   AdminAdminBusinessWalletsRoute: AdminAdminBusinessWalletsRoute,
   AdminAdminChannelsRoute: AdminAdminChannelsRoute,
