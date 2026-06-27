@@ -37,11 +37,11 @@ async function fetchStats() {
     supabase.from("withdrawals").select("*", head).eq("status", "Pending"),
     supabase.from("shop_purchases").select("*", head).eq("status", "Pending"),
     supabase.from("support_tickets").select("*", head).neq("status", "Closed"),
-    supabase.from("security_alerts").select("*", head).eq("resolved", false),
+    supabase.from("security_alerts").select("*", head).eq("is_resolved", false),
     supabase.from("profiles").select("bac_coin_balance"),
     supabase
       .from("admin_action_logs")
-      .select("id, action_type, target_type, target_id, description, created_at")
+      .select("id, action, module, target_type, target_id, new_value, created_at")
       .order("created_at", { ascending: false })
       .limit(10),
   ]);
