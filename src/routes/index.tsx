@@ -194,19 +194,19 @@ function BattleAsiaLanding() {
               </span>
             </h1>
             <p className="mt-4 font-hud text-sm font-semibold tracking-[0.3em] text-foreground/85 sm:text-base">
-              OFFICIAL MOBILE TOURNAMENT ARENA
+              {t("home.tagline")}
             </p>
             <div className="mt-6 flex items-center gap-3">
               <span className="h-px w-10 bg-gold/60" />
               <p className="font-hud text-base font-bold tracking-[0.25em] text-gold sm:text-lg">
-                COMPETE · WIN · EARN BAC
+                {t("home.slogan")}
               </p>
             </div>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link to="/auth" className="btn-gold inline-flex items-center gap-2 px-8 py-3 text-sm sm:text-base">
-                JOIN NOW <ChevronRight size={16} />
+                {t("home.joinNow")} <ChevronRight size={16} />
               </Link>
-              <button className="btn-outline-gold px-8 py-3 text-sm sm:text-base">APK DOWNLOAD</button>
+              <button className="btn-outline-gold px-8 py-3 text-sm sm:text-base">{t("home.apkDownload")}</button>
             </div>
           </div>
 
