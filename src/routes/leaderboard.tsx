@@ -98,7 +98,8 @@ function LeaderboardPage() {
         metric === "prize" ? b.total_prize - a.total_prize :
         b.matches_played - a.matches_played
       );
-      return rows.slice(0, 100);
+      return fillDemo(rows, metric).slice(0, 100);
+
     },
   });
 
