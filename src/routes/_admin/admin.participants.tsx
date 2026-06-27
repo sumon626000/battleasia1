@@ -33,7 +33,7 @@ function AdminParticipantsPage() {
     queryFn: async () => {
       let req = supabase
         .from("match_participants")
-        .select("*, matches:matches!match_participants_match_id_fkey(match_name), profiles:profiles!match_participants_user_id_fkey(username, pubg_id)")
+        .select("*, matches(match_name)")
         .order("created_at", { ascending: false })
         .limit(500);
       if (status !== "all") req = req.eq("status", status as "joined" | "win" | "loss" | "pending" | "refunded" | "cancelled");
@@ -41,7 +41,20 @@ function AdminParticipantsPage() {
       if (to) req = req.lte("created_at", `${to}T23:59:59`);
       const { data, error } = await req;
       if (error) throw error;
-      return (data ?? []) as unknown as Row[];
+      const rows = (data ?? []) as unknown as Row[];
+      const userIds = Array.from(new Set(rows.map((r) => r.user_id).filter(Boolean)));
+      if (userIds.length) {
+        const { data: profs } = await supabase
+          .from("profiles")
+          .select("id, username, pubg_id")
+          .in("id", userIds);
+        const map = new Map((profs ?? []).map((p: any) => [p.id, p]));
+        for (const r of rows) {
+          const p = map.get(r.user_id);
+          r.profiles = p ? { username: p.username, pubg_id: p.pubg_id } : null;
+        }
+      }
+      return rows;
     },
   });
 
