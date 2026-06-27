@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Smartphone, Download, ShieldCheck, Calendar } from "lucide-react";
+import { ApkIcon } from "@/components/site/ApkIcon";
 
 export const Route = createFileRoute("/apk")({
   head: () => ({
@@ -38,7 +39,9 @@ function ApkPage() {
     <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
       <div className="hud-panel rounded-md border border-gold/30 bg-card/40 p-6">
         <div className="flex items-center gap-3">
-          <Smartphone className="h-6 w-6 text-gold" />
+          <span className="grid h-12 w-12 place-items-center rounded-md border border-gold/40 bg-gold/10 text-gold drop-shadow-[0_0_18px_rgba(212,175,55,0.45)]">
+            <ApkIcon size={28} />
+          </span>
           <h1 className="font-display text-3xl uppercase tracking-[0.2em] text-gold">Download APK</h1>
         </div>
         <p className="mt-2 font-hud text-xs uppercase tracking-widest text-foreground/60">
@@ -81,7 +84,7 @@ function ApkPage() {
               rel="noopener noreferrer"
               className="btn-gold inline-flex items-center gap-2 px-5 py-2.5 text-sm"
             >
-              <Download className="h-4 w-4" /> Download APK
+              <ApkIcon size={18} /> Download APK
             </a>
           </div>
           {latest.changelog && (
