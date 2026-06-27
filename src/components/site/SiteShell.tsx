@@ -14,9 +14,12 @@ export function SiteShell({ children }: { children: ReactNode }) {
       </div>
 
       <AnnouncementBar />
-      <SiteHeader />
-      <SiteTicker />
+      <div className="sticky top-0 z-50">
+        <SiteHeader />
+        <SiteTicker />
+      </div>
       <main className="flex-1">{children}</main>
+
       <SiteFooter />
     </div>
   );
