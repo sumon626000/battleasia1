@@ -16,6 +16,9 @@ import {
   Coins,
   Banknote,
   Settings2,
+  Settings,
+  Smartphone,
+  FileText,
 } from "lucide-react";
 
 export const ADMIN_NAV = [

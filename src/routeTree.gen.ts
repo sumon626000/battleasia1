@@ -36,6 +36,7 @@ import { Route as AdminAdminShopRouteImport } from './routes/_admin/admin.shop'
 import { Route as AdminAdminSettingsRouteImport } from './routes/_admin/admin.settings'
 import { Route as AdminAdminResultsRouteImport } from './routes/_admin/admin.results'
 import { Route as AdminAdminParticipantsRouteImport } from './routes/_admin/admin.participants'
+import { Route as AdminAdminPagesRouteImport } from './routes/_admin/admin.pages'
 import { Route as AdminAdminNotificationsRouteImport } from './routes/_admin/admin.notifications'
 import { Route as AdminAdminMatchesRouteImport } from './routes/_admin/admin.matches'
 import { Route as AdminAdminGamesRouteImport } from './routes/_admin/admin.games'
@@ -193,6 +194,11 @@ const AdminAdminParticipantsRoute = AdminAdminParticipantsRouteImport.update({
   path: '/admin/participants',
   getParentRoute: () => AdminRouteRoute,
 } as any)
+const AdminAdminPagesRoute = AdminAdminPagesRouteImport.update({
+  id: '/admin/pages',
+  path: '/admin/pages',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
 const AdminAdminNotificationsRoute = AdminAdminNotificationsRouteImport.update({
   id: '/admin/notifications',
   path: '/admin/notifications',
@@ -274,6 +280,7 @@ export interface FileRoutesByFullPath {
   '/admin/games': typeof AdminAdminGamesRoute
   '/admin/matches': typeof AdminAdminMatchesRoute
   '/admin/notifications': typeof AdminAdminNotificationsRoute
+  '/admin/pages': typeof AdminAdminPagesRoute
   '/admin/participants': typeof AdminAdminParticipantsRoute
   '/admin/results': typeof AdminAdminResultsRoute
   '/admin/settings': typeof AdminAdminSettingsRoute
@@ -313,6 +320,7 @@ export interface FileRoutesByTo {
   '/admin/games': typeof AdminAdminGamesRoute
   '/admin/matches': typeof AdminAdminMatchesRoute
   '/admin/notifications': typeof AdminAdminNotificationsRoute
+  '/admin/pages': typeof AdminAdminPagesRoute
   '/admin/participants': typeof AdminAdminParticipantsRoute
   '/admin/results': typeof AdminAdminResultsRoute
   '/admin/settings': typeof AdminAdminSettingsRoute
@@ -355,6 +363,7 @@ export interface FileRoutesById {
   '/_admin/admin/games': typeof AdminAdminGamesRoute
   '/_admin/admin/matches': typeof AdminAdminMatchesRoute
   '/_admin/admin/notifications': typeof AdminAdminNotificationsRoute
+  '/_admin/admin/pages': typeof AdminAdminPagesRoute
   '/_admin/admin/participants': typeof AdminAdminParticipantsRoute
   '/_admin/admin/results': typeof AdminAdminResultsRoute
   '/_admin/admin/settings': typeof AdminAdminSettingsRoute
@@ -396,6 +405,7 @@ export interface FileRouteTypes {
     | '/admin/games'
     | '/admin/matches'
     | '/admin/notifications'
+    | '/admin/pages'
     | '/admin/participants'
     | '/admin/results'
     | '/admin/settings'
@@ -435,6 +445,7 @@ export interface FileRouteTypes {
     | '/admin/games'
     | '/admin/matches'
     | '/admin/notifications'
+    | '/admin/pages'
     | '/admin/participants'
     | '/admin/results'
     | '/admin/settings'
@@ -476,6 +487,7 @@ export interface FileRouteTypes {
     | '/_admin/admin/games'
     | '/_admin/admin/matches'
     | '/_admin/admin/notifications'
+    | '/_admin/admin/pages'
     | '/_admin/admin/participants'
     | '/_admin/admin/results'
     | '/_admin/admin/settings'
@@ -700,6 +712,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAdminParticipantsRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/_admin/admin/pages': {
+      id: '/_admin/admin/pages'
+      path: '/admin/pages'
+      fullPath: '/admin/pages'
+      preLoaderRoute: typeof AdminAdminPagesRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
     '/_admin/admin/notifications': {
       id: '/_admin/admin/notifications'
       path: '/admin/notifications'
@@ -798,6 +817,7 @@ interface AdminRouteRouteChildren {
   AdminAdminGamesRoute: typeof AdminAdminGamesRoute
   AdminAdminMatchesRoute: typeof AdminAdminMatchesRoute
   AdminAdminNotificationsRoute: typeof AdminAdminNotificationsRoute
+  AdminAdminPagesRoute: typeof AdminAdminPagesRoute
   AdminAdminParticipantsRoute: typeof AdminAdminParticipantsRoute
   AdminAdminResultsRoute: typeof AdminAdminResultsRoute
   AdminAdminSettingsRoute: typeof AdminAdminSettingsRoute
@@ -820,6 +840,7 @@ const AdminRouteRouteChildren: AdminRouteRouteChildren = {
   AdminAdminGamesRoute: AdminAdminGamesRoute,
   AdminAdminMatchesRoute: AdminAdminMatchesRoute,
   AdminAdminNotificationsRoute: AdminAdminNotificationsRoute,
+  AdminAdminPagesRoute: AdminAdminPagesRoute,
   AdminAdminParticipantsRoute: AdminAdminParticipantsRoute,
   AdminAdminResultsRoute: AdminAdminResultsRoute,
   AdminAdminSettingsRoute: AdminAdminSettingsRoute,
