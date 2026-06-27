@@ -1,12 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
 import {
-  Menu, X, Users, Swords, Trophy, Coins, Shield, Zap, Lock, Headphones,
-  Facebook, Twitter, Send, Smartphone, Download, ChevronRight, Crosshair,
+  Users, Swords, Trophy, Coins, Shield, Zap, Lock, Headphones,
+  Smartphone, Download, ChevronRight, Crosshair,
   Radio, Flame, Star,
 } from "lucide-react";
 import heroSoldier from "@/assets/hero-soldier.jpg";
-import logoShield from "@/assets/logo-shield.png";
 import matchSolo from "@/assets/match-solo.jpg";
 import matchSquad from "@/assets/match-squad.jpg";
 import matchDuo from "@/assets/match-duo.jpg";
@@ -24,7 +22,7 @@ export const Route = createFileRoute("/")({
   component: BattleAsiaLanding,
 });
 
-const NAV = ["HOME", "MATCHES", "LEADERBOARD", "SHOP", "NEWS", "SUPPORT"];
+
 
 const STATS = [
   { icon: Users,  value: "12,548",     label: "ONLINE USERS" },
@@ -48,82 +46,9 @@ const FEATURES = [
 
 const PAYMENTS = ["bKash", "Nagad", "Rocket", "Upay", "Bank Transfer", "USDT TRC20"];
 
-const TICKER = [
-  "⚡ SQUAD CLASH LIVE NOW · 80/100",
-  "🏆 WEEKLY PRIZE POOL ৳2,45,300",
-  "🔥 NEW MAP: ERANGEL UNLOCKED",
-  "💰 BUY 1000 BAC · GET 10% BONUS",
-  "🎯 TOP PLAYER: SHADOW_47 · 142 WINS",
-];
-
 function BattleAsiaLanding() {
-  const [open, setOpen] = useState(false);
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-background text-foreground">
-      {/* Ambient glow */}
-      <div aria-hidden className="pointer-events-none fixed inset-0 -z-10">
-        <div className="absolute -left-32 top-20 h-72 w-72 rounded-full bg-gold/15 blur-[120px]" />
-        <div className="absolute -right-24 top-[40%] h-80 w-80 rounded-full bg-gold/10 blur-[140px]" />
-      </div>
-
-      {/* NAV */}
-      <header className="sticky top-0 z-50 border-b border-border/70 bg-background/85 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
-          <a href="#" className="group flex items-center gap-2.5">
-            <div className="relative grid h-10 w-10 place-items-center rounded-md bg-gradient-to-br from-gold/30 to-transparent ring-1 ring-gold/40">
-              <img src={logoShield} alt="Battle Asia" width={32} height={32} className="h-7 w-7" />
-            </div>
-            <span className="font-display text-xl font-bold leading-none tracking-wide">
-              <span className="block">BATTLE</span>
-              <span className="block text-gold">ASIA</span>
-            </span>
-          </a>
-          <nav className="hidden items-center gap-7 lg:flex">
-            {NAV.map((n) => (
-              <a key={n} href="#" className="font-hud text-sm font-semibold text-foreground/75 transition hover:text-gold">
-                {n}
-              </a>
-            ))}
-          </nav>
-          <div className="hidden items-center gap-2 lg:flex">
-            <button className="btn-outline-gold px-5 py-2 text-sm">LOGIN</button>
-            <button className="btn-gold px-5 py-2 text-sm">REGISTER</button>
-          </div>
-          <button onClick={() => setOpen(!open)} className="rounded-md p-2 text-gold lg:hidden" aria-label="Toggle menu">
-            {open ? <X size={24} /> : <Menu size={24} />}
-          </button>
-        </div>
-        {open && (
-          <div className="border-t border-border bg-card lg:hidden">
-            <div className="flex flex-col gap-1 px-4 py-3">
-              {NAV.map((n) => (
-                <a key={n} href="#" className="font-hud rounded px-2 py-2 text-sm font-semibold hover:bg-secondary hover:text-gold">{n}</a>
-              ))}
-              <div className="mt-2 grid grid-cols-2 gap-2">
-                <button className="btn-outline-gold py-2 text-sm">LOGIN</button>
-                <button className="btn-gold py-2 text-sm">REGISTER</button>
-              </div>
-            </div>
-          </div>
-        )}
-      </header>
-
-      {/* LIVE TICKER */}
-      <div className="border-b border-border/60 bg-card/40">
-        <div className="mx-auto flex max-w-7xl items-center gap-3 overflow-hidden px-4 py-2 sm:px-6">
-          <span className="badge-live shrink-0">LIVE</span>
-          <div className="relative flex-1 overflow-hidden mask-fade">
-            <div className="ticker font-mono-tab text-xs text-foreground/85">
-              {[...TICKER, ...TICKER].map((t, i) => (
-                <span key={i} className="inline-flex items-center gap-2">
-                  <span className="text-gold">▸</span> {t}
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-
+    <>
       {/* HERO */}
       <section className="relative overflow-hidden bg-grid-hud">
         <img
@@ -367,22 +292,6 @@ function BattleAsiaLanding() {
       </section>
 
       {/* FOOTER */}
-      <footer className="bg-card/50">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-4 py-6 sm:px-6 md:flex-row">
-          <p className="font-hud text-xs tracking-wider text-muted-foreground">© 2025 BATTLE ASIA · ALL RIGHTS RESERVED</p>
-          <nav className="font-hud flex flex-wrap items-center justify-center gap-4 text-xs text-muted-foreground">
-            <a href="#" className="hover:text-gold">TERMS</a>
-            <a href="#" className="hover:text-gold">PRIVACY</a>
-            <a href="#" className="hover:text-gold">RULES</a>
-            <a href="#" className="hover:text-gold">ABOUT</a>
-          </nav>
-          <div className="flex items-center gap-3 text-gold">
-            <a href="#" aria-label="Telegram" className="grid h-9 w-9 place-items-center rounded-md bg-secondary ring-1 ring-gold/30 hover:bg-gold hover:text-background"><Send size={14} /></a>
-            <a href="#" aria-label="Facebook" className="grid h-9 w-9 place-items-center rounded-md bg-secondary ring-1 ring-gold/30 hover:bg-gold hover:text-background"><Facebook size={14} /></a>
-            <a href="#" aria-label="Twitter"  className="grid h-9 w-9 place-items-center rounded-md bg-secondary ring-1 ring-gold/30 hover:bg-gold hover:text-background"><Twitter  size={14} /></a>
-          </div>
-        </div>
-      </footer>
-    </div>
+    </>
   );
 }
