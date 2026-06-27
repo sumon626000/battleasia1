@@ -10,23 +10,25 @@ import {
   Bell,
   LifeBuoy,
   Shield,
-  Settings,
+  Gamepad2,
+  Users2,
   ArrowLeft,
 } from "lucide-react";
 
 export const ADMIN_NAV = [
   { label: "Overview", href: "/admin", icon: LayoutDashboard },
   { label: "Users", href: "/admin/users", icon: Users },
-  { label: "Roles", href: "/admin/roles", icon: Shield },
+  { label: "Games", href: "/admin/games", icon: Gamepad2 },
   { label: "Matches", href: "/admin/matches", icon: Swords },
   { label: "Results", href: "/admin/results", icon: Trophy },
+  { label: "Participants", href: "/admin/participants", icon: Users2 },
   { label: "Shop", href: "/admin/shop", icon: ShoppingBag },
   { label: "Deposits", href: "/admin/deposits", icon: Wallet },
   { label: "Withdrawals", href: "/admin/withdrawals", icon: Wallet },
+  { label: "Balances", href: "/admin/balances", icon: Wallet },
   { label: "Feed", href: "/admin/feed", icon: Newspaper },
   { label: "Notifications", href: "/admin/notifications", icon: Bell },
   { label: "Support", href: "/admin/support", icon: LifeBuoy },
-  { label: "Settings", href: "/admin/settings", icon: Settings },
 ] as const;
 
 export function AdminShell({ children }: { children: React.ReactNode }) {

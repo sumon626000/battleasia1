@@ -30,12 +30,16 @@ import { Route as AuthenticatedDashboardMatchesRouteImport } from './routes/_aut
 import { Route as AuthenticatedDashboardFeedRouteImport } from './routes/_authenticated/dashboard.feed'
 import { Route as AdminAdminWithdrawalsRouteImport } from './routes/_admin/admin.withdrawals'
 import { Route as AdminAdminUsersRouteImport } from './routes/_admin/admin.users'
+import { Route as AdminAdminSupportRouteImport } from './routes/_admin/admin.support'
 import { Route as AdminAdminShopRouteImport } from './routes/_admin/admin.shop'
 import { Route as AdminAdminResultsRouteImport } from './routes/_admin/admin.results'
+import { Route as AdminAdminParticipantsRouteImport } from './routes/_admin/admin.participants'
 import { Route as AdminAdminNotificationsRouteImport } from './routes/_admin/admin.notifications'
 import { Route as AdminAdminMatchesRouteImport } from './routes/_admin/admin.matches'
+import { Route as AdminAdminGamesRouteImport } from './routes/_admin/admin.games'
 import { Route as AdminAdminFeedRouteImport } from './routes/_admin/admin.feed'
 import { Route as AdminAdminDepositsRouteImport } from './routes/_admin/admin.deposits'
+import { Route as AdminAdminBalancesRouteImport } from './routes/_admin/admin.balances'
 import { Route as AuthenticatedDashboardMatchesMatchIdRouteImport } from './routes/_authenticated/dashboard.matches.$matchId'
 import { Route as AuthenticatedDashboardFeedPostIdRouteImport } from './routes/_authenticated/dashboard.feed.$postId'
 
@@ -152,6 +156,11 @@ const AdminAdminUsersRoute = AdminAdminUsersRouteImport.update({
   path: '/admin/users',
   getParentRoute: () => AdminRouteRoute,
 } as any)
+const AdminAdminSupportRoute = AdminAdminSupportRouteImport.update({
+  id: '/admin/support',
+  path: '/admin/support',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
 const AdminAdminShopRoute = AdminAdminShopRouteImport.update({
   id: '/admin/shop',
   path: '/admin/shop',
@@ -160,6 +169,11 @@ const AdminAdminShopRoute = AdminAdminShopRouteImport.update({
 const AdminAdminResultsRoute = AdminAdminResultsRouteImport.update({
   id: '/admin/results',
   path: '/admin/results',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminAdminParticipantsRoute = AdminAdminParticipantsRouteImport.update({
+  id: '/admin/participants',
+  path: '/admin/participants',
   getParentRoute: () => AdminRouteRoute,
 } as any)
 const AdminAdminNotificationsRoute = AdminAdminNotificationsRouteImport.update({
@@ -172,6 +186,11 @@ const AdminAdminMatchesRoute = AdminAdminMatchesRouteImport.update({
   path: '/admin/matches',
   getParentRoute: () => AdminRouteRoute,
 } as any)
+const AdminAdminGamesRoute = AdminAdminGamesRouteImport.update({
+  id: '/admin/games',
+  path: '/admin/games',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
 const AdminAdminFeedRoute = AdminAdminFeedRouteImport.update({
   id: '/admin/feed',
   path: '/admin/feed',
@@ -180,6 +199,11 @@ const AdminAdminFeedRoute = AdminAdminFeedRouteImport.update({
 const AdminAdminDepositsRoute = AdminAdminDepositsRouteImport.update({
   id: '/admin/deposits',
   path: '/admin/deposits',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminAdminBalancesRoute = AdminAdminBalancesRouteImport.update({
+  id: '/admin/balances',
+  path: '/admin/balances',
   getParentRoute: () => AdminRouteRoute,
 } as any)
 const AuthenticatedDashboardMatchesMatchIdRoute =
@@ -202,12 +226,16 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/email/verify': typeof EmailVerifyRoute
   '/p/$slug': typeof PSlugRoute
+  '/admin/balances': typeof AdminAdminBalancesRoute
   '/admin/deposits': typeof AdminAdminDepositsRoute
   '/admin/feed': typeof AdminAdminFeedRoute
+  '/admin/games': typeof AdminAdminGamesRoute
   '/admin/matches': typeof AdminAdminMatchesRoute
   '/admin/notifications': typeof AdminAdminNotificationsRoute
+  '/admin/participants': typeof AdminAdminParticipantsRoute
   '/admin/results': typeof AdminAdminResultsRoute
   '/admin/shop': typeof AdminAdminShopRoute
+  '/admin/support': typeof AdminAdminSupportRoute
   '/admin/users': typeof AdminAdminUsersRoute
   '/admin/withdrawals': typeof AdminAdminWithdrawalsRoute
   '/dashboard/feed': typeof AuthenticatedDashboardFeedRouteWithChildren
@@ -231,12 +259,16 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/email/verify': typeof EmailVerifyRoute
   '/p/$slug': typeof PSlugRoute
+  '/admin/balances': typeof AdminAdminBalancesRoute
   '/admin/deposits': typeof AdminAdminDepositsRoute
   '/admin/feed': typeof AdminAdminFeedRoute
+  '/admin/games': typeof AdminAdminGamesRoute
   '/admin/matches': typeof AdminAdminMatchesRoute
   '/admin/notifications': typeof AdminAdminNotificationsRoute
+  '/admin/participants': typeof AdminAdminParticipantsRoute
   '/admin/results': typeof AdminAdminResultsRoute
   '/admin/shop': typeof AdminAdminShopRoute
+  '/admin/support': typeof AdminAdminSupportRoute
   '/admin/users': typeof AdminAdminUsersRoute
   '/admin/withdrawals': typeof AdminAdminWithdrawalsRoute
   '/dashboard/feed': typeof AuthenticatedDashboardFeedRouteWithChildren
@@ -263,12 +295,16 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/email/verify': typeof EmailVerifyRoute
   '/p/$slug': typeof PSlugRoute
+  '/_admin/admin/balances': typeof AdminAdminBalancesRoute
   '/_admin/admin/deposits': typeof AdminAdminDepositsRoute
   '/_admin/admin/feed': typeof AdminAdminFeedRoute
+  '/_admin/admin/games': typeof AdminAdminGamesRoute
   '/_admin/admin/matches': typeof AdminAdminMatchesRoute
   '/_admin/admin/notifications': typeof AdminAdminNotificationsRoute
+  '/_admin/admin/participants': typeof AdminAdminParticipantsRoute
   '/_admin/admin/results': typeof AdminAdminResultsRoute
   '/_admin/admin/shop': typeof AdminAdminShopRoute
+  '/_admin/admin/support': typeof AdminAdminSupportRoute
   '/_admin/admin/users': typeof AdminAdminUsersRoute
   '/_admin/admin/withdrawals': typeof AdminAdminWithdrawalsRoute
   '/_authenticated/dashboard/feed': typeof AuthenticatedDashboardFeedRouteWithChildren
@@ -294,12 +330,16 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/email/verify'
     | '/p/$slug'
+    | '/admin/balances'
     | '/admin/deposits'
     | '/admin/feed'
+    | '/admin/games'
     | '/admin/matches'
     | '/admin/notifications'
+    | '/admin/participants'
     | '/admin/results'
     | '/admin/shop'
+    | '/admin/support'
     | '/admin/users'
     | '/admin/withdrawals'
     | '/dashboard/feed'
@@ -323,12 +363,16 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/email/verify'
     | '/p/$slug'
+    | '/admin/balances'
     | '/admin/deposits'
     | '/admin/feed'
+    | '/admin/games'
     | '/admin/matches'
     | '/admin/notifications'
+    | '/admin/participants'
     | '/admin/results'
     | '/admin/shop'
+    | '/admin/support'
     | '/admin/users'
     | '/admin/withdrawals'
     | '/dashboard/feed'
@@ -354,12 +398,16 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard'
     | '/email/verify'
     | '/p/$slug'
+    | '/_admin/admin/balances'
     | '/_admin/admin/deposits'
     | '/_admin/admin/feed'
+    | '/_admin/admin/games'
     | '/_admin/admin/matches'
     | '/_admin/admin/notifications'
+    | '/_admin/admin/participants'
     | '/_admin/admin/results'
     | '/_admin/admin/shop'
+    | '/_admin/admin/support'
     | '/_admin/admin/users'
     | '/_admin/admin/withdrawals'
     | '/_authenticated/dashboard/feed'
@@ -536,6 +584,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAdminUsersRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/_admin/admin/support': {
+      id: '/_admin/admin/support'
+      path: '/admin/support'
+      fullPath: '/admin/support'
+      preLoaderRoute: typeof AdminAdminSupportRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
     '/_admin/admin/shop': {
       id: '/_admin/admin/shop'
       path: '/admin/shop'
@@ -548,6 +603,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/results'
       fullPath: '/admin/results'
       preLoaderRoute: typeof AdminAdminResultsRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/_admin/admin/participants': {
+      id: '/_admin/admin/participants'
+      path: '/admin/participants'
+      fullPath: '/admin/participants'
+      preLoaderRoute: typeof AdminAdminParticipantsRouteImport
       parentRoute: typeof AdminRouteRoute
     }
     '/_admin/admin/notifications': {
@@ -564,6 +626,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAdminMatchesRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/_admin/admin/games': {
+      id: '/_admin/admin/games'
+      path: '/admin/games'
+      fullPath: '/admin/games'
+      preLoaderRoute: typeof AdminAdminGamesRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
     '/_admin/admin/feed': {
       id: '/_admin/admin/feed'
       path: '/admin/feed'
@@ -576,6 +645,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/deposits'
       fullPath: '/admin/deposits'
       preLoaderRoute: typeof AdminAdminDepositsRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/_admin/admin/balances': {
+      id: '/_admin/admin/balances'
+      path: '/admin/balances'
+      fullPath: '/admin/balances'
+      preLoaderRoute: typeof AdminAdminBalancesRouteImport
       parentRoute: typeof AdminRouteRoute
     }
     '/_authenticated/dashboard/matches/$matchId': {
@@ -596,24 +672,32 @@ declare module '@tanstack/react-router' {
 }
 
 interface AdminRouteRouteChildren {
+  AdminAdminBalancesRoute: typeof AdminAdminBalancesRoute
   AdminAdminDepositsRoute: typeof AdminAdminDepositsRoute
   AdminAdminFeedRoute: typeof AdminAdminFeedRoute
+  AdminAdminGamesRoute: typeof AdminAdminGamesRoute
   AdminAdminMatchesRoute: typeof AdminAdminMatchesRoute
   AdminAdminNotificationsRoute: typeof AdminAdminNotificationsRoute
+  AdminAdminParticipantsRoute: typeof AdminAdminParticipantsRoute
   AdminAdminResultsRoute: typeof AdminAdminResultsRoute
   AdminAdminShopRoute: typeof AdminAdminShopRoute
+  AdminAdminSupportRoute: typeof AdminAdminSupportRoute
   AdminAdminUsersRoute: typeof AdminAdminUsersRoute
   AdminAdminWithdrawalsRoute: typeof AdminAdminWithdrawalsRoute
   AdminAdminIndexRoute: typeof AdminAdminIndexRoute
 }
 
 const AdminRouteRouteChildren: AdminRouteRouteChildren = {
+  AdminAdminBalancesRoute: AdminAdminBalancesRoute,
   AdminAdminDepositsRoute: AdminAdminDepositsRoute,
   AdminAdminFeedRoute: AdminAdminFeedRoute,
+  AdminAdminGamesRoute: AdminAdminGamesRoute,
   AdminAdminMatchesRoute: AdminAdminMatchesRoute,
   AdminAdminNotificationsRoute: AdminAdminNotificationsRoute,
+  AdminAdminParticipantsRoute: AdminAdminParticipantsRoute,
   AdminAdminResultsRoute: AdminAdminResultsRoute,
   AdminAdminShopRoute: AdminAdminShopRoute,
+  AdminAdminSupportRoute: AdminAdminSupportRoute,
   AdminAdminUsersRoute: AdminAdminUsersRoute,
   AdminAdminWithdrawalsRoute: AdminAdminWithdrawalsRoute,
   AdminAdminIndexRoute: AdminAdminIndexRoute,
