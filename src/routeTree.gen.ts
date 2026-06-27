@@ -19,6 +19,7 @@ import { Route as NewsRouteImport } from './routes/news'
 import { Route as MatchesRouteImport } from './routes/matches'
 import { Route as LeaderboardRouteImport } from './routes/leaderboard'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
+import { Route as FeedRouteImport } from './routes/feed'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ApkRouteImport } from './routes/apk'
 import { Route as AboutRouteImport } from './routes/about'
@@ -127,6 +128,11 @@ const LeaderboardRoute = LeaderboardRouteImport.update({
 const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
   id: '/forgot-password',
   path: '/forgot-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FeedRoute = FeedRouteImport.update({
+  id: '/feed',
+  path: '/feed',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -448,6 +454,7 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/apk': typeof ApkRoute
   '/auth': typeof AuthRouteWithChildren
+  '/feed': typeof FeedRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/leaderboard': typeof LeaderboardRoute
   '/matches': typeof MatchesRoute
@@ -517,6 +524,7 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/apk': typeof ApkRoute
   '/auth': typeof AuthRouteWithChildren
+  '/feed': typeof FeedRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/leaderboard': typeof LeaderboardRoute
   '/matches': typeof MatchesRoute
@@ -588,6 +596,7 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/apk': typeof ApkRoute
   '/auth': typeof AuthRouteWithChildren
+  '/feed': typeof FeedRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/leaderboard': typeof LeaderboardRoute
   '/matches': typeof MatchesRoute
@@ -659,6 +668,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/apk'
     | '/auth'
+    | '/feed'
     | '/forgot-password'
     | '/leaderboard'
     | '/matches'
@@ -728,6 +738,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/apk'
     | '/auth'
+    | '/feed'
     | '/forgot-password'
     | '/leaderboard'
     | '/matches'
@@ -798,6 +809,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/apk'
     | '/auth'
+    | '/feed'
     | '/forgot-password'
     | '/leaderboard'
     | '/matches'
@@ -870,6 +882,7 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   ApkRoute: typeof ApkRoute
   AuthRoute: typeof AuthRouteWithChildren
+  FeedRoute: typeof FeedRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   LeaderboardRoute: typeof LeaderboardRoute
   MatchesRoute: typeof MatchesRoute
@@ -955,6 +968,13 @@ declare module '@tanstack/react-router' {
       path: '/forgot-password'
       fullPath: '/forgot-password'
       preLoaderRoute: typeof ForgotPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/feed': {
+      id: '/feed'
+      path: '/feed'
+      fullPath: '/feed'
+      preLoaderRoute: typeof FeedRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -1549,6 +1569,7 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   ApkRoute: ApkRoute,
   AuthRoute: AuthRouteWithChildren,
+  FeedRoute: FeedRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
   LeaderboardRoute: LeaderboardRoute,
   MatchesRoute: MatchesRoute,
