@@ -66,11 +66,18 @@ function AuthPage() {
   const [tab, setTab] = useState<"login" | "register">(search.tab ?? "login");
   const [busy, setBusy] = useState(false);
   const [legal, setLegal] = useState<"terms" | "privacy" | null>(null);
+  const [googleEnabled, setGoogleEnabled] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
       if (data.session) navigate({ to: "/dashboard" });
     });
+    supabase
+      .from("website_settings")
+      .select("value")
+      .eq("key", "google_login_enabled")
+      .maybeSingle()
+      .then(({ data }) => setGoogleEnabled(String((data as any)?.value ?? "false") === "true"));
   }, [navigate]);
 
   async function handleGoogle() {
@@ -191,19 +198,22 @@ function AuthPage() {
               />
             )}
 
-            <div className="my-5 flex items-center gap-3">
-              <div className="h-px flex-1 bg-border" />
-              <span className="font-mono text-[10px] tracking-widest text-muted-foreground">OR</span>
-              <div className="h-px flex-1 bg-border" />
-            </div>
-
-            <button
-              onClick={handleGoogle}
-              disabled={busy}
-              className="btn-outline-gold w-full justify-center py-3 text-sm disabled:opacity-60"
-            >
-              CONTINUE WITH GOOGLE
-            </button>
+            {googleEnabled ? (
+              <>
+                <div className="my-5 flex items-center gap-3">
+                  <div className="h-px flex-1 bg-border" />
+                  <span className="font-mono text-[10px] tracking-widest text-muted-foreground">OR</span>
+                  <div className="h-px flex-1 bg-border" />
+                </div>
+                <button
+                  onClick={handleGoogle}
+                  disabled={busy}
+                  className="btn-outline-gold w-full justify-center py-3 text-sm disabled:opacity-60"
+                >
+                  CONTINUE WITH GOOGLE
+                </button>
+              </>
+            ) : null}
 
             <p className="mt-5 text-center text-xs text-muted-foreground">
               By continuing you agree to the{" "}
