@@ -1,6 +1,7 @@
 import { useNavigate, useRouterState } from "@tanstack/react-router";
 import { X } from "lucide-react";
 import { DASH_NAV } from "./DashboardSidebar";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   open: boolean;
