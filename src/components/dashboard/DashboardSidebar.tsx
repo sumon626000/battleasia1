@@ -12,6 +12,7 @@ import {
   User as UserIcon,
   Crown,
   Settings,
+  BarChart3,
 } from "lucide-react";
 
 export const DASH_NAV = [
