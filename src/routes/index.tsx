@@ -195,50 +195,46 @@ function BattleAsiaLanding() {
   const topProfit = useQuery({
     queryKey: ["home", "top-profit"],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data: parts } = await supabase
         .from("match_participants")
-        .select("user_id, prize_bac")
-        .gt("prize_bac", 0);
-      if (error) throw error;
-      const ids = Array.from(new Set((data ?? []).map((r: any) => r.user_id)));
-      const profiles = await fetchProfilesMap(ids);
-      const agg = new Map<string, { name: string; avatar: string | null; total: number }>();
-      (data ?? []).forEach((r: any) => {
-        const p = profiles.get(r.user_id);
-        const cur = agg.get(r.user_id) ?? {
-          name: shortName(p?.in_game_username ?? p?.username),
-          avatar: p?.avatar_url ?? null,
-          total: 0,
-        };
-        cur.total += Number(r.prize_bac ?? 0);
-        agg.set(r.user_id, cur);
+        .select("user_id, prize_bac");
+      const agg = new Map<string, number>();
+      (parts ?? []).forEach((r: any) => {
+        agg.set(r.user_id, (agg.get(r.user_id) ?? 0) + Number(r.prize_bac ?? 0));
       });
-      return Array.from(agg.values()).sort((a, b) => b.total - a.total).slice(0, 5);
+      const { data: profs } = await supabase
+        .from("profiles")
+        .select("id, username, in_game_username, avatar_url")
+        .limit(50);
+      const rows = (profs ?? []).map((p: any) => ({
+        name: shortName(p?.in_game_username ?? p?.username),
+        avatar: p?.avatar_url ?? null,
+        total: agg.get(p.id) ?? 0,
+      }));
+      return rows.sort((a, b) => b.total - a.total).slice(0, 5);
     },
   });
 
   const topKillers = useQuery({
     queryKey: ["home", "top-kills"],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data: parts } = await supabase
         .from("match_participants")
-        .select("user_id, kills")
-        .gt("kills", 0);
-      if (error) throw error;
-      const ids = Array.from(new Set((data ?? []).map((r: any) => r.user_id)));
-      const profiles = await fetchProfilesMap(ids);
-      const agg = new Map<string, { name: string; avatar: string | null; kills: number }>();
-      (data ?? []).forEach((r: any) => {
-        const p = profiles.get(r.user_id);
-        const cur = agg.get(r.user_id) ?? {
-          name: shortName(p?.in_game_username ?? p?.username),
-          avatar: p?.avatar_url ?? null,
-          kills: 0,
-        };
-        cur.kills += Number(r.kills ?? 0);
-        agg.set(r.user_id, cur);
+        .select("user_id, kills");
+      const agg = new Map<string, number>();
+      (parts ?? []).forEach((r: any) => {
+        agg.set(r.user_id, (agg.get(r.user_id) ?? 0) + Number(r.kills ?? 0));
       });
-      return Array.from(agg.values()).sort((a, b) => b.kills - a.kills).slice(0, 5);
+      const { data: profs } = await supabase
+        .from("profiles")
+        .select("id, username, in_game_username, avatar_url")
+        .limit(50);
+      const rows = (profs ?? []).map((p: any) => ({
+        name: shortName(p?.in_game_username ?? p?.username),
+        avatar: p?.avatar_url ?? null,
+        kills: agg.get(p.id) ?? 0,
+      }));
+      return rows.sort((a, b) => b.kills - a.kills).slice(0, 5);
     },
   });
 
