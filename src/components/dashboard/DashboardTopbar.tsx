@@ -44,7 +44,7 @@ export function DashboardTopbar({ profile, onOpenMobileNav }: Props) {
 
         <div className="flex min-w-0 items-center justify-center gap-2 sm:gap-3">
           <div className="hud-panel flex items-center gap-2 px-3 py-1.5">
-            <Coins size={14} className="text-gold" />
+            <CoinIcon size={16} />
             <span className="font-mono text-xs font-bold tabular-nums text-gold">
               {balance.toLocaleString()}
             </span>
