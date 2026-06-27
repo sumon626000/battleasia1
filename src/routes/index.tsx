@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/accordion";
 import heroSoldier from "@/assets/hero-soldier.jpg";
 import phoneApp from "@/assets/phone-app.jpg";
+import bacCoin from "@/assets/battleasia-coin.png";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -209,9 +210,8 @@ function BattleAsiaLanding() {
           {/* BAC card */}
           <div className="hud-panel hud-bracket relative flex flex-col items-center gap-3 p-7 text-center lg:self-center">
             <div className="font-hud absolute left-3 top-3 text-[10px] tracking-[0.2em] text-muted-foreground">// CURRENCY_01</div>
-            <div className="relative mt-3 grid h-20 w-20 place-items-center rounded-full bg-gradient-to-br from-yellow-300 to-yellow-600 shadow-[0_0_40px_-5px_var(--gold)]">
-              <span className="text-3xl font-black text-background">₿</span>
-              <span aria-hidden className="absolute inset-0 rounded-full ring-2 ring-gold/40" />
+            <div className="relative mt-3 h-28 w-28 drop-shadow-[0_0_30px_rgba(212,175,55,0.45)]">
+              <img src={bacCoin} alt="BAC Coin" width={224} height={224} className="h-full w-full object-contain" />
             </div>
             <h3 className="font-display mt-1 text-2xl font-bold text-gold">BAC COIN</h3>
             <p className="text-sm text-muted-foreground">
