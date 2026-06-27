@@ -134,13 +134,16 @@ function MatchesPage() {
             return disabled ? (
               <div key={g.id} className="hud-panel group block overflow-hidden opacity-60 cursor-not-allowed">{inner}</div>
             ) : (
-              <button
+              <div
                 key={g.id}
+                role="button"
+                tabIndex={0}
                 onClick={() => navigate({ to: "/dashboard/matches", search: { game: g.id } })}
-                className="hud-panel group block overflow-hidden text-left transition hover:border-gold/60"
+                onKeyDown={(e) => { if (e.key === "Enter") navigate({ to: "/dashboard/matches", search: { game: g.id } }); }}
+                className="hud-panel group block overflow-hidden text-left transition hover:border-gold/60 cursor-pointer"
               >
                 {inner}
-              </button>
+              </div>
             );
           })}
           {games.isLoading && <div className="col-span-full py-8 text-center text-foreground/40">Loading games...</div>}
