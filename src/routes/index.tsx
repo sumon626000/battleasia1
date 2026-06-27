@@ -690,6 +690,30 @@ function BattleAsiaLanding() {
 
 /* ============== SUB-COMPONENTS ============== */
 
+const RANK_STYLES = {
+  1: {
+    row: "border-gold/70 bg-gradient-to-r from-gold/20 via-gold/8 to-transparent shadow-[0_0_24px_-8px_rgba(212,175,55,0.55)]",
+    badge: "bg-gradient-to-br from-gold to-amber-600 text-background ring-2 ring-gold/40 shadow-[0_0_14px_rgba(212,175,55,0.6)]",
+    icon: Crown,
+    label: "CHAMPION",
+    labelClass: "text-gold",
+  },
+  2: {
+    row: "border-zinc-300/40 bg-gradient-to-r from-zinc-200/12 via-zinc-300/4 to-transparent",
+    badge: "bg-gradient-to-br from-zinc-200 to-zinc-400 text-background ring-2 ring-zinc-300/40",
+    icon: Medal,
+    label: "RUNNER-UP",
+    labelClass: "text-zinc-300",
+  },
+  3: {
+    row: "border-amber-700/50 bg-gradient-to-r from-amber-700/15 via-amber-800/5 to-transparent",
+    badge: "bg-gradient-to-br from-amber-600 to-amber-800 text-background ring-2 ring-amber-700/40",
+    icon: Award,
+    label: "THIRD",
+    labelClass: "text-amber-500",
+  },
+} as const;
+
 type LeaderRow = { rank: number; name: string; avatar: string | null; right: string; sub: string; rightCoin?: boolean };
 function LeaderCard({
   tag, icon: Icon, title, highlight, rows, loading,
@@ -720,31 +744,53 @@ function LeaderCard({
           NO DATA YET
         </div>
       ) : (
-        <ol className="space-y-1.5">
-          {rows.map((r) => (
-            <li key={r.rank} className="flex items-center gap-3 rounded-sm border border-border/60 bg-background/40 p-2.5">
-              <span className={`font-display grid h-7 w-7 shrink-0 place-items-center rounded-sm text-sm font-bold ${
-                r.rank === 1 ? "bg-gold text-background" :
-                r.rank === 2 ? "bg-foreground/80 text-background" :
-                r.rank === 3 ? "bg-amber-700 text-background" :
-                "bg-secondary text-foreground"
-              }`}>{r.rank}</span>
-              {r.avatar ? (
-                <img loading="lazy" decoding="async" src={r.avatar} alt={r.name} className="h-9 w-9 shrink-0 rounded-full object-cover ring-1 ring-border" />
-              ) : (
-                <div className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-secondary font-bold text-foreground/80">
-                  {r.name.charAt(0).toUpperCase()}
+        <ol className="space-y-2">
+          {rows.map((r) => {
+            const elite = RANK_STYLES[r.rank as 1 | 2 | 3];
+            const RankIcon = elite?.icon;
+            return (
+              <li
+                key={r.rank}
+                className={`relative flex items-center gap-3 overflow-hidden rounded-sm border p-2.5 transition ${
+                  elite ? elite.row : "border-border/60 bg-background/40 hover:border-gold/30"
+                }`}
+              >
+                {r.rank === 1 && (
+                  <span aria-hidden className="pointer-events-none absolute inset-y-0 left-0 w-[3px] bg-gradient-to-b from-gold via-amber-500 to-gold/50" />
+                )}
+                <span className={`font-display relative grid h-9 w-9 shrink-0 place-items-center rounded-sm text-sm font-bold ${
+                  elite ? elite.badge : "bg-secondary text-foreground/80"
+                }`}>
+                  {RankIcon ? <RankIcon size={16} /> : r.rank}
+                </span>
+                {r.avatar ? (
+                  <img loading="lazy" decoding="async" src={r.avatar} alt={r.name} className={`h-10 w-10 shrink-0 rounded-full object-cover ring-1 ${elite ? "ring-gold/50" : "ring-border"}`} />
+                ) : (
+                  <div className={`grid h-10 w-10 shrink-0 place-items-center rounded-full font-bold ${
+                    elite ? "bg-gold/15 text-gold ring-1 ring-gold/40" : "bg-secondary text-foreground/80"
+                  }`}>
+                    {r.name.charAt(0).toUpperCase()}
+                  </div>
+                )}
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2">
+                    <div className="truncate text-sm font-semibold">{r.name}</div>
+                    {elite && (
+                      <span className={`font-hud hidden text-[9px] font-bold tracking-[0.2em] sm:inline ${elite.labelClass}`}>
+                        · {elite.label}
+                      </span>
+                    )}
+                  </div>
+                  <div className="font-hud text-[10px] tracking-[0.15em] text-muted-foreground">{r.sub}</div>
                 </div>
-              )}
-              <div className="min-w-0 flex-1">
-                <div className="truncate text-sm font-semibold">{r.name}</div>
-                <div className="font-hud text-[10px] tracking-[0.15em] text-muted-foreground">{r.sub}</div>
-              </div>
-              <div className="font-mono-tab inline-flex items-center gap-1 text-right text-sm font-bold text-gold">
-                {r.rightCoin && <CoinIcon size={12} />}{r.right}
-              </div>
-            </li>
-          ))}
+                <div className={`font-mono-tab inline-flex items-center gap-1 text-right text-sm font-bold ${
+                  r.rank === 1 ? "text-gold text-base" : "text-gold"
+                }`}>
+                  {r.rightCoin && <CoinIcon size={12} />}{r.right}
+                </div>
+              </li>
+            );
+          })}
         </ol>
       )}
     </div>
@@ -785,25 +831,49 @@ function MatchStrip({
         </div>
       ) : (
         <ul className="space-y-2">
-          {items.map((m) => (
-            <li key={m.id} className="flex items-center gap-3 rounded-sm border border-border/60 bg-background/40 p-3 transition hover:border-gold/50">
-              <div className="grid h-10 w-10 shrink-0 place-items-center rounded-sm bg-gold/10 text-gold ring-1 ring-gold/30">
-                <Swords size={16} />
-              </div>
-              <div className="min-w-0 flex-1">
-                <div className="truncate text-sm font-semibold">{m.name}</div>
-                <div className="font-hud text-[10px] tracking-[0.18em] text-muted-foreground">
-                  {m.mode} · {m.map}
+          {items.map((m, idx) => {
+            const rank = idx + 1;
+            const elite = RANK_STYLES[rank as 1 | 2 | 3];
+            const RankIcon = elite?.icon;
+            return (
+              <li
+                key={m.id}
+                className={`relative flex items-center gap-3 overflow-hidden rounded-sm border p-3 transition ${
+                  elite ? elite.row : "border-border/60 bg-background/40 hover:border-gold/50"
+                }`}
+              >
+                {rank === 1 && (
+                  <span aria-hidden className="pointer-events-none absolute inset-y-0 left-0 w-[3px] bg-gradient-to-b from-gold via-amber-500 to-gold/50" />
+                )}
+                <div className={`relative grid h-11 w-11 shrink-0 place-items-center rounded-sm ${
+                  elite ? elite.badge : "bg-gold/10 text-gold ring-1 ring-gold/30"
+                }`}>
+                  {RankIcon ? <RankIcon size={18} /> : <Swords size={16} />}
                 </div>
-              </div>
-              <div className="text-right">
-                <div className="font-mono-tab inline-flex items-center gap-1 text-sm font-bold text-gold">
-                  <CoinIcon size={12} />{m.value}
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2">
+                    <div className="truncate text-sm font-semibold">{m.name}</div>
+                    {elite && (
+                      <span className={`font-hud hidden text-[9px] font-bold tracking-[0.2em] sm:inline ${elite.labelClass}`}>
+                        · {elite.label}
+                      </span>
+                    )}
+                  </div>
+                  <div className="font-hud text-[10px] tracking-[0.18em] text-muted-foreground">
+                    {m.mode} · {m.map}
+                  </div>
                 </div>
-                <div className="font-hud text-[9px] tracking-[0.18em] text-muted-foreground">{m.valueLabel}</div>
-              </div>
-            </li>
-          ))}
+                <div className="text-right">
+                  <div className={`font-mono-tab inline-flex items-center gap-1 font-bold text-gold ${
+                    rank === 1 ? "text-base" : "text-sm"
+                  }`}>
+                    <CoinIcon size={12} />{m.value}
+                  </div>
+                  <div className="font-hud text-[9px] tracking-[0.18em] text-muted-foreground">{m.valueLabel}</div>
+                </div>
+              </li>
+            );
+          })}
         </ul>
       )}
     </div>
