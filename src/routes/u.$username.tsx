@@ -187,33 +187,32 @@ function PublicProfilePage() {
         ) : (
           <div className="grid grid-cols-3 gap-1 sm:gap-2">
             {posts.map((p: any) => {
-              const media = p.social_post_media?.[0];
+              const extra = p.social_post_media?.[0];
+              const mediaUrl = p.media_url || extra?.url || null;
+              const mediaType = p.media_type || extra?.media_type || null;
               return (
                 <Link
                   key={p.id}
                   to="/feed"
                   className="relative aspect-square group overflow-hidden border border-border/40 bg-secondary"
                 >
-                  {media?.media_url ? (
-                    media.media_type === "video" ? (
-                      <video src={media.media_url} className="h-full w-full object-cover" muted />
+                  {mediaUrl ? (
+                    mediaType === "video" ? (
+                      <video src={mediaUrl} className="h-full w-full object-cover" muted />
                     ) : (
-                      <img loading="lazy" src={media.media_url} alt="" className="h-full w-full object-cover transition group-hover:scale-105" />
+                      <img loading="lazy" src={mediaUrl} alt="" className="h-full w-full object-cover transition group-hover:scale-105" />
                     )
                   ) : (
                     <div className="h-full w-full flex items-center justify-center p-2 text-[10px] text-foreground/60 text-center">
                       {p.caption?.slice(0, 80) || "—"}
                     </div>
                   )}
-                  {media?.media_type === "video" && (
+                  {mediaType === "video" && (
                     <Video className="absolute top-1.5 right-1.5 h-3.5 w-3.5 text-white drop-shadow" />
                   )}
-                  {(p.social_post_media?.length ?? 0) > 1 && (
-                    <ImageIcon className="absolute top-1.5 right-1.5 h-3.5 w-3.5 text-white drop-shadow" />
-                  )}
                   <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-4 text-white text-xs font-bold">
-                    <span className="flex items-center gap-1"><Heart size={14} fill="currentColor" /> {p.like_count ?? 0}</span>
-                    <span className="flex items-center gap-1"><MessageCircle size={14} fill="currentColor" /> {p.comment_count ?? 0}</span>
+                    <span className="flex items-center gap-1"><Heart size={14} fill="currentColor" /> {p.likes_count ?? 0}</span>
+                    <span className="flex items-center gap-1"><MessageCircle size={14} fill="currentColor" /> {p.comments_count ?? 0}</span>
                   </div>
                 </Link>
               );
