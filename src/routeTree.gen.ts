@@ -49,6 +49,7 @@ import { Route as AuthenticatedDashboardNotificationsRouteImport } from './route
 import { Route as AuthenticatedDashboardMyMatchesRouteImport } from './routes/_authenticated/dashboard.my-matches'
 import { Route as AuthenticatedDashboardMatchesRouteImport } from './routes/_authenticated/dashboard.matches'
 import { Route as AuthenticatedDashboardFeedRouteImport } from './routes/_authenticated/dashboard.feed'
+import { Route as AuthenticatedDashboardBlocksRouteImport } from './routes/_authenticated/dashboard.blocks'
 import { Route as AdminAdminWithdrawalsRouteImport } from './routes/_admin/admin.withdrawals'
 import { Route as AdminAdminWithdrawConfigRouteImport } from './routes/_admin/admin.withdraw-config'
 import { Route as AdminAdminUsersRouteImport } from './routes/_admin/admin.users'
@@ -295,6 +296,12 @@ const AuthenticatedDashboardFeedRoute =
     path: '/feed',
     getParentRoute: () => AuthenticatedDashboardRoute,
   } as any)
+const AuthenticatedDashboardBlocksRoute =
+  AuthenticatedDashboardBlocksRouteImport.update({
+    id: '/blocks',
+    path: '/blocks',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
 const AdminAdminWithdrawalsRoute = AdminAdminWithdrawalsRouteImport.update({
   id: '/admin/withdrawals',
   path: '/admin/withdrawals',
@@ -519,6 +526,7 @@ export interface FileRoutesByFullPath {
   '/admin/users': typeof AdminAdminUsersRoute
   '/admin/withdraw-config': typeof AdminAdminWithdrawConfigRoute
   '/admin/withdrawals': typeof AdminAdminWithdrawalsRoute
+  '/dashboard/blocks': typeof AuthenticatedDashboardBlocksRoute
   '/dashboard/feed': typeof AuthenticatedDashboardFeedRouteWithChildren
   '/dashboard/matches': typeof AuthenticatedDashboardMatchesRouteWithChildren
   '/dashboard/my-matches': typeof AuthenticatedDashboardMyMatchesRoute
@@ -591,6 +599,7 @@ export interface FileRoutesByTo {
   '/admin/users': typeof AdminAdminUsersRoute
   '/admin/withdraw-config': typeof AdminAdminWithdrawConfigRoute
   '/admin/withdrawals': typeof AdminAdminWithdrawalsRoute
+  '/dashboard/blocks': typeof AuthenticatedDashboardBlocksRoute
   '/dashboard/feed': typeof AuthenticatedDashboardFeedRouteWithChildren
   '/dashboard/matches': typeof AuthenticatedDashboardMatchesRouteWithChildren
   '/dashboard/my-matches': typeof AuthenticatedDashboardMyMatchesRoute
@@ -667,6 +676,7 @@ export interface FileRoutesById {
   '/_admin/admin/users': typeof AdminAdminUsersRoute
   '/_admin/admin/withdraw-config': typeof AdminAdminWithdrawConfigRoute
   '/_admin/admin/withdrawals': typeof AdminAdminWithdrawalsRoute
+  '/_authenticated/dashboard/blocks': typeof AuthenticatedDashboardBlocksRoute
   '/_authenticated/dashboard/feed': typeof AuthenticatedDashboardFeedRouteWithChildren
   '/_authenticated/dashboard/matches': typeof AuthenticatedDashboardMatchesRouteWithChildren
   '/_authenticated/dashboard/my-matches': typeof AuthenticatedDashboardMyMatchesRoute
@@ -742,6 +752,7 @@ export interface FileRouteTypes {
     | '/admin/users'
     | '/admin/withdraw-config'
     | '/admin/withdrawals'
+    | '/dashboard/blocks'
     | '/dashboard/feed'
     | '/dashboard/matches'
     | '/dashboard/my-matches'
@@ -814,6 +825,7 @@ export interface FileRouteTypes {
     | '/admin/users'
     | '/admin/withdraw-config'
     | '/admin/withdrawals'
+    | '/dashboard/blocks'
     | '/dashboard/feed'
     | '/dashboard/matches'
     | '/dashboard/my-matches'
@@ -889,6 +901,7 @@ export interface FileRouteTypes {
     | '/_admin/admin/users'
     | '/_admin/admin/withdraw-config'
     | '/_admin/admin/withdrawals'
+    | '/_authenticated/dashboard/blocks'
     | '/_authenticated/dashboard/feed'
     | '/_authenticated/dashboard/matches'
     | '/_authenticated/dashboard/my-matches'
@@ -1214,6 +1227,13 @@ declare module '@tanstack/react-router' {
       path: '/feed'
       fullPath: '/dashboard/feed'
       preLoaderRoute: typeof AuthenticatedDashboardFeedRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
+    '/_authenticated/dashboard/blocks': {
+      id: '/_authenticated/dashboard/blocks'
+      path: '/blocks'
+      fullPath: '/dashboard/blocks'
+      preLoaderRoute: typeof AuthenticatedDashboardBlocksRouteImport
       parentRoute: typeof AuthenticatedDashboardRoute
     }
     '/_admin/admin/withdrawals': {
@@ -1555,6 +1575,7 @@ const AuthenticatedDashboardMatchesRouteWithChildren =
   )
 
 interface AuthenticatedDashboardRouteChildren {
+  AuthenticatedDashboardBlocksRoute: typeof AuthenticatedDashboardBlocksRoute
   AuthenticatedDashboardFeedRoute: typeof AuthenticatedDashboardFeedRouteWithChildren
   AuthenticatedDashboardMatchesRoute: typeof AuthenticatedDashboardMatchesRouteWithChildren
   AuthenticatedDashboardMyMatchesRoute: typeof AuthenticatedDashboardMyMatchesRoute
@@ -1573,6 +1594,7 @@ interface AuthenticatedDashboardRouteChildren {
 
 const AuthenticatedDashboardRouteChildren: AuthenticatedDashboardRouteChildren =
   {
+    AuthenticatedDashboardBlocksRoute: AuthenticatedDashboardBlocksRoute,
     AuthenticatedDashboardFeedRoute:
       AuthenticatedDashboardFeedRouteWithChildren,
     AuthenticatedDashboardMatchesRoute:
