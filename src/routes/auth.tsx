@@ -198,12 +198,6 @@ function AuthPage() {
               />
             )}
 
-            <div className="my-5 flex items-center gap-3">
-              <div className="h-px flex-1 bg-border" />
-              <span className="font-mono text-[10px] tracking-widest text-muted-foreground">OR</span>
-              <div className="h-px flex-1 bg-border" />
-            </div>
-
             {googleEnabled ? (
               <>
                 <div className="my-5 flex items-center gap-3">
@@ -220,6 +214,13 @@ function AuthPage() {
                 </button>
               </>
             ) : null}
+
+            <p className="mt-5 text-center text-xs text-muted-foreground">
+              By continuing you agree to the{" "}
+              <button onClick={() => setLegal("terms")} className="text-gold hover:underline">
+                Terms
+              </button>{" "}
+              and{" "}
               <button onClick={() => setLegal("privacy")} className="text-gold hover:underline">
                 Privacy Policy
               </button>
