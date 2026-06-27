@@ -158,9 +158,14 @@ function FeedPage() {
               <RefreshCw size={14} />
             </button>
             {isAuthenticated ? (
-              <Link to="/feed/new" className="btn-gold inline-flex items-center gap-1.5 px-3 py-2 text-xs">
-                <Plus size={14} /> Post
-              </Link>
+              <>
+                <Link to="/dashboard/story/new" className="btn-outline-gold inline-flex items-center gap-1.5 px-3 py-2 text-xs">
+                  <Plus size={14} /> Story
+                </Link>
+                <Link to="/feed/new" className="btn-gold inline-flex items-center gap-1.5 px-3 py-2 text-xs">
+                  <Plus size={14} /> Post
+                </Link>
+              </>
             ) : (
               <Link to="/auth" className="btn-gold px-3 py-2 text-xs">Sign in</Link>
             )}
