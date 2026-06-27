@@ -480,8 +480,10 @@ function BattleAsiaLanding() {
       </section>
 
       {/* ============ ABOUT ============ */}
-      <section className="border-y border-border/60 bg-card/30 py-14">
-        <div className="mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-[1.5fr,1fr]">
+      <section className="relative overflow-hidden border-y border-border/60 bg-card/30 py-14">
+        <img loading="lazy" decoding="async" src={pubgAirdrop} alt="" aria-hidden width={1024} height={1024} className="pointer-events-none absolute -right-20 top-1/2 hidden h-[120%] w-[55%] -translate-y-1/2 object-cover opacity-15 lg:block" />
+        <div aria-hidden className="pointer-events-none absolute inset-0 hidden bg-gradient-to-r from-background via-background/60 to-transparent lg:block" />
+        <div className="relative mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-[1.5fr,1fr]">
           <div>
             <div className="chip-tag mb-3"><Star size={12} /> ABOUT</div>
             <h2 className="font-display text-3xl font-bold sm:text-4xl">
@@ -501,7 +503,7 @@ function BattleAsiaLanding() {
           </div>
           <div className="grid grid-cols-2 gap-3">
             {ABOUT_CARDS.map((c) => (
-              <div key={c.k} className="hud-panel grid place-items-center p-5 text-center">
+              <div key={c.k} className="hud-panel grid place-items-center bg-background/70 p-5 text-center backdrop-blur">
                 <div className="font-display inline-flex items-center gap-1 text-3xl font-bold text-gold">
                   {c.coin && <CoinIcon size={22} />}{c.v}
                 </div>
