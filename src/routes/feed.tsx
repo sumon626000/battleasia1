@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Heart, MessageCircle, Send, Plus, RefreshCw, MoreHorizontal, Bookmark } from "lucide-react";
 import { toast } from "sonner";
-import { SiteShell } from "@/components/site/SiteShell";
+
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { CommentsThread, LikeBurst } from "@/components/feed/CommentsThread";
