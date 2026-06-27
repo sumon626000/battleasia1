@@ -89,25 +89,74 @@
 }
 
 @utility btn-gold {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
   background: var(--gradient-gold);
   color: var(--gold-foreground);
-  font-weight: 700;
-  letter-spacing: 0.05em;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
   box-shadow: var(--shadow-gold);
-  transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
-  &:hover { filter: brightness(1.08); transform: translateY(-1px); }
+  transition: transform 0.25s cubic-bezier(.2,.8,.2,1), box-shadow 0.25s ease, filter 0.25s ease;
+}
+@utility btn-gold {
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(120deg, transparent 30%, oklch(1 0 0 / 0.55) 50%, transparent 70%);
+    transform: translateX(-120%);
+    transition: transform 0.7s cubic-bezier(.2,.8,.2,1);
+    pointer-events: none;
+    z-index: 1;
+  }
+  &:hover {
+    filter: brightness(1.1);
+    transform: translateY(-2px);
+    box-shadow: 0 0 0 1px var(--gold),
+                0 12px 36px -6px color-mix(in oklab, var(--gold) 70%, transparent),
+                inset 0 1px 0 oklch(1 0 0 / 0.35);
+  }
+  &:hover::before { transform: translateX(120%); }
   &:active { transform: translateY(0); }
 }
 
 @utility btn-outline-gold {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
   border: 2px solid var(--gold);
   color: var(--gold);
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  background: transparent;
-  transition: all 0.15s ease;
-  &:hover { background: color-mix(in oklab, var(--gold) 15%, transparent); }
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: color-mix(in oklab, var(--gold) 6%, transparent);
+  clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+  transition: all 0.25s cubic-bezier(.2,.8,.2,1);
 }
+@utility btn-outline-gold {
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(120deg, transparent 30%, color-mix(in oklab, var(--gold) 35%, transparent) 50%, transparent 70%);
+    transform: translateX(-120%);
+    transition: transform 0.7s cubic-bezier(.2,.8,.2,1);
+    pointer-events: none;
+  }
+  &:hover {
+    background: color-mix(in oklab, var(--gold) 18%, transparent);
+    color: oklch(0.98 0 0);
+    transform: translateY(-2px);
+    box-shadow: 0 0 0 1px var(--gold),
+                0 10px 30px -8px color-mix(in oklab, var(--gold) 50%, transparent);
+  }
+  &:hover::before { transform: translateX(120%); }
+  &:active { transform: translateY(0); }
+}
+
 
 @utility text-gold { color: var(--gold); }
 @utility bg-gold { background-color: var(--gold); }
