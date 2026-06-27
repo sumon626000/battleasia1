@@ -4,7 +4,7 @@ import { z } from "zod";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Trophy, Save, Upload } from "lucide-react";
+import { Trophy, Save, Upload, FileSpreadsheet } from "lucide-react";
 
 const search = z.object({ matchId: z.coerce.number().optional() });
 
