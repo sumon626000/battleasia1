@@ -1831,6 +1831,10 @@ export type Database = {
         Args: { p_id: number }
         Returns: undefined
       }
+      admin_review_delete_request: {
+        Args: { p_approve: boolean; p_id: string; p_note?: string }
+        Returns: undefined
+      }
       admin_review_deposit: {
         Args: { p_approve: boolean; p_id: number; p_reason?: string }
         Returns: undefined
