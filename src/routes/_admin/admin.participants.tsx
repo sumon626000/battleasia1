@@ -36,7 +36,7 @@ function AdminParticipantsPage() {
         .select("*, matches:matches!match_participants_match_id_fkey(match_name), profiles:profiles!match_participants_user_id_fkey(username, pubg_id)")
         .order("created_at", { ascending: false })
         .limit(500);
-      if (status !== "all") req = req.eq("status", status as "joined" | "completed" | "refunded" | "cancelled");
+      if (status !== "all") req = req.eq("status", status as "joined" | "win" | "loss" | "pending" | "refunded" | "cancelled");
       if (from) req = req.gte("created_at", from);
       if (to) req = req.lte("created_at", `${to}T23:59:59`);
       const { data, error } = await req;
@@ -100,7 +100,7 @@ function AdminParticipantsPage() {
 
       <div className="hud-panel grid gap-3 p-3 md:grid-cols-4">
         <select value={status} onChange={(e) => setStatus(e.target.value)} className="rounded border border-border/60 bg-background/60 px-2 py-1.5 font-hud text-xs">
-          {["all", "joined", "completed", "refunded", "cancelled"].map((s) => (
+          {["all", "joined", "win", "loss", "pending", "refunded", "cancelled"].map((s) => (
             <option key={s} value={s}>{s}</option>
           ))}
         </select>
