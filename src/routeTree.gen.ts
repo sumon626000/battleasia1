@@ -35,6 +35,7 @@ import { Route as AdminAdminTemplatesRouteImport } from './routes/_admin/admin.t
 import { Route as AdminAdminSupportRouteImport } from './routes/_admin/admin.support'
 import { Route as AdminAdminShopRouteImport } from './routes/_admin/admin.shop'
 import { Route as AdminAdminSettingsRouteImport } from './routes/_admin/admin.settings'
+import { Route as AdminAdminSecurityRouteImport } from './routes/_admin/admin.security'
 import { Route as AdminAdminResultsRouteImport } from './routes/_admin/admin.results'
 import { Route as AdminAdminReferralConfigRouteImport } from './routes/_admin/admin.referral-config'
 import { Route as AdminAdminPremiumRouteImport } from './routes/_admin/admin.premium'
@@ -192,6 +193,11 @@ const AdminAdminSettingsRoute = AdminAdminSettingsRouteImport.update({
   path: '/admin/settings',
   getParentRoute: () => AdminRouteRoute,
 } as any)
+const AdminAdminSecurityRoute = AdminAdminSecurityRouteImport.update({
+  id: '/admin/security',
+  path: '/admin/security',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
 const AdminAdminResultsRoute = AdminAdminResultsRouteImport.update({
   id: '/admin/results',
   path: '/admin/results',
@@ -304,6 +310,7 @@ export interface FileRoutesByFullPath {
   '/admin/premium': typeof AdminAdminPremiumRoute
   '/admin/referral-config': typeof AdminAdminReferralConfigRoute
   '/admin/results': typeof AdminAdminResultsRoute
+  '/admin/security': typeof AdminAdminSecurityRoute
   '/admin/settings': typeof AdminAdminSettingsRoute
   '/admin/shop': typeof AdminAdminShopRoute
   '/admin/support': typeof AdminAdminSupportRoute
@@ -347,6 +354,7 @@ export interface FileRoutesByTo {
   '/admin/premium': typeof AdminAdminPremiumRoute
   '/admin/referral-config': typeof AdminAdminReferralConfigRoute
   '/admin/results': typeof AdminAdminResultsRoute
+  '/admin/security': typeof AdminAdminSecurityRoute
   '/admin/settings': typeof AdminAdminSettingsRoute
   '/admin/shop': typeof AdminAdminShopRoute
   '/admin/support': typeof AdminAdminSupportRoute
@@ -393,6 +401,7 @@ export interface FileRoutesById {
   '/_admin/admin/premium': typeof AdminAdminPremiumRoute
   '/_admin/admin/referral-config': typeof AdminAdminReferralConfigRoute
   '/_admin/admin/results': typeof AdminAdminResultsRoute
+  '/_admin/admin/security': typeof AdminAdminSecurityRoute
   '/_admin/admin/settings': typeof AdminAdminSettingsRoute
   '/_admin/admin/shop': typeof AdminAdminShopRoute
   '/_admin/admin/support': typeof AdminAdminSupportRoute
@@ -438,6 +447,7 @@ export interface FileRouteTypes {
     | '/admin/premium'
     | '/admin/referral-config'
     | '/admin/results'
+    | '/admin/security'
     | '/admin/settings'
     | '/admin/shop'
     | '/admin/support'
@@ -481,6 +491,7 @@ export interface FileRouteTypes {
     | '/admin/premium'
     | '/admin/referral-config'
     | '/admin/results'
+    | '/admin/security'
     | '/admin/settings'
     | '/admin/shop'
     | '/admin/support'
@@ -526,6 +537,7 @@ export interface FileRouteTypes {
     | '/_admin/admin/premium'
     | '/_admin/admin/referral-config'
     | '/_admin/admin/results'
+    | '/_admin/admin/security'
     | '/_admin/admin/settings'
     | '/_admin/admin/shop'
     | '/_admin/admin/support'
@@ -742,6 +754,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAdminSettingsRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/_admin/admin/security': {
+      id: '/_admin/admin/security'
+      path: '/admin/security'
+      fullPath: '/admin/security'
+      preLoaderRoute: typeof AdminAdminSecurityRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
     '/_admin/admin/results': {
       id: '/_admin/admin/results'
       path: '/admin/results'
@@ -880,6 +899,7 @@ interface AdminRouteRouteChildren {
   AdminAdminPremiumRoute: typeof AdminAdminPremiumRoute
   AdminAdminReferralConfigRoute: typeof AdminAdminReferralConfigRoute
   AdminAdminResultsRoute: typeof AdminAdminResultsRoute
+  AdminAdminSecurityRoute: typeof AdminAdminSecurityRoute
   AdminAdminSettingsRoute: typeof AdminAdminSettingsRoute
   AdminAdminShopRoute: typeof AdminAdminShopRoute
   AdminAdminSupportRoute: typeof AdminAdminSupportRoute
@@ -906,6 +926,7 @@ const AdminRouteRouteChildren: AdminRouteRouteChildren = {
   AdminAdminPremiumRoute: AdminAdminPremiumRoute,
   AdminAdminReferralConfigRoute: AdminAdminReferralConfigRoute,
   AdminAdminResultsRoute: AdminAdminResultsRoute,
+  AdminAdminSecurityRoute: AdminAdminSecurityRoute,
   AdminAdminSettingsRoute: AdminAdminSettingsRoute,
   AdminAdminShopRoute: AdminAdminShopRoute,
   AdminAdminSupportRoute: AdminAdminSupportRoute,

@@ -19,6 +19,9 @@ import {
   Settings,
   Smartphone,
   FileText,
+  Crown,
+  Mail,
+  ShieldAlert,
 } from "lucide-react";
 
 export const ADMIN_NAV = [
