@@ -49,7 +49,7 @@ export function SiteFooter() {
         <div className="grid gap-10 lg:grid-cols-6">
           <div className="lg:col-span-2">
             <a href="/" className="flex items-center gap-3">
-              <img loading="lazy" decoding="async" src={logoShield} alt="Battle Asia" width={72} height={72} className="h-16 w-16 object-contain drop-shadow-[0_0_14px_rgba(255,176,32,0.4)]" />
+              <img loading="lazy" decoding="async" src={logoShield} alt="Battle Asia" width={96} height={96} className="h-20 w-20 object-contain drop-shadow-[0_0_18px_rgba(255,176,32,0.45)] sm:h-24 sm:w-24" />
               <span className="font-display text-2xl font-bold leading-none tracking-wide">
                 <span className="block">BATTLE</span>
                 <span className="block text-gold">ASIA</span>

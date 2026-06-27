@@ -36,7 +36,7 @@ export function SiteHeader() {
     <header className="sticky top-0 z-50 border-b border-border/70 bg-background/85 backdrop-blur-xl">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
         <Link to="/" className="group flex items-center gap-2.5">
-          <img loading="eager" decoding="async" src={logoShield} alt="Battle Asia" width={88} height={88} className="h-20 w-20 object-contain drop-shadow-[0_0_16px_rgba(255,176,32,0.45)] transition group-hover:drop-shadow-[0_0_24px_rgba(255,176,32,0.65)]" />
+          <img loading="eager" decoding="async" src={logoShield} alt="Battle Asia" width={112} height={112} className="h-24 w-24 object-contain drop-shadow-[0_0_18px_rgba(255,176,32,0.5)] transition group-hover:drop-shadow-[0_0_28px_rgba(255,176,32,0.7)] sm:h-28 sm:w-28" />
 
           <span className="font-display text-xl font-bold leading-none tracking-wide">
             <span className="block">BATTLE</span>

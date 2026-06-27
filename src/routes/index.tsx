@@ -21,6 +21,11 @@ import modeSoloBg from "@/assets/mode-solo.jpg";
 import modeDuoBg from "@/assets/mode-duo.jpg";
 import modeSquadBg from "@/assets/mode-squad.jpg";
 import modeTdmBg from "@/assets/mode-tdm.jpg";
+import pubgSquadAction from "@/assets/pubg-squad-action.jpg";
+import pubgVehicleChase from "@/assets/pubg-vehicle-chase.jpg";
+import pubgSniperRooftop from "@/assets/pubg-sniper-rooftop.jpg";
+import pubgAirdrop from "@/assets/pubg-airdrop.jpg";
+
 
 
 export const Route = createFileRoute("/")({
@@ -361,6 +366,8 @@ function BattleAsiaLanding() {
       {/* ============ BATTLEASIA PULSE ============ */}
       <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
         <div className="hud-panel hud-bracket relative overflow-hidden p-6 sm:p-8">
+          <img loading="lazy" decoding="async" src={pubgSniperRooftop} alt="" aria-hidden width={1792} height={896} className="absolute inset-0 h-full w-full object-cover opacity-20" />
+          <div aria-hidden className="absolute inset-0 bg-gradient-to-r from-background via-background/85 to-background/40" />
           <div aria-hidden className="absolute inset-0 bg-grid-hud opacity-30" />
           <div className="relative grid gap-6 lg:grid-cols-[1fr,auto] lg:items-center">
             <div>
@@ -402,6 +409,8 @@ function BattleAsiaLanding() {
       {/* ============ PLAY NOW BANNER ============ */}
       <section className="mx-auto max-w-7xl px-4 pb-6 sm:px-6">
         <div className="hud-panel hud-bracket relative overflow-hidden p-6 sm:p-8">
+          <img loading="lazy" decoding="async" src={pubgVehicleChase} alt="" aria-hidden width={1792} height={896} className="absolute inset-0 h-full w-full object-cover opacity-25" />
+          <div aria-hidden className="absolute inset-0 bg-gradient-to-r from-background via-background/80 to-background/30" />
           <div aria-hidden className="absolute inset-0 bg-grid-hud opacity-20" />
           <div aria-hidden className="absolute -right-12 -top-12 h-48 w-48 rounded-full bg-gold/10 blur-3xl" />
           <div className="relative grid gap-5 lg:grid-cols-[1fr,auto] lg:items-center">
@@ -471,8 +480,10 @@ function BattleAsiaLanding() {
       </section>
 
       {/* ============ ABOUT ============ */}
-      <section className="border-y border-border/60 bg-card/30 py-14">
-        <div className="mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-[1.5fr,1fr]">
+      <section className="relative overflow-hidden border-y border-border/60 bg-card/30 py-14">
+        <img loading="lazy" decoding="async" src={pubgAirdrop} alt="" aria-hidden width={1024} height={1024} className="pointer-events-none absolute -right-20 top-1/2 hidden h-[120%] w-[55%] -translate-y-1/2 object-cover opacity-15 lg:block" />
+        <div aria-hidden className="pointer-events-none absolute inset-0 hidden bg-gradient-to-r from-background via-background/60 to-transparent lg:block" />
+        <div className="relative mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-[1.5fr,1fr]">
           <div>
             <div className="chip-tag mb-3"><Star size={12} /> ABOUT</div>
             <h2 className="font-display text-3xl font-bold sm:text-4xl">
@@ -492,7 +503,7 @@ function BattleAsiaLanding() {
           </div>
           <div className="grid grid-cols-2 gap-3">
             {ABOUT_CARDS.map((c) => (
-              <div key={c.k} className="hud-panel grid place-items-center p-5 text-center">
+              <div key={c.k} className="hud-panel grid place-items-center bg-background/70 p-5 text-center backdrop-blur">
                 <div className="font-display inline-flex items-center gap-1 text-3xl font-bold text-gold">
                   {c.coin && <CoinIcon size={22} />}{c.v}
                 </div>
@@ -632,6 +643,8 @@ function BattleAsiaLanding() {
 
       {/* ============ CTA BAND ============ */}
       <section className="relative overflow-hidden border-y border-gold/30 bg-gradient-to-r from-card via-background to-card">
+        <img loading="lazy" decoding="async" src={pubgSquadAction} alt="" aria-hidden width={1792} height={896} className="absolute inset-0 h-full w-full object-cover opacity-30" />
+        <div aria-hidden className="absolute inset-0 bg-gradient-to-r from-background via-background/70 to-background/40" />
         <div aria-hidden className="absolute inset-0 bg-grid-hud opacity-30" />
         <div className="relative mx-auto flex max-w-7xl flex-col items-center justify-between gap-5 px-4 py-10 sm:px-6 md:flex-row">
           <div>
