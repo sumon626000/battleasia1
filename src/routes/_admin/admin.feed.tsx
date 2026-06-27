@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { ImageUploader } from "@/components/admin/ImageUploader";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
