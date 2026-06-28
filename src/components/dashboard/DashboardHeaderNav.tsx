@@ -9,6 +9,7 @@ import {
   Users,
   ChevronDown,
   Trophy,
+  BarChart3,
   Crown,
   MessageSquare,
   User as UserIcon,
