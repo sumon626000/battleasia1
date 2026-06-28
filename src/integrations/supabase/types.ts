@@ -1328,6 +1328,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          active_session_token: string | null
           active_theme: string | null
           avatar_url: string | null
           bac_coin_balance: number
@@ -1355,6 +1356,7 @@ export type Database = {
           username: string | null
         }
         Insert: {
+          active_session_token?: string | null
           active_theme?: string | null
           avatar_url?: string | null
           bac_coin_balance?: number
@@ -1382,6 +1384,7 @@ export type Database = {
           username?: string | null
         }
         Update: {
+          active_session_token?: string | null
           active_theme?: string | null
           avatar_url?: string | null
           bac_coin_balance?: number
@@ -2641,6 +2644,7 @@ export type Database = {
         Args: { _action: string; _max: number; _window_secs: number }
         Returns: undefined
       }
+      claim_active_session: { Args: { _token: string }; Returns: undefined }
       claim_daily_login: { Args: never; Returns: Json }
       claim_quest_reward: { Args: { _quest_id: string }; Returns: Json }
       close_support_ticket: {
@@ -2668,6 +2672,7 @@ export type Database = {
         Args: { p_post_id: string }
         Returns: number
       }
+      is_active_session: { Args: { _token: string }; Returns: boolean }
       is_admin: { Args: never; Returns: boolean }
       is_blocked_between: { Args: { a: string; b: string }; Returns: boolean }
       is_super_admin: { Args: never; Returns: boolean }
