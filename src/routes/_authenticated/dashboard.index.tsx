@@ -268,10 +268,10 @@ function DashboardPage() {
                 <li key={m.id}>
                   <Link
                     to="/dashboard/matches/$matchId"
-                    params={{ matchId: m.id }}
+                    params={{ matchId: String(m.id) }}
                     className="flex items-center justify-between rounded border border-border/40 bg-background/40 px-3 py-2 text-xs hover:border-gold/60 hover:text-gold"
                   >
-                    <span className="truncate">{m.title}</span>
+                    <span className="truncate">{m.match_name}</span>
                     <span className="ml-3 shrink-0 font-mono text-gold">
                       {Number(m.entry_fee_bac ?? 0).toLocaleString()} BAC
                     </span>
