@@ -5,14 +5,25 @@ import { SiteTicker } from "./SiteTicker";
 import { SiteFooter } from "./SiteFooter";
 import { AnnouncementBar } from "./AnnouncementBar";
 import { FeedBottomNav } from "@/components/feed/FeedBottomNav";
+import { DashboardShell } from "@/components/dashboard/DashboardShell";
+import { useAuth } from "@/hooks/use-auth";
 
 export function SiteShell({ children }: { children: ReactNode }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const { isAuthenticated } = useAuth();
+
   const isSocialOrLeaderboard =
     pathname === "/feed" ||
     pathname.startsWith("/feed/") ||
     pathname === "/leaderboard" ||
     pathname.startsWith("/leaderboard/");
+
+  // Logged-in users get the full dashboard chrome (topbar with balance,
+  // dashboard bottom nav HOME/PLAY/FEED/LEADERBOARD/PROFILE) on Social
+  // and Leaderboard pages — same look as inside the dashboard.
+  if (isAuthenticated && isSocialOrLeaderboard) {
+    return <DashboardShell>{children}</DashboardShell>;
+  }
 
   return (
     <div className="relative flex min-h-screen flex-col overflow-x-hidden bg-background text-foreground">
