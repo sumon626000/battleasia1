@@ -389,7 +389,7 @@ function EditorModal({
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           {/* LEFT COLUMN */}
           <div className="space-y-3">
-            <Field label="Game" required>
+            <Field label="Game" required error={errors.game_id}>
               <select
                 className={inp}
                 value={draft.game_id ?? ""}
@@ -402,7 +402,7 @@ function EditorModal({
               </select>
             </Field>
 
-            <Select label="Map" required value={draft.map_name} options={MAP_OPTIONS} onChange={(v) => upd({ map_name: v, map_image_url: MAP_IMAGES[v] ?? draft.map_image_url ?? null, banner_image_url: draft.banner_image_url ?? MAP_IMAGES[v] ?? null })} />
+            <Select label="Map" required error={errors.map_name} value={draft.map_name} options={MAP_OPTIONS} onChange={(v) => upd({ map_name: v, map_image_url: MAP_IMAGES[v] ?? draft.map_image_url ?? null, banner_image_url: draft.banner_image_url ?? MAP_IMAGES[v] ?? null })} />
 
             {/* Map preview */}
             <div className="overflow-hidden rounded border border-border/60 bg-secondary/30">
@@ -422,25 +422,25 @@ function EditorModal({
               </div>
             </div>
 
-            <Field label="Match/Event Name" required>
+            <Field label="Match/Event Name" required error={errors.match_name}>
               <input className={inp} value={draft.match_name ?? ""} onChange={(e) => upd({ match_name: e.target.value })} />
             </Field>
 
-            <Field label="Match Schedule" required>
+            <Field label="Match Schedule" required error={errors.schedule_at}>
               <input type="datetime-local" className={inp} value={draft.schedule_at ?? ""} onChange={(e) => upd({ schedule_at: e.target.value })} />
             </Field>
 
-            <Select label="Match Type" required value={draft.match_type} options={MATCH_TYPE} onChange={(v) => upd({ match_type: v })} />
+            <Select label="Match Type" required error={errors.match_type} value={draft.match_type} options={MATCH_TYPE} onChange={(v) => upd({ match_type: v })} />
 
             <Field label="Platform Fee (%)">
               <input type="number" min={0} className={inp} value={draft.platform_fee_pct ?? ""} onChange={(e) => upd({ platform_fee_pct: e.target.value === "" ? undefined : Number(e.target.value) })} />
-              <span className="mt-1 block font-hud text-[10px] tracking-wider text-foreground/55">Percentage of total income kept by platform</span>
+              <span className="mt-1 block font-hud text-[10px] tracking-wider text-foreground/55">Percentage of total income kept by platform — drives Auto Per Kill</span>
             </Field>
           </div>
 
           {/* RIGHT COLUMN */}
           <div className="space-y-3">
-            <Select label="Game Mode" required value={draft.game_mode} options={GAME_MODE} onChange={(v) => upd({ game_mode: v })} />
+            <Select label="Game Mode" required error={errors.game_mode} value={draft.game_mode} options={GAME_MODE} onChange={(v) => upd({ game_mode: v })} />
 
             <Field label={`Total Kills (${draft.game_mode ?? "Classic"})`}>
               <input
@@ -454,21 +454,21 @@ function EditorModal({
               </span>
             </Field>
 
-            <Field label="Total Player" required>
+            <Field label="Total Player" required error={errors.total_players}>
               <input type="number" min={0} className={inp} value={draft.total_players ?? ""} onChange={(e) => upd({ total_players: e.target.value === "" ? undefined : Number(e.target.value) })} />
             </Field>
 
-            <Select label="Player Mode" required value={draft.player_mode} options={PLAYER_MODE} onChange={(v) => upd({ player_mode: v })} />
+            <Select label="Player Mode" required error={errors.player_mode} value={draft.player_mode} options={PLAYER_MODE} onChange={(v) => upd({ player_mode: v })} />
 
-            <Field label="Room ID" required>
+            <Field label="Room ID" required error={errors.room_id}>
               <input className={inp} value={draft.room_id ?? ""} onChange={(e) => upd({ room_id: e.target.value })} />
             </Field>
 
-            <Field label="Password" required>
+            <Field label="Password" required error={errors.room_password}>
               <input className={inp} value={draft.room_password ?? ""} onChange={(e) => upd({ room_password: e.target.value })} />
             </Field>
 
-            <Field label="Match URL" required>
+            <Field label="Match URL" required error={errors.match_url}>
               <input
                 className={inp}
                 placeholder="example.com/room"
@@ -478,15 +478,29 @@ function EditorModal({
               <span className="mt-1 block font-hud text-[10px] tracking-wider text-foreground/55">https:// will be added automatically if omitted</span>
             </Field>
 
-            <Select label="Set Kill Rate" required value={draft.kill_rate_type} options={KILL_TYPE} onChange={(v) => upd({ kill_rate_type: v })} />
+            <Select label="Set Kill Rate" required error={errors.kill_rate_type} value={draft.kill_rate_type} options={KILL_TYPE} onChange={(v) => upd({ kill_rate_type: v })} />
 
-            <Field label="Entry Fee" required>
+            <Field label="Entry Fee" required error={errors.entry_fee_bac}>
               <input type="number" min={0} className={inp} value={draft.entry_fee_bac ?? ""} onChange={(e) => upd({ entry_fee_bac: e.target.value === "" ? undefined : Number(e.target.value) })} />
             </Field>
 
-            <Field label="Per Kill">
-              <input type="number" min={0} className={inp} value={draft.per_kill_amount_bac ?? ""} onChange={(e) => upd({ per_kill_amount_bac: e.target.value === "" ? undefined : Number(e.target.value) })} />
+            <Field label={isAutoKill ? "Per Kill (Auto)" : "Per Kill"}>
+              <input
+                type="number"
+                min={0}
+                className={inp}
+                value={isAutoKill ? autoPerKill : (draft.per_kill_amount_bac ?? "")}
+                readOnly={isAutoKill}
+                onChange={(e) => upd({ per_kill_amount_bac: e.target.value === "" ? undefined : Number(e.target.value) })}
+              />
+              <span className="mt-1 block font-hud text-[10px] tracking-wider text-foreground/55">
+                {isAutoKill
+                  ? `Auto: (entry × players × (1 − fee%)) ÷ loserCount = (${entryFee} × ${totalPlayers} × (1 − ${feePct}%)) ÷ ${loserCount} = ${autoPerKill}`
+                  : "Manual — enter custom per-kill BAC reward"}
+              </span>
             </Field>
+
+
 
             <label className="flex items-start gap-3 rounded border border-border/60 bg-secondary/30 px-3 py-2">
               <input
