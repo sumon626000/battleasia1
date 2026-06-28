@@ -397,6 +397,39 @@ export type Database = {
         }
         Relationships: []
       }
+      daily_login_streaks: {
+        Row: {
+          created_at: string
+          current_streak: number
+          last_claim_date: string | null
+          longest_streak: number
+          total_bac_earned: number
+          total_claims: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          current_streak?: number
+          last_claim_date?: string | null
+          longest_streak?: number
+          total_bac_earned?: number
+          total_claims?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          current_streak?: number
+          last_claim_date?: string | null
+          longest_streak?: number
+          total_bac_earned?: number
+          total_claims?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       deposits: {
         Row: {
           bac_amount: number
@@ -2325,6 +2358,7 @@ export type Database = {
         Args: { _action: string; _max: number; _window_secs: number }
         Returns: undefined
       }
+      claim_daily_login: { Args: never; Returns: Json }
       close_support_ticket: {
         Args: { p_ticket_id: number }
         Returns: undefined
