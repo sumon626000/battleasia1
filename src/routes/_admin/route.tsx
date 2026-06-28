@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { Outlet, createFileRoute, useNavigate } from "@tanstack/react-router";
+import { Link, Outlet, createFileRoute, useNavigate } from "@tanstack/react-router";
 import { AdminShell } from "@/components/admin/AdminShell";
-import { Shield, Loader2 } from "lucide-react";
+import { Shield, Loader2, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_admin")({
   ssr: false,
@@ -26,35 +27,56 @@ function isAdminFresh(): boolean {
 
 function AdminLayout() {
   const navigate = useNavigate();
-  const [state, setState] = useState<"checking" | "login" | "ok">("checking");
+  const [state, setState] = useState<"checking" | "login" | "no-supabase" | "ok">("checking");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
+  const [supaEmail, setSupaEmail] = useState<string | null>(null);
+
+  async function verifySupabaseAdmin(): Promise<boolean> {
+    const { data: sess } = await supabase.auth.getSession();
+    setSupaEmail(sess.session?.user?.email ?? null);
+    if (!sess.session) return false;
+    const { data, error } = await supabase.rpc("is_admin");
+    if (error) return false;
+    return !!data;
+  }
 
   useEffect(() => {
-    setState(isAdminFresh() ? "ok" : "login");
+    (async () => {
+      if (!isAdminFresh()) {
+        setState("login");
+        return;
+      }
+      const ok = await verifySupabaseAdmin();
+      setState(ok ? "ok" : "no-supabase");
+    })();
   }, []);
 
-  function submit(e: React.FormEvent) {
+  async function submit(e: React.FormEvent) {
     e.preventDefault();
     setBusy(true);
-    setTimeout(() => {
-      if (
-        email.trim().toLowerCase() === ADMIN_EMAIL &&
-        password === ADMIN_PASSWORD
-      ) {
-        try {
-          sessionStorage.setItem(ADMIN_KEY, String(Date.now()));
-        } catch {
-          /* noop */
-        }
-        toast.success("Admin access granted");
-        setState("ok");
-      } else {
-        toast.error("Invalid admin credentials");
-      }
+    if (
+      email.trim().toLowerCase() !== ADMIN_EMAIL ||
+      password !== ADMIN_PASSWORD
+    ) {
+      toast.error("Invalid admin credentials");
       setBusy(false);
-    }, 200);
+      return;
+    }
+    try {
+      sessionStorage.setItem(ADMIN_KEY, String(Date.now()));
+    } catch {
+      /* noop */
+    }
+    const ok = await verifySupabaseAdmin();
+    if (ok) {
+      toast.success("Admin access granted");
+      setState("ok");
+    } else {
+      setState("no-supabase");
+    }
+    setBusy(false);
   }
 
   function signOut() {
@@ -138,6 +160,57 @@ function AdminLayout() {
       </div>
     );
   }
+
+
+
+  if (state === "no-supabase") {
+    return (
+      <div className="grid min-h-screen place-items-center bg-background p-6">
+        <div className="hud-panel w-full max-w-md p-6 text-center">
+          <AlertCircle className="mx-auto mb-3 h-10 w-10 text-red-400" />
+          <h1 className="font-display text-lg uppercase tracking-widest text-red-300">
+            Backend Admin Session Required
+          </h1>
+          <p className="mt-3 text-sm text-foreground/70">
+            The standalone gate is unlocked, but database actions require an
+            account with the <span className="text-gold">admin</span> role on
+            the backend. Sign in with your admin user account first, then come
+            back here.
+          </p>
+          {supaEmail && (
+            <p className="mt-2 font-mono text-xs text-foreground/55">
+              Currently signed in as: {supaEmail} (not admin)
+            </p>
+          )}
+          <div className="mt-5 flex flex-col gap-2">
+            <Link
+              to="/auth"
+              className="btn-gamey w-full px-4 py-2 text-xs"
+            >
+              Sign in as admin
+            </Link>
+            <button
+              onClick={async () => {
+                setState("checking");
+                const ok = await verifySupabaseAdmin();
+                setState(ok ? "ok" : "no-supabase");
+              }}
+              className="w-full rounded border border-border/60 px-4 py-2 font-hud text-xs uppercase tracking-widest text-foreground/70 hover:border-gold hover:text-gold"
+            >
+              Re-check session
+            </button>
+            <button
+              onClick={signOut}
+              className="w-full rounded border border-border/60 px-4 py-2 font-hud text-xs uppercase tracking-widest text-foreground/70 hover:border-red-400 hover:text-red-300"
+            >
+              Exit admin
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
 
   return (
     <AdminShell onAdminSignOut={signOut}>

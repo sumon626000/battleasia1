@@ -1,4 +1,22 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+
+const DRAFT_KEY = "ba_admin_match_draft_v1";
+function loadDraft(): Partial<Match> | null {
+  try {
+    const raw = localStorage.getItem(DRAFT_KEY);
+    return raw ? (JSON.parse(raw) as Partial<Match>) : null;
+  } catch {
+    return null;
+  }
+}
+function saveDraft(d: Partial<Match> | null) {
+  try {
+    if (d) localStorage.setItem(DRAFT_KEY, JSON.stringify(d));
+    else localStorage.removeItem(DRAFT_KEY);
+  } catch {
+    /* noop */
+  }
+}
 import { ImageUploader } from "@/components/admin/ImageUploader";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -90,7 +108,17 @@ function AdminMatchesPage() {
   const qc = useQueryClient();
   const [q, setQ] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
-  const [editing, setEditing] = useState<Partial<Match> | null>(null);
+  const [editing, setEditingState] = useState<Partial<Match> | null>(null);
+  const setEditing = (d: Partial<Match> | null) => {
+    setEditingState(d);
+    saveDraft(d);
+  };
+
+  // Restore unsaved draft on mount (so reload doesn't wipe form data)
+  useEffect(() => {
+    const d = loadDraft();
+    if (d) setEditingState(d);
+  }, []);
 
   const { data, isLoading } = useQuery({
     queryKey: ["admin-matches", statusFilter],
