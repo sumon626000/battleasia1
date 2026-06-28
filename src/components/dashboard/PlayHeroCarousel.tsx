@@ -88,13 +88,13 @@ export function PlayHeroCarousel() {
                 href={liveUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded-sm border border-red-400 bg-red-600 px-4 py-2 font-hud text-xs font-bold uppercase tracking-widest text-white shadow-lg shadow-red-600/60 transition hover:bg-red-500 animate-pulse"
+                className="relative inline-flex items-center gap-2 rounded-sm border-2 border-red-400 bg-red-600 px-4 py-2 font-hud text-xs font-bold uppercase tracking-widest text-white ring-2 ring-red-500/60 ring-offset-2 ring-offset-background shadow-[0_0_20px_rgba(239,68,68,0.85),inset_0_0_12px_rgba(255,255,255,0.25)] transition hover:bg-red-500 animate-pulse"
               >
                 <span className="h-2 w-2 rounded-full bg-white animate-ping" />
                 <PlayCircle size={16} /> Watch Live
               </a>
             ) : (
-              <span className="inline-flex items-center gap-2 rounded-sm border border-red-500/60 bg-red-600/30 px-4 py-2 font-hud text-xs font-bold uppercase tracking-widest text-red-200">
+              <span className="inline-flex items-center gap-2 rounded-sm border-2 border-red-500/60 bg-red-600/30 px-4 py-2 font-hud text-xs font-bold uppercase tracking-widest text-red-200 ring-2 ring-red-500/30 ring-offset-2 ring-offset-background shadow-[0_0_12px_rgba(239,68,68,0.4)]">
                 <PlayCircle size={16} /> Live Soon
               </span>
             )}
