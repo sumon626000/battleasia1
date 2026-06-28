@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Heart, MessageCircle, Send, Plus, RefreshCw, MoreHorizontal, Bookmark, Home, Search, Film, ShoppingBag, User as UserIcon } from "lucide-react";
+import { Heart, MessageCircle, Send, Plus, RefreshCw, MoreHorizontal, Bookmark, Home, Search, Film, ShoppingBag, User as UserIcon, Eye } from "lucide-react";
+import { useRef } from "react";
 import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
@@ -31,6 +32,7 @@ type Post = {
   media_type: string | null;
   likes_count: number;
   comments_count: number;
+  views_count: number;
   created_at: string;
   author?: { username: string | null; full_name: string | null; avatar_url: string | null } | null;
   liked_by_me?: boolean;
@@ -70,7 +72,7 @@ function FeedPage() {
     // Pull a larger window so we can mix followed + viral
     const { data: rows } = await supabase
       .from("social_posts")
-      .select("id,user_id,caption,media_url,media_type,likes_count,comments_count,created_at")
+      .select("id,user_id,caption,media_url,media_type,likes_count,comments_count,views_count,created_at")
       .eq("visibility", "public")
       .order("created_at", { ascending: false })
       .limit(150);
@@ -119,7 +121,7 @@ function FeedPage() {
       .on("postgres_changes", { event: "INSERT", schema: "public", table: "social_posts" }, () => load())
       .on("postgres_changes", { event: "UPDATE", schema: "public", table: "social_posts" }, (payload) => {
         const n = payload.new as any;
-        setPosts((prev) => prev.map((p) => (p.id === n.id ? { ...p, likes_count: n.likes_count, comments_count: n.comments_count } : p)));
+        setPosts((prev) => prev.map((p) => (p.id === n.id ? { ...p, likes_count: n.likes_count, comments_count: n.comments_count, views_count: n.views_count ?? p.views_count } : p)));
       })
       .on("postgres_changes", { event: "DELETE", schema: "public", table: "social_posts" }, (payload) => {
         const o = payload.old as any;
@@ -154,7 +156,9 @@ function FeedPage() {
 
   return (
     <>
-    <div className="mx-auto max-w-[600px] px-2 py-5 pb-24 sm:px-4">
+    <div className="mx-auto grid w-full max-w-[1100px] gap-8 px-2 py-5 pb-24 sm:px-4 lg:grid-cols-[minmax(0,640px)_320px]">
+      <div className="min-w-0">
+
         {/* HUD header */}
         <header className="mb-5 flex items-center justify-between border-b border-border/60 pb-3">
           <div className="min-w-0">
@@ -204,6 +208,32 @@ function FeedPage() {
             ))}
           </ul>
         )}
+      </div>
+      <aside className="hidden lg:block">
+        <div className="sticky top-20 space-y-4">
+          <div className="rounded-xl border border-border/60 bg-card/60 p-4">
+            <div className="font-hud text-[10px] uppercase tracking-widest text-foreground/50 mb-2">Quick actions</div>
+            <div className="flex flex-col gap-2">
+              <Link to="/feed/new" className="btn-gold w-full justify-center inline-flex items-center gap-1.5 px-3 py-2 text-xs"><Plus size={14}/> New post</Link>
+              <Link to="/dashboard/story/new" className="btn-outline-gold w-full justify-center inline-flex items-center gap-1.5 px-3 py-2 text-xs"><Plus size={14}/> Add story</Link>
+              <Link to="/leaderboard" className="btn-outline-gold w-full justify-center inline-flex items-center gap-1.5 px-3 py-2 text-xs">Leaderboard</Link>
+            </div>
+          </div>
+          <div className="rounded-xl border border-border/60 bg-card/60 p-4">
+            <div className="font-hud text-[10px] uppercase tracking-widest text-foreground/50 mb-2">Trending now</div>
+            <ul className="space-y-2 text-xs text-foreground/70">
+              {posts.slice(0, 5).map((p) => (
+                <li key={p.id} className="flex items-center justify-between gap-2">
+                  <Link to="/post/$postId" params={{ postId: p.id }} className="truncate hover:text-gold">
+                    {(p.caption || "Untitled drop").slice(0, 40)}
+                  </Link>
+                  <span className="inline-flex items-center gap-1 font-hud text-[10px] text-foreground/50"><Eye size={12}/>{(p.views_count ?? 0).toLocaleString()}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </aside>
     </div>
     <FeedBottomNav />
     </>
@@ -264,9 +294,35 @@ function PostCard({ post, onLike }: { post: Post; onLike: () => void }) {
   const handle = post.author?.username || post.author?.full_name || "player";
   const initials = handle.slice(0, 2).toUpperCase();
   const [showComments, setShowComments] = useState(false);
+  const [views, setViews] = useState<number>(post.views_count ?? 0);
+  const ref = useRef<HTMLLIElement | null>(null);
+
+  useEffect(() => { setViews(post.views_count ?? 0); }, [post.views_count]);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    let fired = false;
+    const obs = new IntersectionObserver(async (entries) => {
+      for (const e of entries) {
+        if (e.isIntersecting && e.intersectionRatio >= 0.5 && !fired) {
+          fired = true;
+          try {
+            const { data } = await supabase.rpc("increment_social_post_view", { p_post_id: post.id });
+            if (typeof data === "number") setViews(data);
+            else setViews((v) => v + 1);
+          } catch { setViews((v) => v + 1); }
+          obs.disconnect();
+          break;
+        }
+      }
+    }, { threshold: [0.5] });
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [post.id]);
 
   return (
-    <li className="overflow-hidden rounded-xl border border-border/70 bg-card/70 backdrop-blur transition hover:border-gold/40 hover:shadow-[0_0_24px_-12px_rgba(255,176,32,0.45)]">
+    <li ref={ref} className="overflow-hidden rounded-xl border border-border/70 bg-card/70 backdrop-blur transition hover:border-gold/40 hover:shadow-[0_0_24px_-12px_rgba(255,176,32,0.45)]">
       {/* author row */}
       <div className="flex items-center gap-3 px-3.5 py-3">
         <Link
@@ -363,8 +419,15 @@ function PostCard({ post, onLike }: { post: Post; onLike: () => void }) {
 
       {/* counts + caption */}
       <div className="px-4 pb-3.5">
-        <div className="font-hud text-sm font-bold text-foreground">
-          {post.likes_count.toLocaleString()} <span className="font-normal text-foreground/60">likes</span>
+        <div className="flex items-center justify-between gap-3">
+          <div className="font-hud text-sm font-bold text-foreground">
+            {post.likes_count.toLocaleString()} <span className="font-normal text-foreground/60">likes</span>
+          </div>
+          <div className="inline-flex items-center gap-1.5 font-hud text-xs text-foreground/60" aria-label="Views">
+            <Eye size={14} className="text-gold/80" />
+            <span className="font-bold text-foreground/80">{views.toLocaleString()}</span>
+            <span className="uppercase tracking-wider text-[10px] text-foreground/50">views</span>
+          </div>
         </div>
         {post.caption ? (
           <p className="mt-1.5 whitespace-pre-wrap text-sm leading-relaxed text-foreground/90">

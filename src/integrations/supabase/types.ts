@@ -1701,6 +1701,7 @@ export type Database = {
           media_url: string | null
           updated_at: string
           user_id: string
+          views_count: number
           visibility: string
         }
         Insert: {
@@ -1714,6 +1715,7 @@ export type Database = {
           media_url?: string | null
           updated_at?: string
           user_id: string
+          views_count?: number
           visibility?: string
         }
         Update: {
@@ -1727,6 +1729,7 @@ export type Database = {
           media_url?: string | null
           updated_at?: string
           user_id?: string
+          views_count?: number
           visibility?: string
         }
         Relationships: []
@@ -2273,6 +2276,10 @@ export type Database = {
         Returns: undefined
       }
       increment_feed_view: { Args: { p_post_id: number }; Returns: undefined }
+      increment_social_post_view: {
+        Args: { p_post_id: string }
+        Returns: number
+      }
       is_admin: { Args: never; Returns: boolean }
       is_blocked_between: { Args: { a: string; b: string }; Returns: boolean }
       is_super_admin: { Args: never; Returns: boolean }
