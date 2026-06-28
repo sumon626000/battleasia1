@@ -20,6 +20,11 @@ import {
   Calendar,
 } from "lucide-react";
 import { CoinIcon } from "@/components/site/CoinIcon";
+import {
+  RankTierCard,
+  AchievementsCard,
+  NextTournamentCard,
+} from "@/components/dashboard/PlayerHubCards";
 import squadHero from "@/assets/pubg-squad-action.jpg";
 import sniperImg from "@/assets/pubg-sniper-rooftop.jpg";
 import airdropImg from "@/assets/pubg-airdrop.jpg";
@@ -218,6 +223,33 @@ function DashboardPage() {
           })}
         </div>
       </section>
+
+      {/* PLAYER HUB: Tier + Next Tournament + Achievements */}
+      <section className="grid gap-3 lg:grid-cols-3">
+        <RankTierCard wins={stats.wins} kills={stats.totalKills} top3={stats.top3} />
+        <div className="lg:col-span-2">
+          <NextTournamentCard
+            match={
+              upcoming[0]
+                ? {
+                    id: Number(upcoming[0].id),
+                    match_name: String(upcoming[0].match_name),
+                    schedule_at: String(upcoming[0].schedule_at),
+                    entry_fee_bac: Number(upcoming[0].entry_fee_bac ?? 0),
+                  }
+                : null
+            }
+          />
+        </div>
+      </section>
+
+      <AchievementsCard
+        played={stats.played}
+        wins={stats.wins}
+        totalKills={stats.totalKills}
+        top3={stats.top3}
+        totalPrize={stats.totalPrize}
+      />
 
       {/* COMBAT STATISTICS */}
       <section>
