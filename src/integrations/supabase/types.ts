@@ -2220,6 +2220,10 @@ export type Database = {
         }
         Returns: number
       }
+      admin_reset_user_history: {
+        Args: { p_scopes: string[]; p_user_id: string }
+        Returns: Json
+      }
       admin_resolve_security_alert: {
         Args: { p_id: number }
         Returns: undefined
