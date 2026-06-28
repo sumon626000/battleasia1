@@ -196,8 +196,21 @@ function FeedLeaderboardPage() {
             onClick={() => setTf(tf === "all" ? "week" : tf === "week" ? "month" : "all")}
             color="red"
           />
-          <FilterChip label="🇮🇳 India" />
-          <FilterChip label="Squad" icon={<Users size={13} />} />
+          <SelectChip
+            value={country}
+            onChange={setCountry}
+            options={COUNTRY_OPTIONS.map((c) => ({ value: c.code, label: `${c.flag} ${c.name}` }))}
+          />
+          <SelectChip
+            value={mode}
+            onChange={(v) => setMode(v as ModeFilter)}
+            options={[
+              { value: "ALL", label: "👥 All Modes" },
+              { value: "Solo", label: "👤 Solo" },
+              { value: "Duo", label: "👬 Duo" },
+              { value: "Squad", label: "👥 Squad" },
+            ]}
+          />
         </div>
 
         {/* Podium */}
