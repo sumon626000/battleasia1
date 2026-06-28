@@ -67,6 +67,7 @@ import { Route as AdminAdminSettingsRouteImport } from './routes/_admin/admin.se
 import { Route as AdminAdminSecurityRouteImport } from './routes/_admin/admin.security'
 import { Route as AdminAdminResultsRouteImport } from './routes/_admin/admin.results'
 import { Route as AdminAdminReferralConfigRouteImport } from './routes/_admin/admin.referral-config'
+import { Route as AdminAdminQuestsRouteImport } from './routes/_admin/admin.quests'
 import { Route as AdminAdminPushRouteImport } from './routes/_admin/admin.push'
 import { Route as AdminAdminPremiumRouteImport } from './routes/_admin/admin.premium'
 import { Route as AdminAdminParticipantsRouteImport } from './routes/_admin/admin.participants'
@@ -398,6 +399,11 @@ const AdminAdminReferralConfigRoute =
     path: '/admin/referral-config',
     getParentRoute: () => AdminRouteRoute,
   } as any)
+const AdminAdminQuestsRoute = AdminAdminQuestsRouteImport.update({
+  id: '/admin/quests',
+  path: '/admin/quests',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
 const AdminAdminPushRoute = AdminAdminPushRouteImport.update({
   id: '/admin/push',
   path: '/admin/push',
@@ -570,6 +576,7 @@ export interface FileRoutesByFullPath {
   '/admin/participants': typeof AdminAdminParticipantsRoute
   '/admin/premium': typeof AdminAdminPremiumRoute
   '/admin/push': typeof AdminAdminPushRoute
+  '/admin/quests': typeof AdminAdminQuestsRoute
   '/admin/referral-config': typeof AdminAdminReferralConfigRoute
   '/admin/results': typeof AdminAdminResultsRoute
   '/admin/security': typeof AdminAdminSecurityRoute
@@ -650,6 +657,7 @@ export interface FileRoutesByTo {
   '/admin/participants': typeof AdminAdminParticipantsRoute
   '/admin/premium': typeof AdminAdminPremiumRoute
   '/admin/push': typeof AdminAdminPushRoute
+  '/admin/quests': typeof AdminAdminQuestsRoute
   '/admin/referral-config': typeof AdminAdminReferralConfigRoute
   '/admin/results': typeof AdminAdminResultsRoute
   '/admin/security': typeof AdminAdminSecurityRoute
@@ -735,6 +743,7 @@ export interface FileRoutesById {
   '/_admin/admin/participants': typeof AdminAdminParticipantsRoute
   '/_admin/admin/premium': typeof AdminAdminPremiumRoute
   '/_admin/admin/push': typeof AdminAdminPushRoute
+  '/_admin/admin/quests': typeof AdminAdminQuestsRoute
   '/_admin/admin/referral-config': typeof AdminAdminReferralConfigRoute
   '/_admin/admin/results': typeof AdminAdminResultsRoute
   '/_admin/admin/security': typeof AdminAdminSecurityRoute
@@ -819,6 +828,7 @@ export interface FileRouteTypes {
     | '/admin/participants'
     | '/admin/premium'
     | '/admin/push'
+    | '/admin/quests'
     | '/admin/referral-config'
     | '/admin/results'
     | '/admin/security'
@@ -899,6 +909,7 @@ export interface FileRouteTypes {
     | '/admin/participants'
     | '/admin/premium'
     | '/admin/push'
+    | '/admin/quests'
     | '/admin/referral-config'
     | '/admin/results'
     | '/admin/security'
@@ -983,6 +994,7 @@ export interface FileRouteTypes {
     | '/_admin/admin/participants'
     | '/_admin/admin/premium'
     | '/_admin/admin/push'
+    | '/_admin/admin/quests'
     | '/_admin/admin/referral-config'
     | '/_admin/admin/results'
     | '/_admin/admin/security'
@@ -1454,6 +1466,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAdminReferralConfigRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/_admin/admin/quests': {
+      id: '/_admin/admin/quests'
+      path: '/admin/quests'
+      fullPath: '/admin/quests'
+      preLoaderRoute: typeof AdminAdminQuestsRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
     '/_admin/admin/push': {
       id: '/_admin/admin/push'
       path: '/admin/push'
@@ -1646,6 +1665,7 @@ interface AdminRouteRouteChildren {
   AdminAdminParticipantsRoute: typeof AdminAdminParticipantsRoute
   AdminAdminPremiumRoute: typeof AdminAdminPremiumRoute
   AdminAdminPushRoute: typeof AdminAdminPushRoute
+  AdminAdminQuestsRoute: typeof AdminAdminQuestsRoute
   AdminAdminReferralConfigRoute: typeof AdminAdminReferralConfigRoute
   AdminAdminResultsRoute: typeof AdminAdminResultsRoute
   AdminAdminSecurityRoute: typeof AdminAdminSecurityRoute
@@ -1682,6 +1702,7 @@ const AdminRouteRouteChildren: AdminRouteRouteChildren = {
   AdminAdminParticipantsRoute: AdminAdminParticipantsRoute,
   AdminAdminPremiumRoute: AdminAdminPremiumRoute,
   AdminAdminPushRoute: AdminAdminPushRoute,
+  AdminAdminQuestsRoute: AdminAdminQuestsRoute,
   AdminAdminReferralConfigRoute: AdminAdminReferralConfigRoute,
   AdminAdminResultsRoute: AdminAdminResultsRoute,
   AdminAdminSecurityRoute: AdminAdminSecurityRoute,
