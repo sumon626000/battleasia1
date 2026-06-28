@@ -48,7 +48,7 @@ function AdminResultsPage() {
   const [selectedId, setSelectedId] = useState<number | undefined>(matchId);
   const [description, setDescription] = useState("");
   const [imageUrl, setImageUrl] = useState("");
-  const [rows, setRows] = useState<Record<string, { status: string; kills: string }>>({});
+  const [rows, setRows] = useState<Record<string, { status: string; kills: string; prize: string }>>({});
   const [csvText, setCsvText] = useState("");
 
   useEffect(() => { if (matchId) setSelectedId(matchId); }, [matchId]);
@@ -93,11 +93,12 @@ function AdminResultsPage() {
 
   useEffect(() => {
     if (!detail) return;
-    const seed: Record<string, { status: string; kills: string }> = {};
+    const seed: Record<string, { status: string; kills: string; prize: string }> = {};
     for (const p of detail.participants) {
       seed[p.user_id] = {
         status: p.rank_position === 1 ? "Winner" : (p.rank_position || p.kills) ? "Loser" : "",
         kills: p.kills ? String(p.kills) : "",
+        prize: p.prize_bac ? String(p.prize_bac) : "",
       };
     }
     setRows(seed);
@@ -146,9 +147,10 @@ function AdminResultsPage() {
         const r = rows[p.user_id];
         if (!r) return null;
         const kills = parseInt(r.kills, 10) || 0;
-        if (!r.status && !r.kills) return null;
+        const prizeOverride = r.prize.trim() === "" ? null : Number(r.prize);
+        if (!r.status && !r.kills && prizeOverride === null) return null;
         const rank = r.status === "Winner" ? 1 : r.status === "Loser" ? 2 : null;
-        return { user_id: p.user_id, rank, kills };
+        return { user_id: p.user_id, rank, kills, prize: prizeOverride };
       })
       .filter(Boolean);
     if (results.length === 0) return toast.error("Fill at least one row.");
@@ -203,7 +205,7 @@ function AdminResultsPage() {
       if (!uid) { skipped++; continue; }
       const rankNum = parseInt(cols[1] || "", 10);
       const kills = cols[2] || "0";
-      next[uid] = { status: rankNum === 1 ? "Winner" : Number.isFinite(rankNum) ? "Loser" : "", kills };
+      next[uid] = { status: rankNum === 1 ? "Winner" : Number.isFinite(rankNum) ? "Loser" : "", kills, prize: cols[3] || "" };
       matched++;
     }
     setRows(next);
@@ -275,25 +277,28 @@ function AdminResultsPage() {
           </section>
 
           <section className="hud-panel overflow-x-auto rounded-md border border-border/70 bg-card/40">
-            <table className="w-full min-w-[760px] text-sm">
+            <table className="w-full min-w-[860px] text-sm">
               <thead className="border-b border-border/60 bg-secondary/40 text-left font-hud text-[10px] uppercase tracking-widest text-foreground/60">
                 <tr>
                   <th className="px-3 py-2">In-game ID</th>
                   <th className="px-3 py-2">User Name</th>
                   <th className="px-3 py-2 w-32">Player Status</th>
                   <th className="px-3 py-2 w-24">Killed</th>
-                  <th className="px-3 py-2 w-32">Kill Win</th>
+                  <th className="px-3 py-2 w-36">Manual Prize</th>
+                  <th className="px-3 py-2 w-32">Total Credit</th>
                   <th className="px-3 py-2 w-28">Status</th>
                 </tr>
               </thead>
               <tbody>
                 {detail.participants.length === 0 && (
-                  <tr><td colSpan={6} className="px-3 py-6 text-center font-hud text-xs uppercase tracking-widest text-foreground/50">No participants joined.</td></tr>
+                  <tr><td colSpan={7} className="px-3 py-6 text-center font-hud text-xs uppercase tracking-widest text-foreground/50">No participants joined.</td></tr>
                 )}
                 {detail.participants.map((p) => {
                   const prof = detail.profMap.get(p.user_id);
-                  const r = rows[p.user_id] ?? { status: "", kills: "" };
+                  const r = rows[p.user_id] ?? { status: "", kills: "", prize: "" };
                   const isLoser = r.status === "Loser";
+                  const manualPrize = r.prize.trim() === "" ? null : Number(r.prize);
+                  const totalCredit = manualPrize !== null ? manualPrize : (computedPrize[p.user_id] ?? p.prize_bac ?? 0);
                   return (
                     <tr key={p.id} className="border-b border-border/40 last:border-0">
                       <td className="px-3 py-2 font-mono text-xs text-foreground/70">{prof?.pubg_id ?? "—"}</td>
@@ -321,9 +326,19 @@ function AdminResultsPage() {
                           className="w-20 rounded border border-border/60 bg-secondary/40 px-2 py-1 font-mono text-sm outline-none focus:border-gold disabled:opacity-40"
                         />
                       </td>
+                      <td className="px-3 py-2">
+                        <input
+                          type="number" min={0} step="0.01"
+                          disabled={detail.match.result_applied}
+                          value={r.prize}
+                          placeholder="auto"
+                          onChange={(e) => setRows({ ...rows, [p.user_id]: { ...r, prize: e.target.value } })}
+                          className="w-28 rounded border border-gold/40 bg-secondary/40 px-2 py-1 font-mono text-sm text-gold outline-none focus:border-gold disabled:opacity-40"
+                        />
+                      </td>
                       <td className="px-3 py-2 tabular-nums text-gold">
                         <span className="inline-flex items-center gap-1">
-                          {(computedPrize[p.user_id] ?? p.prize_bac ?? 0).toLocaleString()}
+                          {Number(totalCredit).toLocaleString()}
                           <CoinIcon size={12} />
                         </span>
                       </td>
