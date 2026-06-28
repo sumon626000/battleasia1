@@ -20,11 +20,13 @@ type TypeFilter = "all" | "Free" | "Paid";
 
 function MatchesPage() {
   const { user } = useAuth();
+  const { profile } = useProfile(user?.id);
   const { game: selectedGameId } = Route.useSearch();
   const navigate = useNavigate();
   const [status, setStatus] = useState<Status>("all");
   const [mode, setMode] = useState<ModeFilter>("all");
   const [type, setType] = useState<TypeFilter>("all");
+  const balance = Number(profile?.bac_coin_balance ?? 0);
 
   const games = useQuery({
     queryKey: ["play-games"],
