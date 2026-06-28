@@ -130,14 +130,14 @@ export function ThemeSwitcher({ compact = false }: { compact?: boolean }) {
       </button>
 
       {open && (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center p-2 sm:p-4">
+        <div className="fixed inset-0 z-[200] flex items-start justify-center overflow-y-auto p-2 sm:items-center sm:p-4">
           <button
             aria-label="Close"
-            className="absolute inset-0 bg-background/85 backdrop-blur-md"
+            className="fixed inset-0 bg-background/85 backdrop-blur-md"
             onClick={() => setOpen(false)}
           />
-          <div className="hud-panel relative z-10 flex max-h-[92vh] w-full max-w-3xl flex-col overflow-hidden border-gold/40 bg-card/95 p-3 sm:p-6">
-            <div className="flex items-center justify-between gap-3">
+          <div className="hud-panel relative z-10 my-2 flex w-full max-w-3xl flex-col border-gold/40 bg-card/95 p-3 sm:my-0 sm:max-h-[92vh] sm:overflow-hidden sm:p-6">
+            <div className="sticky top-0 z-20 -mx-3 -mt-3 flex items-center justify-between gap-3 border-b border-border/40 bg-card/95 px-3 py-2 backdrop-blur sm:static sm:m-0 sm:border-0 sm:bg-transparent sm:p-0">
               <div className="min-w-0">
                 <div className="flex items-center gap-2">
                   <Sparkles size={16} className="text-gold" />
@@ -151,10 +151,10 @@ export function ThemeSwitcher({ compact = false }: { compact?: boolean }) {
               </div>
               <button
                 onClick={() => setOpen(false)}
-                className="shrink-0 rounded-md border border-border/70 p-1.5 hover:border-gold/60 hover:text-gold"
+                className="shrink-0 rounded-md border border-gold/60 bg-gold/10 p-2 text-gold hover:bg-gold/20"
                 aria-label="Close"
               >
-                <X size={14} />
+                <X size={18} />
               </button>
             </div>
 
