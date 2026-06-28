@@ -7,7 +7,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { useProfile } from "@/hooks/use-profile";
 import { CoinIcon } from "@/components/site/CoinIcon";
-import { ConfirmModal } from "@/components/site/ConfirmModal";
+import { matchBannerFor } from "@/lib/match-banners";
+import { useEffect } from "react";
+import { X } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/dashboard/matches/$matchId")({
   head: () => ({ meta: [{ title: "Match Details — Battle Asia" }] }),
