@@ -159,6 +159,9 @@ function AdminLayout() {
         </form>
       </div>
     );
+  }
+
+
 
   if (state === "no-supabase") {
     return (
