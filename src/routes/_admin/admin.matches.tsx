@@ -434,12 +434,7 @@ function EditorModal({
           </div>
         </div>
 
-        {/* Rank prizes */}
-        <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-3">
-          <Field label="Rank 1 Prize"><input type="number" className={inp} value={draft.rank_1_prize_bac ?? 0} onChange={(e) => upd({ rank_1_prize_bac: Number(e.target.value) })} /></Field>
-          <Field label="Rank 2 Prize"><input type="number" className={inp} value={draft.rank_2_prize_bac ?? 0} onChange={(e) => upd({ rank_2_prize_bac: Number(e.target.value) })} /></Field>
-          <Field label="Rank 3 Prize"><input type="number" className={inp} value={draft.rank_3_prize_bac ?? 0} onChange={(e) => upd({ rank_3_prize_bac: Number(e.target.value) })} /></Field>
-        </div>
+        {/* Rank prizes managed from the Results module after match completion */}
 
         {/* Banner + Prize Description side by side */}
         <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2">
