@@ -50,6 +50,18 @@ const MATCH_TYPE = ["Free", "Paid", "Sponsored"] as const;
 const GAME_MODE = ["Classic", "Arcade", "EvoGround", "Arena", "TDM"] as const;
 const PLAYER_MODE = ["Solo", "Duo", "Squad"] as const;
 const MAP_OPTIONS = ["Erangel", "Miramar", "Sanhok", "Vikendi", "Livik", "Karakin", "Paramo", "Haven", "Rondo", "Nusa"] as const;
+const MAP_IMAGES: Record<string, string> = {
+  Erangel: "/banners/erangel-sunset.jpg",
+  Miramar: "/banners/miramar-convoy.jpg",
+  Sanhok: "/banners/sanhok-jungle.jpg",
+  Vikendi: "/banners/vikendi-snow.jpg",
+  Livik: "/banners/night-ops.jpg",
+  Karakin: "/banners/warzone.jpg",
+  Paramo: "/banners/soldier.jpg",
+  Haven: "/banners/sniper.jpg",
+  Rondo: "/banners/squad-team.jpg",
+  Nusa: "/banners/tdm.jpg",
+};
 const REWARD_TYPE = ["KillBased", "RankBased", "Mixed"] as const;
 const KILL_TYPE = ["PerKill", "Total"] as const;
 
@@ -321,7 +333,7 @@ function EditorModal({
               </select>
             </Field>
 
-            <Select label="Map" required value={draft.map_name} options={MAP_OPTIONS} onChange={(v) => upd({ map_name: v })} />
+            <Select label="Map" required value={draft.map_name} options={MAP_OPTIONS} onChange={(v) => upd({ map_name: v, map_image_url: MAP_IMAGES[v] ?? draft.map_image_url ?? null, banner_image_url: draft.banner_image_url ?? MAP_IMAGES[v] ?? null })} />
 
             {/* Map preview */}
             <div className="overflow-hidden rounded border border-border/60 bg-secondary/30">
@@ -422,12 +434,7 @@ function EditorModal({
           </div>
         </div>
 
-        {/* Rank prizes */}
-        <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-3">
-          <Field label="Rank 1 Prize"><input type="number" className={inp} value={draft.rank_1_prize_bac ?? 0} onChange={(e) => upd({ rank_1_prize_bac: Number(e.target.value) })} /></Field>
-          <Field label="Rank 2 Prize"><input type="number" className={inp} value={draft.rank_2_prize_bac ?? 0} onChange={(e) => upd({ rank_2_prize_bac: Number(e.target.value) })} /></Field>
-          <Field label="Rank 3 Prize"><input type="number" className={inp} value={draft.rank_3_prize_bac ?? 0} onChange={(e) => upd({ rank_3_prize_bac: Number(e.target.value) })} /></Field>
-        </div>
+        {/* Rank prizes managed from the Results module after match completion */}
 
         {/* Banner + Prize Description side by side */}
         <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2">
