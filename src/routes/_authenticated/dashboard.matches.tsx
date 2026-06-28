@@ -108,84 +108,21 @@ function MatchesPage() {
     },
   });
 
-  // Step 1: Game picker
+  // === PLAY HUB — unified all-games view ===
   if (!selectedGameId) {
     return (
-      <div className="space-y-5">
-        <PlayHeroCarousel />
-        <section className="hud-panel relative overflow-hidden p-5 sm:p-6">
-          <div className="absolute inset-0 -z-10 bg-grid-hud opacity-30" />
-          <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4">
-            <div className="min-w-0">
-              <p className="font-hud text-[10px] uppercase tracking-[0.3em] text-foreground/60">// SELECT GAME</p>
-              <h1 className="mt-1 font-display text-2xl font-bold tracking-wide sm:text-3xl">
-                CHOOSE YOUR <span className="text-gold">BATTLEGROUND</span>
-              </h1>
-              <p className="mt-1 text-xs text-foreground/60">Pick a game to view tournaments.</p>
-            </div>
-            <Gamepad2 className="text-gold" size={36} />
-          </div>
-        </section>
-
-        <section className="grid gap-3 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
-          {(games.data ?? []).map((g: any) => {
-            const disabled = g.coming_soon || g.status !== "active";
-            const inner = (
-              <>
-                <div className="relative aspect-[4/3] overflow-hidden bg-background/60">
-                  {g.image_url ? (
-                    <img src={g.image_url} alt={g.game_name} className={`h-full w-full object-cover transition group-hover:scale-105 ${disabled ? "grayscale" : ""}`} />
-                  ) : (
-                    <div className="flex h-full items-center justify-center text-foreground/30"><Gamepad2 size={48} /></div>
-                  )}
-                  {g.live_stream_url && !disabled && (
-                    <span className="absolute left-2 top-2 inline-flex items-center gap-1 rounded-sm bg-red-600 px-1.5 py-0.5 font-hud text-[9px] font-bold uppercase tracking-widest text-white shadow-lg shadow-red-600/40 animate-pulse">
-                      <PlayCircle size={10} /> LIVE
-                    </span>
-                  )}
-                </div>
-                <div className="p-3">
-                  <div className="font-display text-sm font-bold uppercase tracking-wide truncate">{g.game_name}</div>
-                  <div className="mt-1 flex items-center justify-between gap-2 font-hud text-[10px] uppercase tracking-widest text-gold">
-                    <span>{disabled ? (<span className="text-foreground/50 inline-flex items-center gap-1"><Lock size={10}/> COMING SOON</span>) : "ENTER →"}</span>
-                    {g.live_stream_url && !disabled && (
-                      <a
-                        href={g.live_stream_url}
-                        target="_blank"
-                        rel="noreferrer"
-                        onClick={(e) => e.stopPropagation()}
-                        className="inline-flex items-center gap-1 rounded-sm border border-red-500/60 bg-red-600/20 px-1.5 py-0.5 text-red-400 hover:bg-red-600/40"
-                      >
-                        <PlayCircle size={10} /> WATCH
-                      </a>
-                    )}
-                  </div>
-                </div>
-              </>
-            );
-            return disabled ? (
-              <div key={g.id} className="hud-panel group block overflow-hidden opacity-60 cursor-not-allowed">{inner}</div>
-            ) : (
-              <div
-                key={g.id}
-                role="button"
-                tabIndex={0}
-                onClick={() => navigate({ to: "/dashboard/matches", search: { game: g.id } })}
-                onKeyDown={(e) => { if (e.key === "Enter") navigate({ to: "/dashboard/matches", search: { game: g.id } }); }}
-                className="hud-panel group block overflow-hidden text-left transition hover:border-gold/60 cursor-pointer"
-              >
-                {inner}
-              </div>
-            );
-          })}
-          {games.isLoading && <div className="col-span-full py-8 text-center text-foreground/40">Loading games...</div>}
-          {!games.isLoading && !games.data?.length && (
-            <div className="col-span-full py-8 text-center font-hud text-xs tracking-widest text-foreground/40">NO GAMES AVAILABLE</div>
-          )}
-        </section>
-      </div>
+      <PlayHub
+        games={games.data ?? []}
+        gamesLoading={games.isLoading}
+        userId={user?.id}
+        balance={balance}
+        isPremium={!!profile?.is_premium}
+        onPickGame={(id) => navigate({ to: "/dashboard/matches", search: { game: id } })}
+      />
     );
   }
+
+
 
   // Step 2: Matches for selected game
   return (
