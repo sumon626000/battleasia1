@@ -24,13 +24,11 @@ export function DashboardShell({ children }: { children: ReactNode }) {
       <DashboardMobileDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
 
       <div className="flex flex-1">
-        <div className="lg:hidden">
-          <DashboardSidebar />
-        </div>
         <main className="min-w-0 flex-1 pb-16 lg:pb-0">
           <div className="mx-auto w-full max-w-7xl px-3 py-4 sm:px-5 sm:py-6">{children}</div>
         </main>
       </div>
+
 
       <DashboardBottomNav />
     </div>
