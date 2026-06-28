@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { Outlet, createFileRoute, useNavigate } from "@tanstack/react-router";
+import { Link, Outlet, createFileRoute, useNavigate } from "@tanstack/react-router";
 import { AdminShell } from "@/components/admin/AdminShell";
-import { Shield, Loader2 } from "lucide-react";
+import { Shield, Loader2, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_admin")({
   ssr: false,
