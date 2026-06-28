@@ -72,7 +72,7 @@ function FeedPage() {
     // Pull a larger window so we can mix followed + viral
     const { data: rows } = await supabase
       .from("social_posts")
-      .select("id,user_id,caption,media_url,media_type,likes_count,comments_count,created_at")
+      .select("id,user_id,caption,media_url,media_type,likes_count,comments_count,views_count,created_at")
       .eq("visibility", "public")
       .order("created_at", { ascending: false })
       .limit(150);
