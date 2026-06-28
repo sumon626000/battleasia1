@@ -328,12 +328,13 @@ function AdminMatchesPage() {
 }
 
 function EditorModal({
-  draft, setDraft, onSave, onClose,
+  draft, setDraft, onSave, onClose, errors,
 }: {
   draft: Partial<Match>;
   setDraft: (d: Partial<Match> | null) => void;
   onSave: () => void;
   onClose: () => void;
+  errors: Partial<Record<FieldKey, boolean>>;
 }) {
   const upd = (patch: Partial<Match>) => setDraft({ ...draft, ...patch });
 
@@ -354,8 +355,25 @@ function EditorModal({
   const winnerTeamSize = draft.player_mode === "Solo" ? 1 : draft.player_mode === "Duo" ? 2 : 4;
   const totalPlayers = Number(draft.total_players ?? 0);
   const loserCount = Math.max(0, totalPlayers - winnerTeamSize);
-  const autoTotalKills = loserCount; // 1 kill per eliminated player
+  const autoTotalKills = loserCount;
+
+  // Auto Per Kill = (Entry × TotalPlayers × (1 − fee%)) / loserCount
+  const entryFee = Number(draft.entry_fee_bac ?? 0);
+  const feePct = Number(draft.platform_fee_pct ?? 0);
+  const totalIncome = entryFee * totalPlayers;
+  const prizePool = totalIncome * (1 - feePct / 100);
+  const autoPerKill = loserCount > 0 ? Math.round((prizePool / loserCount) * 100) / 100 : 0;
+  const isAutoKill = draft.kill_rate_type === "Automatic";
+
+  useEffect(() => {
+    if (isAutoKill && draft.per_kill_amount_bac !== autoPerKill) {
+      setDraft({ ...draft, per_kill_amount_bac: autoPerKill });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAutoKill, autoPerKill]);
+
   const previewSrc = draft.map_image_url || draft.banner_image_url || null;
+
 
   return (
     <div className="fixed inset-0 z-50 grid place-items-center bg-background/80 p-4 backdrop-blur">
