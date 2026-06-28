@@ -419,8 +419,15 @@ function PostCard({ post, onLike }: { post: Post; onLike: () => void }) {
 
       {/* counts + caption */}
       <div className="px-4 pb-3.5">
-        <div className="font-hud text-sm font-bold text-foreground">
-          {post.likes_count.toLocaleString()} <span className="font-normal text-foreground/60">likes</span>
+        <div className="flex items-center justify-between gap-3">
+          <div className="font-hud text-sm font-bold text-foreground">
+            {post.likes_count.toLocaleString()} <span className="font-normal text-foreground/60">likes</span>
+          </div>
+          <div className="inline-flex items-center gap-1.5 font-hud text-xs text-foreground/60" aria-label="Views">
+            <Eye size={14} className="text-gold/80" />
+            <span className="font-bold text-foreground/80">{views.toLocaleString()}</span>
+            <span className="uppercase tracking-wider text-[10px] text-foreground/50">views</span>
+          </div>
         </div>
         {post.caption ? (
           <p className="mt-1.5 whitespace-pre-wrap text-sm leading-relaxed text-foreground/90">
