@@ -25,7 +25,7 @@ export function DashboardShell({ children }: { children: ReactNode }) {
 
       <div className="flex flex-1">
         <main className="min-w-0 flex-1 pb-16 lg:pb-0">
-          <div className="mx-auto w-full max-w-7xl px-3 py-4 sm:px-5 sm:py-6">{children}</div>
+          <div className="mx-auto w-full max-w-[1600px] px-3 py-4 sm:px-5 sm:py-6 xl:px-8">{children}</div>
         </main>
       </div>
 
