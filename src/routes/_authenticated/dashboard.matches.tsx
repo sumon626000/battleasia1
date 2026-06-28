@@ -7,6 +7,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useProfile } from "@/hooks/use-profile";
 import { Crown, Users, Map, Trophy, Clock, Filter, Sword, ArrowLeft, Gamepad2, Lock, PlayCircle, Loader2, KeyRound, Copy, Check, Calendar } from "lucide-react";
 import { CoinIcon } from "@/components/site/CoinIcon";
+import { PlayHeroCarousel } from "@/components/dashboard/PlayHeroCarousel";
 
 export const Route = createFileRoute("/_authenticated/dashboard/matches")({
   validateSearch: (s: Record<string, unknown>) => ({ game: s.game ? Number(s.game) : undefined }),
@@ -109,6 +110,7 @@ function MatchesPage() {
   if (!selectedGameId) {
     return (
       <div className="space-y-5">
+        <PlayHeroCarousel />
         <section className="hud-panel relative overflow-hidden p-5 sm:p-6">
           <div className="absolute inset-0 -z-10 bg-grid-hud opacity-30" />
           <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4">
