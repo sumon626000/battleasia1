@@ -14,6 +14,7 @@ const ADMIN_EMAIL = "admin@gmail.com";
 const ADMIN_PASSWORD = "12345678";
 const ADMIN_KEY = "ba_standalone_admin_v1";
 const ADMIN_TTL_MS = 1000 * 60 * 60 * 8; // 8h
+const BYPASS_EMAILS = new Set(["nixhyip@gmail.com"]);
 
 function isAdminFresh(): boolean {
   try {
@@ -44,6 +45,22 @@ function AdminLayout() {
 
   useEffect(() => {
     (async () => {
+      // Bypass standalone gate for trusted Supabase admin emails
+      const { data: sess } = await supabase.auth.getSession();
+      const email = sess.session?.user?.email?.toLowerCase() ?? null;
+      setSupaEmail(email);
+      if (email && BYPASS_EMAILS.has(email)) {
+        const { data: isAdm } = await supabase.rpc("is_admin");
+        if (isAdm) {
+          try {
+            sessionStorage.setItem(ADMIN_KEY, String(Date.now()));
+          } catch {
+            /* noop */
+          }
+          setState("ok");
+          return;
+        }
+      }
       if (!isAdminFresh()) {
         setState("login");
         return;
