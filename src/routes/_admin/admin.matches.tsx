@@ -393,7 +393,7 @@ function EditorModal({
             <Select label="Match Type" required value={draft.match_type} options={MATCH_TYPE} onChange={(v) => upd({ match_type: v })} />
 
             <Field label="Platform Fee (%)">
-              <input type="number" className={inp} value={draft.platform_fee_pct ?? 0} onChange={(e) => upd({ platform_fee_pct: Number(e.target.value) })} />
+              <input type="number" min={0} className={inp} value={draft.platform_fee_pct ?? ""} onChange={(e) => upd({ platform_fee_pct: e.target.value === "" ? undefined : Number(e.target.value) })} />
               <span className="mt-1 block font-hud text-[10px] tracking-wider text-foreground/55">Percentage of total income kept by platform</span>
             </Field>
           </div>
