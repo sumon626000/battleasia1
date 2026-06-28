@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { useProfile } from "@/hooks/use-profile";
-import { Crown, Users, Map, Trophy, Clock, Filter, Sword, ArrowLeft, Gamepad2, Lock, PlayCircle, Loader2 } from "lucide-react";
+import { Crown, Users, Map, Trophy, Clock, Filter, Sword, ArrowLeft, Gamepad2, Lock, PlayCircle, Loader2, KeyRound, Copy, Check } from "lucide-react";
 import { CoinIcon } from "@/components/site/CoinIcon";
 
 export const Route = createFileRoute("/_authenticated/dashboard/matches")({
@@ -257,6 +257,8 @@ function FilterGroup({
 function MatchCard({ m, joined, filled, balance, isPremium }: { m: any; joined: boolean; filled: number; balance: number; isPremium: boolean }) {
   const qc = useQueryClient();
   const [joining, setJoining] = useState(false);
+  const [showCreds, setShowCreds] = useState(false);
+  const [copied, setCopied] = useState<"id" | "pw" | null>(null);
   const total = m.total_players ?? 0;
   const pct = total ? Math.min(100, Math.round((filled / total) * 100)) : 0;
   const when = m.schedule_at ? new Date(m.schedule_at) : null;
@@ -264,6 +266,33 @@ function MatchCard({ m, joined, filled, balance, isPremium }: { m: any; joined: 
   const isFull = total > 0 && filled >= total;
   const fee = Number(m.entry_fee_bac ?? 0);
   const banner = m.banner_image_url || m.map_image_url || null;
+
+  function handleCredsClick(e: React.MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!joined) {
+      toast.error("You are not joined to this match");
+      return;
+    }
+    if (!m.room_id && !m.room_password) {
+      toast.info("Room ID & Password will be shared before match starts");
+      return;
+    }
+    setShowCreds((v) => !v);
+  }
+
+  async function copyText(e: React.MouseEvent, text: string, which: "id" | "pw") {
+    e.preventDefault();
+    e.stopPropagation();
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(which);
+      toast.success("Copied to clipboard");
+      setTimeout(() => setCopied(null), 1500);
+    } catch {
+      toast.error("Copy failed");
+    }
+  }
 
   async function handleJoin(e: React.MouseEvent) {
     e.preventDefault();
@@ -317,6 +346,49 @@ function MatchCard({ m, joined, filled, balance, isPremium }: { m: any; joined: 
         </span>
       </div>
       <h3 className="mt-2 truncate font-display text-base font-bold uppercase tracking-wide">{m.match_name}</h3>
+
+      <button
+        type="button"
+        onClick={handleCredsClick}
+        className="mt-1 inline-flex items-center gap-1 font-hud text-[10px] font-bold uppercase tracking-widest text-gold underline-offset-2 hover:underline"
+      >
+        <KeyRound size={11} /> ID & PASSWORD
+      </button>
+
+      {showCreds && joined && (m.room_id || m.room_password) && (
+        <div className="mt-2 space-y-1.5 rounded-sm border border-gold/40 bg-gold/5 p-2">
+          {m.room_id && (
+            <div className="flex items-center justify-between gap-2">
+              <div className="min-w-0">
+                <div className="font-hud text-[9px] uppercase tracking-widest text-foreground/60">Room ID</div>
+                <div className="truncate font-mono text-xs text-gold">{m.room_id}</div>
+              </div>
+              <button
+                type="button"
+                onClick={(e) => copyText(e, String(m.room_id), "id")}
+                className="flex items-center gap-1 rounded-sm border border-gold/60 px-2 py-1 font-hud text-[9px] font-bold uppercase tracking-widest text-gold hover:bg-gold hover:text-background"
+              >
+                {copied === "id" ? <><Check size={10}/> COPIED</> : <><Copy size={10}/> COPY</>}
+              </button>
+            </div>
+          )}
+          {m.room_password && (
+            <div className="flex items-center justify-between gap-2">
+              <div className="min-w-0">
+                <div className="font-hud text-[9px] uppercase tracking-widest text-foreground/60">Password</div>
+                <div className="truncate font-mono text-xs text-gold">{m.room_password}</div>
+              </div>
+              <button
+                type="button"
+                onClick={(e) => copyText(e, String(m.room_password), "pw")}
+                className="flex items-center gap-1 rounded-sm border border-gold/60 px-2 py-1 font-hud text-[9px] font-bold uppercase tracking-widest text-gold hover:bg-gold hover:text-background"
+              >
+                {copied === "pw" ? <><Check size={10}/> COPIED</> : <><Copy size={10}/> COPY</>}
+              </button>
+            </div>
+          )}
+        </div>
+      )}
 
       <div className="mt-2 grid grid-cols-2 gap-1.5 text-[11px]">
         <Meta icon={Map} label={m.map_name ?? "—"} />
