@@ -13,6 +13,7 @@ export const Route = createFileRoute("/_admin/admin/matches")({
 
 type Match = {
   id: number;
+  game_id: number | null;
   match_name: string;
   map_name: string;
   status: string;
