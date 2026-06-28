@@ -7,7 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { useProfile } from "@/hooks/use-profile";
 import { CoinIcon } from "@/components/site/CoinIcon";
-import { matchBannerFor } from "@/lib/match-banners";
+import { randomBanner } from "@/lib/match-banners";
 import { useEffect } from "react";
 import { X } from "lucide-react";
 
