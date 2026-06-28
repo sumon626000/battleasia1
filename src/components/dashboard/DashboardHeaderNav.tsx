@@ -20,14 +20,15 @@ import {
 } from "lucide-react";
 import { useIsAdmin } from "@/hooks/use-is-admin";
 
-const PRIMARY = [
+const PRIMARY: { label: string; href: string; icon: any; exact?: boolean }[] = [
   { label: "Home", href: "/dashboard", icon: Home, exact: true },
   { label: "Matches", href: "/dashboard/matches", icon: Swords },
   { label: "Vault", href: "/dashboard/vault", icon: Vault },
   { label: "Shop", href: "/dashboard/shop", icon: ShoppingBag },
   { label: "Feed", href: "/feed", icon: Newspaper },
   { label: "Referrals", href: "/dashboard/referrals", icon: Users },
-] as const;
+];
+
 
 const MORE = [
   { label: "My Matches", href: "/dashboard/my-matches", icon: Trophy },
