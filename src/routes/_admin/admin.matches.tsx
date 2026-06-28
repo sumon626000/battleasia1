@@ -81,7 +81,7 @@ const MAP_IMAGES: Record<string, string> = {
   Nusa: "/banners/tdm.jpg",
 };
 const REWARD_TYPE = ["KillBased", "RankBased", "Mixed"] as const;
-const KILL_TYPE = ["PerKill", "Total"] as const;
+const KILL_TYPE = ["Automatic", "Manual"] as const;
 
 function emptyDraft(): Partial<Match> {
   return {
@@ -92,13 +92,14 @@ function emptyDraft(): Partial<Match> {
     game_mode: "Classic",
     player_mode: "Squad",
     reward_type: "RankBased",
-    kill_rate_type: "PerKill",
+    kill_rate_type: "Automatic",
     total_players: 100,
     entry_fee_bac: 0,
     per_kill_amount_bac: 0,
     rank_1_prize_bac: 500,
     rank_2_prize_bac: 250,
     rank_3_prize_bac: 100,
+    platform_fee_pct: 5,
     schedule_at: new Date(Date.now() + 24 * 3600 * 1000).toISOString().slice(0, 16),
     premium_only: false,
   };
@@ -392,7 +393,7 @@ function EditorModal({
             <Select label="Match Type" required value={draft.match_type} options={MATCH_TYPE} onChange={(v) => upd({ match_type: v })} />
 
             <Field label="Platform Fee (%)">
-              <input type="number" className={inp} value={draft.platform_fee_pct ?? 0} onChange={(e) => upd({ platform_fee_pct: Number(e.target.value) })} />
+              <input type="number" min={0} className={inp} value={draft.platform_fee_pct ?? ""} onChange={(e) => upd({ platform_fee_pct: e.target.value === "" ? undefined : Number(e.target.value) })} />
               <span className="mt-1 block font-hud text-[10px] tracking-wider text-foreground/55">Percentage of total income kept by platform</span>
             </Field>
           </div>
@@ -414,7 +415,7 @@ function EditorModal({
             </Field>
 
             <Field label="Total Player" required>
-              <input type="number" className={inp} value={draft.total_players ?? 0} onChange={(e) => upd({ total_players: Number(e.target.value) })} />
+              <input type="number" min={0} className={inp} value={draft.total_players ?? ""} onChange={(e) => upd({ total_players: e.target.value === "" ? undefined : Number(e.target.value) })} />
             </Field>
 
             <Select label="Player Mode" required value={draft.player_mode} options={PLAYER_MODE} onChange={(v) => upd({ player_mode: v })} />
@@ -440,11 +441,11 @@ function EditorModal({
             <Select label="Set Kill Rate" required value={draft.kill_rate_type} options={KILL_TYPE} onChange={(v) => upd({ kill_rate_type: v })} />
 
             <Field label="Entry Fee" required>
-              <input type="number" className={inp} value={draft.entry_fee_bac ?? 0} onChange={(e) => upd({ entry_fee_bac: Number(e.target.value) })} />
+              <input type="number" min={0} className={inp} value={draft.entry_fee_bac ?? ""} onChange={(e) => upd({ entry_fee_bac: e.target.value === "" ? undefined : Number(e.target.value) })} />
             </Field>
 
             <Field label="Per Kill">
-              <input type="number" className={inp} value={draft.per_kill_amount_bac ?? 0} onChange={(e) => upd({ per_kill_amount_bac: Number(e.target.value) })} />
+              <input type="number" min={0} className={inp} value={draft.per_kill_amount_bac ?? ""} onChange={(e) => upd({ per_kill_amount_bac: e.target.value === "" ? undefined : Number(e.target.value) })} />
             </Field>
 
             <label className="flex items-start gap-3 rounded border border-border/60 bg-secondary/30 px-3 py-2">
