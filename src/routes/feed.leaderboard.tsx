@@ -3,9 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
-import { Bell, MessageSquare, Trophy, Medal, Award } from "lucide-react";
-import { CoinIcon } from "@/components/site/CoinIcon";
-import { format } from "date-fns";
+import { Bell, MessageSquare, Crown, ChevronDown, Users, BadgeCheck } from "lucide-react";
 
 export const Route = createFileRoute("/feed/leaderboard")({
   component: FeedLeaderboardPage,
@@ -26,32 +24,29 @@ type Row = {
   prize: number;
   matches: number;
   score: number;
-  avg: number;
-  badge: { label: string; cls: string };
+  tier: { label: string; color: string; dot: string };
   last_played: string | null;
 };
 
 type TF = "all" | "week" | "month";
+type GameTab = "OVERALL" | "BGMI" | "FFMAX" | "CODM";
 
-function badgeFor(score: number) {
-  if (score >= 100000) return { label: "Champion", cls: "bg-rose-500 text-white" };
-  if (score >= 10000) return { label: "Pro", cls: "bg-amber-400 text-black" };
-  if (score >= 1000) return { label: "Advanced", cls: "bg-zinc-700 text-white" };
-  return { label: "Rookie", cls: "bg-zinc-500 text-white" };
-}
-
-function podiumColor(rank: number) {
-  if (rank === 1) return { card: "from-amber-500 to-amber-600", ring: "ring-amber-300", medal: "text-amber-300" };
-  if (rank === 2) return { card: "from-fuchsia-500 to-purple-700", ring: "ring-purple-300", medal: "text-slate-200" };
-  return { card: "from-cyan-500 to-sky-700", ring: "ring-sky-300", medal: "text-amber-600" };
+function tierFor(score: number) {
+  if (score >= 15000) return { label: "Conqueror", color: "text-amber-400", dot: "bg-amber-400" };
+  if (score >= 8000)  return { label: "Ace Master", color: "text-amber-300", dot: "bg-amber-300" };
+  if (score >= 4000)  return { label: "Ace Dominator", color: "text-fuchsia-400", dot: "bg-fuchsia-400" };
+  if (score >= 1500)  return { label: "Ace", color: "text-amber-500", dot: "bg-amber-500" };
+  if (score >= 500)   return { label: "Crown", color: "text-purple-300", dot: "bg-purple-300" };
+  return { label: "Diamond", color: "text-cyan-300", dot: "bg-cyan-300" };
 }
 
 function FeedLeaderboardPage() {
   const { user } = useAuth() as any;
   const [tf, setTf] = useState<TF>("all");
+  const [tab, setTab] = useState<GameTab>("OVERALL");
 
   const q = useQuery({
-    queryKey: ["feed-leaderboard", tf],
+    queryKey: ["feed-leaderboard", tf, tab],
     queryFn: async () => {
       let since: string | null = null;
       if (tf === "week") since = new Date(Date.now() - 7 * 86400000).toISOString();
@@ -59,15 +54,25 @@ function FeedLeaderboardPage() {
 
       let pq = supabase
         .from("match_participants")
-        .select("user_id, kills, prize_bac, joined_at")
+        .select("user_id, kills, prize_bac, joined_at, matches!inner(game_id, games!inner(name))")
         .eq("result_applied", true)
         .limit(10000);
       if (since) pq = pq.gte("joined_at", since);
       const { data: parts, error } = await pq;
       if (error) throw error;
 
+      const tabFilter = (g: string) => {
+        const n = (g || "").toLowerCase();
+        if (tab === "BGMI") return n.includes("bgmi") || n.includes("battlegrounds");
+        if (tab === "FFMAX") return n.includes("free fire");
+        if (tab === "CODM") return n.includes("call of duty") || n.includes("codm");
+        return true;
+      };
+
       const agg = new Map<string, { kills: number; prize: number; matches: number; last: string | null }>();
       (parts ?? []).forEach((p: any) => {
+        const gname = p.matches?.games?.name ?? "";
+        if (!tabFilter(gname)) return;
         const cur = agg.get(p.user_id) ?? { kills: 0, prize: 0, matches: 0, last: null };
         cur.kills += p.kills ?? 0;
         cur.prize += Number(p.prize_bac ?? 0);
@@ -96,8 +101,7 @@ function FeedLeaderboardPage() {
           prize: a.prize,
           matches: a.matches,
           score,
-          avg: a.matches > 0 ? score / a.matches : 0,
-          badge: badgeFor(score),
+          tier: tierFor(score),
           last_played: a.last,
         };
       });
@@ -108,93 +112,83 @@ function FeedLeaderboardPage() {
 
   const rows = q.data ?? [];
   const podium = rows.slice(0, 3);
+  const rest = rows.slice(3);
 
-  const meRank = useMemo(() => {
+  const meRow = useMemo(() => {
     if (!user?.id) return null;
     const idx = rows.findIndex((r) => r.user_id === user.id);
-    return idx < 0 ? null : idx + 1;
+    return idx < 0 ? null : { rank: idx + 1, row: rows[idx] };
   }, [rows, user?.id]);
 
+  const tabs: { key: GameTab; label: string }[] = [
+    { key: "OVERALL", label: "OVERALL" },
+    { key: "BGMI", label: "BATTLEGROUNDS MOBILE INDIA" },
+    { key: "FFMAX", label: "FREE FIRE MAX" },
+    { key: "CODM", label: "CALL OF DUTY MOBILE" },
+  ];
+
   return (
-    <div className="min-h-screen bg-background pb-28">
+    <div className="min-h-screen bg-background pb-32 text-foreground">
       {/* Top bar */}
-      <header className="sticky top-0 z-30 flex items-center justify-between bg-background/95 px-4 py-3 backdrop-blur border-b border-border/40">
+      <header className="sticky top-0 z-30 flex items-center justify-between border-b border-border/40 bg-background/95 px-4 py-3 backdrop-blur">
         <Link to="/feed" className="font-display text-2xl tracking-tight">
           <span className="text-foreground">BATTLE</span><span className="text-red-500">ASIA</span>
         </Link>
-        <div className="flex items-center gap-3">
-          <button className="relative rounded-full p-2 text-foreground/80 hover:text-gold">
+        <div className="flex items-center gap-2">
+          <button className="rounded-full p-2 text-foreground/80 hover:text-gold">
             <Bell size={20} />
           </button>
-          <Link to="/dashboard/messages" className="relative rounded-full p-2 text-foreground/80 hover:text-gold">
+          <Link to="/dashboard/messages" className="rounded-full p-2 text-foreground/80 hover:text-gold">
             <MessageSquare size={20} />
           </Link>
         </div>
       </header>
 
-      <div className="px-4 pt-5 space-y-5 max-w-5xl mx-auto">
-        {/* Title + timeframe */}
-        <div className="flex items-center justify-between gap-3 flex-wrap">
-          <div className="flex items-center gap-2">
-            <Trophy className="w-6 h-6 text-primary" />
-            <h1 className="font-display text-2xl tracking-wider">LEADER BOARD</h1>
-          </div>
-          <div className="hud-panel p-1 flex gap-1">
-            {(["all", "week", "month"] as TF[]).map((t) => (
+      {/* Game tabs */}
+      <nav className="border-b border-border/40 overflow-x-auto no-scrollbar">
+        <div className="mx-auto flex max-w-5xl items-center gap-6 px-4">
+          {tabs.map((t) => {
+            const active = tab === t.key;
+            return (
               <button
-                key={t}
-                onClick={() => setTf(t)}
-                className={`px-3 py-1.5 text-[11px] font-mono uppercase tracking-wider transition rounded ${
-                  tf === t ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
+                key={t.key}
+                onClick={() => setTab(t.key)}
+                className={`relative shrink-0 py-3 font-display text-[12px] tracking-[0.18em] transition ${
+                  active ? "text-red-500" : "text-foreground/60 hover:text-foreground"
                 }`}
               >
-                {t === "all" ? "All Time" : t === "week" ? "This Week" : "This Month"}
+                {t.label}
+                {active && <span className="absolute inset-x-1 -bottom-px h-[2px] rounded bg-red-500" />}
               </button>
-            ))}
-          </div>
+            );
+          })}
+        </div>
+      </nav>
+
+      <div className="mx-auto max-w-5xl px-4 pt-4 space-y-5">
+        {/* Filter chips */}
+        <div className="flex flex-wrap items-center gap-2.5">
+          <FilterChip
+            active
+            label={tf === "all" ? "Total Ranking" : tf === "week" ? "Weekly" : "Monthly"}
+            onClick={() => setTf(tf === "all" ? "week" : tf === "week" ? "month" : "all")}
+            color="red"
+          />
+          <FilterChip label="🇮🇳 India" />
+          <FilterChip label="Squad" icon={<Users size={13} />} />
         </div>
 
         {/* Podium */}
         {q.isLoading ? (
           <div className="hud-panel p-10 text-center font-mono text-sm text-muted-foreground">Loading rankings…</div>
         ) : podium.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            {podium.map((r, i) => {
-              const rank = i + 1;
-              const c = podiumColor(rank);
-              return (
-                <div
-                  key={r.user_id}
-                  className={`relative rounded-xl bg-gradient-to-br ${c.card} p-4 shadow-lg text-white`}
-                >
-                  <Medal className={`absolute top-2 right-2 w-5 h-5 ${c.medal}`} />
-                  <div className="flex items-center gap-3">
-                    <div className={`h-14 w-14 rounded-full overflow-hidden ring-2 ${c.ring} bg-black/30 shrink-0`}>
-                      {r.avatar_url ? (
-                        <img src={r.avatar_url} alt={r.username} className="h-full w-full object-cover" />
-                      ) : (
-                        <div className="h-full w-full grid place-items-center font-bold">
-                          {r.username.slice(0, 1).toUpperCase()}
-                        </div>
-                      )}
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-1.5 flex-wrap">
-                        <span className="font-display text-base truncate">{r.username}</span>
-                        <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${r.badge.cls}`}>{r.badge.label}</span>
-                      </div>
-                      <div className="flex items-center gap-1 text-xs mt-0.5">
-                        <CoinIcon className="w-3 h-3" />
-                        <span className="font-mono font-bold">{r.score.toLocaleString(undefined, { maximumFractionDigits: 2 })}</span>
-                        <span className="opacity-80">Points</span>
-                      </div>
-                      <div className="text-[11px] opacity-90 mt-1">{r.matches} Games</div>
-                      <div className="text-[10px] opacity-80 font-mono">Average: {r.avg.toFixed(1)}</div>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
+          <div className="grid grid-cols-3 items-end gap-2 sm:gap-4">
+            {/* #2 left */}
+            <PodiumCard rank={2} row={podium[1]} />
+            {/* #1 center elevated */}
+            <PodiumCard rank={1} row={podium[0]} />
+            {/* #3 right */}
+            <PodiumCard rank={3} row={podium[2]} />
           </div>
         ) : (
           <div className="hud-panel p-10 text-center font-mono text-sm text-muted-foreground">
@@ -202,102 +196,175 @@ function FeedLeaderboardPage() {
           </div>
         )}
 
-        {/* Table */}
-        {rows.length > 0 && (
+        {/* Ranked list */}
+        {rest.length > 0 && (
           <div className="hud-panel overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-border/40 bg-card/40 text-left">
-                    <Th>Rank</Th>
-                    <Th>Player</Th>
-                    <Th align="right">Total Score</Th>
-                    <Th align="right">Games</Th>
-                    <Th align="right">Average</Th>
-                    <Th>Badge</Th>
-                    <Th>Last Played</Th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border/30">
-                  {rows.map((r, i) => {
-                    const rank = i + 1;
-                    const isMe = user?.id === r.user_id;
-                    return (
-                      <tr key={r.user_id} className={isMe ? "bg-primary/10" : "hover:bg-card/40"}>
-                        <td className="px-3 py-3">
-                          {rank <= 3 ? (
-                            <Award
-                              className={
-                                rank === 1 ? "w-5 h-5 text-amber-400" :
-                                rank === 2 ? "w-5 h-5 text-slate-300" :
-                                "w-5 h-5 text-amber-700"
-                              }
-                            />
-                          ) : (
-                            <span className="font-mono text-muted-foreground">#{rank}</span>
-                          )}
-                        </td>
-                        <td className="px-3 py-3">
-                          <Link to="/u/$username" params={{ username: r.username }} className="flex items-center gap-2.5 group">
-                            <div className="h-9 w-9 rounded-full overflow-hidden bg-secondary shrink-0">
-                              {r.avatar_url ? (
-                                <img src={r.avatar_url} alt={r.username} className="h-full w-full object-cover" />
-                              ) : (
-                                <div className="h-full w-full grid place-items-center text-xs font-bold">
-                                  {r.username.slice(0, 1).toUpperCase()}
-                                </div>
-                              )}
-                            </div>
-                            <div className="leading-tight">
-                              <div className="font-semibold group-hover:text-primary">{r.username}</div>
-                              <div className="text-[11px] text-muted-foreground">Level {r.level}</div>
-                            </div>
-                          </Link>
-                        </td>
-                        <td className="px-3 py-3 text-right">
-                          <span className="inline-flex items-center gap-1 font-mono">
-                            <CoinIcon className="w-3.5 h-3.5" />
-                            {r.score.toLocaleString(undefined, { maximumFractionDigits: 2 })}
-                          </span>
-                        </td>
-                        <td className="px-3 py-3 text-right font-mono">{r.matches}</td>
-                        <td className="px-3 py-3 text-right">
-                          <span className="inline-flex items-center gap-1 font-mono text-muted-foreground">
-                            <CoinIcon className="w-3.5 h-3.5" />
-                            {r.avg.toFixed(1)}
-                          </span>
-                        </td>
-                        <td className="px-3 py-3">
-                          <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${r.badge.cls}`}>{r.badge.label}</span>
-                        </td>
-                        <td className="px-3 py-3 font-mono text-[11px] text-muted-foreground">
-                          {r.last_played ? format(new Date(r.last_played), "yyyy-MM-dd HH:mm") : "—"}
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+            {/* Header */}
+            <div className="grid grid-cols-[48px_1fr_140px_90px] items-center gap-2 border-b border-border/40 bg-card/40 px-4 py-2.5 font-hud text-[10px] uppercase tracking-[0.18em] text-foreground/60">
+              <span>Rank</span>
+              <span>Player</span>
+              <span>Rank Tier</span>
+              <span className="text-right">Points</span>
+            </div>
+            <ul className="divide-y divide-border/30">
+              {rest.map((r, i) => {
+                const rank = i + 4;
+                const isMe = user?.id === r.user_id;
+                return <RankRow key={r.user_id} rank={rank} row={r} highlight={isMe} />;
+              })}
+            </ul>
+          </div>
+        )}
+
+        {/* You row */}
+        {meRow && meRow.rank > 10 && (
+          <div className="rounded-md border-2 border-red-500/70 bg-red-500/5 px-4 py-3">
+            <div className="grid grid-cols-[48px_1fr_140px_90px] items-center gap-2">
+              <span className="font-display text-xl text-red-500">{meRow.rank}</span>
+              <Link to="/u/$username" params={{ username: meRow.row.username }} className="flex items-center gap-3">
+                <Avatar row={meRow.row} size={36} ring="ring-red-500/60" />
+                <div className="leading-tight">
+                  <div className="font-display tracking-wide text-red-400">You</div>
+                  <div className="text-[11px] text-foreground/60">Lvl {meRow.row.level}</div>
+                </div>
+              </Link>
+              <TierPill tier={meRow.row.tier} />
+              <span className="text-right font-mono font-bold text-red-400">{meRow.row.score.toLocaleString()}</span>
             </div>
           </div>
         )}
 
-        {meRank && (
-          <p className="text-center text-xs text-muted-foreground font-mono">
-            Your rank: <span className="text-primary font-bold">#{meRank}</span>
-          </p>
-        )}
-
-        <p className="pt-1 text-center text-[11px] text-muted-foreground">ⓘ Leaderboards refresh every 10 minutes.</p>
+        <p className="pt-1 text-center text-[11px] text-foreground/60">
+          <span className="mr-1.5 inline-block h-3.5 w-3.5 rounded-full border border-foreground/40 text-center text-[9px] leading-[12px]">i</span>
+          Leaderboards refresh every 10 minutes.
+        </p>
       </div>
     </div>
   );
 }
 
-function Th({ children, align = "left" }: { children: React.ReactNode; align?: "left" | "right" }) {
+/* ---------- pieces ---------- */
+
+function FilterChip({
+  label, active, onClick, color, icon,
+}: { label: string; active?: boolean; onClick?: () => void; color?: "red"; icon?: React.ReactNode }) {
+  const red = color === "red";
   return (
-    <th className={`px-3 py-2.5 text-[10px] font-mono uppercase tracking-wider text-muted-foreground ${align === "right" ? "text-right" : "text-left"}`}>
-      {children}
-    </th>
+    <button
+      onClick={onClick}
+      className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[12px] font-medium transition ${
+        active && red
+          ? "border-red-500/70 text-red-500 bg-red-500/5"
+          : "border-border/60 text-foreground/80 hover:border-foreground/40"
+      }`}
+    >
+      {icon}
+      <span>{label}</span>
+      <ChevronDown size={13} className="opacity-70" />
+    </button>
+  );
+}
+
+function Avatar({ row, size = 40, ring = "ring-border/60" }: { row: Row; size?: number; ring?: string }) {
+  return (
+    <div
+      className={`shrink-0 overflow-hidden rounded-full bg-secondary ring-2 ${ring}`}
+      style={{ width: size, height: size }}
+    >
+      {row.avatar_url ? (
+        <img src={row.avatar_url} alt={row.username} className="h-full w-full object-cover" />
+      ) : (
+        <div className="grid h-full w-full place-items-center text-xs font-bold">
+          {row.username.slice(0, 1).toUpperCase()}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function TierPill({ tier }: { tier: Row["tier"] }) {
+  return (
+    <span className={`inline-flex items-center gap-1.5 text-[12px] font-medium ${tier.color}`}>
+      <span className={`inline-block h-3 w-3 rounded-full ${tier.dot} shadow-[0_0_8px_currentColor] opacity-90`} />
+      {tier.label}
+    </span>
+  );
+}
+
+function PodiumCard({ rank, row }: { rank: 1 | 2 | 3; row?: Row }) {
+  if (!row) return <div className="h-40" />;
+  const isFirst = rank === 1;
+  const isSecond = rank === 2;
+  const ringCls = isFirst ? "ring-amber-400" : isSecond ? "ring-purple-400" : "ring-amber-700";
+  const badgeBg = isFirst ? "bg-amber-400 text-black" : isSecond ? "bg-slate-200 text-black" : "bg-amber-700 text-white";
+  const cardCls = isFirst
+    ? "bg-gradient-to-b from-amber-500/25 via-amber-500/10 to-transparent border-amber-400/50 shadow-[0_0_40px_-10px_rgba(251,191,36,0.5)]"
+    : "bg-gradient-to-b from-card/80 to-card/40 border-border/60";
+  const heightCls = isFirst ? "pt-7 pb-5 -mt-2" : "pt-5 pb-4";
+
+  return (
+    <div className={`relative rounded-xl border ${cardCls} ${heightCls} px-2 text-center`}>
+      {/* Rank badge top-left */}
+      <span className={`absolute -top-2 left-2 grid h-7 w-7 place-items-center rounded-full text-[12px] font-bold ${badgeBg} ring-2 ring-background`}>
+        {rank}
+      </span>
+
+      {/* Crown on #1 */}
+      {isFirst && (
+        <Crown
+          className="absolute left-1/2 -top-5 -translate-x-1/2 text-amber-300 drop-shadow-[0_0_8px_rgba(251,191,36,0.8)]"
+          size={28}
+          fill="currentColor"
+        />
+      )}
+
+      {/* Laurel-style avatar */}
+      <div className="relative mx-auto" style={{ width: isFirst ? 88 : 72, height: isFirst ? 88 : 72 }}>
+        <div className={`absolute inset-0 rounded-full ring-4 ${ringCls} overflow-hidden bg-black/40`}>
+          {row.avatar_url ? (
+            <img src={row.avatar_url} alt={row.username} className="h-full w-full object-cover" />
+          ) : (
+            <div className="grid h-full w-full place-items-center font-bold text-lg">
+              {row.username.slice(0, 1).toUpperCase()}
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="mt-2 flex items-center justify-center gap-1 truncate font-display text-[13px] tracking-wide sm:text-base">
+        <span className="truncate">{row.username}</span>
+        <BadgeCheck size={12} className="text-sky-400 shrink-0" />
+      </div>
+
+      <div className={`mt-1 inline-flex items-center gap-1 text-[11px] sm:text-[12px] ${row.tier.color}`}>
+        <span className={`inline-block h-2.5 w-2.5 rounded-full ${row.tier.dot}`} />
+        {row.tier.label}
+      </div>
+
+      <div className="mt-1.5 text-[10px] uppercase tracking-widest text-foreground/60">Points</div>
+      <div className={`font-mono font-bold tabular-nums ${isFirst ? "text-amber-300 text-xl sm:text-2xl" : "text-foreground text-base sm:text-lg"}`}>
+        {row.score.toLocaleString()}
+      </div>
+    </div>
+  );
+}
+
+function RankRow({ rank, row, highlight }: { rank: number; row: Row; highlight?: boolean }) {
+  return (
+    <li className={`grid grid-cols-[48px_1fr_140px_90px] items-center gap-2 px-4 py-3 transition ${highlight ? "bg-red-500/5" : "hover:bg-card/40"}`}>
+      <span className="font-display text-lg text-foreground/80">{rank}</span>
+      <Link to="/u/$username" params={{ username: row.username }} className="flex items-center gap-3 min-w-0">
+        <Avatar row={row} size={36} />
+        <div className="min-w-0 leading-tight">
+          <div className="flex items-center gap-1 truncate font-semibold">
+            <span className="truncate">{row.username}</span>
+            <BadgeCheck size={12} className="text-sky-400 shrink-0" />
+          </div>
+          <div className="text-[11px] text-foreground/60">Lvl {row.level}</div>
+        </div>
+      </Link>
+      <TierPill tier={row.tier} />
+      <span className="text-right font-mono font-bold tabular-nums">{row.score.toLocaleString()}</span>
+    </li>
   );
 }
