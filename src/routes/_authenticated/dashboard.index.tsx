@@ -76,7 +76,7 @@ function DashboardPage() {
       const [parts, txs, upcoming] = await Promise.all([
         supabase
           .from("match_participants")
-          .select("*, matches:match_id(id, title, status, scheduled_at, entry_fee_bac)")
+          .select("*, matches:match_id(id, match_name, status, schedule_at, entry_fee_bac)")
           .eq("user_id", uid!)
           .order("created_at", { ascending: false }),
         supabase
@@ -87,9 +87,9 @@ function DashboardPage() {
           .limit(10),
         supabase
           .from("matches")
-          .select("id, title, scheduled_at, status, entry_fee_bac")
+          .select("id, match_name, schedule_at, status, entry_fee_bac")
           .in("status", ["Upcoming", "Active"])
-          .order("scheduled_at", { ascending: true })
+          .order("schedule_at", { ascending: true })
           .limit(5),
       ]);
       return {
