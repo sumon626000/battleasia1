@@ -322,7 +322,7 @@ function AdminMatchesPage() {
         </table>
       </div>
 
-      {editing && <EditorModal draft={editing} setDraft={setEditing} onSave={save} onClose={() => setEditing(null)} />}
+      {editing && <EditorModal draft={editing} setDraft={setEditing} onSave={save} onClose={() => setEditing(null)} errors={errors} />}
     </div>
   );
 }
