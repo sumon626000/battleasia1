@@ -9,6 +9,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { CommentsThread, LikeBurst } from "@/components/feed/CommentsThread";
 import { StoriesRail } from "@/components/feed/StoriesRail";
 import { SignedImage, SignedVideo } from "@/components/feed/SignedMedia";
+import { PeopleToFollow } from "@/components/feed/PeopleToFollow";
 
 
 export const Route = createFileRoute("/feed/")({
@@ -191,6 +192,11 @@ function FeedPage() {
 
         <StoriesRail />
 
+        {/* Mobile-only: players to follow */}
+        <div className="my-4 lg:hidden">
+          <PeopleToFollow limit={5} title="Players to follow" />
+        </div>
+
         {loading && posts.length === 0 ? (
           <div className="space-y-5">
             {[1, 2, 3].map((i) => (
@@ -219,6 +225,7 @@ function FeedPage() {
               <Link to="/leaderboard" className="btn-outline-gold w-full justify-center inline-flex items-center gap-1.5 px-3 py-2 text-xs">Leaderboard</Link>
             </div>
           </div>
+          <PeopleToFollow limit={8} title="Players to follow" />
           <div className="rounded-xl border border-border/60 bg-card/60 p-4">
             <div className="font-hud text-[10px] uppercase tracking-widest text-foreground/50 mb-2">Trending now</div>
             <ul className="space-y-2 text-xs text-foreground/70">
