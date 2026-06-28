@@ -343,10 +343,10 @@ function Avatar({ row, size = 40, ring = "ring-border/60" }: { row: Row; size?: 
   );
 }
 
-function TierPill({ tier }: { tier: Row["tier"] }) {
+function TierPill({ tier, compact }: { tier: Row["tier"]; compact?: boolean }) {
   return (
-    <span className={`inline-flex items-center gap-1.5 text-[12px] font-medium ${tier.color}`}>
-      <span className={`inline-block h-3 w-3 rounded-full ${tier.dot} shadow-[0_0_8px_currentColor] opacity-90`} />
+    <span className={`inline-flex items-center gap-1.5 ${compact ? "text-[10px]" : "text-[12px]"} font-medium ${tier.color}`}>
+      <span className={`inline-block ${compact ? "h-2 w-2" : "h-3 w-3"} rounded-full ${tier.dot} shadow-[0_0_8px_currentColor] opacity-90`} />
       {tier.label}
     </span>
   );
