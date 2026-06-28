@@ -300,6 +300,31 @@ function FilterChip({
   );
 }
 
+function SelectChip({
+  value, onChange, options,
+}: { value: string; onChange: (v: string) => void; options: { value: string; label: string }[] }) {
+  const current = options.find((o) => o.value === value) ?? options[0];
+  return (
+    <div className="relative inline-flex items-center">
+      <span className="pointer-events-none inline-flex items-center gap-1.5 rounded-full border border-border/60 px-3 py-1.5 text-[12px] font-medium text-foreground/80">
+        {current.label}
+        <ChevronDown size={13} className="opacity-70" />
+      </span>
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="absolute inset-0 cursor-pointer opacity-0"
+      >
+        {options.map((o) => (
+          <option key={o.value} value={o.value} className="bg-background text-foreground">
+            {o.label}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+}
+
 function Avatar({ row, size = 40, ring = "ring-border/60" }: { row: Row; size?: number; ring?: string }) {
   return (
     <div
