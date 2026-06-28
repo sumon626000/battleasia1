@@ -61,6 +61,7 @@ import { Route as AdminAdminUsersRouteImport } from './routes/_admin/admin.users
 import { Route as AdminAdminTwoFactorRouteImport } from './routes/_admin/admin.two-factor'
 import { Route as AdminAdminTemplatesRouteImport } from './routes/_admin/admin.templates'
 import { Route as AdminAdminSupportRouteImport } from './routes/_admin/admin.support'
+import { Route as AdminAdminSpinWheelRouteImport } from './routes/_admin/admin.spin-wheel'
 import { Route as AdminAdminSmtpRouteImport } from './routes/_admin/admin.smtp'
 import { Route as AdminAdminShopRouteImport } from './routes/_admin/admin.shop'
 import { Route as AdminAdminSettingsRouteImport } from './routes/_admin/admin.settings'
@@ -368,6 +369,11 @@ const AdminAdminSupportRoute = AdminAdminSupportRouteImport.update({
   path: '/admin/support',
   getParentRoute: () => AdminRouteRoute,
 } as any)
+const AdminAdminSpinWheelRoute = AdminAdminSpinWheelRouteImport.update({
+  id: '/admin/spin-wheel',
+  path: '/admin/spin-wheel',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
 const AdminAdminSmtpRoute = AdminAdminSmtpRouteImport.update({
   id: '/admin/smtp',
   path: '/admin/smtp',
@@ -583,6 +589,7 @@ export interface FileRoutesByFullPath {
   '/admin/settings': typeof AdminAdminSettingsRoute
   '/admin/shop': typeof AdminAdminShopRoute
   '/admin/smtp': typeof AdminAdminSmtpRoute
+  '/admin/spin-wheel': typeof AdminAdminSpinWheelRoute
   '/admin/support': typeof AdminAdminSupportRoute
   '/admin/templates': typeof AdminAdminTemplatesRoute
   '/admin/two-factor': typeof AdminAdminTwoFactorRoute
@@ -664,6 +671,7 @@ export interface FileRoutesByTo {
   '/admin/settings': typeof AdminAdminSettingsRoute
   '/admin/shop': typeof AdminAdminShopRoute
   '/admin/smtp': typeof AdminAdminSmtpRoute
+  '/admin/spin-wheel': typeof AdminAdminSpinWheelRoute
   '/admin/support': typeof AdminAdminSupportRoute
   '/admin/templates': typeof AdminAdminTemplatesRoute
   '/admin/two-factor': typeof AdminAdminTwoFactorRoute
@@ -750,6 +758,7 @@ export interface FileRoutesById {
   '/_admin/admin/settings': typeof AdminAdminSettingsRoute
   '/_admin/admin/shop': typeof AdminAdminShopRoute
   '/_admin/admin/smtp': typeof AdminAdminSmtpRoute
+  '/_admin/admin/spin-wheel': typeof AdminAdminSpinWheelRoute
   '/_admin/admin/support': typeof AdminAdminSupportRoute
   '/_admin/admin/templates': typeof AdminAdminTemplatesRoute
   '/_admin/admin/two-factor': typeof AdminAdminTwoFactorRoute
@@ -835,6 +844,7 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/admin/shop'
     | '/admin/smtp'
+    | '/admin/spin-wheel'
     | '/admin/support'
     | '/admin/templates'
     | '/admin/two-factor'
@@ -916,6 +926,7 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/admin/shop'
     | '/admin/smtp'
+    | '/admin/spin-wheel'
     | '/admin/support'
     | '/admin/templates'
     | '/admin/two-factor'
@@ -1001,6 +1012,7 @@ export interface FileRouteTypes {
     | '/_admin/admin/settings'
     | '/_admin/admin/shop'
     | '/_admin/admin/smtp'
+    | '/_admin/admin/spin-wheel'
     | '/_admin/admin/support'
     | '/_admin/admin/templates'
     | '/_admin/admin/two-factor'
@@ -1424,6 +1436,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAdminSupportRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/_admin/admin/spin-wheel': {
+      id: '/_admin/admin/spin-wheel'
+      path: '/admin/spin-wheel'
+      fullPath: '/admin/spin-wheel'
+      preLoaderRoute: typeof AdminAdminSpinWheelRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
     '/_admin/admin/smtp': {
       id: '/_admin/admin/smtp'
       path: '/admin/smtp'
@@ -1672,6 +1691,7 @@ interface AdminRouteRouteChildren {
   AdminAdminSettingsRoute: typeof AdminAdminSettingsRoute
   AdminAdminShopRoute: typeof AdminAdminShopRoute
   AdminAdminSmtpRoute: typeof AdminAdminSmtpRoute
+  AdminAdminSpinWheelRoute: typeof AdminAdminSpinWheelRoute
   AdminAdminSupportRoute: typeof AdminAdminSupportRoute
   AdminAdminTemplatesRoute: typeof AdminAdminTemplatesRoute
   AdminAdminTwoFactorRoute: typeof AdminAdminTwoFactorRoute
@@ -1709,6 +1729,7 @@ const AdminRouteRouteChildren: AdminRouteRouteChildren = {
   AdminAdminSettingsRoute: AdminAdminSettingsRoute,
   AdminAdminShopRoute: AdminAdminShopRoute,
   AdminAdminSmtpRoute: AdminAdminSmtpRoute,
+  AdminAdminSpinWheelRoute: AdminAdminSpinWheelRoute,
   AdminAdminSupportRoute: AdminAdminSupportRoute,
   AdminAdminTemplatesRoute: AdminAdminTemplatesRoute,
   AdminAdminTwoFactorRoute: AdminAdminTwoFactorRoute,
