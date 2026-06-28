@@ -1,10 +1,19 @@
 import type { ReactNode } from "react";
+import { useRouterState } from "@tanstack/react-router";
 import { SiteHeader } from "./SiteHeader";
 import { SiteTicker } from "./SiteTicker";
 import { SiteFooter } from "./SiteFooter";
 import { AnnouncementBar } from "./AnnouncementBar";
+import { FeedBottomNav } from "@/components/feed/FeedBottomNav";
 
 export function SiteShell({ children }: { children: ReactNode }) {
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const isSocialOrLeaderboard =
+    pathname === "/feed" ||
+    pathname.startsWith("/feed/") ||
+    pathname === "/leaderboard" ||
+    pathname.startsWith("/leaderboard/");
+
   return (
     <div className="relative flex min-h-screen flex-col overflow-x-hidden bg-background text-foreground">
       {/* Ambient glow */}
@@ -18,9 +27,9 @@ export function SiteShell({ children }: { children: ReactNode }) {
         <SiteHeader />
         <SiteTicker />
       </div>
-      <main className="flex-1">{children}</main>
+      <main className={`flex-1 ${isSocialOrLeaderboard ? "pb-24" : ""}`}>{children}</main>
 
-      <SiteFooter />
+      {isSocialOrLeaderboard ? <FeedBottomNav /> : <SiteFooter />}
     </div>
   );
 }
