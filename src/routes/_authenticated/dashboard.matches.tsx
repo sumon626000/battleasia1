@@ -229,9 +229,49 @@ function MatchesPage() {
         </a>
       )}
 
-      <div className="hud-panel grid gap-2 p-3 sm:grid-cols-3">
-        <FilterGroup label="STATUS" value={status} onChange={(v) => setStatus(v as Status)}
-          options={[["all","All"],["Upcoming","Upcoming"],["Ongoing","Live"],["Complete","Complete"]]} />
+      {/* Primary tabs */}
+      <div className="hud-panel flex items-center gap-1 overflow-x-auto p-1.5">
+        {(["Ongoing","Upcoming","Results"] as Tab[]).map((t) => {
+          const count = tabCounts.data?.[t] ?? 0;
+          const active = tab === t;
+          return (
+            <button
+              key={t}
+              onClick={() => setTab(t)}
+              className={`flex-1 min-w-[110px] rounded-sm px-3 py-2 font-hud text-[11px] font-bold uppercase tracking-widest transition ${
+                active ? "bg-gold text-background shadow-lg shadow-gold/20" : "text-foreground/70 hover:bg-gold/10 hover:text-gold"
+              }`}
+            >
+              {t === "Ongoing" ? "ONGOING" : t === "Upcoming" ? "UPCOMING" : "RESULTS"} ({count})
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Date filter — only for Results tab */}
+      {tab === "Results" && (
+        <div className="hud-panel flex flex-wrap items-center gap-3 p-3">
+          <div className="flex items-center gap-2 font-hud text-[10px] uppercase tracking-widest text-foreground/70">
+            <Calendar size={12} className="text-gold" /> FILTER BY DATE
+          </div>
+          <input
+            type="date"
+            value={resultDate}
+            onChange={(e) => setResultDate(e.target.value)}
+            className="rounded-sm border border-border/60 bg-background/60 px-2 py-1.5 font-mono text-xs text-foreground focus:border-gold focus:outline-none"
+          />
+          {resultDate && (
+            <button
+              onClick={() => setResultDate("")}
+              className="rounded-sm border border-border/60 px-2 py-1 font-hud text-[10px] font-bold uppercase tracking-widest text-foreground/70 hover:border-gold/60 hover:text-gold"
+            >
+              Clear
+            </button>
+          )}
+        </div>
+      )}
+
+      <div className="hud-panel grid gap-2 p-3 sm:grid-cols-2">
         <FilterGroup label="MODE" value={mode} onChange={(v) => setMode(v as ModeFilter)}
           options={[["all","All"],["Solo","Solo"],["Duo","Duo"],["Squad","Squad"]]} />
         <FilterGroup label="TYPE" value={type} onChange={(v) => setType(v as TypeFilter)}
