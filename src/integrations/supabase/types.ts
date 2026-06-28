@@ -2274,6 +2274,7 @@ export type Database = {
       increment_feed_view: { Args: { p_post_id: number }; Returns: undefined }
       is_admin: { Args: never; Returns: boolean }
       is_blocked_between: { Args: { a: string; b: string }; Returns: boolean }
+      is_super_admin: { Args: never; Returns: boolean }
       join_match: { Args: { p_match_id: number }; Returns: number }
       mark_notifications_read: { Args: { p_ids?: number[] }; Returns: number }
       mark_ticket_read: { Args: { p_ticket_id: number }; Returns: undefined }
@@ -2341,7 +2342,7 @@ export type Database = {
       toggle_feed_like: { Args: { p_post_id: number }; Returns: boolean }
     }
     Enums: {
-      app_role: "admin" | "moderator" | "user"
+      app_role: "admin" | "moderator" | "user" | "sub_admin" | "super_admin"
       audience_type: "all" | "selected"
       balance_log_type:
         | "deposit"
@@ -2528,7 +2529,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "moderator", "user"],
+      app_role: ["admin", "moderator", "user", "sub_admin", "super_admin"],
       audience_type: ["all", "selected"],
       balance_log_type: [
         "deposit",

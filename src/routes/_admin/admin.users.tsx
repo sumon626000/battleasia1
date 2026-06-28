@@ -59,9 +59,11 @@ async function fetchUsers(q: string) {
 function ActionModal({
   user,
   onClose,
+  isSuper,
 }: {
   user: Row;
   onClose: () => void;
+  isSuper: boolean;
 }) {
   const qc = useQueryClient();
   const [reason, setReason] = useState("");
@@ -69,6 +71,7 @@ function ActionModal({
   const [note, setNote] = useState("");
   const [role, setRole] = useState(user.roles?.[0]?.role ?? "user");
   const [busy, setBusy] = useState(false);
+
 
   const refresh = () => {
     qc.invalidateQueries({ queryKey: ["admin-users"] });
@@ -105,19 +108,24 @@ function ActionModal({
         <div className="mt-4 space-y-4">
           {/* Role */}
           <div className="border-t border-border/40 pt-3">
-            <label className="font-hud text-[10px] uppercase tracking-widest text-foreground/60">Role</label>
+            <label className="font-hud text-[10px] uppercase tracking-widest text-foreground/60">
+              Role {isSuper ? "" : "(super admin only)"}
+            </label>
             <div className="mt-2 flex gap-2">
               <select
                 value={role}
+                disabled={!isSuper}
                 onChange={(e) => setRole(e.target.value)}
-                className="flex-1 rounded border border-border bg-background px-2 py-1.5 font-hud text-sm"
+                className="flex-1 rounded border border-border bg-background px-2 py-1.5 font-hud text-sm disabled:opacity-50"
               >
                 <option value="user">User</option>
                 <option value="moderator">Moderator</option>
+                <option value="sub_admin">Sub Admin</option>
                 <option value="admin">Admin</option>
+                <option value="super_admin">Super Admin</option>
               </select>
               <button
-                disabled={busy}
+                disabled={busy || !isSuper}
                 onClick={() =>
                   run(
                     async () => {
@@ -131,12 +139,13 @@ function ActionModal({
                     "Role updated"
                   )
                 }
-                className="rounded border border-gold/60 bg-gold/10 px-3 py-1.5 font-hud text-xs uppercase tracking-widest text-gold hover:bg-gold/20"
+                className="rounded border border-gold/60 bg-gold/10 px-3 py-1.5 font-hud text-xs uppercase tracking-widest text-gold hover:bg-gold/20 disabled:opacity-50"
               >
                 Apply
               </button>
             </div>
           </div>
+
 
           {/* Suspend */}
           <div className="border-t border-border/40 pt-3">
@@ -241,10 +250,18 @@ function ActionModal({
 function AdminUsers() {
   const [q, setQ] = useState("");
   const [selected, setSelected] = useState<Row | null>(null);
+  const { data: isSuper = false } = useQuery({
+    queryKey: ["is-super-admin"],
+    queryFn: async () => {
+      const { data } = await supabase.rpc("is_super_admin");
+      return !!data;
+    },
+  });
   const { data, isLoading } = useQuery({
     queryKey: ["admin-users", q],
     queryFn: () => fetchUsers(q),
   });
+
 
   return (
     <div className="space-y-4">
@@ -370,7 +387,7 @@ function AdminUsers() {
         </table>
       </div>
 
-      {selected && <ActionModal user={selected} onClose={() => setSelected(null)} />}
+      {selected && <ActionModal user={selected} onClose={() => setSelected(null)} isSuper={isSuper} />}
     </div>
   );
 }
