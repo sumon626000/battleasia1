@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
-import { Crown, Users, Map, Trophy, Clock, Filter, Sword, ArrowLeft, Gamepad2, Lock, PlayCircle } from "lucide-react";
+import { useProfile } from "@/hooks/use-profile";
+import { Crown, Users, Map, Trophy, Clock, Filter, Sword, ArrowLeft, Gamepad2, Lock, PlayCircle, Loader2 } from "lucide-react";
 import { CoinIcon } from "@/components/site/CoinIcon";
 
 export const Route = createFileRoute("/_authenticated/dashboard/matches")({
@@ -18,11 +20,13 @@ type TypeFilter = "all" | "Free" | "Paid";
 
 function MatchesPage() {
   const { user } = useAuth();
+  const { profile } = useProfile(user?.id);
   const { game: selectedGameId } = Route.useSearch();
   const navigate = useNavigate();
   const [status, setStatus] = useState<Status>("all");
   const [mode, setMode] = useState<ModeFilter>("all");
   const [type, setType] = useState<TypeFilter>("all");
+  const balance = Number(profile?.bac_coin_balance ?? 0);
 
   const games = useQuery({
     queryKey: ["play-games"],
@@ -212,7 +216,7 @@ function MatchesPage() {
 
       <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
         {(matches.data ?? []).map((m: any) => (
-          <MatchCard key={m.id} m={m} joined={joined.data?.has(m.id) ?? false} filled={counts.data?.[m.id] ?? 0} />
+          <MatchCard key={m.id} m={m} joined={joined.data?.has(m.id) ?? false} filled={counts.data?.[m.id] ?? 0} balance={balance} isPremium={!!profile?.is_premium} />
         ))}
         {matches.isLoading && <div className="col-span-full py-8 text-center text-foreground/40">Loading matches...</div>}
         {!matches.isLoading && !matches.data?.length && (
@@ -250,19 +254,55 @@ function FilterGroup({
   );
 }
 
-function MatchCard({ m, joined, filled }: { m: any; joined: boolean; filled: number }) {
+function MatchCard({ m, joined, filled, balance, isPremium }: { m: any; joined: boolean; filled: number; balance: number; isPremium: boolean }) {
+  const qc = useQueryClient();
+  const [joining, setJoining] = useState(false);
   const total = m.total_players ?? 0;
   const pct = total ? Math.min(100, Math.round((filled / total) * 100)) : 0;
   const when = m.schedule_at ? new Date(m.schedule_at) : null;
   const isLive = m.status === "Ongoing";
   const isFull = total > 0 && filled >= total;
+  const fee = Number(m.entry_fee_bac ?? 0);
+  const banner = m.banner_image_url || m.map_image_url || null;
+
+  async function handleJoin(e: React.MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (joined) return;
+    if (isFull) { toast.error("Match is full"); return; }
+    if (m.premium_only && !isPremium) { toast.error("Premium membership required"); return; }
+    if (m.match_type === "Paid" && fee > balance) {
+      toast.error("Insufficient BAC balance", { description: `Need ${fee} BAC, you have ${balance} BAC` });
+      return;
+    }
+    setJoining(true);
+    const { error } = await supabase.rpc("join_match", { p_match_id: m.id });
+    setJoining(false);
+    if (error) { toast.error(error.message || "Failed to join"); return; }
+    toast.success(`Joined ${m.match_name}! Good luck soldier.`);
+    qc.invalidateQueries({ queryKey: ["my-match-ids"] });
+    qc.invalidateQueries({ queryKey: ["match-counts"] });
+    qc.invalidateQueries({ queryKey: ["profile"] });
+  }
 
   return (
     <Link
       to="/dashboard/matches/$matchId"
       params={{ matchId: String(m.id) }}
-      className="hud-panel block overflow-hidden p-4 transition hover:border-gold/60"
+      className="hud-panel block overflow-hidden transition hover:border-gold/60"
     >
+      {banner && (
+        <div className="relative aspect-[16/9] overflow-hidden bg-background/60">
+          <img src={banner} alt={m.match_name} className="h-full w-full object-cover" loading="lazy" />
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
+          {isLive && (
+            <span className="absolute left-2 top-2 inline-flex items-center gap-1 rounded-sm bg-red-600 px-1.5 py-0.5 font-hud text-[9px] font-bold uppercase tracking-widest text-white animate-pulse">
+              <PlayCircle size={10} /> LIVE
+            </span>
+          )}
+        </div>
+      )}
+      <div className="p-4">
       <div className="flex flex-wrap items-center gap-1.5">
         <span className={`rounded-sm px-1.5 py-0.5 font-hud text-[9px] font-bold uppercase tracking-wider ${
           isLive ? "bg-red-500/20 text-red-400" : "bg-gold/15 text-gold"
@@ -301,7 +341,7 @@ function MatchCard({ m, joined, filled }: { m: any; joined: boolean; filled: num
         </div>
       )}
 
-      <div className="mt-3">
+      <div className="mt-3 grid grid-cols-[1fr_auto] gap-2">
         {joined ? (
           <span className="block rounded-sm border border-green-500/40 bg-green-500/10 py-2 text-center font-hud text-[10px] font-bold uppercase tracking-widest text-green-400">
             ✓ JOINED
@@ -311,10 +351,19 @@ function MatchCard({ m, joined, filled }: { m: any; joined: boolean; filled: num
             FULL
           </span>
         ) : (
-          <span className="block rounded-sm border border-gold/40 bg-gold/10 py-2 text-center font-hud text-[10px] font-bold uppercase tracking-widest text-gold">
-            VIEW & JOIN
-          </span>
+          <button
+            type="button"
+            onClick={handleJoin}
+            disabled={joining}
+            className="flex items-center justify-center gap-1.5 rounded-sm border border-gold/60 bg-gold/15 py-2 font-hud text-[10px] font-bold uppercase tracking-widest text-gold transition hover:bg-gold hover:text-background disabled:opacity-50"
+          >
+            {joining ? <><Loader2 size={12} className="animate-spin" /> JOINING</> : (m.match_type === "Free" ? "JOIN FREE" : `JOIN · ${fee} BAC`)}
+          </button>
         )}
+        <span className="rounded-sm border border-border/60 px-3 py-2 text-center font-hud text-[10px] font-bold uppercase tracking-widest text-foreground/70">
+          VIEW
+        </span>
+      </div>
       </div>
     </Link>
   );
