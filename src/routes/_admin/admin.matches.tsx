@@ -415,7 +415,7 @@ function EditorModal({
             </Field>
 
             <Field label="Total Player" required>
-              <input type="number" className={inp} value={draft.total_players ?? 0} onChange={(e) => upd({ total_players: Number(e.target.value) })} />
+              <input type="number" min={0} className={inp} value={draft.total_players ?? ""} onChange={(e) => upd({ total_players: e.target.value === "" ? undefined : Number(e.target.value) })} />
             </Field>
 
             <Select label="Player Mode" required value={draft.player_mode} options={PLAYER_MODE} onChange={(v) => upd({ player_mode: v })} />
