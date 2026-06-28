@@ -294,9 +294,35 @@ function PostCard({ post, onLike }: { post: Post; onLike: () => void }) {
   const handle = post.author?.username || post.author?.full_name || "player";
   const initials = handle.slice(0, 2).toUpperCase();
   const [showComments, setShowComments] = useState(false);
+  const [views, setViews] = useState<number>(post.views_count ?? 0);
+  const ref = useRef<HTMLLIElement | null>(null);
+
+  useEffect(() => { setViews(post.views_count ?? 0); }, [post.views_count]);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    let fired = false;
+    const obs = new IntersectionObserver(async (entries) => {
+      for (const e of entries) {
+        if (e.isIntersecting && e.intersectionRatio >= 0.5 && !fired) {
+          fired = true;
+          try {
+            const { data } = await supabase.rpc("increment_social_post_view", { p_post_id: post.id });
+            if (typeof data === "number") setViews(data);
+            else setViews((v) => v + 1);
+          } catch { setViews((v) => v + 1); }
+          obs.disconnect();
+          break;
+        }
+      }
+    }, { threshold: [0.5] });
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [post.id]);
 
   return (
-    <li className="overflow-hidden rounded-xl border border-border/70 bg-card/70 backdrop-blur transition hover:border-gold/40 hover:shadow-[0_0_24px_-12px_rgba(255,176,32,0.45)]">
+    <li ref={ref} className="overflow-hidden rounded-xl border border-border/70 bg-card/70 backdrop-blur transition hover:border-gold/40 hover:shadow-[0_0_24px_-12px_rgba(255,176,32,0.45)]">
       {/* author row */}
       <div className="flex items-center gap-3 px-3.5 py-3">
         <Link
