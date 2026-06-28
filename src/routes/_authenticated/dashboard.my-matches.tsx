@@ -1,9 +1,10 @@
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
+import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
-import { Trophy, Eye, Loader2 } from "lucide-react";
+import { Trophy, Eye, Loader2, KeyRound, Copy, Check, ExternalLink } from "lucide-react";
 import { CoinIcon } from "@/components/site/CoinIcon";
 import { randomBanner } from "@/lib/match-banners";
 import { format } from "date-fns";
