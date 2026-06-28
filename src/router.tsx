@@ -22,6 +22,8 @@ export const getRouter = () => {
     },
     queryCache: new QueryCache({
       onError: (error, query) => {
+        // Suppress toast for TanStack Router notFound() — the route's notFoundComponent handles UI.
+        if (error && typeof error === "object" && (error as any).isNotFound) return;
         const msg = describeError(error);
         console.error("[query error]", query.queryKey, error);
         toast.error("Could not load data", {
