@@ -334,6 +334,18 @@ function PostCard({ post, onLike, onFollow, isSelf }: { post: Post; onLike: () =
             {timeAgo(post.created_at)} ago · View post
           </Link>
         </div>
+        {!isSelf && post.author?.username && (
+          <button
+            onClick={onFollow}
+            className={`shrink-0 rounded-md px-2.5 py-1 font-hud text-[10px] font-bold uppercase tracking-widest transition ${
+              post.following_author
+                ? "border border-gold/40 bg-gold/10 text-gold"
+                : "border border-gold bg-gold text-background hover:bg-gold/90"
+            }`}
+          >
+            {post.following_author ? "Following" : "Follow"}
+          </button>
+        )}
         <Link
           to="/post/$postId"
           params={{ postId: post.id }}
