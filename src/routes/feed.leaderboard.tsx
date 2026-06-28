@@ -30,6 +30,21 @@ type Row = {
 
 type TF = "all" | "week" | "month";
 type GameTab = "OVERALL" | "BGMI" | "FFMAX" | "CODM";
+type ModeFilter = "ALL" | "Solo" | "Duo" | "Squad";
+
+const COUNTRY_OPTIONS: { code: string; flag: string; name: string }[] = [
+  { code: "ALL", flag: "🌏", name: "All Countries" },
+  { code: "BD", flag: "🇧🇩", name: "Bangladesh" },
+  { code: "IN", flag: "🇮🇳", name: "India" },
+  { code: "PK", flag: "🇵🇰", name: "Pakistan" },
+  { code: "NP", flag: "🇳🇵", name: "Nepal" },
+  { code: "LK", flag: "🇱🇰", name: "Sri Lanka" },
+  { code: "MY", flag: "🇲🇾", name: "Malaysia" },
+  { code: "ID", flag: "🇮🇩", name: "Indonesia" },
+  { code: "TH", flag: "🇹🇭", name: "Thailand" },
+  { code: "VN", flag: "🇻🇳", name: "Vietnam" },
+  { code: "PH", flag: "🇵🇭", name: "Philippines" },
+];
 
 function tierFor(score: number) {
   if (score >= 15000) return { label: "Conqueror", color: "text-amber-400", dot: "bg-amber-400" };
