@@ -2129,6 +2129,7 @@ export type Database = {
         Args: { p_match_id: number; p_reason: string }
         Returns: number
       }
+      admin_delete_all_non_admin_users: { Args: never; Returns: number }
       admin_delete_feed_category: { Args: { p_id: number }; Returns: undefined }
       admin_delete_feed_post: { Args: { p_id: number }; Returns: undefined }
       admin_delete_match: { Args: { p_match_id: number }; Returns: undefined }
