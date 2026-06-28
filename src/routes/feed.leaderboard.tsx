@@ -6,6 +6,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { Bell, MessageSquare, Crown, ChevronDown, Users, BadgeCheck } from "lucide-react";
 
 export const Route = createFileRoute("/feed/leaderboard")({
+  ssr: false,
   component: FeedLeaderboardPage,
   head: () => ({
     meta: [
