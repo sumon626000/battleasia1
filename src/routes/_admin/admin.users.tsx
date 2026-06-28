@@ -59,9 +59,11 @@ async function fetchUsers(q: string) {
 function ActionModal({
   user,
   onClose,
+  isSuper,
 }: {
   user: Row;
   onClose: () => void;
+  isSuper: boolean;
 }) {
   const qc = useQueryClient();
   const [reason, setReason] = useState("");
@@ -69,6 +71,7 @@ function ActionModal({
   const [note, setNote] = useState("");
   const [role, setRole] = useState(user.roles?.[0]?.role ?? "user");
   const [busy, setBusy] = useState(false);
+
 
   const refresh = () => {
     qc.invalidateQueries({ queryKey: ["admin-users"] });
