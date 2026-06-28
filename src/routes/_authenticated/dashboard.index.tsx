@@ -25,6 +25,8 @@ import {
   AchievementsCard,
   NextTournamentCard,
 } from "@/components/dashboard/PlayerHubCards";
+import { DailyLoginCard } from "@/components/dashboard/DailyLoginCard";
+import squadHero from "@/assets/pubg-squad-action.jpg";
 import squadHero from "@/assets/pubg-squad-action.jpg";
 import sniperImg from "@/assets/pubg-sniper-rooftop.jpg";
 import airdropImg from "@/assets/pubg-airdrop.jpg";
