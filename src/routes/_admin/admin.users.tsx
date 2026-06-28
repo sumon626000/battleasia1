@@ -5,9 +5,26 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import {
   Search, ShieldCheck, ShieldOff, Coins, UserX, UserCheck, X, Download,
-  Columns3, Filter, Rows3, MoreVertical, Trash2,
+  Columns3, Filter, Rows3, MoreVertical, Trash2, RotateCcw,
 } from "lucide-react";
 import { exportRowsAsCSV } from "@/lib/csv";
+
+const RESET_SCOPES = [
+  { key: "balance_logs", label: "Balance History" },
+  { key: "matches", label: "Match Participation" },
+  { key: "deposits", label: "Deposits" },
+  { key: "withdrawals", label: "Withdrawals" },
+  { key: "shop", label: "Shop Purchases" },
+  { key: "referrals", label: "Referrals" },
+  { key: "login_history", label: "Login History" },
+  { key: "notifications", label: "Notifications" },
+  { key: "feed", label: "Feed Posts / Likes / Comments" },
+  { key: "stories", label: "Stories" },
+  { key: "messages", label: "Direct Messages" },
+  { key: "security", label: "Security Alerts" },
+  { key: "online_sessions", label: "Online Sessions" },
+  { key: "support", label: "Support Tickets" },
+] as const;
 
 export const Route = createFileRoute("/_admin/admin/users")({
   component: AdminUsers,
@@ -86,6 +103,9 @@ function ActionModal({
   const [note, setNote] = useState("");
   const [role, setRole] = useState(user.roles?.[0]?.role ?? "user");
   const [busy, setBusy] = useState(false);
+  const [resetScopes, setResetScopes] = useState<Record<string, boolean>>({});
+  const toggleScope = (k: string) => setResetScopes((s) => ({ ...s, [k]: !s[k] }));
+  const allScopesSelected = RESET_SCOPES.every((s) => resetScopes[s.key]);
 
   const refresh = () => {
     qc.invalidateQueries({ queryKey: ["admin-users"] });
@@ -172,6 +192,58 @@ function ActionModal({
               }, "Balance adjusted")}
               className="mt-2 rounded border border-gold/60 bg-gold/10 px-3 py-1.5 font-hud text-xs uppercase tracking-widest text-gold hover:bg-gold/20 disabled:opacity-50">
               <Coins className="mr-1 inline h-3 w-3" /> Adjust
+            </button>
+          </div>
+
+          <div className="border-t border-border/40 pt-3">
+            <div className="flex items-center justify-between">
+              <label className="font-hud text-[10px] uppercase tracking-widest text-foreground/60">
+                Reset History
+              </label>
+              <button
+                type="button"
+                onClick={() =>
+                  setResetScopes(
+                    allScopesSelected
+                      ? {}
+                      : Object.fromEntries(RESET_SCOPES.map((s) => [s.key, true])),
+                  )
+                }
+                className="font-hud text-[10px] uppercase tracking-widest text-gold hover:underline"
+              >
+                {allScopesSelected ? "Clear all" : "Select all"}
+              </button>
+            </div>
+            <div className="mt-2 grid grid-cols-2 gap-1.5 rounded border border-border/50 bg-background/40 p-2">
+              {RESET_SCOPES.map((s) => (
+                <label key={s.key} className="flex cursor-pointer items-center gap-2 rounded px-1.5 py-1 text-xs hover:bg-secondary/40">
+                  <input
+                    type="checkbox"
+                    checked={!!resetScopes[s.key]}
+                    onChange={() => toggleScope(s.key)}
+                  />
+                  <span>{s.label}</span>
+                </label>
+              ))}
+            </div>
+            <button
+              disabled={busy || !Object.values(resetScopes).some(Boolean)}
+              onClick={() => {
+                const scopes = Object.entries(resetScopes).filter(([, v]) => v).map(([k]) => k);
+                if (!scopes.length) return;
+                if (!window.confirm(`Permanently delete the selected history (${scopes.length} type${scopes.length > 1 ? "s" : ""}) for this user? This cannot be undone.`)) return;
+                run(async () => {
+                  const { error } = await supabase.rpc("admin_reset_user_history", {
+                    p_user_id: user.id,
+                    p_scopes: scopes,
+                  });
+                  if (error) throw error;
+                  setResetScopes({});
+                }, "History reset");
+              }}
+              className="mt-2 inline-flex items-center gap-1.5 rounded border border-destructive/60 bg-destructive/10 px-3 py-1.5 font-hud text-xs uppercase tracking-widest text-destructive hover:bg-destructive/20 disabled:opacity-50"
+            >
+              <RotateCcw className="h-3 w-3" /> Reset Selected
             </button>
           </div>
         </div>
