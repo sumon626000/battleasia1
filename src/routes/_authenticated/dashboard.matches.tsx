@@ -216,7 +216,7 @@ function MatchesPage() {
 
       <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
         {(matches.data ?? []).map((m: any) => (
-          <MatchCard key={m.id} m={m} joined={joined.data?.has(m.id) ?? false} filled={counts.data?.[m.id] ?? 0} />
+          <MatchCard key={m.id} m={m} joined={joined.data?.has(m.id) ?? false} filled={counts.data?.[m.id] ?? 0} balance={balance} isPremium={!!profile?.is_premium} />
         ))}
         {matches.isLoading && <div className="col-span-full py-8 text-center text-foreground/40">Loading matches...</div>}
         {!matches.isLoading && !matches.data?.length && (
