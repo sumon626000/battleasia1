@@ -2661,6 +2661,7 @@ export type Database = {
         }
         Returns: number
       }
+      sync_daily_quest_progress: { Args: never; Returns: undefined }
       toggle_feed_like: { Args: { p_post_id: number }; Returns: boolean }
     }
     Enums: {
