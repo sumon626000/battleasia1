@@ -225,6 +225,9 @@ function DashboardPage() {
         </div>
       </section>
 
+      {/* DAILY LOGIN STREAK */}
+      <DailyLoginCard />
+
       {/* PLAYER HUB: Tier + Next Tournament + Achievements */}
       <section className="grid gap-3 lg:grid-cols-3">
         <RankTierCard wins={stats.wins} kills={stats.totalKills} top3={stats.top3} />
