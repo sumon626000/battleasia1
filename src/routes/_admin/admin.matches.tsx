@@ -110,6 +110,9 @@ function AdminMatchesPage() {
     if (payload.schedule_at && typeof payload.schedule_at === "string") {
       payload.schedule_at = new Date(payload.schedule_at).toISOString();
     }
+    if (typeof payload.match_url === "string" && payload.match_url.trim() && !/^https?:\/\//i.test(payload.match_url as string)) {
+      payload.match_url = `https://${(payload.match_url as string).trim()}`;
+    }
     delete (payload as { id?: number }).id;
     delete (payload as { result_applied?: boolean }).result_applied;
     delete (payload as { deleted_at?: string | null }).deleted_at;
