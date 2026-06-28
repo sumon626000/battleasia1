@@ -254,7 +254,7 @@ function AdminResultsPage() {
               <div>
                 <div className="font-display text-lg text-foreground">{detail.match.match_name}</div>
                 <div className="font-hud text-[10px] uppercase tracking-widest text-foreground/55">
-                  Reward: {detail.match.reward_type} · Per kill: {detail.match.per_kill_amount_bac} · 1st/2nd/3rd: {detail.match.rank_1_prize_bac}/{detail.match.rank_2_prize_bac}/{detail.match.rank_3_prize_bac}
+                  Reward: {detail.match.reward_type} · Mode: {detail.match.player_mode} · Per Kill: {pool.perKill} coins · Platform Fee: {detail.match.platform_fee_pct}%
                 </div>
               </div>
               {detail.match.result_applied && (
@@ -263,49 +263,70 @@ function AdminResultsPage() {
             </div>
           </section>
 
+          {/* Prize Breakdown */}
+          <section className="hud-panel rounded-md border border-border/70 bg-card/40 p-4">
+            <h2 className="mb-3 font-display text-sm uppercase tracking-widest text-gold">Prize Breakdown</h2>
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+              <Stat label={`Platform Fee (${detail.match.platform_fee_pct}%)`} value={`-${pool.platformFee.toLocaleString()}`} tone="negative" />
+              <Stat label="Prize Pool" value={pool.prizePool.toLocaleString()} />
+              <Stat label="Kill Money Pool" value={pool.killPool.toLocaleString()} tone="positive" />
+              <Stat label={`Per Kill (÷${pool.loserCount} W.kills)`} value={pool.perKill.toLocaleString()} tone="positive" sub={`${pool.prizePool.toLocaleString()} ÷ ${pool.loserCount}`} />
+            </div>
+          </section>
+
           <section className="hud-panel overflow-x-auto rounded-md border border-border/70 bg-card/40">
-            <table className="w-full min-w-[700px] text-sm">
+            <table className="w-full min-w-[760px] text-sm">
               <thead className="border-b border-border/60 bg-secondary/40 text-left font-hud text-[10px] uppercase tracking-widest text-foreground/60">
                 <tr>
-                  <th className="px-3 py-2">Player</th>
-                  <th className="px-3 py-2 w-24">Rank</th>
-                  <th className="px-3 py-2 w-24">Kills</th>
-                  <th className="px-3 py-2 w-32">Prize (preview)</th>
+                  <th className="px-3 py-2">In-game ID</th>
+                  <th className="px-3 py-2">User Name</th>
+                  <th className="px-3 py-2 w-32">Player Status</th>
+                  <th className="px-3 py-2 w-24">Killed</th>
+                  <th className="px-3 py-2 w-32">Kill Win</th>
                   <th className="px-3 py-2 w-28">Status</th>
                 </tr>
               </thead>
               <tbody>
                 {detail.participants.length === 0 && (
-                  <tr><td colSpan={5} className="px-3 py-6 text-center font-hud text-xs uppercase tracking-widest text-foreground/50">No participants joined.</td></tr>
+                  <tr><td colSpan={6} className="px-3 py-6 text-center font-hud text-xs uppercase tracking-widest text-foreground/50">No participants joined.</td></tr>
                 )}
                 {detail.participants.map((p) => {
                   const prof = detail.profMap.get(p.user_id);
-                  const r = rows[p.user_id] ?? { rank: "", kills: "" };
+                  const r = rows[p.user_id] ?? { status: "", kills: "" };
+                  const isLoser = r.status === "Loser";
                   return (
                     <tr key={p.id} className="border-b border-border/40 last:border-0">
+                      <td className="px-3 py-2 font-mono text-xs text-foreground/70">{prof?.pubg_id ?? "—"}</td>
                       <td className="px-3 py-2">
                         <div className="font-display text-foreground">{prof?.in_game_username || prof?.username || p.user_id.slice(0, 8)}</div>
-                        <div className="font-hud text-[10px] uppercase tracking-widest text-foreground/55">PUBG: {prof?.pubg_id ?? "—"}</div>
                       </td>
                       <td className="px-3 py-2">
-                        <input
-                          type="number" min={1}
+                        <select
                           disabled={detail.match.result_applied}
-                          value={r.rank}
-                          onChange={(e) => setRows({ ...rows, [p.user_id]: { ...r, rank: e.target.value } })}
-                          className="w-20 rounded border border-border/60 bg-secondary/40 px-2 py-1 font-mono text-sm outline-none focus:border-gold"
-                        />
+                          value={r.status}
+                          onChange={(e) => setRows({ ...rows, [p.user_id]: { ...r, status: e.target.value, kills: e.target.value === "Winner" ? "" : r.kills } })}
+                          className="w-28 rounded border border-border/60 bg-secondary/40 px-2 py-1 font-hud text-xs outline-none focus:border-gold"
+                        >
+                          <option value="">—</option>
+                          <option value="Winner">Winner</option>
+                          <option value="Loser">Loser</option>
+                        </select>
                       </td>
                       <td className="px-3 py-2">
                         <input
                           type="number" min={0}
-                          disabled={detail.match.result_applied}
-                          value={r.kills}
+                          disabled={detail.match.result_applied || !isLoser}
+                          value={isLoser ? r.kills : ""}
                           onChange={(e) => setRows({ ...rows, [p.user_id]: { ...r, kills: e.target.value } })}
-                          className="w-20 rounded border border-border/60 bg-secondary/40 px-2 py-1 font-mono text-sm outline-none focus:border-gold"
+                          className="w-20 rounded border border-border/60 bg-secondary/40 px-2 py-1 font-mono text-sm outline-none focus:border-gold disabled:opacity-40"
                         />
                       </td>
-                      <td className="px-3 py-2 tabular-nums text-gold">{(computedPrize[p.user_id] ?? p.prize_bac ?? 0).toLocaleString()}</td>
+                      <td className="px-3 py-2 tabular-nums text-gold">
+                        <span className="inline-flex items-center gap-1">
+                          {(computedPrize[p.user_id] ?? p.prize_bac ?? 0).toLocaleString()}
+                          <CoinIcon size={12} />
+                        </span>
+                      </td>
                       <td className="px-3 py-2 font-hud text-[10px] uppercase tracking-widest">{p.status}</td>
                     </tr>
                   );
