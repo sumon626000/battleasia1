@@ -445,7 +445,7 @@ function EditorModal({
             </Field>
 
             <Field label="Per Kill">
-              <input type="number" className={inp} value={draft.per_kill_amount_bac ?? 0} onChange={(e) => upd({ per_kill_amount_bac: Number(e.target.value) })} />
+              <input type="number" min={0} className={inp} value={draft.per_kill_amount_bac ?? ""} onChange={(e) => upd({ per_kill_amount_bac: e.target.value === "" ? undefined : Number(e.target.value) })} />
             </Field>
 
             <label className="flex items-start gap-3 rounded border border-border/60 bg-secondary/30 px-3 py-2">
