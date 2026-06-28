@@ -147,9 +147,10 @@ function AdminResultsPage() {
         const r = rows[p.user_id];
         if (!r) return null;
         const kills = parseInt(r.kills, 10) || 0;
-        if (!r.status && !r.kills) return null;
+        const prizeOverride = r.prize.trim() === "" ? null : Number(r.prize);
+        if (!r.status && !r.kills && prizeOverride === null) return null;
         const rank = r.status === "Winner" ? 1 : r.status === "Loser" ? 2 : null;
-        return { user_id: p.user_id, rank, kills };
+        return { user_id: p.user_id, rank, kills, prize: prizeOverride };
       })
       .filter(Boolean);
     if (results.length === 0) return toast.error("Fill at least one row.");
