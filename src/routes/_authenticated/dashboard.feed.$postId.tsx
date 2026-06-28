@@ -2,7 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
-import { ArrowLeft, Heart, MessageCircle, Eye, Crown, Send, Loader2 } from "lucide-react";
+import { ArrowLeft, Heart, MessageCircle, Eye, Crown, Send, Loader2, Pencil, Trash2, X, Check } from "lucide-react";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/dashboard/feed/$postId")({
   component: PostDetail,
@@ -121,17 +122,85 @@ function PostDetail() {
         <div className="mt-6 space-y-3">
           {comments.length === 0 && <p className="font-mono text-xs text-foreground/50">No comments yet. Be the first.</p>}
           {comments.map((c) => (
-            <div key={c.id} className="rounded-md border border-border/60 bg-background/40 p-3">
-              <div className="mb-1 flex items-center gap-2 font-mono text-[10px] uppercase tracking-wider text-foreground/60">
-                <span className="text-gold">{c.username ?? "operative"}</span>
-                <span>·</span>
-                <span>{new Date(c.created_at).toLocaleString()}</span>
-              </div>
-              <p className="font-mono text-sm text-foreground/85 whitespace-pre-wrap">{c.comment_text}</p>
-            </div>
+            <CommentItem key={c.id} c={c} mine={user?.id === c.user_id} onChanged={load} />
           ))}
         </div>
       </section>
+    </div>
+  );
+}
+
+function CommentItem({ c, mine, onChanged }: { c: Comment; mine: boolean; onChanged: () => void | Promise<void> }) {
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState(c.comment_text);
+  const [busy, setBusy] = useState(false);
+
+  const save = async () => {
+    const t = draft.trim();
+    if (!t || t === c.comment_text) { setEditing(false); return; }
+    setBusy(true);
+    const { error } = await supabase
+      .from("feed_comments")
+      .update({ comment_text: t, updated_at: new Date().toISOString() })
+      .eq("id", c.id);
+    setBusy(false);
+    if (error) { toast.error(error.message); return; }
+    setEditing(false);
+    await onChanged();
+  };
+
+  const remove = async () => {
+    if (!confirm("Delete this comment?")) return;
+    setBusy(true);
+    const { error } = await supabase
+      .from("feed_comments")
+      .update({ deleted_at: new Date().toISOString() })
+      .eq("id", c.id);
+    setBusy(false);
+    if (error) { toast.error(error.message); return; }
+    toast.success("Comment deleted");
+    await onChanged();
+  };
+
+  return (
+    <div className="rounded-md border border-border/60 bg-background/40 p-3">
+      <div className="mb-1 flex items-center justify-between gap-2 font-mono text-[10px] uppercase tracking-wider text-foreground/60">
+        <div className="flex items-center gap-2">
+          <span className="text-gold">{c.username ?? "operative"}</span>
+          <span>·</span>
+          <span>{new Date(c.created_at).toLocaleString()}</span>
+        </div>
+        {mine && !editing && (
+          <div className="flex items-center gap-1">
+            <button onClick={() => { setDraft(c.comment_text); setEditing(true); }}
+              className="inline-flex items-center gap-1 rounded border border-border/60 px-1.5 py-0.5 hover:border-gold/60 hover:text-gold">
+              <Pencil size={10} /> Edit
+            </button>
+            <button onClick={remove} disabled={busy}
+              className="inline-flex items-center gap-1 rounded border border-border/60 px-1.5 py-0.5 hover:border-red-500/60 hover:text-red-400 disabled:opacity-50">
+              <Trash2 size={10} /> Delete
+            </button>
+          </div>
+        )}
+      </div>
+      {editing ? (
+        <div className="space-y-2">
+          <textarea value={draft} onChange={(e) => setDraft(e.target.value)} maxLength={1000} rows={2}
+            className="w-full rounded-md border border-border bg-background/60 p-2 font-mono text-sm outline-none focus:border-gold/60" />
+          <div className="flex justify-end gap-2">
+            <button onClick={() => setEditing(false)} disabled={busy}
+              className="inline-flex items-center gap-1 rounded border border-border px-2 py-1 font-hud text-[10px] uppercase tracking-wider text-foreground/70 hover:border-foreground/60">
+              <X size={10} /> Cancel
+            </button>
+            <button onClick={save} disabled={busy || !draft.trim()}
+              className="inline-flex items-center gap-1 rounded border border-gold bg-gold/20 px-2 py-1 font-hud text-[10px] uppercase tracking-wider text-gold hover:bg-gold/30 disabled:opacity-50">
+              {busy ? <Loader2 size={10} className="animate-spin" /> : <Check size={10} />} Save
+            </button>
+          </div>
+        </div>
+      ) : (
+        <p className="font-mono text-sm text-foreground/85 whitespace-pre-wrap">{c.comment_text}</p>
+      )}
     </div>
   );
 }
