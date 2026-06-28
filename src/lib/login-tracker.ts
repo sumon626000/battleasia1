@@ -90,6 +90,34 @@ export async function heartbeatSession() {
   }
 }
 
+/** Claim this device as the single active session for the signed-in user. */
+export async function claimActiveSession() {
+  if (typeof window === "undefined") return;
+  const token = getSessionToken();
+  try {
+    await supabase.rpc("claim_active_session", { _token: token });
+  } catch {
+    /* non-fatal */
+  }
+}
+
+/** Returns true if this device still owns the active session. */
+export async function isActiveSession(): Promise<boolean> {
+  if (typeof window === "undefined") return true;
+  const token = sessionStorage.getItem(SESSION_KEY);
+  if (!token) return true;
+  try {
+    const { data, error } = await supabase.rpc("is_active_session", {
+      _token: token,
+    });
+    if (error) return true; // fail-open on network errors
+    return data !== false;
+  } catch {
+    return true;
+  }
+}
+
 export function clearLocalSessionToken() {
   if (typeof window !== "undefined") sessionStorage.removeItem(SESSION_KEY);
 }
+
