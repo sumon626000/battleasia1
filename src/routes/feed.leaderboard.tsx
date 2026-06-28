@@ -412,9 +412,9 @@ function PodiumCard({ rank, row }: { rank: 1 | 2 | 3; row?: Row }) {
 
 function RankRow({ rank, row, highlight }: { rank: number; row: Row; highlight?: boolean }) {
   return (
-    <li className={`grid grid-cols-[48px_1fr_140px_90px] items-center gap-2 px-4 py-3 transition ${highlight ? "bg-red-500/5" : "hover:bg-card/40"}`}>
+    <li className={`grid grid-cols-[36px_1fr_84px] sm:grid-cols-[48px_1fr_140px_90px] items-center gap-2 px-3 sm:px-4 py-3 transition ${highlight ? "bg-red-500/5" : "hover:bg-card/40"}`}>
       <span className="font-display text-lg text-foreground/80">{rank}</span>
-      <Link to="/u/$username" params={{ username: row.username }} className="flex items-center gap-3 min-w-0">
+      <Link to="/u/$username" params={{ username: row.username }} className="flex items-center gap-2.5 min-w-0">
         <Avatar row={row} size={36} />
         <div className="min-w-0 leading-tight">
           <div className="flex items-center gap-1 truncate font-semibold">
@@ -422,9 +422,10 @@ function RankRow({ rank, row, highlight }: { rank: number; row: Row; highlight?:
             <BadgeCheck size={12} className="text-sky-400 shrink-0" />
           </div>
           <div className="text-[11px] text-foreground/60">Lvl {row.level}</div>
+          <div className="sm:hidden mt-0.5"><TierPill tier={row.tier} compact /></div>
         </div>
       </Link>
-      <TierPill tier={row.tier} />
+      <div className="hidden sm:block"><TierPill tier={row.tier} /></div>
       <span className="text-right font-mono font-bold tabular-nums">{row.score.toLocaleString()}</span>
     </li>
   );
