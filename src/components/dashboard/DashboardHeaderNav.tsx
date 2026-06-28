@@ -9,6 +9,7 @@ import {
   Users,
   ChevronDown,
   Trophy,
+  BarChart3,
   Crown,
   MessageSquare,
   User as UserIcon,
@@ -32,6 +33,7 @@ const PRIMARY: { label: string; href: string; icon: any; exact?: boolean }[] = [
 
 const MORE = [
   { label: "My Matches", href: "/dashboard/my-matches", icon: Trophy },
+  { label: "My Statistics", href: "/dashboard/statistics", icon: BarChart3 },
   { label: "Premium", href: "/dashboard/premium", icon: Crown },
   { label: "Messages", href: "/dashboard/messages", icon: MessageSquare },
   { label: "Profile", href: "/dashboard/profile", icon: UserIcon },
