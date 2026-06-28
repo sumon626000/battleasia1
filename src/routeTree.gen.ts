@@ -19,13 +19,13 @@ import { Route as NewsRouteImport } from './routes/news'
 import { Route as MatchesRouteImport } from './routes/matches'
 import { Route as LeaderboardRouteImport } from './routes/leaderboard'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
-import { Route as FeedRouteImport } from './routes/feed'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ApkRouteImport } from './routes/apk'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AdminRouteRouteImport } from './routes/_admin/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as FeedIndexRouteImport } from './routes/feed.index'
 import { Route as UUsernameRouteImport } from './routes/u.$username'
 import { Route as PostPostIdRouteImport } from './routes/post.$postId'
 import { Route as PSlugRouteImport } from './routes/p.$slug'
@@ -141,11 +141,6 @@ const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
   path: '/forgot-password',
   getParentRoute: () => rootRouteImport,
 } as any)
-const FeedRoute = FeedRouteImport.update({
-  id: '/feed',
-  path: '/feed',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
@@ -174,6 +169,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FeedIndexRoute = FeedIndexRouteImport.update({
+  id: '/feed/',
+  path: '/feed/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const UUsernameRoute = UUsernameRouteImport.update({
   id: '/u/$username',
   path: '/u/$username',
@@ -190,9 +190,9 @@ const PSlugRoute = PSlugRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const FeedLeaderboardRoute = FeedLeaderboardRouteImport.update({
-  id: '/leaderboard',
-  path: '/leaderboard',
-  getParentRoute: () => FeedRoute,
+  id: '/feed/leaderboard',
+  path: '/feed/leaderboard',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const EmailVerifyRoute = EmailVerifyRouteImport.update({
   id: '/email/verify',
@@ -524,7 +524,6 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/apk': typeof ApkRoute
   '/auth': typeof AuthRouteWithChildren
-  '/feed': typeof FeedRouteWithChildren
   '/forgot-password': typeof ForgotPasswordRoute
   '/leaderboard': typeof LeaderboardRoute
   '/matches': typeof MatchesRoute
@@ -543,6 +542,7 @@ export interface FileRoutesByFullPath {
   '/p/$slug': typeof PSlugRoute
   '/post/$postId': typeof PostPostIdRoute
   '/u/$username': typeof UUsernameRouteWithChildren
+  '/feed/': typeof FeedIndexRoute
   '/admin/account-deletions': typeof AdminAdminAccountDeletionsRoute
   '/admin/apk': typeof AdminAdminApkRoute
   '/admin/backups': typeof AdminAdminBackupsRoute
@@ -605,7 +605,6 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/apk': typeof ApkRoute
   '/auth': typeof AuthRouteWithChildren
-  '/feed': typeof FeedRouteWithChildren
   '/forgot-password': typeof ForgotPasswordRoute
   '/leaderboard': typeof LeaderboardRoute
   '/matches': typeof MatchesRoute
@@ -623,6 +622,7 @@ export interface FileRoutesByTo {
   '/p/$slug': typeof PSlugRoute
   '/post/$postId': typeof PostPostIdRoute
   '/u/$username': typeof UUsernameRouteWithChildren
+  '/feed': typeof FeedIndexRoute
   '/admin/account-deletions': typeof AdminAdminAccountDeletionsRoute
   '/admin/apk': typeof AdminAdminApkRoute
   '/admin/backups': typeof AdminAdminBackupsRoute
@@ -688,7 +688,6 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/apk': typeof ApkRoute
   '/auth': typeof AuthRouteWithChildren
-  '/feed': typeof FeedRouteWithChildren
   '/forgot-password': typeof ForgotPasswordRoute
   '/leaderboard': typeof LeaderboardRoute
   '/matches': typeof MatchesRoute
@@ -707,6 +706,7 @@ export interface FileRoutesById {
   '/p/$slug': typeof PSlugRoute
   '/post/$postId': typeof PostPostIdRoute
   '/u/$username': typeof UUsernameRouteWithChildren
+  '/feed/': typeof FeedIndexRoute
   '/_admin/admin/account-deletions': typeof AdminAdminAccountDeletionsRoute
   '/_admin/admin/apk': typeof AdminAdminApkRoute
   '/_admin/admin/backups': typeof AdminAdminBackupsRoute
@@ -771,7 +771,6 @@ export interface FileRouteTypes {
     | '/about'
     | '/apk'
     | '/auth'
-    | '/feed'
     | '/forgot-password'
     | '/leaderboard'
     | '/matches'
@@ -790,6 +789,7 @@ export interface FileRouteTypes {
     | '/p/$slug'
     | '/post/$postId'
     | '/u/$username'
+    | '/feed/'
     | '/admin/account-deletions'
     | '/admin/apk'
     | '/admin/backups'
@@ -852,7 +852,6 @@ export interface FileRouteTypes {
     | '/about'
     | '/apk'
     | '/auth'
-    | '/feed'
     | '/forgot-password'
     | '/leaderboard'
     | '/matches'
@@ -870,6 +869,7 @@ export interface FileRouteTypes {
     | '/p/$slug'
     | '/post/$postId'
     | '/u/$username'
+    | '/feed'
     | '/admin/account-deletions'
     | '/admin/apk'
     | '/admin/backups'
@@ -934,7 +934,6 @@ export interface FileRouteTypes {
     | '/about'
     | '/apk'
     | '/auth'
-    | '/feed'
     | '/forgot-password'
     | '/leaderboard'
     | '/matches'
@@ -953,6 +952,7 @@ export interface FileRouteTypes {
     | '/p/$slug'
     | '/post/$postId'
     | '/u/$username'
+    | '/feed/'
     | '/_admin/admin/account-deletions'
     | '/_admin/admin/apk'
     | '/_admin/admin/backups'
@@ -1018,7 +1018,6 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   ApkRoute: typeof ApkRoute
   AuthRoute: typeof AuthRouteWithChildren
-  FeedRoute: typeof FeedRouteWithChildren
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   LeaderboardRoute: typeof LeaderboardRoute
   MatchesRoute: typeof MatchesRoute
@@ -1031,9 +1030,11 @@ export interface RootRouteChildren {
   SupportRoute: typeof SupportRoute
   ApiChatRoute: typeof ApiChatRoute
   EmailVerifyRoute: typeof EmailVerifyRoute
+  FeedLeaderboardRoute: typeof FeedLeaderboardRoute
   PSlugRoute: typeof PSlugRoute
   PostPostIdRoute: typeof PostPostIdRoute
   UUsernameRoute: typeof UUsernameRouteWithChildren
+  FeedIndexRoute: typeof FeedIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -1108,13 +1109,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ForgotPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/feed': {
-      id: '/feed'
-      path: '/feed'
-      fullPath: '/feed'
-      preLoaderRoute: typeof FeedRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/auth': {
       id: '/auth'
       path: '/auth'
@@ -1157,6 +1151,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/feed/': {
+      id: '/feed/'
+      path: '/feed'
+      fullPath: '/feed/'
+      preLoaderRoute: typeof FeedIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/u/$username': {
       id: '/u/$username'
       path: '/u/$username'
@@ -1180,10 +1181,10 @@ declare module '@tanstack/react-router' {
     }
     '/feed/leaderboard': {
       id: '/feed/leaderboard'
-      path: '/leaderboard'
+      path: '/feed/leaderboard'
       fullPath: '/feed/leaderboard'
       preLoaderRoute: typeof FeedLeaderboardRouteImport
-      parentRoute: typeof FeedRoute
+      parentRoute: typeof rootRouteImport
     }
     '/email/verify': {
       id: '/email/verify'
@@ -1803,16 +1804,6 @@ const AuthRouteChildren: AuthRouteChildren = {
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
-interface FeedRouteChildren {
-  FeedLeaderboardRoute: typeof FeedLeaderboardRoute
-}
-
-const FeedRouteChildren: FeedRouteChildren = {
-  FeedLeaderboardRoute: FeedLeaderboardRoute,
-}
-
-const FeedRouteWithChildren = FeedRoute._addFileChildren(FeedRouteChildren)
-
 interface UUsernameRouteChildren {
   UUsernameFollowersRoute: typeof UUsernameFollowersRoute
   UUsernameFollowingRoute: typeof UUsernameFollowingRoute
@@ -1834,7 +1825,6 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   ApkRoute: ApkRoute,
   AuthRoute: AuthRouteWithChildren,
-  FeedRoute: FeedRouteWithChildren,
   ForgotPasswordRoute: ForgotPasswordRoute,
   LeaderboardRoute: LeaderboardRoute,
   MatchesRoute: MatchesRoute,
@@ -1847,20 +1837,12 @@ const rootRouteChildren: RootRouteChildren = {
   SupportRoute: SupportRoute,
   ApiChatRoute: ApiChatRoute,
   EmailVerifyRoute: EmailVerifyRoute,
+  FeedLeaderboardRoute: FeedLeaderboardRoute,
   PSlugRoute: PSlugRoute,
   PostPostIdRoute: PostPostIdRoute,
   UUsernameRoute: UUsernameRouteWithChildren,
+  FeedIndexRoute: FeedIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

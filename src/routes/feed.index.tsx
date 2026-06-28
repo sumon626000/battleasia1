@@ -11,7 +11,7 @@ import { StoriesRail } from "@/components/feed/StoriesRail";
 import { SignedImage, SignedVideo } from "@/components/feed/SignedMedia";
 
 
-export const Route = createFileRoute("/feed")({
+export const Route = createFileRoute("/feed/")({
   head: () => ({
     meta: [
       { title: "Feed — Battle Asia" },
