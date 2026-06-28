@@ -32,6 +32,7 @@ type Post = {
   media_type: string | null;
   likes_count: number;
   comments_count: number;
+  views_count: number;
   created_at: string;
   author?: { username: string | null; full_name: string | null; avatar_url: string | null } | null;
   liked_by_me?: boolean;
