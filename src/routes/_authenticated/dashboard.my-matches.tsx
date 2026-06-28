@@ -164,12 +164,37 @@ function SummaryItem({ label, value, accent }: { label: string; value: number | 
 
 function MatchCard({ p }: { p: any }) {
   const m = p.match;
+  const [showCreds, setShowCreds] = useState(false);
+  const [copied, setCopied] = useState<"id" | "pw" | null>(null);
   if (!m) return null;
   const status = m.status?.toLowerCase();
   const done = p.result_applied || status === "completed";
   const won = done && Number(p.prize_bac || 0) > 0;
   const lost = done && !won;
   const pending = !done;
+
+  async function copyText(e: React.MouseEvent, text: string, which: "id" | "pw") {
+    e.preventDefault();
+    e.stopPropagation();
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(which);
+      toast.success("Copied to clipboard");
+      setTimeout(() => setCopied(null), 1500);
+    } catch {
+      toast.error("Copy failed");
+    }
+  }
+
+  function toggleCreds(e: React.MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!m.room_id && !m.room_password) {
+      toast.info("Room ID & Password will be shared before match starts");
+      return;
+    }
+    setShowCreds((v) => !v);
+  }
   const entryFree = Number(m.entry_fee_bac || 0) === 0;
 
   const badge = won
