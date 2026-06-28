@@ -234,11 +234,11 @@ function FeedLeaderboardPage() {
         {/* Ranked list */}
         {rest.length > 0 && (
           <div className="hud-panel overflow-hidden">
-            {/* Header */}
-            <div className="grid grid-cols-[48px_1fr_140px_90px] items-center gap-2 border-b border-border/40 bg-card/40 px-4 py-2.5 font-hud text-[10px] uppercase tracking-[0.18em] text-foreground/60">
+            {/* Header — hide Rank Tier column on mobile */}
+            <div className="grid grid-cols-[36px_1fr_84px] sm:grid-cols-[48px_1fr_140px_90px] items-center gap-2 border-b border-border/40 bg-card/40 px-3 sm:px-4 py-2.5 font-hud text-[10px] uppercase tracking-[0.18em] text-foreground/60">
               <span>Rank</span>
               <span>Player</span>
-              <span>Rank Tier</span>
+              <span className="hidden sm:inline">Rank Tier</span>
               <span className="text-right">Points</span>
             </div>
             <ul className="divide-y divide-border/30">
@@ -253,18 +253,19 @@ function FeedLeaderboardPage() {
 
         {/* You row */}
         {meRow && meRow.rank > 10 && (
-          <div className="rounded-md border-2 border-red-500/70 bg-red-500/5 px-4 py-3">
-            <div className="grid grid-cols-[48px_1fr_140px_90px] items-center gap-2">
+          <div className="rounded-md border-2 border-red-500/70 bg-red-500/5 px-3 sm:px-4 py-3">
+            <div className="grid grid-cols-[36px_1fr_84px] sm:grid-cols-[48px_1fr_140px_90px] items-center gap-2">
               <span className="font-display text-xl text-red-500">{meRow.rank}</span>
-              <Link to="/u/$username" params={{ username: meRow.row.username }} className="flex items-center gap-3">
+              <Link to="/u/$username" params={{ username: meRow.row.username }} className="flex items-center gap-2.5 min-w-0">
                 <Avatar row={meRow.row} size={36} ring="ring-red-500/60" />
-                <div className="leading-tight">
-                  <div className="font-display tracking-wide text-red-400">You</div>
+                <div className="leading-tight min-w-0">
+                  <div className="font-display tracking-wide text-red-400 truncate">You</div>
                   <div className="text-[11px] text-foreground/60">Lvl {meRow.row.level}</div>
+                  <div className="sm:hidden mt-0.5"><TierPill tier={meRow.row.tier} compact /></div>
                 </div>
               </Link>
-              <TierPill tier={meRow.row.tier} />
-              <span className="text-right font-mono font-bold text-red-400">{meRow.row.score.toLocaleString()}</span>
+              <div className="hidden sm:block"><TierPill tier={meRow.row.tier} /></div>
+              <span className="text-right font-mono font-bold text-red-400 tabular-nums">{meRow.row.score.toLocaleString()}</span>
             </div>
           </div>
         )}
@@ -342,10 +343,10 @@ function Avatar({ row, size = 40, ring = "ring-border/60" }: { row: Row; size?: 
   );
 }
 
-function TierPill({ tier }: { tier: Row["tier"] }) {
+function TierPill({ tier, compact }: { tier: Row["tier"]; compact?: boolean }) {
   return (
-    <span className={`inline-flex items-center gap-1.5 text-[12px] font-medium ${tier.color}`}>
-      <span className={`inline-block h-3 w-3 rounded-full ${tier.dot} shadow-[0_0_8px_currentColor] opacity-90`} />
+    <span className={`inline-flex items-center gap-1.5 ${compact ? "text-[10px]" : "text-[12px]"} font-medium ${tier.color}`}>
+      <span className={`inline-block ${compact ? "h-2 w-2" : "h-3 w-3"} rounded-full ${tier.dot} shadow-[0_0_8px_currentColor] opacity-90`} />
       {tier.label}
     </span>
   );
@@ -411,9 +412,9 @@ function PodiumCard({ rank, row }: { rank: 1 | 2 | 3; row?: Row }) {
 
 function RankRow({ rank, row, highlight }: { rank: number; row: Row; highlight?: boolean }) {
   return (
-    <li className={`grid grid-cols-[48px_1fr_140px_90px] items-center gap-2 px-4 py-3 transition ${highlight ? "bg-red-500/5" : "hover:bg-card/40"}`}>
+    <li className={`grid grid-cols-[36px_1fr_84px] sm:grid-cols-[48px_1fr_140px_90px] items-center gap-2 px-3 sm:px-4 py-3 transition ${highlight ? "bg-red-500/5" : "hover:bg-card/40"}`}>
       <span className="font-display text-lg text-foreground/80">{rank}</span>
-      <Link to="/u/$username" params={{ username: row.username }} className="flex items-center gap-3 min-w-0">
+      <Link to="/u/$username" params={{ username: row.username }} className="flex items-center gap-2.5 min-w-0">
         <Avatar row={row} size={36} />
         <div className="min-w-0 leading-tight">
           <div className="flex items-center gap-1 truncate font-semibold">
@@ -421,9 +422,10 @@ function RankRow({ rank, row, highlight }: { rank: number; row: Row; highlight?:
             <BadgeCheck size={12} className="text-sky-400 shrink-0" />
           </div>
           <div className="text-[11px] text-foreground/60">Lvl {row.level}</div>
+          <div className="sm:hidden mt-0.5"><TierPill tier={row.tier} compact /></div>
         </div>
       </Link>
-      <TierPill tier={row.tier} />
+      <div className="hidden sm:block"><TierPill tier={row.tier} /></div>
       <span className="text-right font-mono font-bold tabular-nums">{row.score.toLocaleString()}</span>
     </li>
   );
