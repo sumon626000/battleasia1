@@ -73,6 +73,15 @@ export function SiteHeader() {
         </div>
         <div className="flex items-center gap-1 lg:hidden">
           <LanguageSwitcher compact />
+          {isAuthenticated && (
+            <button
+              onClick={signOut}
+              className="grid h-9 w-9 place-items-center rounded-md border border-border/70 text-foreground/75 transition hover:border-destructive/60 hover:text-destructive"
+              aria-label="Sign out"
+            >
+              <LogOut size={15} />
+            </button>
+          )}
           <button onClick={() => setOpen(!open)} className="rounded-md p-2 text-gold" aria-label="Toggle menu">
             {open ? <X size={24} /> : <Menu size={24} />}
           </button>
