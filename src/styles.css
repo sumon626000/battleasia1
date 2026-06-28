@@ -150,8 +150,45 @@
   --shadow-card: 0 4px 24px -4px oklch(0 0.15 25 / 0.75);
 }
 
+/* =========================================================================
+   THEME: Official Light (PUBG official-style — clean, minimal, light)
+   Activated by <html data-theme="official">
+   ========================================================================= */
+[data-theme="official"] {
+  --background: oklch(0.985 0.002 80);
+  --foreground: oklch(0.18 0.01 80);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.18 0.01 80);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.18 0.01 80);
+  --primary: oklch(0.78 0.17 70);
+  --primary-foreground: oklch(0.16 0.01 80);
+  --secondary: oklch(0.95 0.005 80);
+  --secondary-foreground: oklch(0.22 0.01 80);
+  --muted: oklch(0.95 0.005 80);
+  --muted-foreground: oklch(0.5 0.01 80);
+  --accent: oklch(0.78 0.17 70);
+  --accent-foreground: oklch(0.16 0.01 80);
+  --destructive: oklch(0.6 0.22 28);
+  --destructive-foreground: oklch(0.98 0 0);
+  --border: oklch(0.9 0.005 80);
+  --input: oklch(0.92 0.005 80);
+  --ring: oklch(0.78 0.17 70);
 
+  --gold: oklch(0.72 0.17 70);
+  --gold-foreground: oklch(0.16 0.01 80);
+  --success: oklch(0.65 0.18 145);
+  --live: oklch(0.6 0.24 28);
 
+  --gradient-hero: linear-gradient(180deg, oklch(0.99 0.002 80) 0%, oklch(0.94 0.005 80) 100%);
+  --gradient-gold: linear-gradient(135deg, oklch(0.82 0.17 70), oklch(0.7 0.17 60));
+  --shadow-gold: 0 1px 0 oklch(0 0 0 / 0.04),
+                 0 6px 20px -8px color-mix(in oklab, var(--gold) 45%, transparent);
+  --shadow-card: 0 1px 2px oklch(0 0 0 / 0.04), 0 8px 24px -12px oklch(0 0 0 / 0.12);
+}
+
+[data-theme="official"] { color-scheme: light; }
+[data-theme="official"] body { background: var(--background); }
 
 .dark { color-scheme: dark; }
 
