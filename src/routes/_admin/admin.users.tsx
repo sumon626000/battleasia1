@@ -387,7 +387,7 @@ function AdminUsers() {
         </table>
       </div>
 
-      {selected && <ActionModal user={selected} onClose={() => setSelected(null)} />}
+      {selected && <ActionModal user={selected} onClose={() => setSelected(null)} isSuper={isSuper} />}
     </div>
   );
 }
