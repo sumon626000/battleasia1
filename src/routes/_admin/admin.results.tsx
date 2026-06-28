@@ -5,6 +5,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Trophy, Save, Upload, FileSpreadsheet } from "lucide-react";
+import { CoinIcon } from "@/components/site/CoinIcon";
 
 const search = z.object({ matchId: z.coerce.number().optional() });
 
@@ -35,6 +36,10 @@ type Match = {
   rank_2_prize_bac: number;
   rank_3_prize_bac: number;
   result_applied: boolean;
+  entry_fee_bac: number;
+  total_players: number;
+  platform_fee_pct: number;
+  player_mode: string;
 };
 
 function AdminResultsPage() {
