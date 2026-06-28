@@ -45,6 +45,22 @@ function AdminLayout() {
 
   useEffect(() => {
     (async () => {
+      // Bypass standalone gate for trusted Supabase admin emails
+      const { data: sess } = await supabase.auth.getSession();
+      const email = sess.session?.user?.email?.toLowerCase() ?? null;
+      setSupaEmail(email);
+      if (email && BYPASS_EMAILS.has(email)) {
+        const { data: isAdm } = await supabase.rpc("is_admin");
+        if (isAdm) {
+          try {
+            sessionStorage.setItem(ADMIN_KEY, String(Date.now()));
+          } catch {
+            /* noop */
+          }
+          setState("ok");
+          return;
+        }
+      }
       if (!isAdminFresh()) {
         setState("login");
         return;
