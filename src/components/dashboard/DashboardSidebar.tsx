@@ -31,10 +31,10 @@ type DashGroup = { label: string; icon: any; items: DashItem[] };
 
 export const DASH_GROUPS: DashGroup[] = [
   {
-    label: "Overview",
-    icon: LayoutDashboard,
+    label: "Home",
+    icon: Home,
     items: [
-      { key: "dash.overview", href: "/dashboard", icon: LayoutDashboard },
+      { key: "dash.overview", href: "/dashboard", icon: Home },
     ],
   },
   {
@@ -114,6 +114,26 @@ export function DashNavBody({ onNavigate }: { onNavigate?: () => void }) {
         const Gicon = group.icon;
         const isOpen = open[group.label] ?? false;
         const hasActive = group.items.some((i) => isActive(i.href));
+        if (group.items.length === 1) {
+          const item = group.items[0];
+          const Icon = item.icon;
+          const active = isActive(item.href);
+          return (
+            <Link
+              key={group.label}
+              to={item.href}
+              onClick={onNavigate}
+              className={`mb-1 flex items-center gap-2 rounded-md border px-3 py-2 font-hud text-xs font-bold uppercase tracking-widest transition ${
+                active
+                  ? "border-gold/50 bg-gold/5 text-gold"
+                  : "border-transparent text-foreground/80 hover:border-border hover:bg-secondary/60 hover:text-gold"
+              }`}
+            >
+              <Icon size={14} />
+              <span>{group.label}</span>
+            </Link>
+          );
+        }
         return (
           <div key={group.label} className="mb-1">
             <button
