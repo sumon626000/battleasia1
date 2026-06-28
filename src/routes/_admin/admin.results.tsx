@@ -5,6 +5,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Trophy, Save, Upload, FileSpreadsheet } from "lucide-react";
+import { CoinIcon } from "@/components/site/CoinIcon";
 
 const search = z.object({ matchId: z.coerce.number().optional() });
 
@@ -35,6 +36,10 @@ type Match = {
   rank_2_prize_bac: number;
   rank_3_prize_bac: number;
   result_applied: boolean;
+  entry_fee_bac: number;
+  total_players: number;
+  platform_fee_pct: number;
+  player_mode: string;
 };
 
 function AdminResultsPage() {
@@ -43,7 +48,7 @@ function AdminResultsPage() {
   const [selectedId, setSelectedId] = useState<number | undefined>(matchId);
   const [description, setDescription] = useState("");
   const [imageUrl, setImageUrl] = useState("");
-  const [rows, setRows] = useState<Record<string, { rank: string; kills: string }>>({});
+  const [rows, setRows] = useState<Record<string, { status: string; kills: string }>>({});
   const [csvText, setCsvText] = useState("");
 
   useEffect(() => { if (matchId) setSelectedId(matchId); }, [matchId]);
@@ -88,14 +93,31 @@ function AdminResultsPage() {
 
   useEffect(() => {
     if (!detail) return;
-    const seed: Record<string, { rank: string; kills: string }> = {};
+    const seed: Record<string, { status: string; kills: string }> = {};
     for (const p of detail.participants) {
       seed[p.user_id] = {
-        rank: p.rank_position ? String(p.rank_position) : "",
+        status: p.rank_position === 1 ? "Winner" : (p.rank_position || p.kills) ? "Loser" : "",
         kills: p.kills ? String(p.kills) : "",
       };
     }
     setRows(seed);
+  }, [detail]);
+
+  // Pool breakdown
+  const pool = useMemo(() => {
+    if (!detail) return { totalIncome: 0, platformFee: 0, prizePool: 0, killPool: 0, perKill: 0, loserCount: 0 };
+    const m = detail.match;
+    const entry = Number(m.entry_fee_bac ?? 0);
+    const total = Number(m.total_players ?? 0);
+    const feePct = Number(m.platform_fee_pct ?? 0);
+    const totalIncome = entry * total;
+    const platformFee = totalIncome * (feePct / 100);
+    const prizePool = totalIncome - platformFee;
+    const teamSize = m.player_mode === "Solo" ? 1 : m.player_mode === "Duo" ? 2 : 4;
+    const loserCount = Math.max(0, total - teamSize);
+    const perKill = Number(m.per_kill_amount_bac ?? 0) || (loserCount > 0 ? Math.round((prizePool / loserCount) * 100) / 100 : 0);
+    const killPool = prizePool;
+    return { totalIncome, platformFee, prizePool, killPool, perKill, loserCount };
   }, [detail]);
 
   const computedPrize = useMemo(() => {
@@ -105,19 +127,16 @@ function AdminResultsPage() {
     for (const p of detail.participants) {
       const r = rows[p.user_id];
       if (!r) continue;
-      const rank = parseInt(r.rank, 10);
       const kills = parseInt(r.kills, 10) || 0;
       let prize = 0;
-      if (m.reward_type === "KillBased" || m.reward_type === "Mixed") prize += kills * Number(m.per_kill_amount_bac || 0);
+      if (m.reward_type === "KillBased" || m.reward_type === "Mixed") prize += kills * pool.perKill;
       if (m.reward_type === "RankBased" || m.reward_type === "Mixed") {
-        if (rank === 1) prize += Number(m.rank_1_prize_bac || 0);
-        else if (rank === 2) prize += Number(m.rank_2_prize_bac || 0);
-        else if (rank === 3) prize += Number(m.rank_3_prize_bac || 0);
+        if (r.status === "Winner") prize += Number(m.rank_1_prize_bac || 0);
       }
-      out[p.user_id] = prize;
+      out[p.user_id] = Math.round(prize * 100) / 100;
     }
     return out;
-  }, [detail, rows]);
+  }, [detail, rows, pool.perKill]);
 
   async function publish() {
     if (!detail) return;
@@ -126,10 +145,10 @@ function AdminResultsPage() {
       .map((p) => {
         const r = rows[p.user_id];
         if (!r) return null;
-        const rank = parseInt(r.rank, 10);
         const kills = parseInt(r.kills, 10) || 0;
-        if (!r.rank && !r.kills) return null;
-        return { user_id: p.user_id, rank: Number.isFinite(rank) ? rank : null, kills };
+        if (!r.status && !r.kills) return null;
+        const rank = r.status === "Winner" ? 1 : r.status === "Loser" ? 2 : null;
+        return { user_id: p.user_id, rank, kills };
       })
       .filter(Boolean);
     if (results.length === 0) return toast.error("Fill at least one row.");
@@ -182,9 +201,9 @@ function AdminResultsPage() {
       const key = cols[0].toLowerCase();
       const uid = byPubg.get(key) || byName.get(key);
       if (!uid) { skipped++; continue; }
-      const rank = cols[1] || "";
+      const rankNum = parseInt(cols[1] || "", 10);
       const kills = cols[2] || "0";
-      next[uid] = { rank, kills };
+      next[uid] = { status: rankNum === 1 ? "Winner" : Number.isFinite(rankNum) ? "Loser" : "", kills };
       matched++;
     }
     setRows(next);
@@ -235,7 +254,7 @@ function AdminResultsPage() {
               <div>
                 <div className="font-display text-lg text-foreground">{detail.match.match_name}</div>
                 <div className="font-hud text-[10px] uppercase tracking-widest text-foreground/55">
-                  Reward: {detail.match.reward_type} · Per kill: {detail.match.per_kill_amount_bac} · 1st/2nd/3rd: {detail.match.rank_1_prize_bac}/{detail.match.rank_2_prize_bac}/{detail.match.rank_3_prize_bac}
+                  Reward: {detail.match.reward_type} · Mode: {detail.match.player_mode} · Per Kill: {pool.perKill} coins · Platform Fee: {detail.match.platform_fee_pct}%
                 </div>
               </div>
               {detail.match.result_applied && (
@@ -244,49 +263,70 @@ function AdminResultsPage() {
             </div>
           </section>
 
+          {/* Prize Breakdown */}
+          <section className="hud-panel rounded-md border border-border/70 bg-card/40 p-4">
+            <h2 className="mb-3 font-display text-sm uppercase tracking-widest text-gold">Prize Breakdown</h2>
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+              <Stat label={`Platform Fee (${detail.match.platform_fee_pct}%)`} value={`-${pool.platformFee.toLocaleString()}`} tone="negative" />
+              <Stat label="Prize Pool" value={pool.prizePool.toLocaleString()} />
+              <Stat label="Kill Money Pool" value={pool.killPool.toLocaleString()} tone="positive" />
+              <Stat label={`Per Kill (÷${pool.loserCount} W.kills)`} value={pool.perKill.toLocaleString()} tone="positive" sub={`${pool.prizePool.toLocaleString()} ÷ ${pool.loserCount}`} />
+            </div>
+          </section>
+
           <section className="hud-panel overflow-x-auto rounded-md border border-border/70 bg-card/40">
-            <table className="w-full min-w-[700px] text-sm">
+            <table className="w-full min-w-[760px] text-sm">
               <thead className="border-b border-border/60 bg-secondary/40 text-left font-hud text-[10px] uppercase tracking-widest text-foreground/60">
                 <tr>
-                  <th className="px-3 py-2">Player</th>
-                  <th className="px-3 py-2 w-24">Rank</th>
-                  <th className="px-3 py-2 w-24">Kills</th>
-                  <th className="px-3 py-2 w-32">Prize (preview)</th>
+                  <th className="px-3 py-2">In-game ID</th>
+                  <th className="px-3 py-2">User Name</th>
+                  <th className="px-3 py-2 w-32">Player Status</th>
+                  <th className="px-3 py-2 w-24">Killed</th>
+                  <th className="px-3 py-2 w-32">Kill Win</th>
                   <th className="px-3 py-2 w-28">Status</th>
                 </tr>
               </thead>
               <tbody>
                 {detail.participants.length === 0 && (
-                  <tr><td colSpan={5} className="px-3 py-6 text-center font-hud text-xs uppercase tracking-widest text-foreground/50">No participants joined.</td></tr>
+                  <tr><td colSpan={6} className="px-3 py-6 text-center font-hud text-xs uppercase tracking-widest text-foreground/50">No participants joined.</td></tr>
                 )}
                 {detail.participants.map((p) => {
                   const prof = detail.profMap.get(p.user_id);
-                  const r = rows[p.user_id] ?? { rank: "", kills: "" };
+                  const r = rows[p.user_id] ?? { status: "", kills: "" };
+                  const isLoser = r.status === "Loser";
                   return (
                     <tr key={p.id} className="border-b border-border/40 last:border-0">
+                      <td className="px-3 py-2 font-mono text-xs text-foreground/70">{prof?.pubg_id ?? "—"}</td>
                       <td className="px-3 py-2">
                         <div className="font-display text-foreground">{prof?.in_game_username || prof?.username || p.user_id.slice(0, 8)}</div>
-                        <div className="font-hud text-[10px] uppercase tracking-widest text-foreground/55">PUBG: {prof?.pubg_id ?? "—"}</div>
                       </td>
                       <td className="px-3 py-2">
-                        <input
-                          type="number" min={1}
+                        <select
                           disabled={detail.match.result_applied}
-                          value={r.rank}
-                          onChange={(e) => setRows({ ...rows, [p.user_id]: { ...r, rank: e.target.value } })}
-                          className="w-20 rounded border border-border/60 bg-secondary/40 px-2 py-1 font-mono text-sm outline-none focus:border-gold"
-                        />
+                          value={r.status}
+                          onChange={(e) => setRows({ ...rows, [p.user_id]: { ...r, status: e.target.value, kills: e.target.value === "Winner" ? "" : r.kills } })}
+                          className="w-28 rounded border border-border/60 bg-secondary/40 px-2 py-1 font-hud text-xs outline-none focus:border-gold"
+                        >
+                          <option value="">—</option>
+                          <option value="Winner">Winner</option>
+                          <option value="Loser">Loser</option>
+                        </select>
                       </td>
                       <td className="px-3 py-2">
                         <input
                           type="number" min={0}
-                          disabled={detail.match.result_applied}
-                          value={r.kills}
+                          disabled={detail.match.result_applied || !isLoser}
+                          value={isLoser ? r.kills : ""}
                           onChange={(e) => setRows({ ...rows, [p.user_id]: { ...r, kills: e.target.value } })}
-                          className="w-20 rounded border border-border/60 bg-secondary/40 px-2 py-1 font-mono text-sm outline-none focus:border-gold"
+                          className="w-20 rounded border border-border/60 bg-secondary/40 px-2 py-1 font-mono text-sm outline-none focus:border-gold disabled:opacity-40"
                         />
                       </td>
-                      <td className="px-3 py-2 tabular-nums text-gold">{(computedPrize[p.user_id] ?? p.prize_bac ?? 0).toLocaleString()}</td>
+                      <td className="px-3 py-2 tabular-nums text-gold">
+                        <span className="inline-flex items-center gap-1">
+                          {(computedPrize[p.user_id] ?? p.prize_bac ?? 0).toLocaleString()}
+                          <CoinIcon size={12} />
+                        </span>
+                      </td>
                       <td className="px-3 py-2 font-hud text-[10px] uppercase tracking-widest">{p.status}</td>
                     </tr>
                   );
@@ -358,6 +398,19 @@ function AdminResultsPage() {
           )}
         </>
       )}
+    </div>
+  );
+}
+
+function Stat({ label, value, tone, sub }: { label: string; value: string; tone?: "positive" | "negative"; sub?: string }) {
+  const color = tone === "negative" ? "text-destructive" : tone === "positive" ? "text-emerald-400" : "text-foreground";
+  return (
+    <div className="rounded border border-border/60 bg-secondary/30 p-3">
+      <div className="font-hud text-[10px] uppercase tracking-widest text-foreground/55">{label}</div>
+      <div className={`mt-1 flex items-center gap-1 font-display text-lg ${color}`}>
+        {value} <CoinIcon size={14} />
+      </div>
+      {sub && <div className="mt-0.5 font-mono text-[10px] text-foreground/50">{sub}</div>}
     </div>
   );
 }
