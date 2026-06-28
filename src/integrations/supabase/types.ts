@@ -430,6 +430,51 @@ export type Database = {
         }
         Relationships: []
       }
+      daily_quests: {
+        Row: {
+          code: string
+          created_at: string
+          description: string | null
+          icon: string | null
+          id: string
+          is_active: boolean
+          quest_type: string
+          reward_bac: number
+          sort_order: number
+          target_value: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          quest_type: string
+          reward_bac?: number
+          sort_order?: number
+          target_value?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          quest_type?: string
+          reward_bac?: number
+          sort_order?: number
+          target_value?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       deposits: {
         Row: {
           bac_amount: number
@@ -1863,6 +1908,122 @@ export type Database = {
         }
         Relationships: []
       }
+      spin_history: {
+        Row: {
+          created_at: string
+          id: string
+          is_free: boolean
+          reward_amount: number
+          reward_type: string
+          segment_id: string | null
+          spin_cost: number
+          spin_date: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_free?: boolean
+          reward_amount?: number
+          reward_type: string
+          segment_id?: string | null
+          spin_cost?: number
+          spin_date?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_free?: boolean
+          reward_amount?: number
+          reward_type?: string
+          segment_id?: string | null
+          spin_cost?: number
+          spin_date?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "spin_history_segment_id_fkey"
+            columns: ["segment_id"]
+            isOneToOne: false
+            referencedRelation: "spin_wheel_config"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      spin_settings: {
+        Row: {
+          extra_spin_cost_bac: number
+          free_spins_per_day: number
+          id: number
+          is_enabled: boolean
+          max_spins_per_day: number
+          spin_cost_bac: number
+          updated_at: string
+        }
+        Insert: {
+          extra_spin_cost_bac?: number
+          free_spins_per_day?: number
+          id?: number
+          is_enabled?: boolean
+          max_spins_per_day?: number
+          spin_cost_bac?: number
+          updated_at?: string
+        }
+        Update: {
+          extra_spin_cost_bac?: number
+          free_spins_per_day?: number
+          id?: number
+          is_enabled?: boolean
+          max_spins_per_day?: number
+          spin_cost_bac?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      spin_wheel_config: {
+        Row: {
+          color: string
+          created_at: string
+          icon: string | null
+          id: string
+          is_active: boolean
+          label: string
+          reward_amount: number
+          reward_type: string
+          sort_order: number
+          updated_at: string
+          weight: number
+        }
+        Insert: {
+          color?: string
+          created_at?: string
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          label: string
+          reward_amount?: number
+          reward_type?: string
+          sort_order?: number
+          updated_at?: string
+          weight?: number
+        }
+        Update: {
+          color?: string
+          created_at?: string
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          label?: string
+          reward_amount?: number
+          reward_type?: string
+          sort_order?: number
+          updated_at?: string
+          weight?: number
+        }
+        Relationships: []
+      }
       static_pages: {
         Row: {
           content_html: string
@@ -2061,6 +2222,53 @@ export type Database = {
             columns: ["notification_id"]
             isOneToOne: false
             referencedRelation: "notifications"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_quest_progress: {
+        Row: {
+          claimed_at: string | null
+          created_at: string
+          id: string
+          is_claimed: boolean
+          is_completed: boolean
+          progress: number
+          quest_date: string
+          quest_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          claimed_at?: string | null
+          created_at?: string
+          id?: string
+          is_claimed?: boolean
+          is_completed?: boolean
+          progress?: number
+          quest_date?: string
+          quest_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          claimed_at?: string | null
+          created_at?: string
+          id?: string
+          is_claimed?: boolean
+          is_completed?: boolean
+          progress?: number
+          quest_date?: string
+          quest_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_quest_progress_quest_id_fkey"
+            columns: ["quest_id"]
+            isOneToOne: false
+            referencedRelation: "daily_quests"
             referencedColumns: ["id"]
           },
         ]
@@ -2359,6 +2567,7 @@ export type Database = {
         Returns: undefined
       }
       claim_daily_login: { Args: never; Returns: Json }
+      claim_quest_reward: { Args: { _quest_id: string }; Returns: Json }
       close_support_ticket: {
         Args: { p_ticket_id: number }
         Returns: undefined
@@ -2401,6 +2610,7 @@ export type Database = {
         }
         Returns: undefined
       }
+      perform_spin: { Args: never; Returns: Json }
       record_login_event: {
         Args: {
           _browser: string
