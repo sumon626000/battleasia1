@@ -44,7 +44,8 @@ function MyMatchesPage() {
             id, match_name, map_name, schedule_at, status, game_mode, player_mode,
             reward_type, kill_rate_type, per_kill_amount_bac,
             rank_1_prize_bac, rank_2_prize_bac, rank_3_prize_bac,
-            entry_fee_bac, banner_image_url, total_players
+            entry_fee_bac, banner_image_url, total_players,
+            room_id, room_password, match_url, private_description
           )
         `)
         .eq("user_id", user!.id)
