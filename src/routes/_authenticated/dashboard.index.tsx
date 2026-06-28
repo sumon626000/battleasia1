@@ -242,10 +242,12 @@ function DashboardPage() {
 
 
 
-      {/* PLAYER HUB: Tier + Next Tournament + Achievements */}
+      {/* PLAYER HUB: Tier + Next Tournament */}
       <section className="grid gap-3 lg:grid-cols-3">
-        <RankTierCard wins={stats.wins} kills={stats.totalKills} top3={stats.top3} />
-        <div className="lg:col-span-2">
+        <div className="xl:hidden">
+          <RankTierCard wins={stats.wins} kills={stats.totalKills} top3={stats.top3} />
+        </div>
+        <div className="lg:col-span-2 xl:col-span-3">
           <NextTournamentCard
             match={
               upcoming[0]
@@ -260,6 +262,7 @@ function DashboardPage() {
           />
         </div>
       </section>
+
 
       <AchievementsCard
         played={stats.played}
