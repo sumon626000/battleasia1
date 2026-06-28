@@ -156,7 +156,9 @@ function FeedPage() {
 
   return (
     <>
-    <div className="mx-auto max-w-[600px] px-2 py-5 pb-24 sm:px-4">
+    <div className="mx-auto grid w-full max-w-[1100px] gap-8 px-2 py-5 pb-24 sm:px-4 lg:grid-cols-[minmax(0,640px)_320px]">
+      <div className="min-w-0">
+
         {/* HUD header */}
         <header className="mb-5 flex items-center justify-between border-b border-border/60 pb-3">
           <div className="min-w-0">
