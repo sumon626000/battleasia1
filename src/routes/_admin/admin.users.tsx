@@ -5,9 +5,26 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import {
   Search, ShieldCheck, ShieldOff, Coins, UserX, UserCheck, X, Download,
-  Columns3, Filter, Rows3, MoreVertical, Trash2,
+  Columns3, Filter, Rows3, MoreVertical, Trash2, RotateCcw,
 } from "lucide-react";
 import { exportRowsAsCSV } from "@/lib/csv";
+
+const RESET_SCOPES = [
+  { key: "balance_logs", label: "Balance History" },
+  { key: "matches", label: "Match Participation" },
+  { key: "deposits", label: "Deposits" },
+  { key: "withdrawals", label: "Withdrawals" },
+  { key: "shop", label: "Shop Purchases" },
+  { key: "referrals", label: "Referrals" },
+  { key: "login_history", label: "Login History" },
+  { key: "notifications", label: "Notifications" },
+  { key: "feed", label: "Feed Posts / Likes / Comments" },
+  { key: "stories", label: "Stories" },
+  { key: "messages", label: "Direct Messages" },
+  { key: "security", label: "Security Alerts" },
+  { key: "online_sessions", label: "Online Sessions" },
+  { key: "support", label: "Support Tickets" },
+] as const;
 
 export const Route = createFileRoute("/_admin/admin/users")({
   component: AdminUsers,
