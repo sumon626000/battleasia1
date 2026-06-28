@@ -43,7 +43,7 @@ export function PlayHeroCarousel() {
     return () => { if (timer.current) clearInterval(timer.current); };
   }, []);
 
-  const liveUrl = (live.data ?? "").trim();
+  const liveUrl = ((live.data ?? "").trim()) || "https://youtube.com/@battleasia";
 
   return (
     <section className="hud-panel relative overflow-hidden">
