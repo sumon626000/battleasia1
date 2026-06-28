@@ -20,6 +20,11 @@ import {
   Calendar,
 } from "lucide-react";
 import { CoinIcon } from "@/components/site/CoinIcon";
+import {
+  RankTierCard,
+  AchievementsCard,
+  NextTournamentCard,
+} from "@/components/dashboard/PlayerHubCards";
 import squadHero from "@/assets/pubg-squad-action.jpg";
 import sniperImg from "@/assets/pubg-sniper-rooftop.jpg";
 import airdropImg from "@/assets/pubg-airdrop.jpg";
