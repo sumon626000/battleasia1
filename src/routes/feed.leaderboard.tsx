@@ -59,9 +59,11 @@ function FeedLeaderboardPage() {
   const { user } = useAuth() as any;
   const [tf, setTf] = useState<TF>("all");
   const [tab, setTab] = useState<GameTab>("OVERALL");
+  const [country, setCountry] = useState<string>("ALL");
+  const [mode, setMode] = useState<ModeFilter>("ALL");
 
   const q = useQuery({
-    queryKey: ["feed-leaderboard", tf, tab],
+    queryKey: ["feed-leaderboard", tf, tab, country, mode],
     queryFn: async () => {
       let since: string | null = null;
       if (tf === "week") since = new Date(Date.now() - 7 * 86400000).toISOString();
@@ -69,7 +71,7 @@ function FeedLeaderboardPage() {
 
       let pq = supabase
         .from("match_participants")
-        .select("user_id, kills, prize_bac, joined_at, matches!inner(game_id, games!inner(name))")
+        .select("user_id, kills, prize_bac, joined_at, matches!inner(game_id, player_mode, games!inner(game_name))")
         .eq("result_applied", true)
         .limit(10000);
       if (since) pq = pq.gte("joined_at", since);
@@ -86,8 +88,10 @@ function FeedLeaderboardPage() {
 
       const agg = new Map<string, { kills: number; prize: number; matches: number; last: string | null }>();
       (parts ?? []).forEach((p: any) => {
-        const gname = p.matches?.games?.name ?? "";
+        const gname = p.matches?.games?.game_name ?? "";
+        const pmode = String(p.matches?.player_mode ?? "");
         if (!tabFilter(gname)) return;
+        if (mode !== "ALL" && pmode.toLowerCase() !== mode.toLowerCase()) return;
         const cur = agg.get(p.user_id) ?? { kills: 0, prize: 0, matches: 0, last: null };
         cur.kills += p.kills ?? 0;
         cur.prize += Number(p.prize_bac ?? 0);
@@ -99,10 +103,12 @@ function FeedLeaderboardPage() {
       const ids = Array.from(agg.keys());
       if (ids.length === 0) return [] as Row[];
 
-      const { data: profs } = await supabase
+      let profQ = supabase
         .from("profiles")
-        .select("id, username, avatar_url")
+        .select("id, username, avatar_url, country_code")
         .in("id", ids);
+      if (country !== "ALL") profQ = profQ.eq("country_code", country);
+      const { data: profs } = await profQ;
 
       const rows: Row[] = (profs ?? []).map((p: any) => {
         const a = agg.get(p.id)!;
@@ -124,6 +130,7 @@ function FeedLeaderboardPage() {
       return rows.slice(0, 100);
     },
   });
+
 
   const rows = q.data ?? [];
   const podium = rows.slice(0, 3);
