@@ -333,7 +333,7 @@ function EditorModal({
               </select>
             </Field>
 
-            <Select label="Map" required value={draft.map_name} options={MAP_OPTIONS} onChange={(v) => upd({ map_name: v })} />
+            <Select label="Map" required value={draft.map_name} options={MAP_OPTIONS} onChange={(v) => upd({ map_name: v, map_image_url: MAP_IMAGES[v] ?? draft.map_image_url ?? null, banner_image_url: draft.banner_image_url ?? MAP_IMAGES[v] ?? null })} />
 
             {/* Map preview */}
             <div className="overflow-hidden rounded border border-border/60 bg-secondary/30">
