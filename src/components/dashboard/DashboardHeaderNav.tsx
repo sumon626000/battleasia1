@@ -64,7 +64,7 @@ export function DashboardHeaderNav() {
   const moreActive = MORE.some((m) => isActive(m.href));
 
   return (
-    <div className="hidden border-b border-border/60 bg-background/70 backdrop-blur lg:block">
+    <div className="relative z-40 hidden border-b border-border/60 bg-background/70 backdrop-blur lg:block">
       <div className="mx-auto flex max-w-7xl items-center gap-1 px-5 py-2">
         <Link
           to="/"
