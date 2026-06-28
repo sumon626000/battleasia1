@@ -139,15 +139,19 @@ export function ChatWidget() {
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="fixed bottom-5 right-5 z-[60] flex h-14 w-14 items-center justify-center rounded-full border border-gold/60 bg-gradient-to-br from-gold/90 to-amber-600 text-black shadow-2xl shadow-gold/30 hover:scale-105 transition-transform"
+          className="group fixed bottom-24 right-4 z-[60] flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-amber-300 via-gold to-amber-600 text-black shadow-[0_8px_30px_-4px_rgba(255,193,7,0.55)] ring-1 ring-gold/60 transition-all hover:scale-110 hover:shadow-[0_10px_40px_-4px_rgba(255,193,7,0.75)] sm:bottom-8 sm:right-6 sm:h-16 sm:w-16"
           aria-label="Open support chat"
         >
-          <MessageCircle size={26} />
+          <span aria-hidden className="pointer-events-none absolute inset-0 rounded-full bg-gold/40 opacity-70 blur-md animate-pulse" />
+          <span aria-hidden className="pointer-events-none absolute inset-0 rounded-full ring-2 ring-gold/40 animate-ping" />
+          <MessageCircle size={26} className="relative z-10 drop-shadow sm:size-7" />
+          <span aria-hidden className="absolute -top-1 -right-1 z-10 h-3 w-3 rounded-full bg-emerald-400 ring-2 ring-background" />
         </button>
       )}
 
+
       {open && active && (
-        <div className="fixed bottom-5 right-5 z-[60] flex h-[600px] max-h-[85vh] w-[380px] max-w-[95vw] flex-col overflow-hidden rounded-xl border border-gold/40 bg-card shadow-2xl">
+        <div className="fixed bottom-24 right-4 z-[60] flex h-[600px] max-h-[80vh] w-[380px] max-w-[95vw] flex-col overflow-hidden rounded-xl border border-gold/40 bg-card shadow-2xl sm:bottom-8 sm:right-6">
           <div className="flex items-center justify-between border-b border-border/60 bg-gradient-to-r from-gold/10 to-transparent px-3 py-2">
             <button
               onClick={() => setShowList((s) => !s)}
