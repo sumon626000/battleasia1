@@ -105,14 +105,21 @@ function emptyDraft(): Partial<Match> {
   };
 }
 
+type FieldKey =
+  | "game_id" | "match_name" | "map_name" | "schedule_at" | "match_type"
+  | "game_mode" | "player_mode" | "total_players" | "room_id" | "room_password"
+  | "match_url" | "kill_rate_type" | "entry_fee_bac" | "status";
+
 function AdminMatchesPage() {
   const qc = useQueryClient();
   const [q, setQ] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [editing, setEditingState] = useState<Partial<Match> | null>(null);
+  const [errors, setErrors] = useState<Partial<Record<FieldKey, boolean>>>({});
   const setEditing = (d: Partial<Match> | null) => {
     setEditingState(d);
     saveDraft(d);
+    if (!d) setErrors({});
   };
 
   // Restore unsaved draft on mount (so reload doesn't wipe form data)
@@ -141,12 +148,26 @@ function AdminMatchesPage() {
 
   async function save() {
     if (!editing) return;
-    const missing: string[] = [];
-    if (!editing.match_name?.trim()) missing.push("Match Name");
-    if (!editing.map_name?.trim()) missing.push("Map");
-    if (!editing.schedule_at) missing.push("Schedule");
-    if (!editing.total_players || editing.total_players <= 0) missing.push("Total Players");
-    if (missing.length) return toast.error(`Required field missing: ${missing.join(", ")}`);
+    const e: Partial<Record<FieldKey, boolean>> = {};
+    if (!editing.game_id) e.game_id = true;
+    if (!editing.match_name?.trim()) e.match_name = true;
+    if (!editing.map_name?.trim()) e.map_name = true;
+    if (!editing.schedule_at) e.schedule_at = true;
+    if (!editing.match_type) e.match_type = true;
+    if (!editing.game_mode) e.game_mode = true;
+    if (!editing.player_mode) e.player_mode = true;
+    if (!editing.total_players || editing.total_players <= 0) e.total_players = true;
+    if (!editing.room_id?.trim()) e.room_id = true;
+    if (!editing.room_password?.trim()) e.room_password = true;
+    if (!editing.match_url?.trim()) e.match_url = true;
+    if (!editing.kill_rate_type) e.kill_rate_type = true;
+    if (editing.entry_fee_bac === undefined || editing.entry_fee_bac === null || Number.isNaN(Number(editing.entry_fee_bac))) e.entry_fee_bac = true;
+    if (!editing.status) e.status = true;
+    setErrors(e);
+    if (Object.keys(e).length) {
+      toast.error("Please fill the highlighted required fields");
+      return;
+    }
     const payload: Record<string, unknown> = { ...editing };
     if (payload.schedule_at && typeof payload.schedule_at === "string") {
       payload.schedule_at = new Date(payload.schedule_at).toISOString();
@@ -166,6 +187,7 @@ function AdminMatchesPage() {
     setEditing(null);
     qc.invalidateQueries({ queryKey: ["admin-matches"] });
   }
+
 
   async function softDelete(id: number) {
     if (!confirm("Soft-delete this match?")) return;
@@ -300,18 +322,19 @@ function AdminMatchesPage() {
         </table>
       </div>
 
-      {editing && <EditorModal draft={editing} setDraft={setEditing} onSave={save} onClose={() => setEditing(null)} />}
+      {editing && <EditorModal draft={editing} setDraft={setEditing} onSave={save} onClose={() => setEditing(null)} errors={errors} />}
     </div>
   );
 }
 
 function EditorModal({
-  draft, setDraft, onSave, onClose,
+  draft, setDraft, onSave, onClose, errors,
 }: {
   draft: Partial<Match>;
   setDraft: (d: Partial<Match> | null) => void;
   onSave: () => void;
   onClose: () => void;
+  errors: Partial<Record<FieldKey, boolean>>;
 }) {
   const upd = (patch: Partial<Match>) => setDraft({ ...draft, ...patch });
 
@@ -332,8 +355,25 @@ function EditorModal({
   const winnerTeamSize = draft.player_mode === "Solo" ? 1 : draft.player_mode === "Duo" ? 2 : 4;
   const totalPlayers = Number(draft.total_players ?? 0);
   const loserCount = Math.max(0, totalPlayers - winnerTeamSize);
-  const autoTotalKills = loserCount; // 1 kill per eliminated player
+  const autoTotalKills = loserCount;
+
+  // Auto Per Kill = (Entry × TotalPlayers × (1 − fee%)) / loserCount
+  const entryFee = Number(draft.entry_fee_bac ?? 0);
+  const feePct = Number(draft.platform_fee_pct ?? 0);
+  const totalIncome = entryFee * totalPlayers;
+  const prizePool = totalIncome * (1 - feePct / 100);
+  const autoPerKill = loserCount > 0 ? Math.round((prizePool / loserCount) * 100) / 100 : 0;
+  const isAutoKill = draft.kill_rate_type === "Automatic";
+
+  useEffect(() => {
+    if (isAutoKill && draft.per_kill_amount_bac !== autoPerKill) {
+      setDraft({ ...draft, per_kill_amount_bac: autoPerKill });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAutoKill, autoPerKill]);
+
   const previewSrc = draft.map_image_url || draft.banner_image_url || null;
+
 
   return (
     <div className="fixed inset-0 z-50 grid place-items-center bg-background/80 p-4 backdrop-blur">
@@ -349,7 +389,7 @@ function EditorModal({
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           {/* LEFT COLUMN */}
           <div className="space-y-3">
-            <Field label="Game" required>
+            <Field label="Game" required error={errors.game_id}>
               <select
                 className={inp}
                 value={draft.game_id ?? ""}
@@ -362,7 +402,7 @@ function EditorModal({
               </select>
             </Field>
 
-            <Select label="Map" required value={draft.map_name} options={MAP_OPTIONS} onChange={(v) => upd({ map_name: v, map_image_url: MAP_IMAGES[v] ?? draft.map_image_url ?? null, banner_image_url: draft.banner_image_url ?? MAP_IMAGES[v] ?? null })} />
+            <Select label="Map" required error={errors.map_name} value={draft.map_name} options={MAP_OPTIONS} onChange={(v) => upd({ map_name: v, map_image_url: MAP_IMAGES[v] ?? draft.map_image_url ?? null, banner_image_url: draft.banner_image_url ?? MAP_IMAGES[v] ?? null })} />
 
             {/* Map preview */}
             <div className="overflow-hidden rounded border border-border/60 bg-secondary/30">
@@ -382,25 +422,25 @@ function EditorModal({
               </div>
             </div>
 
-            <Field label="Match/Event Name" required>
+            <Field label="Match/Event Name" required error={errors.match_name}>
               <input className={inp} value={draft.match_name ?? ""} onChange={(e) => upd({ match_name: e.target.value })} />
             </Field>
 
-            <Field label="Match Schedule" required>
+            <Field label="Match Schedule" required error={errors.schedule_at}>
               <input type="datetime-local" className={inp} value={draft.schedule_at ?? ""} onChange={(e) => upd({ schedule_at: e.target.value })} />
             </Field>
 
-            <Select label="Match Type" required value={draft.match_type} options={MATCH_TYPE} onChange={(v) => upd({ match_type: v })} />
+            <Select label="Match Type" required error={errors.match_type} value={draft.match_type} options={MATCH_TYPE} onChange={(v) => upd({ match_type: v })} />
 
             <Field label="Platform Fee (%)">
               <input type="number" min={0} className={inp} value={draft.platform_fee_pct ?? ""} onChange={(e) => upd({ platform_fee_pct: e.target.value === "" ? undefined : Number(e.target.value) })} />
-              <span className="mt-1 block font-hud text-[10px] tracking-wider text-foreground/55">Percentage of total income kept by platform</span>
+              <span className="mt-1 block font-hud text-[10px] tracking-wider text-foreground/55">Percentage of total income kept by platform — drives Auto Per Kill</span>
             </Field>
           </div>
 
           {/* RIGHT COLUMN */}
           <div className="space-y-3">
-            <Select label="Game Mode" required value={draft.game_mode} options={GAME_MODE} onChange={(v) => upd({ game_mode: v })} />
+            <Select label="Game Mode" required error={errors.game_mode} value={draft.game_mode} options={GAME_MODE} onChange={(v) => upd({ game_mode: v })} />
 
             <Field label={`Total Kills (${draft.game_mode ?? "Classic"})`}>
               <input
@@ -414,21 +454,21 @@ function EditorModal({
               </span>
             </Field>
 
-            <Field label="Total Player" required>
+            <Field label="Total Player" required error={errors.total_players}>
               <input type="number" min={0} className={inp} value={draft.total_players ?? ""} onChange={(e) => upd({ total_players: e.target.value === "" ? undefined : Number(e.target.value) })} />
             </Field>
 
-            <Select label="Player Mode" required value={draft.player_mode} options={PLAYER_MODE} onChange={(v) => upd({ player_mode: v })} />
+            <Select label="Player Mode" required error={errors.player_mode} value={draft.player_mode} options={PLAYER_MODE} onChange={(v) => upd({ player_mode: v })} />
 
-            <Field label="Room ID" required>
+            <Field label="Room ID" required error={errors.room_id}>
               <input className={inp} value={draft.room_id ?? ""} onChange={(e) => upd({ room_id: e.target.value })} />
             </Field>
 
-            <Field label="Password" required>
+            <Field label="Password" required error={errors.room_password}>
               <input className={inp} value={draft.room_password ?? ""} onChange={(e) => upd({ room_password: e.target.value })} />
             </Field>
 
-            <Field label="Match URL" required>
+            <Field label="Match URL" required error={errors.match_url}>
               <input
                 className={inp}
                 placeholder="example.com/room"
@@ -438,15 +478,29 @@ function EditorModal({
               <span className="mt-1 block font-hud text-[10px] tracking-wider text-foreground/55">https:// will be added automatically if omitted</span>
             </Field>
 
-            <Select label="Set Kill Rate" required value={draft.kill_rate_type} options={KILL_TYPE} onChange={(v) => upd({ kill_rate_type: v })} />
+            <Select label="Set Kill Rate" required error={errors.kill_rate_type} value={draft.kill_rate_type} options={KILL_TYPE} onChange={(v) => upd({ kill_rate_type: v })} />
 
-            <Field label="Entry Fee" required>
+            <Field label="Entry Fee" required error={errors.entry_fee_bac}>
               <input type="number" min={0} className={inp} value={draft.entry_fee_bac ?? ""} onChange={(e) => upd({ entry_fee_bac: e.target.value === "" ? undefined : Number(e.target.value) })} />
             </Field>
 
-            <Field label="Per Kill">
-              <input type="number" min={0} className={inp} value={draft.per_kill_amount_bac ?? ""} onChange={(e) => upd({ per_kill_amount_bac: e.target.value === "" ? undefined : Number(e.target.value) })} />
+            <Field label={isAutoKill ? "Per Kill (Auto)" : "Per Kill"}>
+              <input
+                type="number"
+                min={0}
+                className={inp}
+                value={isAutoKill ? autoPerKill : (draft.per_kill_amount_bac ?? "")}
+                readOnly={isAutoKill}
+                onChange={(e) => upd({ per_kill_amount_bac: e.target.value === "" ? undefined : Number(e.target.value) })}
+              />
+              <span className="mt-1 block font-hud text-[10px] tracking-wider text-foreground/55">
+                {isAutoKill
+                  ? `Auto: (entry × players × (1 − fee%)) ÷ loserCount = (${entryFee} × ${totalPlayers} × (1 − ${feePct}%)) ÷ ${loserCount} = ${autoPerKill}`
+                  : "Manual — enter custom per-kill BAC reward"}
+              </span>
             </Field>
+
+
 
             <label className="flex items-start gap-3 rounded border border-border/60 bg-secondary/30 px-3 py-2">
               <input
@@ -535,20 +589,23 @@ function EditorModal({
 
 const inp = "w-full rounded border border-border/60 bg-secondary/40 px-3 py-2 font-mono text-sm outline-none focus:border-gold";
 
-function Field({ label, required, children }: { label: string; required?: boolean; children: React.ReactNode }) {
+function Field({ label, required, error, children }: { label: string; required?: boolean; error?: boolean; children: React.ReactNode }) {
   return (
     <label className="flex flex-col gap-1">
-      <span className="font-hud text-[10px] uppercase tracking-widest text-foreground/60">
+      <span className={`font-hud text-[10px] uppercase tracking-widest ${error ? "text-destructive" : "text-foreground/60"}`}>
         {label}{required ? <span className="ml-1 text-destructive">*</span> : <span className="ml-1 text-foreground/30">(optional)</span>}
+        {error && <span className="ml-2 normal-case tracking-normal text-destructive">— required</span>}
       </span>
-      {children}
+      <div className={error ? "rounded ring-2 ring-destructive" : ""}>
+        {children}
+      </div>
     </label>
   );
 }
 
-function Select<T extends string>({ label, value, options, onChange, required, placeholder }: { label: string; value: T | undefined; options: readonly T[]; onChange: (v: T) => void; required?: boolean; placeholder?: string }) {
+function Select<T extends string>({ label, value, options, onChange, required, error, placeholder }: { label: string; value: T | undefined; options: readonly T[]; onChange: (v: T) => void; required?: boolean; error?: boolean; placeholder?: string }) {
   return (
-    <Field label={label} required={required}>
+    <Field label={label} required={required} error={error}>
       <select className={inp} value={value ?? ""} onChange={(e) => onChange(e.target.value as T)}>
         <option value="" disabled>{placeholder ?? `Select ${label}`}</option>
         {options.map((o) => <option key={o} value={o}>{o}</option>)}
@@ -556,3 +613,4 @@ function Select<T extends string>({ label, value, options, onChange, required, p
     </Field>
   );
 }
+
