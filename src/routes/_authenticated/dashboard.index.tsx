@@ -227,21 +227,27 @@ function DashboardPage() {
         </div>
       </section>
 
-      {/* DAILY LOGIN STREAK */}
-      <DailyLoginCard />
-
-      {/* DAILY QUESTS + SPIN WHEEL */}
-      <section className="grid gap-4 lg:grid-cols-2">
+      {/* DAILY LOGIN + QUESTS + SPIN — 3-column on XL desktop */}
+      <section className="grid gap-4 lg:grid-cols-2 xl:grid-cols-3">
+        <div className="xl:col-span-3 lg:col-span-2">
+          <DailyLoginCard />
+        </div>
         <DailyQuestsCard />
         <SpinWheelCard />
+        <div className="hidden xl:block">
+          <RankTierCard wins={stats.wins} kills={stats.totalKills} top3={stats.top3} />
+        </div>
       </section>
 
 
 
-      {/* PLAYER HUB: Tier + Next Tournament + Achievements */}
+
+      {/* PLAYER HUB: Tier + Next Tournament */}
       <section className="grid gap-3 lg:grid-cols-3">
-        <RankTierCard wins={stats.wins} kills={stats.totalKills} top3={stats.top3} />
-        <div className="lg:col-span-2">
+        <div className="xl:hidden">
+          <RankTierCard wins={stats.wins} kills={stats.totalKills} top3={stats.top3} />
+        </div>
+        <div className="lg:col-span-2 xl:col-span-3">
           <NextTournamentCard
             match={
               upcoming[0]
@@ -256,6 +262,7 @@ function DashboardPage() {
           />
         </div>
       </section>
+
 
       <AchievementsCard
         played={stats.played}
@@ -281,7 +288,7 @@ function DashboardPage() {
         {isLoading ? (
           <div className="hud-panel p-8 text-center text-sm text-foreground/60">Loading…</div>
         ) : (
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
             <StatCard icon={Crown} label="Top 3 Finishes" value={stats.top3} />
             <StatCard icon={Target} label="Top 10 Finishes" value={stats.top10} />
             <StatCard icon={Crosshair} label="Total Kills" value={stats.totalKills} hint={`${stats.avgKills} avg/match`} />
