@@ -1,6 +1,9 @@
+import { useMemo } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
 import { useProfile } from "@/hooks/use-profile";
+import { supabase } from "@/integrations/supabase/client";
 import {
   Trophy,
   Swords,
@@ -10,32 +13,130 @@ import {
   ShoppingBag,
   Crown,
   ArrowRight,
+  Target,
+  Coins,
+  Crosshair,
+  Activity,
+  Calendar,
 } from "lucide-react";
 import { CoinIcon } from "@/components/site/CoinIcon";
 import squadHero from "@/assets/pubg-squad-action.jpg";
 import sniperImg from "@/assets/pubg-sniper-rooftop.jpg";
-import vehicleImg from "@/assets/pubg-vehicle-chase.jpg";
 import airdropImg from "@/assets/pubg-airdrop.jpg";
 
 export const Route = createFileRoute("/_authenticated/dashboard/")({
   head: () => ({
-    meta: [{ title: "Dashboard — Battle Asia" }],
+    meta: [{ title: "Home — Battle Asia" }],
   }),
   component: DashboardPage,
 });
 
+function StatCard({
+  icon: Icon,
+  label,
+  value,
+  hint,
+  accent,
+}: {
+  icon: typeof Trophy;
+  label: string;
+  value: string | number;
+  hint?: string;
+  accent?: string;
+}) {
+  return (
+    <div className="hud-panel relative overflow-hidden p-4">
+      <div className="flex items-start justify-between">
+        <div className="min-w-0">
+          <div className="font-mono text-[10px] uppercase tracking-widest text-foreground/55">
+            {label}
+          </div>
+          <div className={`mt-1 font-display text-2xl font-bold ${accent ?? "text-gold"}`}>
+            {value}
+          </div>
+          {hint && <div className="mt-0.5 text-[11px] text-foreground/55">{hint}</div>}
+        </div>
+        <Icon size={18} className="text-foreground/40" />
+      </div>
+    </div>
+  );
+}
+
 function DashboardPage() {
   const { user } = useAuth();
   const { profile } = useProfile(user?.id);
+  const uid = user?.id;
   const name = profile?.in_game_username || profile?.username || "Player";
   const balance = Number(profile?.bac_coin_balance ?? 0);
 
-  const stats: Array<{ label: string; value: string; icon: any; accent?: boolean; isCoin?: boolean }> = [
-    { label: "BAC Balance", value: balance.toLocaleString(), icon: null, accent: true, isCoin: true },
-    { label: "Matches Played", value: "0", icon: Swords },
-    { label: "Wins", value: "0", icon: Trophy },
-    { label: "Referrals", value: "0", icon: Users },
-  ];
+  const { data, isLoading } = useQuery({
+    enabled: !!uid,
+    queryKey: ["my-stats", uid],
+    queryFn: async () => {
+      const [parts, txs, upcoming] = await Promise.all([
+        supabase
+          .from("match_participants")
+          .select("*, matches:match_id(id, title, status, scheduled_at, entry_fee_bac)")
+          .eq("user_id", uid!)
+          .order("created_at", { ascending: false }),
+        supabase
+          .from("balance_logs")
+          .select("amount, type, created_at")
+          .eq("user_id", uid!)
+          .order("created_at", { ascending: false })
+          .limit(10),
+        supabase
+          .from("matches")
+          .select("id, title, scheduled_at, status, entry_fee_bac")
+          .in("status", ["Upcoming", "Active"])
+          .order("scheduled_at", { ascending: true })
+          .limit(5),
+      ]);
+      return {
+        participants: parts.data ?? [],
+        balanceLogs: txs.data ?? [],
+        upcoming: upcoming.data ?? [],
+      };
+    },
+  });
+
+  const stats = useMemo(() => {
+    const parts = data?.participants ?? [];
+    const finished = parts.filter((p) => {
+      const m = p.matches as { status?: string } | null;
+      return m?.status === "completed" || m?.status === "result_published";
+    });
+    const wins = finished.filter((p) => Number(p.rank_position ?? 0) === 1).length;
+    const top3 = finished.filter(
+      (p) => Number(p.rank_position ?? 0) > 0 && Number(p.rank_position ?? 0) <= 3,
+    ).length;
+    const top10 = finished.filter(
+      (p) => Number(p.rank_position ?? 0) > 0 && Number(p.rank_position ?? 0) <= 10,
+    ).length;
+    const totalKills = finished.reduce((s, p) => s + Number(p.kills ?? 0), 0);
+    const totalPrize = finished.reduce((s, p) => s + Number(p.prize_bac ?? 0), 0);
+    const totalEntry = parts.reduce((s, p) => {
+      const m = p.matches as { entry_fee_bac?: number } | null;
+      return s + Number(m?.entry_fee_bac ?? 0);
+    }, 0);
+    const winRate = finished.length ? Math.round((wins / finished.length) * 100) : 0;
+    const avgKills = finished.length ? (totalKills / finished.length).toFixed(1) : "0.0";
+    return {
+      played: parts.length,
+      finished: finished.length,
+      wins,
+      top3,
+      top10,
+      totalKills,
+      totalPrize,
+      totalEntry,
+      winRate,
+      avgKills,
+    };
+  }, [data]);
+
+  const recent = (data?.participants ?? []).slice(0, 6);
+  const upcoming = data?.upcoming ?? [];
 
   const quick = [
     { label: "Join Match", href: "/dashboard/matches", icon: Swords },
@@ -46,16 +147,14 @@ function DashboardPage() {
 
   return (
     <div className="space-y-5">
+      {/* HERO */}
       <section className="hud-panel relative overflow-hidden p-5 sm:p-6">
         <div
           aria-hidden
           className="absolute inset-0 -z-10 bg-cover bg-center opacity-30"
           style={{ backgroundImage: `url(${squadHero})` }}
         />
-        <div
-          aria-hidden
-          className="absolute inset-0 -z-10 bg-gradient-to-r from-background via-background/80 to-background/40"
-        />
+        <div aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-r from-background via-background/80 to-background/40" />
         <div aria-hidden className="absolute inset-0 -z-10 bg-grid-hud opacity-20" />
         <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4">
           <div className="min-w-0">
@@ -75,28 +174,25 @@ function DashboardPage() {
         </div>
       </section>
 
+      {/* BALANCE + QUICK SUMMARY */}
       <section className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        {stats.map((s) => {
-          const Icon = s.icon;
-          return (
-            <div
-              key={s.label}
-              className={`hud-panel p-3 sm:p-4 ${s.accent ? "border-gold/40" : ""}`}
-            >
-              <div className="flex items-center justify-between">
-                <span className="font-hud text-[10px] uppercase tracking-wider text-foreground/60">
-                  {s.label}
-                </span>
-                {s.isCoin ? <CoinIcon size={16} /> : <Icon size={14} className={s.accent ? "text-gold" : "text-foreground/50"} />}
-              </div>
-              <div className={`mt-2 font-mono text-xl font-bold tabular-nums sm:text-2xl ${s.accent ? "text-gold" : ""}`}>
-                {s.value}
-              </div>
-            </div>
-          );
-        })}
+        <div className="hud-panel border-gold/40 p-3 sm:p-4">
+          <div className="flex items-center justify-between">
+            <span className="font-hud text-[10px] uppercase tracking-wider text-foreground/60">
+              BAC Balance
+            </span>
+            <CoinIcon size={16} />
+          </div>
+          <div className="mt-2 font-mono text-xl font-bold tabular-nums text-gold sm:text-2xl">
+            {balance.toLocaleString()}
+          </div>
+        </div>
+        <StatCard icon={Swords} label="Matches Played" value={stats.played} hint={`${stats.finished} finished`} />
+        <StatCard icon={Trophy} label="Wins" value={stats.wins} accent="text-emerald-400" hint={`${stats.winRate}% win rate`} />
+        <StatCard icon={Users} label="Referrals" value={profile?.referral_count ?? 0} />
       </section>
 
+      {/* QUICK ACTIONS */}
       <section>
         <h2 className="mb-3 font-hud text-sm font-bold uppercase tracking-widest text-foreground/80">
           Quick Actions
@@ -123,52 +219,115 @@ function DashboardPage() {
         </div>
       </section>
 
-      <section className="grid gap-4 lg:grid-cols-2">
-        <div className="hud-panel relative overflow-hidden p-5">
-          <div
-            aria-hidden
-            className="absolute inset-0 -z-10 bg-cover bg-center opacity-20"
-            style={{ backgroundImage: `url(${vehicleImg})` }}
-          />
-          <div aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-t from-background via-background/85 to-transparent" />
-          <h3 className="font-hud text-sm font-bold uppercase tracking-widest text-gold">
-            Upcoming Matches
-          </h3>
-          <p className="mt-2 font-mono text-xs text-foreground/70">
-            No upcoming matches yet. Check the Play Matches page.
-          </p>
+      {/* COMBAT STATISTICS */}
+      <section>
+        <div className="mb-3 flex items-end justify-between">
+          <h2 className="font-hud text-sm font-bold uppercase tracking-widest text-foreground/80">
+            Combat Statistics
+          </h2>
+          <Link
+            to="/dashboard/my-matches"
+            className="rounded border border-border/60 px-3 py-1 font-hud text-[10px] uppercase tracking-widest hover:border-gold hover:text-gold"
+          >
+            My Matches →
+          </Link>
         </div>
-        <div className="hud-panel relative overflow-hidden p-5">
-          <div
-            aria-hidden
-            className="absolute inset-0 -z-10 bg-cover bg-center opacity-20"
-            style={{ backgroundImage: `url(${sniperImg})` }}
-          />
-          <div aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-t from-background via-background/85 to-transparent" />
-          <h3 className="font-hud text-sm font-bold uppercase tracking-widest text-gold">
-            Recent Activity
-          </h3>
-          <p className="mt-2 font-mono text-xs text-foreground/70">
-            Your wallet and match history will appear here.
-          </p>
-        </div>
+        {isLoading ? (
+          <div className="hud-panel p-8 text-center text-sm text-foreground/60">Loading…</div>
+        ) : (
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <StatCard icon={Crown} label="Top 3 Finishes" value={stats.top3} />
+            <StatCard icon={Target} label="Top 10 Finishes" value={stats.top10} />
+            <StatCard icon={Crosshair} label="Total Kills" value={stats.totalKills} hint={`${stats.avgKills} avg/match`} />
+            <StatCard icon={Coins} label="Total Prize Won" value={stats.totalPrize.toLocaleString()} accent="text-gold" hint="BAC" />
+            <StatCard icon={Activity} label="Total Entry Spent" value={stats.totalEntry.toLocaleString()} hint="BAC" />
+            <StatCard
+              icon={Calendar}
+              label="Net P/L"
+              value={(stats.totalPrize - stats.totalEntry).toLocaleString()}
+              accent={stats.totalPrize - stats.totalEntry >= 0 ? "text-emerald-400" : "text-destructive"}
+              hint="BAC"
+            />
+          </div>
+        )}
       </section>
 
-      <section className="hud-panel relative overflow-hidden p-5 sm:p-6">
-        <div
-          aria-hidden
-          className="absolute inset-0 -z-10 bg-cover bg-center opacity-25"
-          style={{ backgroundImage: `url(${airdropImg})` }}
-        />
-        <div aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-r from-background via-background/70 to-transparent" />
-        <div className="max-w-md">
-          <p className="font-hud text-[10px] uppercase tracking-[0.3em] text-gold/80">Drop Zone</p>
-          <h3 className="mt-1 font-display text-xl font-bold uppercase tracking-wide">
-            Claim Your Loot
+      {/* UPCOMING + RECENT */}
+      <section className="grid gap-4 lg:grid-cols-2">
+        <div className="hud-panel relative overflow-hidden p-5">
+          <div aria-hidden className="absolute inset-0 -z-10 bg-cover bg-center opacity-20" style={{ backgroundImage: `url(${airdropImg})` }} />
+          <div aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-t from-background via-background/85 to-transparent" />
+          <h3 className="mb-3 font-hud text-sm font-bold uppercase tracking-widest text-gold">
+            Upcoming Matches
           </h3>
-          <p className="mt-2 font-mono text-xs text-foreground/70">
-            Top up BAC Coin, join tournaments, and climb the leaderboard.
-          </p>
+          {upcoming.length === 0 ? (
+            <p className="font-mono text-xs text-foreground/70">No upcoming matches yet.</p>
+          ) : (
+            <ul className="space-y-2">
+              {upcoming.map((m) => (
+                <li key={m.id}>
+                  <Link
+                    to="/dashboard/matches/$matchId"
+                    params={{ matchId: m.id }}
+                    className="flex items-center justify-between rounded border border-border/40 bg-background/40 px-3 py-2 text-xs hover:border-gold/60 hover:text-gold"
+                  >
+                    <span className="truncate">{m.title}</span>
+                    <span className="ml-3 shrink-0 font-mono text-gold">
+                      {Number(m.entry_fee_bac ?? 0).toLocaleString()} BAC
+                    </span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+        <div className="hud-panel relative overflow-hidden p-5">
+          <div aria-hidden className="absolute inset-0 -z-10 bg-cover bg-center opacity-20" style={{ backgroundImage: `url(${sniperImg})` }} />
+          <div aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-t from-background via-background/85 to-transparent" />
+          <h3 className="mb-3 font-hud text-sm font-bold uppercase tracking-widest text-gold">
+            Recent Matches
+          </h3>
+          {recent.length === 0 ? (
+            <p className="font-mono text-xs text-foreground/70">No matches played yet.</p>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-xs">
+                <thead className="font-mono uppercase tracking-widest text-foreground/55">
+                  <tr className="border-b border-border/40">
+                    <th className="py-2 text-left">Match</th>
+                    <th className="py-2 text-right">Rank</th>
+                    <th className="py-2 text-right">Kills</th>
+                    <th className="py-2 text-right">Prize</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {recent.map((p) => {
+                    const m = p.matches as { id?: string; title?: string } | null;
+                    return (
+                      <tr key={p.id} className="border-b border-border/20">
+                        <td className="py-2">
+                          {m?.id ? (
+                            <Link to="/dashboard/matches/$matchId" params={{ matchId: m.id }} className="hover:text-gold">
+                              {m.title ?? "Match"}
+                            </Link>
+                          ) : (
+                            "Match"
+                          )}
+                        </td>
+                        <td className="py-2 text-right font-mono">
+                          {p.rank_position ? `#${p.rank_position}` : "—"}
+                        </td>
+                        <td className="py-2 text-right font-mono">{p.kills ?? 0}</td>
+                        <td className="py-2 text-right font-mono text-gold">
+                          {Number(p.prize_bac ?? 0).toLocaleString()}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
       </section>
     </div>
