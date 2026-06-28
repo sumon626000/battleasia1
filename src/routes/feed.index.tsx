@@ -37,6 +37,7 @@ type Post = {
   created_at: string;
   author?: { username: string | null; full_name: string | null; avatar_url: string | null } | null;
   liked_by_me?: boolean;
+  following_author?: boolean;
 };
 
 function timeAgo(d: string) {
