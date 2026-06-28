@@ -257,6 +257,8 @@ function FilterGroup({
 function MatchCard({ m, joined, filled, balance, isPremium }: { m: any; joined: boolean; filled: number; balance: number; isPremium: boolean }) {
   const qc = useQueryClient();
   const [joining, setJoining] = useState(false);
+  const [showCreds, setShowCreds] = useState(false);
+  const [copied, setCopied] = useState<"id" | "pw" | null>(null);
   const total = m.total_players ?? 0;
   const pct = total ? Math.min(100, Math.round((filled / total) * 100)) : 0;
   const when = m.schedule_at ? new Date(m.schedule_at) : null;
@@ -264,6 +266,33 @@ function MatchCard({ m, joined, filled, balance, isPremium }: { m: any; joined: 
   const isFull = total > 0 && filled >= total;
   const fee = Number(m.entry_fee_bac ?? 0);
   const banner = m.banner_image_url || m.map_image_url || null;
+
+  function handleCredsClick(e: React.MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!joined) {
+      toast.error("You are not joined to this match");
+      return;
+    }
+    if (!m.room_id && !m.room_password) {
+      toast.info("Room ID & Password will be shared before match starts");
+      return;
+    }
+    setShowCreds((v) => !v);
+  }
+
+  async function copyText(e: React.MouseEvent, text: string, which: "id" | "pw") {
+    e.preventDefault();
+    e.stopPropagation();
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(which);
+      toast.success("Copied to clipboard");
+      setTimeout(() => setCopied(null), 1500);
+    } catch {
+      toast.error("Copy failed");
+    }
+  }
 
   async function handleJoin(e: React.MouseEvent) {
     e.preventDefault();
