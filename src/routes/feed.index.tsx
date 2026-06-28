@@ -156,6 +156,26 @@ function FeedPage() {
     }
   }
 
+  async function toggleFollow(post: Post) {
+    if (!user) return toast.error("Sign in to follow");
+    if (post.user_id === user.id) return;
+    const willFollow = !post.following_author;
+    // optimistic across all posts by same author
+    setPosts((prev) => prev.map((p) => (p.user_id === post.user_id ? { ...p, following_author: willFollow } : p)));
+    try {
+      if (willFollow) {
+        const { error } = await supabase.from("user_follows").insert({ follower_id: user.id, following_id: post.user_id });
+        if (error) throw error;
+      } else {
+        const { error } = await supabase.from("user_follows").delete().eq("follower_id", user.id).eq("following_id", post.user_id);
+        if (error) throw error;
+      }
+    } catch (e: any) {
+      toast.error(e.message || "Action failed");
+      setPosts((prev) => prev.map((p) => (p.user_id === post.user_id ? { ...p, following_author: !willFollow } : p)));
+    }
+  }
+
   return (
     <>
     <div className="mx-auto grid w-full max-w-[1100px] gap-8 px-2 py-5 pb-24 sm:px-4 lg:grid-cols-[minmax(0,640px)_320px]">
