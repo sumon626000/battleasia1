@@ -1,7 +1,7 @@
 import { useState, type ReactNode } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { useProfile } from "@/hooks/use-profile";
-import { DashboardSidebar } from "./DashboardSidebar";
+
 import { DashboardTopbar } from "./DashboardTopbar";
 import { DashboardBottomNav } from "./DashboardBottomNav";
 import { DashboardMobileDrawer } from "./DashboardMobileDrawer";
