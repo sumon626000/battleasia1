@@ -31,10 +31,10 @@ type DashGroup = { label: string; icon: any; items: DashItem[] };
 
 export const DASH_GROUPS: DashGroup[] = [
   {
-    label: "Overview",
-    icon: LayoutDashboard,
+    label: "Home",
+    icon: Home,
     items: [
-      { key: "dash.overview", href: "/dashboard", icon: LayoutDashboard },
+      { key: "dash.overview", href: "/dashboard", icon: Home },
     ],
   },
   {
