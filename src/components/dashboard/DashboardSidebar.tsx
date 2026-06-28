@@ -43,6 +43,7 @@ export const DASH_GROUPS: DashGroup[] = [
     items: [
       { key: "dash.playMatches", href: "/dashboard/matches", icon: Swords },
       { key: "dash.matches", href: "/dashboard/my-matches", icon: Trophy },
+      { key: "dash.statistics", href: "/dashboard/statistics", icon: BarChart3 },
     ],
   },
   {
