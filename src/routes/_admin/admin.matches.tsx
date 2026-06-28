@@ -1,10 +1,18 @@
 import { useEffect, useMemo, useState } from "react";
 
-const DRAFT_KEY = "ba_admin_match_draft_v1";
+const DRAFT_KEY = "ba_admin_match_draft_v2";
+const VALID_KILL_TYPES = ["Automatic", "Manual"] as const;
 function loadDraft(): Partial<Match> | null {
   try {
+    // clear old incompatible draft
+    localStorage.removeItem("ba_admin_match_draft_v1");
     const raw = localStorage.getItem(DRAFT_KEY);
-    return raw ? (JSON.parse(raw) as Partial<Match>) : null;
+    if (!raw) return null;
+    const d = JSON.parse(raw) as Partial<Match>;
+    if (d.kill_rate_type && !VALID_KILL_TYPES.includes(d.kill_rate_type as typeof VALID_KILL_TYPES[number])) {
+      d.kill_rate_type = "Automatic";
+    }
+    return d;
   } catch {
     return null;
   }
