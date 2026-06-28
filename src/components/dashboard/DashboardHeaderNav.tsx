@@ -113,7 +113,7 @@ export function DashboardHeaderNav() {
           {open && (
             <div
               role="menu"
-              className="absolute left-0 top-full z-50 mt-1 w-56 overflow-hidden rounded-md border border-border/70 bg-background/95 shadow-xl backdrop-blur"
+              className="absolute left-0 top-full z-[200] mt-1 w-56 overflow-hidden rounded-md border border-border/70 bg-background shadow-2xl"
             >
               {MORE.map((item) => {
                 const Icon = item.icon;
