@@ -250,10 +250,18 @@ function ActionModal({
 function AdminUsers() {
   const [q, setQ] = useState("");
   const [selected, setSelected] = useState<Row | null>(null);
+  const { data: isSuper = false } = useQuery({
+    queryKey: ["is-super-admin"],
+    queryFn: async () => {
+      const { data } = await supabase.rpc("is_super_admin");
+      return !!data;
+    },
+  });
   const { data, isLoading } = useQuery({
     queryKey: ["admin-users", q],
     queryFn: () => fetchUsers(q),
   });
+
 
   return (
     <div className="space-y-4">
