@@ -208,6 +208,32 @@ function FeedPage() {
             ))}
           </ul>
         )}
+      </div>
+      <aside className="hidden lg:block">
+        <div className="sticky top-20 space-y-4">
+          <div className="rounded-xl border border-border/60 bg-card/60 p-4">
+            <div className="font-hud text-[10px] uppercase tracking-widest text-foreground/50 mb-2">Quick actions</div>
+            <div className="flex flex-col gap-2">
+              <Link to="/feed/new" className="btn-gold w-full justify-center inline-flex items-center gap-1.5 px-3 py-2 text-xs"><Plus size={14}/> New post</Link>
+              <Link to="/dashboard/story/new" className="btn-outline-gold w-full justify-center inline-flex items-center gap-1.5 px-3 py-2 text-xs"><Plus size={14}/> Add story</Link>
+              <Link to="/leaderboard" className="btn-outline-gold w-full justify-center inline-flex items-center gap-1.5 px-3 py-2 text-xs">Leaderboard</Link>
+            </div>
+          </div>
+          <div className="rounded-xl border border-border/60 bg-card/60 p-4">
+            <div className="font-hud text-[10px] uppercase tracking-widest text-foreground/50 mb-2">Trending now</div>
+            <ul className="space-y-2 text-xs text-foreground/70">
+              {posts.slice(0, 5).map((p) => (
+                <li key={p.id} className="flex items-center justify-between gap-2">
+                  <Link to="/post/$postId" params={{ postId: p.id }} className="truncate hover:text-gold">
+                    {(p.caption || "Untitled drop").slice(0, 40)}
+                  </Link>
+                  <span className="inline-flex items-center gap-1 font-hud text-[10px] text-foreground/50"><Eye size={12}/>{(p.views_count ?? 0).toLocaleString()}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </aside>
     </div>
     <FeedBottomNav />
     </>
