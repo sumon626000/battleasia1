@@ -370,10 +370,11 @@ function Field({ label, required, children }: { label: string; required?: boolea
   );
 }
 
-function Select<T extends string>({ label, value, options, onChange }: { label: string; value: T | undefined; options: readonly T[]; onChange: (v: T) => void }) {
+function Select<T extends string>({ label, value, options, onChange, required, placeholder }: { label: string; value: T | undefined; options: readonly T[]; onChange: (v: T) => void; required?: boolean; placeholder?: string }) {
   return (
-    <Field label={label}>
+    <Field label={label} required={required}>
       <select className={inp} value={value ?? ""} onChange={(e) => onChange(e.target.value as T)}>
+        <option value="" disabled>{placeholder ?? `Select ${label}`}</option>
         {options.map((o) => <option key={o} value={o}>{o}</option>)}
       </select>
     </Field>
