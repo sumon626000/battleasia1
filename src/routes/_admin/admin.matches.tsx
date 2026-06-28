@@ -557,20 +557,23 @@ function EditorModal({
 
 const inp = "w-full rounded border border-border/60 bg-secondary/40 px-3 py-2 font-mono text-sm outline-none focus:border-gold";
 
-function Field({ label, required, children }: { label: string; required?: boolean; children: React.ReactNode }) {
+function Field({ label, required, error, children }: { label: string; required?: boolean; error?: boolean; children: React.ReactNode }) {
   return (
     <label className="flex flex-col gap-1">
-      <span className="font-hud text-[10px] uppercase tracking-widest text-foreground/60">
+      <span className={`font-hud text-[10px] uppercase tracking-widest ${error ? "text-destructive" : "text-foreground/60"}`}>
         {label}{required ? <span className="ml-1 text-destructive">*</span> : <span className="ml-1 text-foreground/30">(optional)</span>}
+        {error && <span className="ml-2 normal-case tracking-normal text-destructive">— required</span>}
       </span>
-      {children}
+      <div className={error ? "rounded ring-2 ring-destructive" : ""}>
+        {children}
+      </div>
     </label>
   );
 }
 
-function Select<T extends string>({ label, value, options, onChange, required, placeholder }: { label: string; value: T | undefined; options: readonly T[]; onChange: (v: T) => void; required?: boolean; placeholder?: string }) {
+function Select<T extends string>({ label, value, options, onChange, required, error, placeholder }: { label: string; value: T | undefined; options: readonly T[]; onChange: (v: T) => void; required?: boolean; error?: boolean; placeholder?: string }) {
   return (
-    <Field label={label} required={required}>
+    <Field label={label} required={required} error={error}>
       <select className={inp} value={value ?? ""} onChange={(e) => onChange(e.target.value as T)}>
         <option value="" disabled>{placeholder ?? `Select ${label}`}</option>
         {options.map((o) => <option key={o} value={o}>{o}</option>)}
@@ -578,3 +581,4 @@ function Select<T extends string>({ label, value, options, onChange, required, p
     </Field>
   );
 }
+
