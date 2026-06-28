@@ -145,10 +145,10 @@ function AdminResultsPage() {
       .map((p) => {
         const r = rows[p.user_id];
         if (!r) return null;
-        const rank = parseInt(r.rank, 10);
         const kills = parseInt(r.kills, 10) || 0;
-        if (!r.rank && !r.kills) return null;
-        return { user_id: p.user_id, rank: Number.isFinite(rank) ? rank : null, kills };
+        if (!r.status && !r.kills) return null;
+        const rank = r.status === "Winner" ? 1 : r.status === "Loser" ? 2 : null;
+        return { user_id: p.user_id, rank, kills };
       })
       .filter(Boolean);
     if (results.length === 0) return toast.error("Fill at least one row.");
@@ -201,9 +201,9 @@ function AdminResultsPage() {
       const key = cols[0].toLowerCase();
       const uid = byPubg.get(key) || byName.get(key);
       if (!uid) { skipped++; continue; }
-      const rank = cols[1] || "";
+      const rankNum = parseInt(cols[1] || "", 10);
       const kills = cols[2] || "0";
-      next[uid] = { rank, kills };
+      next[uid] = { status: rankNum === 1 ? "Winner" : Number.isFinite(rankNum) ? "Loser" : "", kills };
       matched++;
     }
     setRows(next);
