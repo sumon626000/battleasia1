@@ -2,7 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
-import { ArrowLeft, Heart, MessageCircle, Eye, Crown, Send, Loader2 } from "lucide-react";
+import { ArrowLeft, Heart, MessageCircle, Eye, Crown, Send, Loader2, Pencil, Trash2, X, Check } from "lucide-react";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/dashboard/feed/$postId")({
   component: PostDetail,
