@@ -189,7 +189,7 @@ function DashboardPage() {
         </div>
         <StatCard icon={Swords} label="Matches Played" value={stats.played} hint={`${stats.finished} finished`} />
         <StatCard icon={Trophy} label="Wins" value={stats.wins} accent="text-emerald-400" hint={`${stats.winRate}% win rate`} />
-        <StatCard icon={Users} label="Referrals" value={profile?.referral_count ?? 0} />
+        <StatCard icon={Users} label="Referrals" value={0} />
       </section>
 
       {/* QUICK ACTIONS */}
