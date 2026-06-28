@@ -112,7 +112,7 @@ function FeedPage() {
         .in("post_id", list.map((p) => p.id));
       likedSet = new Set((likes ?? []).map((l: any) => l.post_id));
     }
-    setPosts(list.map((p) => ({ ...p, author: profileMap[p.user_id] ?? null, liked_by_me: likedSet.has(p.id) })));
+    setPosts(list.map((p) => ({ ...p, author: profileMap[p.user_id] ?? null, liked_by_me: likedSet.has(p.id), following_author: followingIds.has(p.user_id) })));
     setLoading(false);
   }
 
