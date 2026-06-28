@@ -1,12 +1,12 @@
 import { useNavigate, useRouterState } from "@tanstack/react-router";
-import { LayoutDashboard, Swords, Vault, ShoppingBag, User as UserIcon } from "lucide-react";
+import { LayoutDashboard, Swords, Trophy, ShoppingBag, User as UserIcon } from "lucide-react";
 import { useT } from "@/lib/i18n";
 
 const BOTTOM = [
   { key: "dash.home", href: "/dashboard", icon: LayoutDashboard },
   { key: "dash.play", href: "/dashboard/matches", icon: Swords },
   { key: "dash.shop", href: "/dashboard/shop", icon: ShoppingBag },
-  { key: "dash.vault", href: "/dashboard/vault", icon: Vault },
+  { key: "nav.leaderboard", href: "/feed/leaderboard", icon: Trophy, label: "Leaderboard" },
   { key: "dash.profile", href: "/dashboard/profile", icon: UserIcon },
 ] as const;
 
@@ -33,7 +33,7 @@ export function DashboardBottomNav() {
                 }`}
               >
                 <Icon size={18} />
-                <span>{t(item.key)}</span>
+                <span>{(item as any).label ?? t(item.key)}</span>
                 {active && <span className="mt-0.5 h-0.5 w-6 bg-gold" />}
               </button>
             </li>
