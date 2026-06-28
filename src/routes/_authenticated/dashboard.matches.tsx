@@ -1,19 +1,21 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { useProfile } from "@/hooks/use-profile";
-import { Crown, Users, Map, Trophy, Clock, Filter, Sword, ArrowLeft, Gamepad2, Lock, PlayCircle, Loader2, KeyRound, Copy, Check, Calendar } from "lucide-react";
+import { Crown, Users, Map, Trophy, Clock, Filter, Sword, ArrowLeft, Gamepad2, Lock, PlayCircle, Loader2, KeyRound, Copy, Check, Calendar, Ticket, ChevronDown, Radio } from "lucide-react";
 import { CoinIcon } from "@/components/site/CoinIcon";
 import { PlayHeroCarousel } from "@/components/dashboard/PlayHeroCarousel";
 
 export const Route = createFileRoute("/_authenticated/dashboard/matches")({
   validateSearch: (s: Record<string, unknown>) => ({ game: s.game ? Number(s.game) : undefined }),
-  head: () => ({ meta: [{ title: "Matches — Battle Asia" }] }),
+  head: () => ({ meta: [{ title: "Play — Battle Asia" }] }),
   component: MatchesPage,
 });
+
+type HubTab = "tournaments" | "live" | "upcoming" | "mine";
 
 type Tab = "Ongoing" | "Upcoming" | "Results";
 type ModeFilter = "all" | "Solo" | "Duo" | "Squad";
@@ -106,84 +108,21 @@ function MatchesPage() {
     },
   });
 
-  // Step 1: Game picker
+  // === PLAY HUB — unified all-games view ===
   if (!selectedGameId) {
     return (
-      <div className="space-y-5">
-        <PlayHeroCarousel />
-        <section className="hud-panel relative overflow-hidden p-5 sm:p-6">
-          <div className="absolute inset-0 -z-10 bg-grid-hud opacity-30" />
-          <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4">
-            <div className="min-w-0">
-              <p className="font-hud text-[10px] uppercase tracking-[0.3em] text-foreground/60">// SELECT GAME</p>
-              <h1 className="mt-1 font-display text-2xl font-bold tracking-wide sm:text-3xl">
-                CHOOSE YOUR <span className="text-gold">BATTLEGROUND</span>
-              </h1>
-              <p className="mt-1 text-xs text-foreground/60">Pick a game to view tournaments.</p>
-            </div>
-            <Gamepad2 className="text-gold" size={36} />
-          </div>
-        </section>
-
-        <section className="grid gap-3 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
-          {(games.data ?? []).map((g: any) => {
-            const disabled = g.coming_soon || g.status !== "active";
-            const inner = (
-              <>
-                <div className="relative aspect-[4/3] overflow-hidden bg-background/60">
-                  {g.image_url ? (
-                    <img src={g.image_url} alt={g.game_name} className={`h-full w-full object-cover transition group-hover:scale-105 ${disabled ? "grayscale" : ""}`} />
-                  ) : (
-                    <div className="flex h-full items-center justify-center text-foreground/30"><Gamepad2 size={48} /></div>
-                  )}
-                  {g.live_stream_url && !disabled && (
-                    <span className="absolute left-2 top-2 inline-flex items-center gap-1 rounded-sm bg-red-600 px-1.5 py-0.5 font-hud text-[9px] font-bold uppercase tracking-widest text-white shadow-lg shadow-red-600/40 animate-pulse">
-                      <PlayCircle size={10} /> LIVE
-                    </span>
-                  )}
-                </div>
-                <div className="p-3">
-                  <div className="font-display text-sm font-bold uppercase tracking-wide truncate">{g.game_name}</div>
-                  <div className="mt-1 flex items-center justify-between gap-2 font-hud text-[10px] uppercase tracking-widest text-gold">
-                    <span>{disabled ? (<span className="text-foreground/50 inline-flex items-center gap-1"><Lock size={10}/> COMING SOON</span>) : "ENTER →"}</span>
-                    {g.live_stream_url && !disabled && (
-                      <a
-                        href={g.live_stream_url}
-                        target="_blank"
-                        rel="noreferrer"
-                        onClick={(e) => e.stopPropagation()}
-                        className="inline-flex items-center gap-1 rounded-sm border border-red-500/60 bg-red-600/20 px-1.5 py-0.5 text-red-400 hover:bg-red-600/40"
-                      >
-                        <PlayCircle size={10} /> WATCH
-                      </a>
-                    )}
-                  </div>
-                </div>
-              </>
-            );
-            return disabled ? (
-              <div key={g.id} className="hud-panel group block overflow-hidden opacity-60 cursor-not-allowed">{inner}</div>
-            ) : (
-              <div
-                key={g.id}
-                role="button"
-                tabIndex={0}
-                onClick={() => navigate({ to: "/dashboard/matches", search: { game: g.id } })}
-                onKeyDown={(e) => { if (e.key === "Enter") navigate({ to: "/dashboard/matches", search: { game: g.id } }); }}
-                className="hud-panel group block overflow-hidden text-left transition hover:border-gold/60 cursor-pointer"
-              >
-                {inner}
-              </div>
-            );
-          })}
-          {games.isLoading && <div className="col-span-full py-8 text-center text-foreground/40">Loading games...</div>}
-          {!games.isLoading && !games.data?.length && (
-            <div className="col-span-full py-8 text-center font-hud text-xs tracking-widest text-foreground/40">NO GAMES AVAILABLE</div>
-          )}
-        </section>
-      </div>
+      <PlayHub
+        games={games.data ?? []}
+        gamesLoading={games.isLoading}
+        userId={user?.id}
+        balance={balance}
+        isPremium={!!profile?.is_premium}
+        onPickGame={(id) => navigate({ to: "/dashboard/matches", search: { game: id } })}
+      />
     );
   }
+
+
 
   // Step 2: Matches for selected game
   return (
@@ -512,5 +451,454 @@ function Meta({ icon: Icon, label }: { icon: any; label: string }) {
     <div className="flex items-center gap-1 text-foreground/70">
       <Icon size={11} className="text-gold/70" /> <span className="truncate">{label}</span>
     </div>
+  );
+}
+
+// ========================== PLAY HUB ==========================
+
+type GameRow = { id: number; game_name: string; image_url: string | null; status: string | null; coming_soon: boolean | null; live_stream_url: string | null };
+
+function PlayHub({
+  games, gamesLoading, userId, balance, isPremium, onPickGame,
+}: {
+  games: GameRow[];
+  gamesLoading: boolean;
+  userId: string | undefined;
+  balance: number;
+  isPremium: boolean;
+  onPickGame: (id: number) => void;
+}) {
+  const [tab, setTab] = useState<HubTab>("tournaments");
+  const [gameFilter, setGameFilter] = useState<number | "all">("all");
+  const [modeFilter, setModeFilter] = useState<"all" | "Solo" | "Duo" | "Squad">("all");
+  const [gameOpen, setGameOpen] = useState(false);
+  const [filterOpen, setFilterOpen] = useState(false);
+  const gameRef = useRef<HTMLDivElement>(null);
+  const filterRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function onDoc(e: MouseEvent) {
+      if (gameRef.current && !gameRef.current.contains(e.target as Node)) setGameOpen(false);
+      if (filterRef.current && !filterRef.current.contains(e.target as Node)) setFilterOpen(false);
+    }
+    document.addEventListener("mousedown", onDoc);
+    return () => document.removeEventListener("mousedown", onDoc);
+  }, []);
+
+  // My joined match ids — also drives "MY MATCHES" tab and "My Tickets" badge
+  const joined = useQuery({
+    queryKey: ["my-match-ids", userId],
+    enabled: !!userId,
+    queryFn: async () => {
+      const { data } = await supabase.from("match_participants").select("match_id").eq("user_id", userId!);
+      return new Set((data ?? []).map((r: any) => r.match_id as number));
+    },
+  });
+
+  // Pull a generous window of matches across all games once, slice client-side per tab.
+  const allMatches = useQuery({
+    queryKey: ["hub-matches"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("matches")
+        .select("*")
+        .is("deleted_at", null)
+        .in("status", ["Ongoing", "Upcoming", "Active"])
+        .order("schedule_at", { ascending: true })
+        .limit(200);
+      return (data ?? []) as any[];
+    },
+  });
+
+  const counts = useQuery({
+    queryKey: ["hub-match-counts", (allMatches.data ?? []).map((m: any) => m.id).join(",")],
+    enabled: !!allMatches.data?.length,
+    queryFn: async () => {
+      const ids = (allMatches.data ?? []).map((m: any) => m.id);
+      const { data } = await supabase.from("match_participants").select("match_id").in("match_id", ids);
+      const map: Record<number, number> = {};
+      (data ?? []).forEach((r: any) => { map[r.match_id] = (map[r.match_id] ?? 0) + 1; });
+      return map;
+    },
+  });
+
+  const myTickets = joined.data?.size ?? 0;
+
+  const filtered = (allMatches.data ?? []).filter((m: any) => {
+    if (tab === "live" && m.status !== "Ongoing") return false;
+    if (tab === "upcoming" && !(m.status === "Upcoming" || m.status === "Active")) return false;
+    if (tab === "mine" && !(joined.data?.has(m.id))) return false;
+    if (gameFilter !== "all" && m.game_id !== gameFilter) return false;
+    if (modeFilter !== "all" && m.player_mode !== modeFilter) return false;
+    return true;
+  });
+
+  const liveCount = (allMatches.data ?? []).filter((m: any) => m.status === "Ongoing").length;
+  const upcomingCount = (allMatches.data ?? []).filter((m: any) => m.status === "Upcoming" || m.status === "Active").length;
+
+  const tabs: { id: HubTab; label: string; badge?: number; dot?: boolean }[] = [
+    { id: "tournaments", label: "TOURNAMENTS" },
+    { id: "live", label: "LIVE NOW", badge: liveCount, dot: liveCount > 0 },
+    { id: "upcoming", label: "UPCOMING", badge: upcomingCount },
+    { id: "mine", label: "MY MATCHES", badge: myTickets },
+  ];
+
+  const currentGame = gameFilter === "all" ? null : games.find((g) => g.id === gameFilter);
+  const activeGames = games.filter((g) => !g.coming_soon && g.status === "active");
+
+  return (
+    <div className="space-y-5">
+      {/* Header */}
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <h1 className="font-display text-3xl font-black uppercase tracking-wider">PLAY</h1>
+          <p className="mt-0.5 font-hud text-[11px] uppercase tracking-widest text-foreground/60">
+            Compete. Conquer. Be the Champion.
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={() => setTab("mine")}
+          className="relative flex items-center gap-2 rounded-md border border-red-500/50 bg-red-500/10 px-3 py-2 font-hud text-xs font-bold uppercase tracking-widest text-red-300 transition hover:bg-red-500/20"
+        >
+          <Ticket size={14} className="text-red-400" />
+          <span className="hidden sm:inline">My Tickets</span>
+          <span className="sm:hidden">Tickets</span>
+          {myTickets > 0 && (
+            <span className="absolute -right-1.5 -top-1.5 grid h-5 min-w-5 place-items-center rounded-full bg-red-500 px-1 font-mono text-[10px] font-bold text-white shadow-lg shadow-red-600/50">
+              {myTickets}
+            </span>
+          )}
+        </button>
+      </div>
+
+      {/* Tabs */}
+      <div className="border-b border-border/40">
+        <div className="flex items-center gap-1 overflow-x-auto">
+          {tabs.map((t) => {
+            const active = tab === t.id;
+            return (
+              <button
+                key={t.id}
+                onClick={() => setTab(t.id)}
+                className={`relative whitespace-nowrap px-3 py-2.5 font-hud text-[11px] font-bold uppercase tracking-widest transition ${
+                  active ? "text-red-400" : "text-foreground/60 hover:text-foreground"
+                }`}
+              >
+                <span className="inline-flex items-center gap-1.5">
+                  {t.label}
+                  {t.dot && <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-red-500" />}
+                  {typeof t.badge === "number" && t.badge > 0 && !t.dot && (
+                    <span className="rounded-sm bg-foreground/10 px-1 font-mono text-[9px] text-foreground/70">{t.badge}</span>
+                  )}
+                </span>
+                {active && <span className="absolute inset-x-1 -bottom-px h-0.5 bg-red-500" />}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Hero carousel */}
+      <PlayHeroCarousel />
+
+      {/* All Games + Filter row */}
+      <div className="flex items-center justify-between gap-3">
+        {/* All Games dropdown */}
+        <div className="relative" ref={gameRef}>
+          <button
+            type="button"
+            onClick={() => { setGameOpen((o) => !o); setFilterOpen(false); }}
+            className="flex items-center gap-2 rounded-md border border-border/60 bg-card/60 px-3 py-2 font-hud text-[11px] font-bold uppercase tracking-widest text-foreground/85 transition hover:border-gold/50"
+          >
+            <Gamepad2 size={14} className="text-gold" />
+            <span className="max-w-[140px] truncate">{currentGame ? currentGame.game_name : "All Games"}</span>
+            <ChevronDown size={12} className={`text-foreground/60 transition ${gameOpen ? "rotate-180" : ""}`} />
+          </button>
+          {gameOpen && (
+            <div className="absolute left-0 top-full z-50 mt-1.5 w-56 overflow-hidden rounded-md border border-gold/40 bg-card/95 shadow-2xl backdrop-blur-xl">
+              <button
+                type="button"
+                onClick={() => { setGameFilter("all"); setGameOpen(false); }}
+                className={`flex w-full items-center justify-between px-3 py-2 text-left font-hud text-[11px] font-bold uppercase tracking-widest transition hover:bg-gold/10 ${
+                  gameFilter === "all" ? "bg-gold/15 text-gold" : "text-foreground/80"
+                }`}
+              >
+                <span>All Games</span>
+                {gameFilter === "all" && <Check size={12} className="text-gold" />}
+              </button>
+              <div className="max-h-72 overflow-y-auto">
+                {activeGames.map((g) => (
+                  <button
+                    key={g.id}
+                    type="button"
+                    onClick={() => { setGameFilter(g.id); setGameOpen(false); }}
+                    className={`flex w-full items-center justify-between gap-2 px-3 py-2 text-left transition hover:bg-gold/10 ${
+                      gameFilter === g.id ? "bg-gold/15 text-gold" : "text-foreground/85"
+                    }`}
+                  >
+                    <span className="flex min-w-0 items-center gap-2">
+                      {g.image_url ? (
+                        <img src={g.image_url} alt="" className="h-6 w-6 rounded object-cover" />
+                      ) : (
+                        <div className="h-6 w-6 rounded bg-background/60" />
+                      )}
+                      <span className="truncate font-hud text-[11px] font-bold uppercase tracking-widest">{g.game_name}</span>
+                    </span>
+                    {gameFilter === g.id && <Check size={12} className="text-gold" />}
+                  </button>
+                ))}
+                {!activeGames.length && (
+                  <div className="px-3 py-3 text-center font-hud text-[10px] uppercase tracking-widest text-foreground/40">
+                    No games
+                  </div>
+                )}
+              </div>
+              <div className="border-t border-border/40 px-3 py-2">
+                <button
+                  type="button"
+                  onClick={() => { if (currentGame) onPickGame(currentGame.id); else if (activeGames[0]) onPickGame(activeGames[0].id); setGameOpen(false); }}
+                  className="w-full rounded-sm border border-gold/50 px-2 py-1.5 font-hud text-[10px] font-bold uppercase tracking-widest text-gold hover:bg-gold hover:text-background"
+                >
+                  Open Game Arena →
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Filter dropdown (Mode) */}
+        <div className="relative" ref={filterRef}>
+          <button
+            type="button"
+            onClick={() => { setFilterOpen((o) => !o); setGameOpen(false); }}
+            className="flex items-center gap-2 rounded-md border border-border/60 bg-card/60 px-3 py-2 font-hud text-[11px] font-bold uppercase tracking-widest text-foreground/85 transition hover:border-gold/50"
+          >
+            <Filter size={13} className="text-gold" />
+            <span>{modeFilter === "all" ? "Filter" : modeFilter}</span>
+            <ChevronDown size={12} className={`text-foreground/60 transition ${filterOpen ? "rotate-180" : ""}`} />
+          </button>
+          {filterOpen && (
+            <div className="absolute right-0 top-full z-50 mt-1.5 w-44 overflow-hidden rounded-md border border-gold/40 bg-card/95 shadow-2xl backdrop-blur-xl">
+              <div className="border-b border-border/40 px-3 py-1.5 font-hud text-[9px] uppercase tracking-widest text-foreground/50">Player Mode</div>
+              {(["all", "Solo", "Duo", "Squad"] as const).map((m) => (
+                <button
+                  key={m}
+                  type="button"
+                  onClick={() => { setModeFilter(m); setFilterOpen(false); }}
+                  className={`flex w-full items-center justify-between px-3 py-2 text-left font-hud text-[11px] font-bold uppercase tracking-widest transition hover:bg-gold/10 ${
+                    modeFilter === m ? "bg-gold/15 text-gold" : "text-foreground/80"
+                  }`}
+                >
+                  <span>{m === "all" ? "All" : m}</span>
+                  {modeFilter === m && <Check size={12} className="text-gold" />}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Match list */}
+      <section className="space-y-3">
+        {allMatches.isLoading && (
+          <div className="hud-panel py-10 text-center font-hud text-xs tracking-widest text-foreground/40">LOADING MATCHES…</div>
+        )}
+        {!allMatches.isLoading && filtered.length === 0 && (
+          <div className="hud-panel flex flex-col items-center gap-2 py-10 text-center">
+            <Radio size={28} className="text-foreground/30" />
+            <div className="font-hud text-xs uppercase tracking-widest text-foreground/50">
+              {tab === "mine" ? "You haven't joined any matches yet" : "No matches found"}
+            </div>
+          </div>
+        )}
+        {filtered.map((m: any) => (
+          <HubMatchRow
+            key={m.id}
+            m={m}
+            game={games.find((g) => g.id === m.game_id) ?? null}
+            joined={joined.data?.has(m.id) ?? false}
+            filled={counts.data?.[m.id] ?? 0}
+            balance={balance}
+            isPremium={isPremium}
+          />
+        ))}
+      </section>
+
+      {/* Browse by game — quick chips */}
+      {!gamesLoading && activeGames.length > 0 && (
+        <section className="hud-panel p-3">
+          <div className="mb-2 flex items-center gap-2 font-hud text-[10px] uppercase tracking-widest text-foreground/60">
+            <Gamepad2 size={12} className="text-gold" /> BROWSE BY GAME
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {activeGames.map((g) => (
+              <button
+                key={g.id}
+                onClick={() => onPickGame(g.id)}
+                className="flex items-center gap-2 rounded-sm border border-border/60 bg-background/40 px-2.5 py-1.5 font-hud text-[10px] font-bold uppercase tracking-widest text-foreground/80 transition hover:border-gold/60 hover:text-gold"
+              >
+                {g.image_url && <img src={g.image_url} alt="" className="h-4 w-4 rounded-sm object-cover" />}
+                {g.game_name}
+              </button>
+            ))}
+          </div>
+        </section>
+      )}
+    </div>
+  );
+}
+
+function HubMatchRow({
+  m, game, joined, filled, balance, isPremium,
+}: {
+  m: any; game: GameRow | null; joined: boolean; filled: number; balance: number; isPremium: boolean;
+}) {
+  const qc = useQueryClient();
+  const [joining, setJoining] = useState(false);
+  const isLive = m.status === "Ongoing";
+  const total = m.total_players ?? 0;
+  const isFull = total > 0 && filled >= total;
+  const fee = Number(m.entry_fee_bac ?? 0);
+  const when = m.schedule_at ? new Date(m.schedule_at) : null;
+  const [countdown, setCountdown] = useState<string>("");
+
+  // Live countdown for upcoming, or time elapsed for live
+  useEffect(() => {
+    if (!when) return;
+    const tick = () => {
+      const diff = when.getTime() - Date.now();
+      if (isLive) {
+        setCountdown("LIVE");
+        return;
+      }
+      if (diff <= 0) { setCountdown("STARTING"); return; }
+      const h = Math.floor(diff / 3600000);
+      const mm = Math.floor((diff % 3600000) / 60000);
+      const ss = Math.floor((diff % 60000) / 1000);
+      setCountdown(`${String(h).padStart(2,"0")}:${String(mm).padStart(2,"0")}:${String(ss).padStart(2,"0")}`);
+    };
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, [when, isLive]);
+
+  async function handleJoin(e: React.MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (joined || isFull) return;
+    if (m.premium_only && !isPremium) { toast.error("Premium membership required"); return; }
+    if (m.match_type === "Paid" && fee > balance) {
+      toast.error("Insufficient BAC balance", { description: `Need ${fee} BAC, you have ${balance} BAC` });
+      return;
+    }
+    setJoining(true);
+    const { error } = await supabase.rpc("join_match", { p_match_id: m.id });
+    setJoining(false);
+    if (error) { toast.error(error.message || "Failed to join"); return; }
+    toast.success(`Joined ${m.match_name}!`);
+    qc.invalidateQueries({ queryKey: ["my-match-ids"] });
+    qc.invalidateQueries({ queryKey: ["hub-match-counts"] });
+    qc.invalidateQueries({ queryKey: ["profile"] });
+  }
+
+  // Status badge + button color theme
+  const theme = isLive
+    ? { badge: "LIVE", badgeCls: "bg-red-500 text-white", btnCls: "bg-red-500 hover:bg-red-600 text-white border-red-500", label: "JOIN NOW", accent: "text-red-400" }
+    : { badge: "UPCOMING", badgeCls: "bg-blue-500/90 text-white", btnCls: "border border-blue-400/70 text-blue-300 hover:bg-blue-500/15", label: "REGISTER", accent: "text-blue-300" };
+
+  return (
+    <Link
+      to="/dashboard/matches/$matchId"
+      params={{ matchId: String(m.id) }}
+      className="hud-panel block overflow-hidden p-3 transition hover:border-gold/50"
+    >
+      <div className="flex items-start gap-3">
+        {/* Thumb */}
+        <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-md bg-background/60 sm:h-24 sm:w-24">
+          {game?.image_url ? (
+            <img src={game.image_url} alt={game.game_name} className="h-full w-full object-cover" loading="lazy" />
+          ) : m.banner_image_url ? (
+            <img src={m.banner_image_url} alt="" className="h-full w-full object-cover" loading="lazy" />
+          ) : (
+            <div className="grid h-full place-items-center text-foreground/30"><Gamepad2 size={28} /></div>
+          )}
+          <span className={`absolute left-1 top-1 rounded-sm px-1.5 py-0.5 font-hud text-[8px] font-bold uppercase tracking-widest shadow-md ${theme.badgeCls}`}>
+            {theme.badge}
+          </span>
+        </div>
+
+        {/* Middle */}
+        <div className="min-w-0 flex-1">
+          <h3 className="truncate font-display text-sm font-bold tracking-wide sm:text-base">{m.match_name}</h3>
+          <div className="mt-0.5 flex flex-wrap items-center gap-x-1.5 gap-y-0.5 font-hud text-[10px] uppercase tracking-widest text-foreground/60">
+            {game?.game_name && <span>{game.game_name}</span>}
+            {game?.game_name && <span className="text-foreground/30">•</span>}
+            <span>{m.player_mode}</span>
+            <span className="text-foreground/30">•</span>
+            <span>{m.game_mode}</span>
+            {m.premium_only && (
+              <>
+                <span className="text-foreground/30">•</span>
+                <span className="inline-flex items-center gap-1 text-gold"><Crown size={9} /> PREMIUM</span>
+              </>
+            )}
+          </div>
+
+          <div className="mt-2 grid grid-cols-2 gap-x-3 gap-y-0.5 text-[11px]">
+            <div>
+              <div className="font-hud text-[9px] uppercase tracking-widest text-foreground/50">Prize Pool</div>
+              <div className="flex items-center gap-1 font-mono font-bold text-emerald-400">
+                <CoinIcon size={11} />
+                {Number(m.rank_1_prize_bac ?? 0).toLocaleString()}
+              </div>
+            </div>
+            <div>
+              <div className="font-hud text-[9px] uppercase tracking-widest text-foreground/50">Entry Fee</div>
+              <div className="flex items-center gap-1 font-mono font-bold text-foreground">
+                {m.match_type === "Free" ? <span className="text-emerald-400">FREE</span> : <><CoinIcon size={11} />{fee}</>}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Right action */}
+        <div className="flex w-[110px] shrink-0 flex-col items-end gap-1.5 sm:w-[130px]">
+          <div className={`flex items-center gap-1 font-hud text-[10px] font-bold uppercase tracking-widest ${theme.accent}`}>
+            {isLive ? <Radio size={11} className="animate-pulse" /> : <Clock size={11} />}
+            {isLive ? "LIVE" : "Starts in"}
+          </div>
+          {!isLive && (
+            <div className="font-mono text-sm font-bold text-foreground">{countdown}</div>
+          )}
+          {joined ? (
+            <span className="w-full rounded-md border border-emerald-500/50 bg-emerald-500/10 px-2 py-1.5 text-center font-hud text-[10px] font-bold uppercase tracking-widest text-emerald-400">
+              ✓ JOINED
+            </span>
+          ) : isFull ? (
+            <span className="w-full rounded-md border border-foreground/20 bg-foreground/5 px-2 py-1.5 text-center font-hud text-[10px] font-bold uppercase tracking-widest text-foreground/50">
+              FULL
+            </span>
+          ) : (
+            <button
+              type="button"
+              onClick={handleJoin}
+              disabled={joining}
+              className={`w-full rounded-md px-2 py-1.5 font-hud text-[11px] font-bold uppercase tracking-widest transition disabled:opacity-50 ${theme.btnCls}`}
+            >
+              {joining ? <Loader2 size={12} className="mx-auto animate-spin" /> : theme.label}
+            </button>
+          )}
+          <div className="font-mono text-[10px] text-foreground/50">
+            {filled}/{total || "∞"} Teams
+          </div>
+          {isLive && when && (
+            <div className="font-hud text-[9px] uppercase tracking-widest text-foreground/40">
+              Started {when.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+            </div>
+          )}
+        </div>
+      </div>
+    </Link>
   );
 }
