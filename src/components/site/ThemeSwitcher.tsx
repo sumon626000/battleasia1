@@ -130,119 +130,118 @@ export function ThemeSwitcher({ compact = false }: { compact?: boolean }) {
       </button>
 
       {open && (
-        <div className="fixed inset-0 z-[200] flex items-start justify-center overflow-y-auto p-2 sm:items-center sm:p-4">
+        <>
           <button
             aria-label="Close"
-            className="fixed inset-0 bg-background/85 backdrop-blur-md"
+            className="fixed inset-0 z-[200] bg-background/90 backdrop-blur-md"
             onClick={() => setOpen(false)}
           />
-          <div className="hud-panel relative z-10 my-2 flex w-full max-w-3xl flex-col border-gold/40 bg-card/95 p-3 sm:my-0 sm:max-h-[92vh] sm:overflow-hidden sm:p-6">
-            <div className="sticky top-0 z-20 -mx-3 -mt-3 flex items-center justify-between gap-3 border-b border-border/40 bg-card/95 px-3 py-2 backdrop-blur sm:static sm:m-0 sm:border-0 sm:bg-transparent sm:p-0">
+          <div className="fixed inset-x-0 top-0 z-[201] mx-auto flex h-[100dvh] w-full max-w-3xl flex-col bg-card sm:inset-x-4 sm:top-1/2 sm:h-auto sm:max-h-[90dvh] sm:-translate-y-1/2 sm:rounded-xl sm:border sm:border-gold/40 sm:shadow-2xl">
+            {/* Sticky header */}
+            <div className="flex items-center justify-between gap-3 border-b border-border/40 bg-card px-3 py-3 sm:px-6 sm:py-4">
               <div className="min-w-0">
                 <div className="flex items-center gap-2">
-                  <Sparkles size={16} className="text-gold" />
-                  <h2 className="font-display text-base sm:text-xl font-bold uppercase tracking-widest text-gold">
+                  <Sparkles size={16} className="text-gold shrink-0" />
+                  <h2 className="font-display text-base sm:text-xl font-bold uppercase tracking-widest text-gold truncate">
                     Choose Theme
                   </h2>
                 </div>
-                <p className="mt-0.5 hidden sm:block font-hud text-[11px] uppercase tracking-wide text-foreground/60">
-                  Unlock new battle aesthetics with BAC coins
-                </p>
               </div>
               <button
                 onClick={() => setOpen(false)}
                 className="shrink-0 rounded-md border border-gold/60 bg-gold/10 p-2 text-gold hover:bg-gold/20"
                 aria-label="Close"
               >
-                <X size={18} />
+                <X size={20} />
               </button>
             </div>
 
-            {isAuthenticated && (
-              <div className="mt-2 flex items-center gap-1.5 font-hud text-[11px]">
-                <span className="text-foreground/60 uppercase tracking-wider">Balance:</span>
-                <CoinIcon size={12} />
-                <span className="font-mono font-bold text-gold">{balance.toLocaleString()}</span>
-              </div>
-            )}
+            {/* Scrollable body */}
+            <div className="flex-1 overflow-y-auto overscroll-contain px-3 py-3 sm:px-6 sm:py-5">
+              {isAuthenticated && (
+                <div className="mb-3 flex items-center gap-1.5 font-hud text-[11px]">
+                  <span className="text-foreground/60 uppercase tracking-wider">Balance:</span>
+                  <CoinIcon size={12} />
+                  <span className="font-mono font-bold text-gold">{balance.toLocaleString()}</span>
+                </div>
+              )}
 
-            <div className="mt-3 grid grid-cols-2 gap-2 overflow-y-auto sm:mt-5 sm:grid-cols-3 sm:gap-3">
-              {themes.map((t) => {
-                const owned = isOwned(t);
-                const active = t.id === activeTheme;
-                const canAfford = balance >= t.price_bac;
-                return (
-                  <button
-                    key={t.id}
-                    onClick={() => handleClick(t)}
-                    disabled={applyMut.isPending || buyMut.isPending}
-                    className={`group relative overflow-hidden rounded-lg border-2 p-2 text-left transition active:scale-[0.98] hover:scale-[1.02] disabled:opacity-60 sm:p-4 ${
-                      active ? "border-gold" : "border-border/60 hover:border-gold/60"
-                    }`}
-                    style={{
-                      background: `linear-gradient(135deg, ${t.preview_color}22, transparent 70%)`,
-                      boxShadow: active ? `0 0 24px ${t.preview_color}66` : undefined,
-                    }}
-                  >
-                    {/* Preview swatch */}
-                    <div
-                      className="mb-2 h-12 rounded-md border border-white/10 sm:mb-3 sm:h-20"
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3">
+                {themes.map((t) => {
+                  const owned = isOwned(t);
+                  const active = t.id === activeTheme;
+                  const canAfford = balance >= t.price_bac;
+                  return (
+                    <button
+                      key={t.id}
+                      onClick={() => handleClick(t)}
+                      disabled={applyMut.isPending || buyMut.isPending}
+                      className={`group relative overflow-hidden rounded-lg border-2 p-2 text-left transition active:scale-[0.98] hover:scale-[1.02] disabled:opacity-60 sm:p-4 ${
+                        active ? "border-gold" : "border-border/60 hover:border-gold/60"
+                      }`}
                       style={{
-                        background: `linear-gradient(135deg, ${t.preview_color}, ${t.preview_color}88, #111)`,
-                        boxShadow: `inset 0 0 30px ${t.preview_color}44`,
+                        background: `linear-gradient(135deg, ${t.preview_color}22, transparent 70%)`,
+                        boxShadow: active ? `0 0 24px ${t.preview_color}66` : undefined,
                       }}
-                    />
-                    <div className="font-display text-xs sm:text-base font-bold uppercase tracking-wider truncate" style={{ color: t.preview_color }}>
-                      {t.name}
-                    </div>
-                    {t.description && (
-                      <p className="mt-0.5 line-clamp-2 hidden sm:block font-hud text-[11px] text-foreground/60">
-                        {t.description}
-                      </p>
-                    )}
-
-                    <div className="mt-2 sm:mt-3">
-                      {active ? (
-                        <span className="inline-flex items-center gap-1 rounded border border-gold/50 bg-gold/10 px-1.5 py-0.5 font-hud text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-gold">
-                          <Check size={10} /> Active
-                        </span>
-                      ) : owned ? (
-                        <span className="inline-flex items-center gap-1 rounded border border-success/50 bg-success/10 px-1.5 py-0.5 font-hud text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-success">
-                          Apply
-                        </span>
-                      ) : (
-                        <span
-                          className={`inline-flex items-center gap-1 rounded border px-1.5 py-0.5 font-hud text-[9px] sm:text-[10px] font-bold uppercase tracking-widest ${
-                            canAfford
-                              ? "border-gold/50 bg-gold/10 text-gold"
-                              : "border-destructive/50 bg-destructive/10 text-destructive"
-                          }`}
-                        >
-                          <Lock size={9} />
-                          <CoinIcon size={9} />
-                          {t.price_bac.toLocaleString()}
-                        </span>
+                    >
+                      <div
+                        className="mb-2 h-12 rounded-md border border-white/10 sm:mb-3 sm:h-20"
+                        style={{
+                          background: `linear-gradient(135deg, ${t.preview_color}, ${t.preview_color}88, #111)`,
+                          boxShadow: `inset 0 0 30px ${t.preview_color}44`,
+                        }}
+                      />
+                      <div className="font-display text-xs sm:text-base font-bold uppercase tracking-wider truncate" style={{ color: t.preview_color }}>
+                        {t.name}
+                      </div>
+                      {t.description && (
+                        <p className="mt-0.5 line-clamp-2 hidden sm:block font-hud text-[11px] text-foreground/60">
+                          {t.description}
+                        </p>
                       )}
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
 
-
-            {isAuthenticated && balance < 500 && (
-              <div className="mt-4 text-center">
-                <Link
-                  to="/dashboard/vault"
-                  onClick={() => setOpen(false)}
-                  className="font-hud text-[11px] uppercase tracking-widest text-gold hover:underline"
-                >
-                  Need more BAC? Top up in the Vault →
-                </Link>
+                      <div className="mt-2 sm:mt-3">
+                        {active ? (
+                          <span className="inline-flex items-center gap-1 rounded border border-gold/50 bg-gold/10 px-1.5 py-0.5 font-hud text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-gold">
+                            <Check size={10} /> Active
+                          </span>
+                        ) : owned ? (
+                          <span className="inline-flex items-center gap-1 rounded border border-success/50 bg-success/10 px-1.5 py-0.5 font-hud text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-success">
+                            Apply
+                          </span>
+                        ) : (
+                          <span
+                            className={`inline-flex items-center gap-1 rounded border px-1.5 py-0.5 font-hud text-[9px] sm:text-[10px] font-bold uppercase tracking-widest ${
+                              canAfford
+                                ? "border-gold/50 bg-gold/10 text-gold"
+                                : "border-destructive/50 bg-destructive/10 text-destructive"
+                            }`}
+                          >
+                            <Lock size={9} />
+                            <CoinIcon size={9} />
+                            {t.price_bac.toLocaleString()}
+                          </span>
+                        )}
+                      </div>
+                    </button>
+                  );
+                })}
               </div>
-            )}
+
+              {isAuthenticated && balance < 500 && (
+                <div className="mt-4 text-center">
+                  <Link
+                    to="/dashboard/vault"
+                    onClick={() => setOpen(false)}
+                    className="font-hud text-[11px] uppercase tracking-widest text-gold hover:underline"
+                  >
+                    Need more BAC? Top up in the Vault →
+                  </Link>
+                </div>
+              )}
+            </div>
           </div>
-        </div>
+        </>
       )}
     </>
   );
