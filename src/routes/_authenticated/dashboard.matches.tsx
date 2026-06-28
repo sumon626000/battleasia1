@@ -347,6 +347,49 @@ function MatchCard({ m, joined, filled, balance, isPremium }: { m: any; joined: 
       </div>
       <h3 className="mt-2 truncate font-display text-base font-bold uppercase tracking-wide">{m.match_name}</h3>
 
+      <button
+        type="button"
+        onClick={handleCredsClick}
+        className="mt-1 inline-flex items-center gap-1 font-hud text-[10px] font-bold uppercase tracking-widest text-gold underline-offset-2 hover:underline"
+      >
+        <KeyRound size={11} /> ID & PASSWORD
+      </button>
+
+      {showCreds && joined && (m.room_id || m.room_password) && (
+        <div className="mt-2 space-y-1.5 rounded-sm border border-gold/40 bg-gold/5 p-2">
+          {m.room_id && (
+            <div className="flex items-center justify-between gap-2">
+              <div className="min-w-0">
+                <div className="font-hud text-[9px] uppercase tracking-widest text-foreground/60">Room ID</div>
+                <div className="truncate font-mono text-xs text-gold">{m.room_id}</div>
+              </div>
+              <button
+                type="button"
+                onClick={(e) => copyText(e, String(m.room_id), "id")}
+                className="flex items-center gap-1 rounded-sm border border-gold/60 px-2 py-1 font-hud text-[9px] font-bold uppercase tracking-widest text-gold hover:bg-gold hover:text-background"
+              >
+                {copied === "id" ? <><Check size={10}/> COPIED</> : <><Copy size={10}/> COPY</>}
+              </button>
+            </div>
+          )}
+          {m.room_password && (
+            <div className="flex items-center justify-between gap-2">
+              <div className="min-w-0">
+                <div className="font-hud text-[9px] uppercase tracking-widest text-foreground/60">Password</div>
+                <div className="truncate font-mono text-xs text-gold">{m.room_password}</div>
+              </div>
+              <button
+                type="button"
+                onClick={(e) => copyText(e, String(m.room_password), "pw")}
+                className="flex items-center gap-1 rounded-sm border border-gold/60 px-2 py-1 font-hud text-[9px] font-bold uppercase tracking-widest text-gold hover:bg-gold hover:text-background"
+              >
+                {copied === "pw" ? <><Check size={10}/> COPIED</> : <><Copy size={10}/> COPY</>}
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+
       <div className="mt-2 grid grid-cols-2 gap-1.5 text-[11px]">
         <Meta icon={Map} label={m.map_name ?? "—"} />
         <Meta icon={Users} label={`${m.player_mode} · ${m.game_mode}`} />
