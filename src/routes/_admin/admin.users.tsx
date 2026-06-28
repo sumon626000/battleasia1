@@ -103,6 +103,9 @@ function ActionModal({
   const [note, setNote] = useState("");
   const [role, setRole] = useState(user.roles?.[0]?.role ?? "user");
   const [busy, setBusy] = useState(false);
+  const [resetScopes, setResetScopes] = useState<Record<string, boolean>>({});
+  const toggleScope = (k: string) => setResetScopes((s) => ({ ...s, [k]: !s[k] }));
+  const allScopesSelected = RESET_SCOPES.every((s) => resetScopes[s.key]);
 
   const refresh = () => {
     qc.invalidateQueries({ queryKey: ["admin-users"] });
