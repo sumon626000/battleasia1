@@ -159,7 +159,55 @@ function AdminLayout() {
         </form>
       </div>
     );
+
+  if (state === "no-supabase") {
+    return (
+      <div className="grid min-h-screen place-items-center bg-background p-6">
+        <div className="hud-panel w-full max-w-md p-6 text-center">
+          <AlertCircle className="mx-auto mb-3 h-10 w-10 text-red-400" />
+          <h1 className="font-display text-lg uppercase tracking-widest text-red-300">
+            Backend Admin Session Required
+          </h1>
+          <p className="mt-3 text-sm text-foreground/70">
+            The standalone gate is unlocked, but database actions require an
+            account with the <span className="text-gold">admin</span> role on
+            the backend. Sign in with your admin user account first, then come
+            back here.
+          </p>
+          {supaEmail && (
+            <p className="mt-2 font-mono text-xs text-foreground/55">
+              Currently signed in as: {supaEmail} (not admin)
+            </p>
+          )}
+          <div className="mt-5 flex flex-col gap-2">
+            <Link
+              to="/auth"
+              className="btn-gamey w-full px-4 py-2 text-xs"
+            >
+              Sign in as admin
+            </Link>
+            <button
+              onClick={async () => {
+                setState("checking");
+                const ok = await verifySupabaseAdmin();
+                setState(ok ? "ok" : "no-supabase");
+              }}
+              className="w-full rounded border border-border/60 px-4 py-2 font-hud text-xs uppercase tracking-widest text-foreground/70 hover:border-gold hover:text-gold"
+            >
+              Re-check session
+            </button>
+            <button
+              onClick={signOut}
+              className="w-full rounded border border-border/60 px-4 py-2 font-hud text-xs uppercase tracking-widest text-foreground/70 hover:border-red-400 hover:text-red-300"
+            >
+              Exit admin
+            </button>
+          </div>
+        </div>
+      </div>
+    );
   }
+
 
   return (
     <AdminShell onAdminSignOut={signOut}>
