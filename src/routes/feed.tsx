@@ -121,7 +121,7 @@ function FeedPage() {
       .on("postgres_changes", { event: "INSERT", schema: "public", table: "social_posts" }, () => load())
       .on("postgres_changes", { event: "UPDATE", schema: "public", table: "social_posts" }, (payload) => {
         const n = payload.new as any;
-        setPosts((prev) => prev.map((p) => (p.id === n.id ? { ...p, likes_count: n.likes_count, comments_count: n.comments_count } : p)));
+        setPosts((prev) => prev.map((p) => (p.id === n.id ? { ...p, likes_count: n.likes_count, comments_count: n.comments_count, views_count: n.views_count ?? p.views_count } : p)));
       })
       .on("postgres_changes", { event: "DELETE", schema: "public", table: "social_posts" }, (payload) => {
         const o = payload.old as any;
