@@ -81,7 +81,7 @@ const MAP_IMAGES: Record<string, string> = {
   Nusa: "/banners/tdm.jpg",
 };
 const REWARD_TYPE = ["KillBased", "RankBased", "Mixed"] as const;
-const KILL_TYPE = ["PerKill", "Total"] as const;
+const KILL_TYPE = ["Automatic", "Manual"] as const;
 
 function emptyDraft(): Partial<Match> {
   return {
