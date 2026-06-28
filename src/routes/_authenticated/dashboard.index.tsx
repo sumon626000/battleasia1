@@ -302,13 +302,13 @@ function DashboardPage() {
                 </thead>
                 <tbody>
                   {recent.map((p) => {
-                    const m = p.matches as { id?: string; title?: string } | null;
+                    const m = p.matches as { id?: number; match_name?: string } | null;
                     return (
                       <tr key={p.id} className="border-b border-border/20">
                         <td className="py-2">
                           {m?.id ? (
-                            <Link to="/dashboard/matches/$matchId" params={{ matchId: m.id }} className="hover:text-gold">
-                              {m.title ?? "Match"}
+                            <Link to="/dashboard/matches/$matchId" params={{ matchId: String(m.id) }} className="hover:text-gold">
+                              {m.match_name ?? "Match"}
                             </Link>
                           ) : (
                             "Match"
