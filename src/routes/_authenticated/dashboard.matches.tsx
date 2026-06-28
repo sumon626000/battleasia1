@@ -7,6 +7,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useProfile } from "@/hooks/use-profile";
 import { Crown, Users, Map, Trophy, Clock, Filter, Sword, ArrowLeft, Gamepad2, Lock, PlayCircle, Loader2, KeyRound, Copy, Check, Calendar } from "lucide-react";
 import { CoinIcon } from "@/components/site/CoinIcon";
+import { PlayHeroCarousel } from "@/components/dashboard/PlayHeroCarousel";
 
 export const Route = createFileRoute("/_authenticated/dashboard/matches")({
   validateSearch: (s: Record<string, unknown>) => ({ game: s.game ? Number(s.game) : undefined }),
