@@ -64,7 +64,7 @@ export function DashboardHeaderNav() {
   const moreActive = MORE.some((m) => isActive(m.href));
 
   return (
-    <div className="hidden border-b border-border/60 bg-background/70 backdrop-blur lg:block">
+    <div className="relative z-40 hidden border-b border-border/60 bg-background/70 backdrop-blur lg:block">
       <div className="mx-auto flex max-w-7xl items-center gap-1 px-5 py-2">
         <Link
           to="/"
@@ -113,7 +113,7 @@ export function DashboardHeaderNav() {
           {open && (
             <div
               role="menu"
-              className="absolute left-0 top-full z-50 mt-1 w-56 overflow-hidden rounded-md border border-border/70 bg-background/95 shadow-xl backdrop-blur"
+              className="absolute left-0 top-full z-[200] mt-1 w-56 overflow-hidden rounded-md border border-border/70 bg-background shadow-2xl"
             >
               {MORE.map((item) => {
                 const Icon = item.icon;
