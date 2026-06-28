@@ -48,7 +48,7 @@ function AdminResultsPage() {
   const [selectedId, setSelectedId] = useState<number | undefined>(matchId);
   const [description, setDescription] = useState("");
   const [imageUrl, setImageUrl] = useState("");
-  const [rows, setRows] = useState<Record<string, { rank: string; kills: string }>>({});
+  const [rows, setRows] = useState<Record<string, { status: string; kills: string }>>({});
   const [csvText, setCsvText] = useState("");
 
   useEffect(() => { if (matchId) setSelectedId(matchId); }, [matchId]);
@@ -93,14 +93,31 @@ function AdminResultsPage() {
 
   useEffect(() => {
     if (!detail) return;
-    const seed: Record<string, { rank: string; kills: string }> = {};
+    const seed: Record<string, { status: string; kills: string }> = {};
     for (const p of detail.participants) {
       seed[p.user_id] = {
-        rank: p.rank_position ? String(p.rank_position) : "",
+        status: p.rank_position === 1 ? "Winner" : (p.rank_position || p.kills) ? "Loser" : "",
         kills: p.kills ? String(p.kills) : "",
       };
     }
     setRows(seed);
+  }, [detail]);
+
+  // Pool breakdown
+  const pool = useMemo(() => {
+    if (!detail) return { totalIncome: 0, platformFee: 0, prizePool: 0, killPool: 0, perKill: 0, loserCount: 0 };
+    const m = detail.match;
+    const entry = Number(m.entry_fee_bac ?? 0);
+    const total = Number(m.total_players ?? 0);
+    const feePct = Number(m.platform_fee_pct ?? 0);
+    const totalIncome = entry * total;
+    const platformFee = totalIncome * (feePct / 100);
+    const prizePool = totalIncome - platformFee;
+    const teamSize = m.player_mode === "Solo" ? 1 : m.player_mode === "Duo" ? 2 : 4;
+    const loserCount = Math.max(0, total - teamSize);
+    const perKill = Number(m.per_kill_amount_bac ?? 0) || (loserCount > 0 ? Math.round((prizePool / loserCount) * 100) / 100 : 0);
+    const killPool = prizePool;
+    return { totalIncome, platformFee, prizePool, killPool, perKill, loserCount };
   }, [detail]);
 
   const computedPrize = useMemo(() => {
@@ -110,19 +127,16 @@ function AdminResultsPage() {
     for (const p of detail.participants) {
       const r = rows[p.user_id];
       if (!r) continue;
-      const rank = parseInt(r.rank, 10);
       const kills = parseInt(r.kills, 10) || 0;
       let prize = 0;
-      if (m.reward_type === "KillBased" || m.reward_type === "Mixed") prize += kills * Number(m.per_kill_amount_bac || 0);
+      if (m.reward_type === "KillBased" || m.reward_type === "Mixed") prize += kills * pool.perKill;
       if (m.reward_type === "RankBased" || m.reward_type === "Mixed") {
-        if (rank === 1) prize += Number(m.rank_1_prize_bac || 0);
-        else if (rank === 2) prize += Number(m.rank_2_prize_bac || 0);
-        else if (rank === 3) prize += Number(m.rank_3_prize_bac || 0);
+        if (r.status === "Winner") prize += Number(m.rank_1_prize_bac || 0);
       }
-      out[p.user_id] = prize;
+      out[p.user_id] = Math.round(prize * 100) / 100;
     }
     return out;
-  }, [detail, rows]);
+  }, [detail, rows, pool.perKill]);
 
   async function publish() {
     if (!detail) return;
