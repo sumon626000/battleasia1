@@ -61,12 +61,14 @@ import { Route as AdminAdminUsersRouteImport } from './routes/_admin/admin.users
 import { Route as AdminAdminTwoFactorRouteImport } from './routes/_admin/admin.two-factor'
 import { Route as AdminAdminTemplatesRouteImport } from './routes/_admin/admin.templates'
 import { Route as AdminAdminSupportRouteImport } from './routes/_admin/admin.support'
+import { Route as AdminAdminSpinWheelRouteImport } from './routes/_admin/admin.spin-wheel'
 import { Route as AdminAdminSmtpRouteImport } from './routes/_admin/admin.smtp'
 import { Route as AdminAdminShopRouteImport } from './routes/_admin/admin.shop'
 import { Route as AdminAdminSettingsRouteImport } from './routes/_admin/admin.settings'
 import { Route as AdminAdminSecurityRouteImport } from './routes/_admin/admin.security'
 import { Route as AdminAdminResultsRouteImport } from './routes/_admin/admin.results'
 import { Route as AdminAdminReferralConfigRouteImport } from './routes/_admin/admin.referral-config'
+import { Route as AdminAdminQuestsRouteImport } from './routes/_admin/admin.quests'
 import { Route as AdminAdminPushRouteImport } from './routes/_admin/admin.push'
 import { Route as AdminAdminPremiumRouteImport } from './routes/_admin/admin.premium'
 import { Route as AdminAdminParticipantsRouteImport } from './routes/_admin/admin.participants'
@@ -367,6 +369,11 @@ const AdminAdminSupportRoute = AdminAdminSupportRouteImport.update({
   path: '/admin/support',
   getParentRoute: () => AdminRouteRoute,
 } as any)
+const AdminAdminSpinWheelRoute = AdminAdminSpinWheelRouteImport.update({
+  id: '/admin/spin-wheel',
+  path: '/admin/spin-wheel',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
 const AdminAdminSmtpRoute = AdminAdminSmtpRouteImport.update({
   id: '/admin/smtp',
   path: '/admin/smtp',
@@ -398,6 +405,11 @@ const AdminAdminReferralConfigRoute =
     path: '/admin/referral-config',
     getParentRoute: () => AdminRouteRoute,
   } as any)
+const AdminAdminQuestsRoute = AdminAdminQuestsRouteImport.update({
+  id: '/admin/quests',
+  path: '/admin/quests',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
 const AdminAdminPushRoute = AdminAdminPushRouteImport.update({
   id: '/admin/push',
   path: '/admin/push',
@@ -570,12 +582,14 @@ export interface FileRoutesByFullPath {
   '/admin/participants': typeof AdminAdminParticipantsRoute
   '/admin/premium': typeof AdminAdminPremiumRoute
   '/admin/push': typeof AdminAdminPushRoute
+  '/admin/quests': typeof AdminAdminQuestsRoute
   '/admin/referral-config': typeof AdminAdminReferralConfigRoute
   '/admin/results': typeof AdminAdminResultsRoute
   '/admin/security': typeof AdminAdminSecurityRoute
   '/admin/settings': typeof AdminAdminSettingsRoute
   '/admin/shop': typeof AdminAdminShopRoute
   '/admin/smtp': typeof AdminAdminSmtpRoute
+  '/admin/spin-wheel': typeof AdminAdminSpinWheelRoute
   '/admin/support': typeof AdminAdminSupportRoute
   '/admin/templates': typeof AdminAdminTemplatesRoute
   '/admin/two-factor': typeof AdminAdminTwoFactorRoute
@@ -650,12 +664,14 @@ export interface FileRoutesByTo {
   '/admin/participants': typeof AdminAdminParticipantsRoute
   '/admin/premium': typeof AdminAdminPremiumRoute
   '/admin/push': typeof AdminAdminPushRoute
+  '/admin/quests': typeof AdminAdminQuestsRoute
   '/admin/referral-config': typeof AdminAdminReferralConfigRoute
   '/admin/results': typeof AdminAdminResultsRoute
   '/admin/security': typeof AdminAdminSecurityRoute
   '/admin/settings': typeof AdminAdminSettingsRoute
   '/admin/shop': typeof AdminAdminShopRoute
   '/admin/smtp': typeof AdminAdminSmtpRoute
+  '/admin/spin-wheel': typeof AdminAdminSpinWheelRoute
   '/admin/support': typeof AdminAdminSupportRoute
   '/admin/templates': typeof AdminAdminTemplatesRoute
   '/admin/two-factor': typeof AdminAdminTwoFactorRoute
@@ -735,12 +751,14 @@ export interface FileRoutesById {
   '/_admin/admin/participants': typeof AdminAdminParticipantsRoute
   '/_admin/admin/premium': typeof AdminAdminPremiumRoute
   '/_admin/admin/push': typeof AdminAdminPushRoute
+  '/_admin/admin/quests': typeof AdminAdminQuestsRoute
   '/_admin/admin/referral-config': typeof AdminAdminReferralConfigRoute
   '/_admin/admin/results': typeof AdminAdminResultsRoute
   '/_admin/admin/security': typeof AdminAdminSecurityRoute
   '/_admin/admin/settings': typeof AdminAdminSettingsRoute
   '/_admin/admin/shop': typeof AdminAdminShopRoute
   '/_admin/admin/smtp': typeof AdminAdminSmtpRoute
+  '/_admin/admin/spin-wheel': typeof AdminAdminSpinWheelRoute
   '/_admin/admin/support': typeof AdminAdminSupportRoute
   '/_admin/admin/templates': typeof AdminAdminTemplatesRoute
   '/_admin/admin/two-factor': typeof AdminAdminTwoFactorRoute
@@ -819,12 +837,14 @@ export interface FileRouteTypes {
     | '/admin/participants'
     | '/admin/premium'
     | '/admin/push'
+    | '/admin/quests'
     | '/admin/referral-config'
     | '/admin/results'
     | '/admin/security'
     | '/admin/settings'
     | '/admin/shop'
     | '/admin/smtp'
+    | '/admin/spin-wheel'
     | '/admin/support'
     | '/admin/templates'
     | '/admin/two-factor'
@@ -899,12 +919,14 @@ export interface FileRouteTypes {
     | '/admin/participants'
     | '/admin/premium'
     | '/admin/push'
+    | '/admin/quests'
     | '/admin/referral-config'
     | '/admin/results'
     | '/admin/security'
     | '/admin/settings'
     | '/admin/shop'
     | '/admin/smtp'
+    | '/admin/spin-wheel'
     | '/admin/support'
     | '/admin/templates'
     | '/admin/two-factor'
@@ -983,12 +1005,14 @@ export interface FileRouteTypes {
     | '/_admin/admin/participants'
     | '/_admin/admin/premium'
     | '/_admin/admin/push'
+    | '/_admin/admin/quests'
     | '/_admin/admin/referral-config'
     | '/_admin/admin/results'
     | '/_admin/admin/security'
     | '/_admin/admin/settings'
     | '/_admin/admin/shop'
     | '/_admin/admin/smtp'
+    | '/_admin/admin/spin-wheel'
     | '/_admin/admin/support'
     | '/_admin/admin/templates'
     | '/_admin/admin/two-factor'
@@ -1412,6 +1436,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAdminSupportRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/_admin/admin/spin-wheel': {
+      id: '/_admin/admin/spin-wheel'
+      path: '/admin/spin-wheel'
+      fullPath: '/admin/spin-wheel'
+      preLoaderRoute: typeof AdminAdminSpinWheelRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
     '/_admin/admin/smtp': {
       id: '/_admin/admin/smtp'
       path: '/admin/smtp'
@@ -1452,6 +1483,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/referral-config'
       fullPath: '/admin/referral-config'
       preLoaderRoute: typeof AdminAdminReferralConfigRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/_admin/admin/quests': {
+      id: '/_admin/admin/quests'
+      path: '/admin/quests'
+      fullPath: '/admin/quests'
+      preLoaderRoute: typeof AdminAdminQuestsRouteImport
       parentRoute: typeof AdminRouteRoute
     }
     '/_admin/admin/push': {
@@ -1646,12 +1684,14 @@ interface AdminRouteRouteChildren {
   AdminAdminParticipantsRoute: typeof AdminAdminParticipantsRoute
   AdminAdminPremiumRoute: typeof AdminAdminPremiumRoute
   AdminAdminPushRoute: typeof AdminAdminPushRoute
+  AdminAdminQuestsRoute: typeof AdminAdminQuestsRoute
   AdminAdminReferralConfigRoute: typeof AdminAdminReferralConfigRoute
   AdminAdminResultsRoute: typeof AdminAdminResultsRoute
   AdminAdminSecurityRoute: typeof AdminAdminSecurityRoute
   AdminAdminSettingsRoute: typeof AdminAdminSettingsRoute
   AdminAdminShopRoute: typeof AdminAdminShopRoute
   AdminAdminSmtpRoute: typeof AdminAdminSmtpRoute
+  AdminAdminSpinWheelRoute: typeof AdminAdminSpinWheelRoute
   AdminAdminSupportRoute: typeof AdminAdminSupportRoute
   AdminAdminTemplatesRoute: typeof AdminAdminTemplatesRoute
   AdminAdminTwoFactorRoute: typeof AdminAdminTwoFactorRoute
@@ -1682,12 +1722,14 @@ const AdminRouteRouteChildren: AdminRouteRouteChildren = {
   AdminAdminParticipantsRoute: AdminAdminParticipantsRoute,
   AdminAdminPremiumRoute: AdminAdminPremiumRoute,
   AdminAdminPushRoute: AdminAdminPushRoute,
+  AdminAdminQuestsRoute: AdminAdminQuestsRoute,
   AdminAdminReferralConfigRoute: AdminAdminReferralConfigRoute,
   AdminAdminResultsRoute: AdminAdminResultsRoute,
   AdminAdminSecurityRoute: AdminAdminSecurityRoute,
   AdminAdminSettingsRoute: AdminAdminSettingsRoute,
   AdminAdminShopRoute: AdminAdminShopRoute,
   AdminAdminSmtpRoute: AdminAdminSmtpRoute,
+  AdminAdminSpinWheelRoute: AdminAdminSpinWheelRoute,
   AdminAdminSupportRoute: AdminAdminSupportRoute,
   AdminAdminTemplatesRoute: AdminAdminTemplatesRoute,
   AdminAdminTwoFactorRoute: AdminAdminTwoFactorRoute,

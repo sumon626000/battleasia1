@@ -82,7 +82,11 @@ export const ADMIN_GROUPS: NavGroup[] = [
   {
     label: "Shop",
     icon: ShoppingBag,
-    items: [{ label: "Shop Items", href: "/admin/shop", icon: ShoppingBag }],
+    items: [
+      { label: "Shop Items", href: "/admin/shop", icon: ShoppingBag },
+      { label: "Daily Quests", href: "/admin/quests", icon: ShoppingBag },
+      { label: "Spin Wheel", href: "/admin/spin-wheel", icon: ShoppingBag },
+    ],
   },
   {
     label: "Content",

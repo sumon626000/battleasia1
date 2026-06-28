@@ -26,6 +26,8 @@ import {
   NextTournamentCard,
 } from "@/components/dashboard/PlayerHubCards";
 import { DailyLoginCard } from "@/components/dashboard/DailyLoginCard";
+import { DailyQuestsCard } from "@/components/dashboard/DailyQuestsCard";
+import { SpinWheelCard } from "@/components/dashboard/SpinWheelCard";
 import squadHero from "@/assets/pubg-squad-action.jpg";
 import sniperImg from "@/assets/pubg-sniper-rooftop.jpg";
 import airdropImg from "@/assets/pubg-airdrop.jpg";
@@ -227,6 +229,14 @@ function DashboardPage() {
 
       {/* DAILY LOGIN STREAK */}
       <DailyLoginCard />
+
+      {/* DAILY QUESTS + SPIN WHEEL */}
+      <section className="grid gap-4 lg:grid-cols-2">
+        <DailyQuestsCard />
+        <SpinWheelCard />
+      </section>
+
+
 
       {/* PLAYER HUB: Tier + Next Tournament + Achievements */}
       <section className="grid gap-3 lg:grid-cols-3">
