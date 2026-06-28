@@ -401,3 +401,16 @@ function AdminResultsPage() {
     </div>
   );
 }
+
+function Stat({ label, value, tone, sub }: { label: string; value: string; tone?: "positive" | "negative"; sub?: string }) {
+  const color = tone === "negative" ? "text-destructive" : tone === "positive" ? "text-emerald-400" : "text-foreground";
+  return (
+    <div className="rounded border border-border/60 bg-secondary/30 p-3">
+      <div className="font-hud text-[10px] uppercase tracking-widest text-foreground/55">{label}</div>
+      <div className={`mt-1 flex items-center gap-1 font-display text-lg ${color}`}>
+        {value} <CoinIcon size={14} />
+      </div>
+      {sub && <div className="mt-0.5 font-mono text-[10px] text-foreground/50">{sub}</div>}
+    </div>
+  );
+}
