@@ -29,6 +29,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as UUsernameRouteImport } from './routes/u.$username'
 import { Route as PostPostIdRouteImport } from './routes/post.$postId'
 import { Route as PSlugRouteImport } from './routes/p.$slug'
+import { Route as FeedLeaderboardRouteImport } from './routes/feed.leaderboard'
 import { Route as EmailVerifyRouteImport } from './routes/email.verify'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
@@ -187,6 +188,11 @@ const PSlugRoute = PSlugRouteImport.update({
   id: '/p/$slug',
   path: '/p/$slug',
   getParentRoute: () => rootRouteImport,
+} as any)
+const FeedLeaderboardRoute = FeedLeaderboardRouteImport.update({
+  id: '/leaderboard',
+  path: '/leaderboard',
+  getParentRoute: () => FeedRoute,
 } as any)
 const EmailVerifyRoute = EmailVerifyRouteImport.update({
   id: '/email/verify',
@@ -518,7 +524,7 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/apk': typeof ApkRoute
   '/auth': typeof AuthRouteWithChildren
-  '/feed': typeof FeedRoute
+  '/feed': typeof FeedRouteWithChildren
   '/forgot-password': typeof ForgotPasswordRoute
   '/leaderboard': typeof LeaderboardRoute
   '/matches': typeof MatchesRoute
@@ -533,6 +539,7 @@ export interface FileRoutesByFullPath {
   '/api/chat': typeof ApiChatRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/email/verify': typeof EmailVerifyRoute
+  '/feed/leaderboard': typeof FeedLeaderboardRoute
   '/p/$slug': typeof PSlugRoute
   '/post/$postId': typeof PostPostIdRoute
   '/u/$username': typeof UUsernameRouteWithChildren
@@ -598,7 +605,7 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/apk': typeof ApkRoute
   '/auth': typeof AuthRouteWithChildren
-  '/feed': typeof FeedRoute
+  '/feed': typeof FeedRouteWithChildren
   '/forgot-password': typeof ForgotPasswordRoute
   '/leaderboard': typeof LeaderboardRoute
   '/matches': typeof MatchesRoute
@@ -612,6 +619,7 @@ export interface FileRoutesByTo {
   '/api/chat': typeof ApiChatRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/email/verify': typeof EmailVerifyRoute
+  '/feed/leaderboard': typeof FeedLeaderboardRoute
   '/p/$slug': typeof PSlugRoute
   '/post/$postId': typeof PostPostIdRoute
   '/u/$username': typeof UUsernameRouteWithChildren
@@ -680,7 +688,7 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/apk': typeof ApkRoute
   '/auth': typeof AuthRouteWithChildren
-  '/feed': typeof FeedRoute
+  '/feed': typeof FeedRouteWithChildren
   '/forgot-password': typeof ForgotPasswordRoute
   '/leaderboard': typeof LeaderboardRoute
   '/matches': typeof MatchesRoute
@@ -695,6 +703,7 @@ export interface FileRoutesById {
   '/api/chat': typeof ApiChatRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/email/verify': typeof EmailVerifyRoute
+  '/feed/leaderboard': typeof FeedLeaderboardRoute
   '/p/$slug': typeof PSlugRoute
   '/post/$postId': typeof PostPostIdRoute
   '/u/$username': typeof UUsernameRouteWithChildren
@@ -777,6 +786,7 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/auth/callback'
     | '/email/verify'
+    | '/feed/leaderboard'
     | '/p/$slug'
     | '/post/$postId'
     | '/u/$username'
@@ -856,6 +866,7 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/auth/callback'
     | '/email/verify'
+    | '/feed/leaderboard'
     | '/p/$slug'
     | '/post/$postId'
     | '/u/$username'
@@ -938,6 +949,7 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/auth/callback'
     | '/email/verify'
+    | '/feed/leaderboard'
     | '/p/$slug'
     | '/post/$postId'
     | '/u/$username'
@@ -1006,7 +1018,7 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   ApkRoute: typeof ApkRoute
   AuthRoute: typeof AuthRouteWithChildren
-  FeedRoute: typeof FeedRoute
+  FeedRoute: typeof FeedRouteWithChildren
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   LeaderboardRoute: typeof LeaderboardRoute
   MatchesRoute: typeof MatchesRoute
@@ -1165,6 +1177,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/p/$slug'
       preLoaderRoute: typeof PSlugRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/feed/leaderboard': {
+      id: '/feed/leaderboard'
+      path: '/leaderboard'
+      fullPath: '/feed/leaderboard'
+      preLoaderRoute: typeof FeedLeaderboardRouteImport
+      parentRoute: typeof FeedRoute
     }
     '/email/verify': {
       id: '/email/verify'
@@ -1784,6 +1803,16 @@ const AuthRouteChildren: AuthRouteChildren = {
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
+interface FeedRouteChildren {
+  FeedLeaderboardRoute: typeof FeedLeaderboardRoute
+}
+
+const FeedRouteChildren: FeedRouteChildren = {
+  FeedLeaderboardRoute: FeedLeaderboardRoute,
+}
+
+const FeedRouteWithChildren = FeedRoute._addFileChildren(FeedRouteChildren)
+
 interface UUsernameRouteChildren {
   UUsernameFollowersRoute: typeof UUsernameFollowersRoute
   UUsernameFollowingRoute: typeof UUsernameFollowingRoute
@@ -1805,7 +1834,7 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   ApkRoute: ApkRoute,
   AuthRoute: AuthRouteWithChildren,
-  FeedRoute: FeedRoute,
+  FeedRoute: FeedRouteWithChildren,
   ForgotPasswordRoute: ForgotPasswordRoute,
   LeaderboardRoute: LeaderboardRoute,
   MatchesRoute: MatchesRoute,

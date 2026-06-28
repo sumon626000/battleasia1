@@ -247,7 +247,7 @@ function FeedBottomNav() {
 
   const items = [
     { key: "home", label: "Home", icon: Home, to: "/feed" as const, active: pathname === "/feed" },
-    { key: "search", label: "Search", icon: Search, to: "/leaderboard" as const, active: pathname.startsWith("/leaderboard") },
+    { key: "leaderboard", label: "Leaderboard", icon: Search, to: "/feed/leaderboard" as const, active: pathname.startsWith("/feed/leaderboard") },
     { key: "reels", label: "Reels", icon: Film, to: "/feed" as const, active: false, onClick: () => toast.info("Reels coming soon") },
     { key: "shop", label: "Shop", icon: ShoppingBag, to: "/shop" as const, active: pathname.startsWith("/shop") },
     isAuthenticated && username
