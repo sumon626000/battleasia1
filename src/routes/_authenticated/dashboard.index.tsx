@@ -25,6 +25,7 @@ import {
   AchievementsCard,
   NextTournamentCard,
 } from "@/components/dashboard/PlayerHubCards";
+import { DailyLoginCard } from "@/components/dashboard/DailyLoginCard";
 import squadHero from "@/assets/pubg-squad-action.jpg";
 import sniperImg from "@/assets/pubg-sniper-rooftop.jpg";
 import airdropImg from "@/assets/pubg-airdrop.jpg";
@@ -223,6 +224,9 @@ function DashboardPage() {
           })}
         </div>
       </section>
+
+      {/* DAILY LOGIN STREAK */}
+      <DailyLoginCard />
 
       {/* PLAYER HUB: Tier + Next Tournament + Achievements */}
       <section className="grid gap-3 lg:grid-cols-3">
