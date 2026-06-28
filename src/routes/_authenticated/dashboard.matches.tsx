@@ -1,19 +1,21 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { useProfile } from "@/hooks/use-profile";
-import { Crown, Users, Map, Trophy, Clock, Filter, Sword, ArrowLeft, Gamepad2, Lock, PlayCircle, Loader2, KeyRound, Copy, Check, Calendar } from "lucide-react";
+import { Crown, Users, Map, Trophy, Clock, Filter, Sword, ArrowLeft, Gamepad2, Lock, PlayCircle, Loader2, KeyRound, Copy, Check, Calendar, Ticket, ChevronDown, Radio } from "lucide-react";
 import { CoinIcon } from "@/components/site/CoinIcon";
 import { PlayHeroCarousel } from "@/components/dashboard/PlayHeroCarousel";
 
 export const Route = createFileRoute("/_authenticated/dashboard/matches")({
   validateSearch: (s: Record<string, unknown>) => ({ game: s.game ? Number(s.game) : undefined }),
-  head: () => ({ meta: [{ title: "Matches — Battle Asia" }] }),
+  head: () => ({ meta: [{ title: "Play — Battle Asia" }] }),
   component: MatchesPage,
 });
+
+type HubTab = "tournaments" | "live" | "upcoming" | "mine";
 
 type Tab = "Ongoing" | "Upcoming" | "Results";
 type ModeFilter = "all" | "Solo" | "Duo" | "Squad";
