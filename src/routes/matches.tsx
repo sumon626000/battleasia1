@@ -102,16 +102,14 @@ function PublicMatchesPage() {
                 </div>
               </div>
             </Link>
-            {m.live_stream_url && (
-              <a
-                href={m.live_stream_url}
-                target="_blank"
-                rel="noreferrer"
-                className="flex items-center justify-center gap-2 border-t border-red-500/40 bg-red-600/90 px-3 py-2 font-hud text-xs uppercase tracking-widest text-white hover:bg-red-600 transition"
-              >
-                <PlayCircle size={16} /> Watch Live
-              </a>
-            )}
+            <a
+              href={m.live_stream_url || "https://youtube.com/@battleasia"}
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-center justify-center gap-2 border-t border-red-500/40 bg-red-600/90 px-3 py-2 font-hud text-xs uppercase tracking-widest text-white hover:bg-red-600 transition"
+            >
+              <PlayCircle size={16} /> Watch Live
+            </a>
           </div>
         ))}
       </div>

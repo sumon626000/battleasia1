@@ -109,16 +109,14 @@ function MatchDetailPage() {
         </div>
         <h1 className="mt-3 font-display text-2xl font-bold uppercase tracking-wide sm:text-3xl">{m.match_name}</h1>
         {m.sponsor && <p className="mt-1 font-hud text-[10px] uppercase tracking-widest text-gold">// SPONSORED BY {m.sponsor}</p>}
-        {m.live_stream_url && (
-          <a
-            href={m.live_stream_url}
-            target="_blank"
-            rel="noreferrer"
-            className="mt-4 inline-flex items-center gap-2 rounded-md border border-red-500/60 bg-red-600 px-5 py-2.5 font-hud text-xs font-bold uppercase tracking-widest text-white shadow-lg shadow-red-600/30 hover:bg-red-500 transition animate-pulse"
-          >
-            <PlayCircle size={18} /> Watch Live on YouTube
-          </a>
-        )}
+        <a
+          href={m.live_stream_url || "https://youtube.com/@battleasia"}
+          target="_blank"
+          rel="noreferrer"
+          className="mt-4 inline-flex items-center gap-2 rounded-md border border-red-500/60 bg-red-600 px-5 py-2.5 font-hud text-xs font-bold uppercase tracking-widest text-white shadow-lg shadow-red-600/30 hover:bg-red-500 transition animate-pulse"
+        >
+          <PlayCircle size={18} /> Watch Live on YouTube
+        </a>
       </section>
 
       <div className="grid gap-4 lg:grid-cols-[2fr_1fr]">
