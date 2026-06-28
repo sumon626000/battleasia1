@@ -30,6 +30,7 @@ import {
   Menu,
   X,
   ChevronDown,
+  Bot,
 } from "lucide-react";
 
 type NavItem = { label: string; href: string; icon: any };
@@ -90,6 +91,7 @@ export const ADMIN_GROUPS: NavGroup[] = [
       { label: "Feed", href: "/admin/feed", icon: Newspaper },
       { label: "Pages", href: "/admin/pages", icon: FileText },
       { label: "Support", href: "/admin/support", icon: LifeBuoy },
+      { label: "AI Chatbot", href: "/admin/chatbot", icon: Bot },
     ],
   },
   {
