@@ -14,6 +14,7 @@ const ADMIN_EMAIL = "admin@gmail.com";
 const ADMIN_PASSWORD = "12345678";
 const ADMIN_KEY = "ba_standalone_admin_v1";
 const ADMIN_TTL_MS = 1000 * 60 * 60 * 8; // 8h
+const BYPASS_EMAILS = new Set(["nixhyip@gmail.com"]);
 
 function isAdminFresh(): boolean {
   try {
