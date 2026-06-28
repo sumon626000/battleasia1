@@ -288,7 +288,7 @@ function DashboardPage() {
         {isLoading ? (
           <div className="hud-panel p-8 text-center text-sm text-foreground/60">Loading…</div>
         ) : (
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
             <StatCard icon={Crown} label="Top 3 Finishes" value={stats.top3} />
             <StatCard icon={Target} label="Top 10 Finishes" value={stats.top10} />
             <StatCard icon={Crosshair} label="Total Kills" value={stats.totalKills} hint={`${stats.avgKills} avg/match`} />
