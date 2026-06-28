@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { useProfile } from "@/hooks/use-profile";
-import { Crown, Users, Map, Trophy, Clock, Filter, Sword, ArrowLeft, Gamepad2, Lock, PlayCircle, Loader2, KeyRound, Copy, Check } from "lucide-react";
+import { Crown, Users, Map, Trophy, Clock, Filter, Sword, ArrowLeft, Gamepad2, Lock, PlayCircle, Loader2, KeyRound, Copy, Check, Calendar } from "lucide-react";
 import { CoinIcon } from "@/components/site/CoinIcon";
 
 export const Route = createFileRoute("/_authenticated/dashboard/matches")({
@@ -14,7 +14,7 @@ export const Route = createFileRoute("/_authenticated/dashboard/matches")({
   component: MatchesPage,
 });
 
-type Status = "all" | "Upcoming" | "Ongoing" | "Complete";
+type Tab = "Ongoing" | "Upcoming" | "Results";
 type ModeFilter = "all" | "Solo" | "Duo" | "Squad";
 type TypeFilter = "all" | "Free" | "Paid";
 
@@ -23,9 +23,10 @@ function MatchesPage() {
   const { profile } = useProfile(user?.id);
   const { game: selectedGameId } = Route.useSearch();
   const navigate = useNavigate();
-  const [status, setStatus] = useState<Status>("all");
+  const [tab, setTab] = useState<Tab>("Ongoing");
   const [mode, setMode] = useState<ModeFilter>("all");
   const [type, setType] = useState<TypeFilter>("all");
+  const [resultDate, setResultDate] = useState<string>(""); // YYYY-MM-DD
   const balance = Number(profile?.bac_coin_balance ?? 0);
 
   const games = useQuery({
@@ -44,19 +45,42 @@ function MatchesPage() {
   const selectedGame = games.data?.find((g: any) => g.id === selectedGameId);
 
   const matches = useQuery({
-    queryKey: ["matches", selectedGameId, status, mode, type],
+    queryKey: ["matches", selectedGameId, tab, mode, type, resultDate],
     enabled: !!selectedGameId,
     queryFn: async () => {
       let q = supabase
         .from("matches").select("*").is("deleted_at", null)
-        .eq("game_id", selectedGameId!)
-        .order("schedule_at", { ascending: true });
-      if (status !== "all") q = q.eq("status", status);
-      else q = q.in("status", ["Upcoming", "Active", "Ongoing"]);
+        .eq("game_id", selectedGameId!);
+      if (tab === "Ongoing") q = q.eq("status", "Ongoing").order("schedule_at", { ascending: true });
+      else if (tab === "Upcoming") q = q.in("status", ["Upcoming", "Active"]).order("schedule_at", { ascending: true });
+      else {
+        q = q.eq("status", "Complete").order("schedule_at", { ascending: false });
+        if (resultDate) {
+          const start = new Date(resultDate + "T00:00:00").toISOString();
+          const end = new Date(resultDate + "T23:59:59.999").toISOString();
+          q = q.gte("schedule_at", start).lte("schedule_at", end);
+        }
+      }
       if (mode !== "all") q = q.eq("player_mode", mode);
       if (type !== "all") q = q.eq("match_type", type);
       const { data } = await q;
       return data ?? [];
+    },
+  });
+
+  const tabCounts = useQuery({
+    queryKey: ["match-tab-counts", selectedGameId],
+    enabled: !!selectedGameId,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("matches").select("status").is("deleted_at", null).eq("game_id", selectedGameId!);
+      const c = { Ongoing: 0, Upcoming: 0, Results: 0 };
+      (data ?? []).forEach((r: any) => {
+        if (r.status === "Ongoing") c.Ongoing++;
+        else if (r.status === "Upcoming" || r.status === "Active") c.Upcoming++;
+        else if (r.status === "Complete") c.Results++;
+      });
+      return c;
     },
   });
 
