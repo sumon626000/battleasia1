@@ -69,16 +69,16 @@ const GAME_MODE = ["Classic", "Arcade", "EvoGround", "Arena", "TDM"] as const;
 const PLAYER_MODE = ["Solo", "Duo", "Squad"] as const;
 const MAP_OPTIONS = ["Erangel", "Miramar", "Sanhok", "Vikendi", "Livik", "Karakin", "Paramo", "Haven", "Rondo", "Nusa"] as const;
 const MAP_IMAGES: Record<string, string> = {
-  Erangel: "/banners/erangel-sunset.jpg",
-  Miramar: "/banners/miramar-convoy.jpg",
-  Sanhok: "/banners/sanhok-jungle.jpg",
-  Vikendi: "/banners/vikendi-snow.jpg",
-  Livik: "/banners/night-ops.jpg",
-  Karakin: "/banners/warzone.jpg",
-  Paramo: "/banners/soldier.jpg",
-  Haven: "/banners/sniper.jpg",
-  Rondo: "/banners/squad-team.jpg",
-  Nusa: "/banners/tdm.jpg",
+  Erangel: "/maps/erangel.jpg",
+  Miramar: "/maps/miramar.jpg",
+  Sanhok: "/maps/sanhok.jpg",
+  Vikendi: "/maps/vikendi.jpg",
+  Livik: "/maps/livik.jpg",
+  Karakin: "/maps/karakin.jpg",
+  Paramo: "/maps/paramo.jpg",
+  Haven: "/maps/haven.jpg",
+  Rondo: "/maps/rondo.jpg",
+  Nusa: "/maps/nusa.jpg",
 };
 const REWARD_TYPE = ["KillBased", "RankBased", "Mixed"] as const;
 const KILL_TYPE = ["Automatic", "Manual"] as const;
