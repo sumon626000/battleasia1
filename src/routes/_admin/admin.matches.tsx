@@ -108,7 +108,17 @@ function AdminMatchesPage() {
   const qc = useQueryClient();
   const [q, setQ] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
-  const [editing, setEditing] = useState<Partial<Match> | null>(null);
+  const [editing, setEditingState] = useState<Partial<Match> | null>(null);
+  const setEditing = (d: Partial<Match> | null) => {
+    setEditingState(d);
+    saveDraft(d);
+  };
+
+  // Restore unsaved draft on mount (so reload doesn't wipe form data)
+  useEffect(() => {
+    const d = loadDraft();
+    if (d) setEditingState(d);
+  }, []);
 
   const { data, isLoading } = useQuery({
     queryKey: ["admin-matches", statusFilter],
