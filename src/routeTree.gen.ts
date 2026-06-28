@@ -26,6 +26,7 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AdminRouteRouteImport } from './routes/_admin/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as FeedIndexRouteImport } from './routes/feed.index'
 import { Route as UUsernameRouteImport } from './routes/u.$username'
 import { Route as PostPostIdRouteImport } from './routes/post.$postId'
 import { Route as PSlugRouteImport } from './routes/p.$slug'
@@ -173,6 +174,11 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const FeedIndexRoute = FeedIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => FeedRoute,
 } as any)
 const UUsernameRoute = UUsernameRouteImport.update({
   id: '/u/$username',
@@ -543,6 +549,7 @@ export interface FileRoutesByFullPath {
   '/p/$slug': typeof PSlugRoute
   '/post/$postId': typeof PostPostIdRoute
   '/u/$username': typeof UUsernameRouteWithChildren
+  '/feed/': typeof FeedIndexRoute
   '/admin/account-deletions': typeof AdminAdminAccountDeletionsRoute
   '/admin/apk': typeof AdminAdminApkRoute
   '/admin/backups': typeof AdminAdminBackupsRoute
@@ -605,7 +612,6 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/apk': typeof ApkRoute
   '/auth': typeof AuthRouteWithChildren
-  '/feed': typeof FeedRouteWithChildren
   '/forgot-password': typeof ForgotPasswordRoute
   '/leaderboard': typeof LeaderboardRoute
   '/matches': typeof MatchesRoute
@@ -623,6 +629,7 @@ export interface FileRoutesByTo {
   '/p/$slug': typeof PSlugRoute
   '/post/$postId': typeof PostPostIdRoute
   '/u/$username': typeof UUsernameRouteWithChildren
+  '/feed': typeof FeedIndexRoute
   '/admin/account-deletions': typeof AdminAdminAccountDeletionsRoute
   '/admin/apk': typeof AdminAdminApkRoute
   '/admin/backups': typeof AdminAdminBackupsRoute
@@ -707,6 +714,7 @@ export interface FileRoutesById {
   '/p/$slug': typeof PSlugRoute
   '/post/$postId': typeof PostPostIdRoute
   '/u/$username': typeof UUsernameRouteWithChildren
+  '/feed/': typeof FeedIndexRoute
   '/_admin/admin/account-deletions': typeof AdminAdminAccountDeletionsRoute
   '/_admin/admin/apk': typeof AdminAdminApkRoute
   '/_admin/admin/backups': typeof AdminAdminBackupsRoute
@@ -790,6 +798,7 @@ export interface FileRouteTypes {
     | '/p/$slug'
     | '/post/$postId'
     | '/u/$username'
+    | '/feed/'
     | '/admin/account-deletions'
     | '/admin/apk'
     | '/admin/backups'
@@ -852,7 +861,6 @@ export interface FileRouteTypes {
     | '/about'
     | '/apk'
     | '/auth'
-    | '/feed'
     | '/forgot-password'
     | '/leaderboard'
     | '/matches'
@@ -870,6 +878,7 @@ export interface FileRouteTypes {
     | '/p/$slug'
     | '/post/$postId'
     | '/u/$username'
+    | '/feed'
     | '/admin/account-deletions'
     | '/admin/apk'
     | '/admin/backups'
@@ -953,6 +962,7 @@ export interface FileRouteTypes {
     | '/p/$slug'
     | '/post/$postId'
     | '/u/$username'
+    | '/feed/'
     | '/_admin/admin/account-deletions'
     | '/_admin/admin/apk'
     | '/_admin/admin/backups'
@@ -1156,6 +1166,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/feed/': {
+      id: '/feed/'
+      path: '/'
+      fullPath: '/feed/'
+      preLoaderRoute: typeof FeedIndexRouteImport
+      parentRoute: typeof FeedRoute
     }
     '/u/$username': {
       id: '/u/$username'
@@ -1805,10 +1822,12 @@ const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
 interface FeedRouteChildren {
   FeedLeaderboardRoute: typeof FeedLeaderboardRoute
+  FeedIndexRoute: typeof FeedIndexRoute
 }
 
 const FeedRouteChildren: FeedRouteChildren = {
   FeedLeaderboardRoute: FeedLeaderboardRoute,
+  FeedIndexRoute: FeedIndexRoute,
 }
 
 const FeedRouteWithChildren = FeedRoute._addFileChildren(FeedRouteChildren)
