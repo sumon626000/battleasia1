@@ -19,6 +19,7 @@ import { Route as NewsRouteImport } from './routes/news'
 import { Route as MatchesRouteImport } from './routes/matches'
 import { Route as LeaderboardRouteImport } from './routes/leaderboard'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
+import { Route as FeedRouteImport } from './routes/feed'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ApkRouteImport } from './routes/apk'
 import { Route as AboutRouteImport } from './routes/about'
@@ -141,6 +142,11 @@ const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
   path: '/forgot-password',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FeedRoute = FeedRouteImport.update({
+  id: '/feed',
+  path: '/feed',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
@@ -170,9 +176,9 @@ const IndexRoute = IndexRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const FeedIndexRoute = FeedIndexRouteImport.update({
-  id: '/feed/',
-  path: '/feed/',
-  getParentRoute: () => rootRouteImport,
+  id: '/',
+  path: '/',
+  getParentRoute: () => FeedRoute,
 } as any)
 const UUsernameRoute = UUsernameRouteImport.update({
   id: '/u/$username',
@@ -190,9 +196,9 @@ const PSlugRoute = PSlugRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const FeedLeaderboardRoute = FeedLeaderboardRouteImport.update({
-  id: '/feed/leaderboard',
-  path: '/feed/leaderboard',
-  getParentRoute: () => rootRouteImport,
+  id: '/leaderboard',
+  path: '/leaderboard',
+  getParentRoute: () => FeedRoute,
 } as any)
 const EmailVerifyRoute = EmailVerifyRouteImport.update({
   id: '/email/verify',
@@ -524,6 +530,7 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/apk': typeof ApkRoute
   '/auth': typeof AuthRouteWithChildren
+  '/feed': typeof FeedRouteWithChildren
   '/forgot-password': typeof ForgotPasswordRoute
   '/leaderboard': typeof LeaderboardRoute
   '/matches': typeof MatchesRoute
@@ -688,6 +695,7 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/apk': typeof ApkRoute
   '/auth': typeof AuthRouteWithChildren
+  '/feed': typeof FeedRouteWithChildren
   '/forgot-password': typeof ForgotPasswordRoute
   '/leaderboard': typeof LeaderboardRoute
   '/matches': typeof MatchesRoute
@@ -771,6 +779,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/apk'
     | '/auth'
+    | '/feed'
     | '/forgot-password'
     | '/leaderboard'
     | '/matches'
@@ -934,6 +943,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/apk'
     | '/auth'
+    | '/feed'
     | '/forgot-password'
     | '/leaderboard'
     | '/matches'
@@ -1018,6 +1028,7 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   ApkRoute: typeof ApkRoute
   AuthRoute: typeof AuthRouteWithChildren
+  FeedRoute: typeof FeedRouteWithChildren
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   LeaderboardRoute: typeof LeaderboardRoute
   MatchesRoute: typeof MatchesRoute
@@ -1030,11 +1041,9 @@ export interface RootRouteChildren {
   SupportRoute: typeof SupportRoute
   ApiChatRoute: typeof ApiChatRoute
   EmailVerifyRoute: typeof EmailVerifyRoute
-  FeedLeaderboardRoute: typeof FeedLeaderboardRoute
   PSlugRoute: typeof PSlugRoute
   PostPostIdRoute: typeof PostPostIdRoute
   UUsernameRoute: typeof UUsernameRouteWithChildren
-  FeedIndexRoute: typeof FeedIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -1109,6 +1118,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ForgotPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/feed': {
+      id: '/feed'
+      path: '/feed'
+      fullPath: '/feed'
+      preLoaderRoute: typeof FeedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth': {
       id: '/auth'
       path: '/auth'
@@ -1153,10 +1169,10 @@ declare module '@tanstack/react-router' {
     }
     '/feed/': {
       id: '/feed/'
-      path: '/feed'
+      path: '/'
       fullPath: '/feed/'
       preLoaderRoute: typeof FeedIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof FeedRoute
     }
     '/u/$username': {
       id: '/u/$username'
@@ -1181,10 +1197,10 @@ declare module '@tanstack/react-router' {
     }
     '/feed/leaderboard': {
       id: '/feed/leaderboard'
-      path: '/feed/leaderboard'
+      path: '/leaderboard'
       fullPath: '/feed/leaderboard'
       preLoaderRoute: typeof FeedLeaderboardRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof FeedRoute
     }
     '/email/verify': {
       id: '/email/verify'
@@ -1804,6 +1820,18 @@ const AuthRouteChildren: AuthRouteChildren = {
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
+interface FeedRouteChildren {
+  FeedLeaderboardRoute: typeof FeedLeaderboardRoute
+  FeedIndexRoute: typeof FeedIndexRoute
+}
+
+const FeedRouteChildren: FeedRouteChildren = {
+  FeedLeaderboardRoute: FeedLeaderboardRoute,
+  FeedIndexRoute: FeedIndexRoute,
+}
+
+const FeedRouteWithChildren = FeedRoute._addFileChildren(FeedRouteChildren)
+
 interface UUsernameRouteChildren {
   UUsernameFollowersRoute: typeof UUsernameFollowersRoute
   UUsernameFollowingRoute: typeof UUsernameFollowingRoute
@@ -1825,6 +1853,7 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   ApkRoute: ApkRoute,
   AuthRoute: AuthRouteWithChildren,
+  FeedRoute: FeedRouteWithChildren,
   ForgotPasswordRoute: ForgotPasswordRoute,
   LeaderboardRoute: LeaderboardRoute,
   MatchesRoute: MatchesRoute,
@@ -1837,11 +1866,9 @@ const rootRouteChildren: RootRouteChildren = {
   SupportRoute: SupportRoute,
   ApiChatRoute: ApiChatRoute,
   EmailVerifyRoute: EmailVerifyRoute,
-  FeedLeaderboardRoute: FeedLeaderboardRoute,
   PSlugRoute: PSlugRoute,
   PostPostIdRoute: PostPostIdRoute,
   UUsernameRoute: UUsernameRouteWithChildren,
-  FeedIndexRoute: FeedIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
