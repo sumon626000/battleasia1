@@ -33,7 +33,7 @@ export function DashboardBottomNav() {
                 }`}
               >
                 <Icon size={18} />
-                <span>{t(item.key)}</span>
+                <span>{(item as any).label ?? t(item.key)}</span>
                 {active && <span className="mt-0.5 h-0.5 w-6 bg-gold" />}
               </button>
             </li>
