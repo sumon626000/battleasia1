@@ -204,7 +204,7 @@ function AdminResultsPage() {
       if (!uid) { skipped++; continue; }
       const rankNum = parseInt(cols[1] || "", 10);
       const kills = cols[2] || "0";
-      next[uid] = { status: rankNum === 1 ? "Winner" : Number.isFinite(rankNum) ? "Loser" : "", kills };
+      next[uid] = { status: rankNum === 1 ? "Winner" : Number.isFinite(rankNum) ? "Loser" : "", kills, prize: cols[3] || "" };
       matched++;
     }
     setRows(next);
