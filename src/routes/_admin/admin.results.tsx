@@ -93,11 +93,12 @@ function AdminResultsPage() {
 
   useEffect(() => {
     if (!detail) return;
-    const seed: Record<string, { status: string; kills: string }> = {};
+    const seed: Record<string, { status: string; kills: string; prize: string }> = {};
     for (const p of detail.participants) {
       seed[p.user_id] = {
         status: p.rank_position === 1 ? "Winner" : (p.rank_position || p.kills) ? "Loser" : "",
         kills: p.kills ? String(p.kills) : "",
+        prize: p.prize_bac ? String(p.prize_bac) : "",
       };
     }
     setRows(seed);
