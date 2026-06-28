@@ -1,6 +1,6 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Heart, MessageCircle, Send, Plus, RefreshCw, MoreHorizontal, Bookmark } from "lucide-react";
+import { Heart, MessageCircle, Send, Plus, RefreshCw, MoreHorizontal, Bookmark, Home, Search, Film, ShoppingBag, User as UserIcon } from "lucide-react";
 import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
@@ -8,6 +8,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { CommentsThread, LikeBurst } from "@/components/feed/CommentsThread";
 import { StoriesRail } from "@/components/feed/StoriesRail";
 import { SignedImage, SignedVideo } from "@/components/feed/SignedMedia";
+
 
 export const Route = createFileRoute("/feed")({
   head: () => ({
@@ -152,7 +153,8 @@ function FeedPage() {
   }
 
   return (
-    <div className="mx-auto max-w-[600px] px-2 py-5 sm:px-4">
+    <>
+    <div className="mx-auto max-w-[600px] px-2 py-5 pb-24 sm:px-4">
         {/* HUD header */}
         <header className="mb-5 flex items-center justify-between border-b border-border/60 pb-3">
           <div className="min-w-0">
@@ -203,8 +205,60 @@ function FeedPage() {
           </ul>
         )}
     </div>
+    <FeedBottomNav />
+    </>
   );
 }
+
+function FeedBottomNav() {
+  const { user, profile, isAuthenticated } = useAuth() as any;
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const username = profile?.username || profile?.full_name || user?.email?.split("@")[0];
+
+  const items = [
+    { key: "home", label: "Home", icon: Home, to: "/feed" as const, active: pathname === "/feed" },
+    { key: "search", label: "Search", icon: Search, to: "/leaderboard" as const, active: pathname.startsWith("/leaderboard") },
+    { key: "reels", label: "Reels", icon: Film, to: "/feed" as const, active: false, onClick: () => toast.info("Reels coming soon") },
+    { key: "shop", label: "Shop", icon: ShoppingBag, to: "/shop" as const, active: pathname.startsWith("/shop") },
+    isAuthenticated && username
+      ? { key: "profile", label: "Profile", icon: UserIcon, to: "/u/$username" as const, params: { username }, active: pathname.startsWith("/u/") }
+      : { key: "profile", label: "Profile", icon: UserIcon, to: "/auth" as const, active: pathname.startsWith("/auth") },
+  ];
+
+  return (
+    <nav
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-border/70 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80"
+      style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
+      aria-label="Feed navigation"
+    >
+      <ul className="mx-auto flex max-w-[600px] items-center justify-around px-2 py-2">
+        {items.map((it: any) => {
+          const Icon = it.icon;
+          const cls = `flex flex-col items-center gap-0.5 rounded-md px-3 py-1.5 font-hud text-[9px] uppercase tracking-wider transition ${
+            it.active ? "text-gold" : "text-foreground/70 hover:text-gold"
+          }`;
+          if (it.onClick) {
+            return (
+              <li key={it.key}>
+                <button onClick={it.onClick} className={cls} aria-label={it.label}>
+                  <Icon size={24} strokeWidth={it.active ? 2.5 : 2} fill={it.active ? "currentColor" : "none"} />
+                </button>
+              </li>
+            );
+          }
+          return (
+            <li key={it.key}>
+              <Link to={it.to} params={it.params} className={cls} aria-label={it.label}>
+                <Icon size={24} strokeWidth={it.active ? 2.5 : 2} fill={it.active ? "currentColor" : "none"} />
+              </Link>
+            </li>
+          );
+        })}
+      </ul>
+    </nav>
+  );
+}
+
 
 function PostCard({ post, onLike }: { post: Post; onLike: () => void }) {
   const handle = post.author?.username || post.author?.full_name || "player";
