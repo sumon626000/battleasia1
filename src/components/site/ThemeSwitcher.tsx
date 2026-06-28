@@ -130,43 +130,43 @@ export function ThemeSwitcher({ compact = false }: { compact?: boolean }) {
       </button>
 
       {open && (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[200] flex items-center justify-center p-2 sm:p-4">
           <button
             aria-label="Close"
             className="absolute inset-0 bg-background/85 backdrop-blur-md"
             onClick={() => setOpen(false)}
           />
-          <div className="hud-panel relative z-10 w-full max-w-3xl overflow-hidden border-gold/40 bg-card/95 p-5 sm:p-6">
+          <div className="hud-panel relative z-10 flex max-h-[92vh] w-full max-w-3xl flex-col overflow-hidden border-gold/40 bg-card/95 p-3 sm:p-6">
             <div className="flex items-center justify-between gap-3">
-              <div>
+              <div className="min-w-0">
                 <div className="flex items-center gap-2">
-                  <Sparkles size={18} className="text-gold" />
-                  <h2 className="font-display text-xl font-bold uppercase tracking-widest text-gold">
-                    Choose Your Theme
+                  <Sparkles size={16} className="text-gold" />
+                  <h2 className="font-display text-base sm:text-xl font-bold uppercase tracking-widest text-gold">
+                    Choose Theme
                   </h2>
                 </div>
-                <p className="mt-1 font-hud text-[11px] uppercase tracking-wide text-foreground/60">
+                <p className="mt-0.5 hidden sm:block font-hud text-[11px] uppercase tracking-wide text-foreground/60">
                   Unlock new battle aesthetics with BAC coins
                 </p>
               </div>
               <button
                 onClick={() => setOpen(false)}
-                className="rounded-md border border-border/70 p-2 hover:border-gold/60 hover:text-gold"
+                className="shrink-0 rounded-md border border-border/70 p-1.5 hover:border-gold/60 hover:text-gold"
                 aria-label="Close"
               >
-                <X size={16} />
+                <X size={14} />
               </button>
             </div>
 
             {isAuthenticated && (
-              <div className="mt-3 flex items-center gap-2 font-hud text-xs">
-                <span className="text-foreground/60 uppercase tracking-wider">Your balance:</span>
-                <CoinIcon size={14} />
+              <div className="mt-2 flex items-center gap-1.5 font-hud text-[11px]">
+                <span className="text-foreground/60 uppercase tracking-wider">Balance:</span>
+                <CoinIcon size={12} />
                 <span className="font-mono font-bold text-gold">{balance.toLocaleString()}</span>
               </div>
             )}
 
-            <div className="mt-5 grid gap-3 sm:grid-cols-3">
+            <div className="mt-3 grid grid-cols-2 gap-2 overflow-y-auto sm:mt-5 sm:grid-cols-3 sm:gap-3">
               {themes.map((t) => {
                 const owned = isOwned(t);
                 const active = t.id === activeTheme;
@@ -176,7 +176,7 @@ export function ThemeSwitcher({ compact = false }: { compact?: boolean }) {
                     key={t.id}
                     onClick={() => handleClick(t)}
                     disabled={applyMut.isPending || buyMut.isPending}
-                    className={`group relative overflow-hidden rounded-lg border-2 p-4 text-left transition hover:scale-[1.02] disabled:opacity-60 ${
+                    className={`group relative overflow-hidden rounded-lg border-2 p-2 text-left transition active:scale-[0.98] hover:scale-[1.02] disabled:opacity-60 sm:p-4 ${
                       active ? "border-gold" : "border-border/60 hover:border-gold/60"
                     }`}
                     style={{
@@ -186,41 +186,41 @@ export function ThemeSwitcher({ compact = false }: { compact?: boolean }) {
                   >
                     {/* Preview swatch */}
                     <div
-                      className="mb-3 h-20 rounded-md border border-white/10"
+                      className="mb-2 h-12 rounded-md border border-white/10 sm:mb-3 sm:h-20"
                       style={{
                         background: `linear-gradient(135deg, ${t.preview_color}, ${t.preview_color}88, #111)`,
                         boxShadow: `inset 0 0 30px ${t.preview_color}44`,
                       }}
                     />
-                    <div className="font-display text-base font-bold uppercase tracking-wider" style={{ color: t.preview_color }}>
+                    <div className="font-display text-xs sm:text-base font-bold uppercase tracking-wider truncate" style={{ color: t.preview_color }}>
                       {t.name}
                     </div>
                     {t.description && (
-                      <p className="mt-1 line-clamp-2 font-hud text-[11px] text-foreground/60">
+                      <p className="mt-0.5 line-clamp-2 hidden sm:block font-hud text-[11px] text-foreground/60">
                         {t.description}
                       </p>
                     )}
 
-                    <div className="mt-3">
+                    <div className="mt-2 sm:mt-3">
                       {active ? (
-                        <span className="inline-flex items-center gap-1.5 rounded border border-gold/50 bg-gold/10 px-2 py-1 font-hud text-[10px] font-bold uppercase tracking-widest text-gold">
-                          <Check size={11} /> Active
+                        <span className="inline-flex items-center gap-1 rounded border border-gold/50 bg-gold/10 px-1.5 py-0.5 font-hud text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-gold">
+                          <Check size={10} /> Active
                         </span>
                       ) : owned ? (
-                        <span className="inline-flex items-center gap-1.5 rounded border border-success/50 bg-success/10 px-2 py-1 font-hud text-[10px] font-bold uppercase tracking-widest text-success">
-                          Tap to Apply
+                        <span className="inline-flex items-center gap-1 rounded border border-success/50 bg-success/10 px-1.5 py-0.5 font-hud text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-success">
+                          Apply
                         </span>
                       ) : (
                         <span
-                          className={`inline-flex items-center gap-1.5 rounded border px-2 py-1 font-hud text-[10px] font-bold uppercase tracking-widest ${
+                          className={`inline-flex items-center gap-1 rounded border px-1.5 py-0.5 font-hud text-[9px] sm:text-[10px] font-bold uppercase tracking-widest ${
                             canAfford
                               ? "border-gold/50 bg-gold/10 text-gold"
                               : "border-destructive/50 bg-destructive/10 text-destructive"
                           }`}
                         >
-                          <Lock size={11} />
-                          <CoinIcon size={11} />
-                          {t.price_bac.toLocaleString()} BAC
+                          <Lock size={9} />
+                          <CoinIcon size={9} />
+                          {t.price_bac.toLocaleString()}
                         </span>
                       )}
                     </div>
@@ -228,6 +228,7 @@ export function ThemeSwitcher({ compact = false }: { compact?: boolean }) {
                 );
               })}
             </div>
+
 
             {isAuthenticated && balance < 500 && (
               <div className="mt-4 text-center">
