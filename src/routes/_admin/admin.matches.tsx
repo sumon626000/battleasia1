@@ -105,14 +105,21 @@ function emptyDraft(): Partial<Match> {
   };
 }
 
+type FieldKey =
+  | "game_id" | "match_name" | "map_name" | "schedule_at" | "match_type"
+  | "game_mode" | "player_mode" | "total_players" | "room_id" | "room_password"
+  | "match_url" | "kill_rate_type" | "entry_fee_bac" | "status";
+
 function AdminMatchesPage() {
   const qc = useQueryClient();
   const [q, setQ] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [editing, setEditingState] = useState<Partial<Match> | null>(null);
+  const [errors, setErrors] = useState<Partial<Record<FieldKey, boolean>>>({});
   const setEditing = (d: Partial<Match> | null) => {
     setEditingState(d);
     saveDraft(d);
+    if (!d) setErrors({});
   };
 
   // Restore unsaved draft on mount (so reload doesn't wipe form data)
@@ -141,12 +148,26 @@ function AdminMatchesPage() {
 
   async function save() {
     if (!editing) return;
-    const missing: string[] = [];
-    if (!editing.match_name?.trim()) missing.push("Match Name");
-    if (!editing.map_name?.trim()) missing.push("Map");
-    if (!editing.schedule_at) missing.push("Schedule");
-    if (!editing.total_players || editing.total_players <= 0) missing.push("Total Players");
-    if (missing.length) return toast.error(`Required field missing: ${missing.join(", ")}`);
+    const e: Partial<Record<FieldKey, boolean>> = {};
+    if (!editing.game_id) e.game_id = true;
+    if (!editing.match_name?.trim()) e.match_name = true;
+    if (!editing.map_name?.trim()) e.map_name = true;
+    if (!editing.schedule_at) e.schedule_at = true;
+    if (!editing.match_type) e.match_type = true;
+    if (!editing.game_mode) e.game_mode = true;
+    if (!editing.player_mode) e.player_mode = true;
+    if (!editing.total_players || editing.total_players <= 0) e.total_players = true;
+    if (!editing.room_id?.trim()) e.room_id = true;
+    if (!editing.room_password?.trim()) e.room_password = true;
+    if (!editing.match_url?.trim()) e.match_url = true;
+    if (!editing.kill_rate_type) e.kill_rate_type = true;
+    if (editing.entry_fee_bac === undefined || editing.entry_fee_bac === null || Number.isNaN(Number(editing.entry_fee_bac))) e.entry_fee_bac = true;
+    if (!editing.status) e.status = true;
+    setErrors(e);
+    if (Object.keys(e).length) {
+      toast.error("Please fill the highlighted required fields");
+      return;
+    }
     const payload: Record<string, unknown> = { ...editing };
     if (payload.schedule_at && typeof payload.schedule_at === "string") {
       payload.schedule_at = new Date(payload.schedule_at).toISOString();
@@ -166,6 +187,7 @@ function AdminMatchesPage() {
     setEditing(null);
     qc.invalidateQueries({ queryKey: ["admin-matches"] });
   }
+
 
   async function softDelete(id: number) {
     if (!confirm("Soft-delete this match?")) return;
