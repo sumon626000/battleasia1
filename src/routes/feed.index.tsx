@@ -13,6 +13,7 @@ import { PeopleToFollow } from "@/components/feed/PeopleToFollow";
 
 
 export const Route = createFileRoute("/feed/")({
+  ssr: false,
   head: () => ({
     meta: [
       { title: "Feed — Battle Asia" },
