@@ -35,7 +35,6 @@ export const DASH_GROUPS: DashGroup[] = [
     icon: LayoutDashboard,
     items: [
       { key: "dash.overview", href: "/dashboard", icon: LayoutDashboard },
-      { key: "dash.statistics", href: "/dashboard/statistics", icon: BarChart3 },
     ],
   },
   {
