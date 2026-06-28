@@ -270,51 +270,175 @@ function EditorModal({
   onClose: () => void;
 }) {
   const upd = (patch: Partial<Match>) => setDraft({ ...draft, ...patch });
+
+  const { data: games } = useQuery({
+    queryKey: ["admin-matches-games"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("games")
+        .select("id, game_name, image_url")
+        .is("deleted_at", null)
+        .eq("status", "active")
+        .order("sort_order", { ascending: true });
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
+  const winnerTeamSize = draft.player_mode === "Solo" ? 1 : draft.player_mode === "Duo" ? 2 : 4;
+  const totalPlayers = Number(draft.total_players ?? 0);
+  const loserCount = Math.max(0, totalPlayers - winnerTeamSize);
+  const autoTotalKills = loserCount; // 1 kill per eliminated player
+  const previewSrc = draft.map_image_url || draft.banner_image_url || null;
+
   return (
     <div className="fixed inset-0 z-50 grid place-items-center bg-background/80 p-4 backdrop-blur">
-      <div className="hud-panel w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-md border border-gold/40 bg-card p-5">
+      <div className="hud-panel w-full max-w-5xl max-h-[92vh] overflow-y-auto rounded-md border border-gold/40 bg-card p-5">
         <div className="mb-4 flex items-center justify-between">
           <h2 className="font-display text-lg uppercase tracking-widest text-gold">
-            {draft.id ? `Edit Match #${draft.id}` : "New Match"}
+            {draft.id ? `Edit Match #${draft.id}` : "Create Match"}
           </h2>
           <button onClick={onClose} className="font-hud text-xs uppercase tracking-widest text-foreground/60 hover:text-gold">Close</button>
         </div>
 
-        <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-          <Field label="Match Name" required><input className={inp} value={draft.match_name ?? ""} onChange={(e) => upd({ match_name: e.target.value })} /></Field>
-          <Select label="Map" value={draft.map_name} options={MAP_OPTIONS} onChange={(v) => upd({ map_name: v })} />
-          <Field label="Schedule (local)" required><input type="datetime-local" className={inp} value={draft.schedule_at ?? ""} onChange={(e) => upd({ schedule_at: e.target.value })} /></Field>
-          <Field label="Total Players" required><input type="number" className={inp} value={draft.total_players ?? 0} onChange={(e) => upd({ total_players: Number(e.target.value) })} /></Field>
+        {/* Top two-column section: left = identity + preview, right = combat settings */}
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          {/* LEFT COLUMN */}
+          <div className="space-y-3">
+            <Field label="Game" required>
+              <select
+                className={inp}
+                value={draft.game_id ?? ""}
+                onChange={(e) => upd({ game_id: e.target.value ? Number(e.target.value) : null })}
+              >
+                <option value="" disabled>Select Game</option>
+                {games?.map((g) => (
+                  <option key={g.id} value={g.id}>{g.game_name}</option>
+                ))}
+              </select>
+            </Field>
 
-          <Select label="Status" value={draft.status} options={STATUS} onChange={(v) => upd({ status: v })} />
-          <Select label="Match Type" value={draft.match_type} options={MATCH_TYPE} onChange={(v) => upd({ match_type: v })} />
-          <Select label="Game Mode" value={draft.game_mode} options={GAME_MODE} onChange={(v) => upd({ game_mode: v })} />
-          <Select label="Player Mode" value={draft.player_mode} options={PLAYER_MODE} onChange={(v) => upd({ player_mode: v })} />
-          <Select label="Reward Type" value={draft.reward_type} options={REWARD_TYPE} onChange={(v) => upd({ reward_type: v })} />
-          <Select label="Kill Rate" value={draft.kill_rate_type} options={KILL_TYPE} onChange={(v) => upd({ kill_rate_type: v })} />
+            <Select label="Map" required value={draft.map_name} options={MAP_OPTIONS} onChange={(v) => upd({ map_name: v })} />
 
-          <Field label="Entry Fee BAC"><input type="number" className={inp} value={draft.entry_fee_bac ?? 0} onChange={(e) => upd({ entry_fee_bac: Number(e.target.value) })} /></Field>
-          <Field label="Per Kill BAC"><input type="number" className={inp} value={draft.per_kill_amount_bac ?? 0} onChange={(e) => upd({ per_kill_amount_bac: Number(e.target.value) })} /></Field>
+            {/* Map preview */}
+            <div className="overflow-hidden rounded border border-border/60 bg-secondary/30">
+              <div className="relative aspect-video w-full">
+                {previewSrc ? (
+                  <img src={previewSrc} alt={draft.map_name ?? "Map"} className="h-full w-full object-cover" />
+                ) : (
+                  <div className="grid h-full w-full place-items-center font-hud text-xs uppercase tracking-widest text-foreground/50">
+                    Select a map to preview
+                  </div>
+                )}
+                {draft.map_name && (
+                  <span className="absolute left-2 top-2 rounded bg-black/60 px-2 py-0.5 font-hud text-[10px] uppercase tracking-widest text-gold">
+                    {draft.map_name}
+                  </span>
+                )}
+              </div>
+            </div>
+
+            <Field label="Match/Event Name" required>
+              <input className={inp} value={draft.match_name ?? ""} onChange={(e) => upd({ match_name: e.target.value })} />
+            </Field>
+
+            <Field label="Match Schedule" required>
+              <input type="datetime-local" className={inp} value={draft.schedule_at ?? ""} onChange={(e) => upd({ schedule_at: e.target.value })} />
+            </Field>
+
+            <Select label="Match Type" required value={draft.match_type} options={MATCH_TYPE} onChange={(v) => upd({ match_type: v })} />
+
+            <Field label="Platform Fee (%)">
+              <input type="number" className={inp} value={draft.platform_fee_pct ?? 0} onChange={(e) => upd({ platform_fee_pct: Number(e.target.value) })} />
+              <span className="mt-1 block font-hud text-[10px] tracking-wider text-foreground/55">Percentage of total income kept by platform</span>
+            </Field>
+          </div>
+
+          {/* RIGHT COLUMN */}
+          <div className="space-y-3">
+            <Select label="Game Mode" required value={draft.game_mode} options={GAME_MODE} onChange={(v) => upd({ game_mode: v })} />
+
+            <Field label={`Total Kills (${draft.game_mode ?? "Classic"})`}>
+              <input
+                type="number"
+                className={inp}
+                value={autoTotalKills}
+                readOnly
+              />
+              <span className="mt-1 block font-hud text-[10px] tracking-wider text-foreground/55">
+                Auto: loserCount = totalPlayer({totalPlayers}) − winnerTeamSize({winnerTeamSize}) = {autoTotalKills}
+              </span>
+            </Field>
+
+            <Field label="Total Player" required>
+              <input type="number" className={inp} value={draft.total_players ?? 0} onChange={(e) => upd({ total_players: Number(e.target.value) })} />
+            </Field>
+
+            <Select label="Player Mode" required value={draft.player_mode} options={PLAYER_MODE} onChange={(v) => upd({ player_mode: v })} />
+
+            <Field label="Room ID" required>
+              <input className={inp} value={draft.room_id ?? ""} onChange={(e) => upd({ room_id: e.target.value })} />
+            </Field>
+
+            <Field label="Password" required>
+              <input className={inp} value={draft.room_password ?? ""} onChange={(e) => upd({ room_password: e.target.value })} />
+            </Field>
+
+            <Field label="Match URL" required>
+              <input
+                className={inp}
+                placeholder="example.com/room"
+                value={draft.match_url ?? ""}
+                onChange={(e) => upd({ match_url: e.target.value })}
+              />
+              <span className="mt-1 block font-hud text-[10px] tracking-wider text-foreground/55">https:// will be added automatically if omitted</span>
+            </Field>
+
+            <Select label="Set Kill Rate" required value={draft.kill_rate_type} options={KILL_TYPE} onChange={(v) => upd({ kill_rate_type: v })} />
+
+            <Field label="Entry Fee" required>
+              <input type="number" className={inp} value={draft.entry_fee_bac ?? 0} onChange={(e) => upd({ entry_fee_bac: Number(e.target.value) })} />
+            </Field>
+
+            <Field label="Per Kill">
+              <input type="number" className={inp} value={draft.per_kill_amount_bac ?? 0} onChange={(e) => upd({ per_kill_amount_bac: Number(e.target.value) })} />
+            </Field>
+
+            <label className="flex items-start gap-3 rounded border border-border/60 bg-secondary/30 px-3 py-2">
+              <input
+                type="checkbox"
+                className="mt-1"
+                checked={!!draft.premium_only}
+                onChange={(e) => upd({ premium_only: e.target.checked })}
+              />
+              <span>
+                <span className="block font-hud text-xs uppercase tracking-widest text-foreground/90">Premium Only</span>
+                <span className="block font-hud text-[10px] tracking-wider text-foreground/55">Only premium members can join this match</span>
+              </span>
+            </label>
+          </div>
+        </div>
+
+        {/* Rank prizes */}
+        <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-3">
           <Field label="Rank 1 Prize"><input type="number" className={inp} value={draft.rank_1_prize_bac ?? 0} onChange={(e) => upd({ rank_1_prize_bac: Number(e.target.value) })} /></Field>
           <Field label="Rank 2 Prize"><input type="number" className={inp} value={draft.rank_2_prize_bac ?? 0} onChange={(e) => upd({ rank_2_prize_bac: Number(e.target.value) })} /></Field>
           <Field label="Rank 3 Prize"><input type="number" className={inp} value={draft.rank_3_prize_bac ?? 0} onChange={(e) => upd({ rank_3_prize_bac: Number(e.target.value) })} /></Field>
-          <Field label="Platform Fee %"><input type="number" className={inp} value={draft.platform_fee_pct ?? 0} onChange={(e) => upd({ platform_fee_pct: Number(e.target.value) })} /></Field>
-
-          <Field label="Room ID"><input className={inp} value={draft.room_id ?? ""} onChange={(e) => upd({ room_id: e.target.value })} placeholder="Visible only to joined players" /></Field>
-          <Field label="Room Password"><input className={inp} value={draft.room_password ?? ""} onChange={(e) => upd({ room_password: e.target.value })} /></Field>
-
-          <Field label="Sponsor"><input className={inp} value={draft.sponsor ?? ""} onChange={(e) => upd({ sponsor: e.target.value })} /></Field>
-          <Field label="Match URL"><input className={inp} value={draft.match_url ?? ""} onChange={(e) => upd({ match_url: e.target.value })} /></Field>
-          <Field label="Live Stream URL (YouTube)"><input className={inp} value={draft.live_stream_url ?? ""} onChange={(e) => upd({ live_stream_url: e.target.value })} placeholder="https://youtube.com/watch?v=…" /></Field>
-          <Field label="Banner Image"><ImageUploader value={draft.banner_image_url} onChange={(u) => upd({ banner_image_url: u })} folder="match-banners" aspect="16/9" /></Field>
-          <Field label="Map Image"><ImageUploader value={draft.map_image_url} onChange={(u) => upd({ map_image_url: u })} folder="match-maps" aspect="16/9" /></Field>
-
-          <label className="flex items-center gap-2 font-hud text-xs uppercase tracking-widest text-foreground/80">
-            <input type="checkbox" checked={!!draft.premium_only} onChange={(e) => upd({ premium_only: e.target.checked })} />
-            Premium Only
-          </label>
         </div>
 
+        {/* Banner + Prize Description side by side */}
+        <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2">
+          <div>
+            <Field label="Upload Banner (Recommended 1000x500)">
+              <ImageUploader value={draft.banner_image_url} onChange={(u) => upd({ banner_image_url: u })} folder="match-banners" aspect="16/9" />
+            </Field>
+          </div>
+          <Field label="Prize Description">
+            <textarea className={`${inp} h-32`} value={draft.prize_description ?? ""} onChange={(e) => upd({ prize_description: e.target.value })} />
+          </Field>
+        </div>
+
+        {/* Banner library quick pick */}
         <div className="mt-4">
           <div className="mb-2 font-hud text-[10px] uppercase tracking-widest text-foreground/70">Banner Library — Click to Select</div>
           <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-6">
@@ -341,16 +465,28 @@ function EditorModal({
           </div>
         </div>
 
-        <div className="mt-3 grid grid-cols-1 gap-3">
-          <Field label="Public Description"><textarea className={`${inp} h-20`} value={draft.description ?? ""} onChange={(e) => upd({ description: e.target.value })} /></Field>
-          <Field label="Prize Description"><textarea className={`${inp} h-20`} value={draft.prize_description ?? ""} onChange={(e) => upd({ prize_description: e.target.value })} /></Field>
-          <Field label="Private Brief (joined players)"><textarea className={`${inp} h-20`} value={draft.private_description ?? ""} onChange={(e) => upd({ private_description: e.target.value })} /></Field>
+        {/* Sponsor + descriptions */}
+        <div className="mt-4 space-y-3">
+          <Field label="Match Sponsor">
+            <input className={inp} value={draft.sponsor ?? ""} onChange={(e) => upd({ sponsor: e.target.value })} />
+          </Field>
+          <Field label="Match Description">
+            <textarea className={`${inp} h-24`} value={draft.description ?? ""} onChange={(e) => upd({ description: e.target.value })} />
+          </Field>
+          <Field label="Match Private Description (Visible to joined players)">
+            <textarea className={`${inp} h-24`} value={draft.private_description ?? ""} onChange={(e) => upd({ private_description: e.target.value })} />
+          </Field>
+          <Field label="Live Stream URL (YouTube)">
+            <input className={inp} placeholder="https://youtube.com/watch?v=…" value={draft.live_stream_url ?? ""} onChange={(e) => upd({ live_stream_url: e.target.value })} />
+          </Field>
+          <Select label="Match Status" required value={draft.status} options={STATUS} onChange={(v) => upd({ status: v })} />
+          <Select label="Reward Type" value={draft.reward_type} options={REWARD_TYPE} onChange={(v) => upd({ reward_type: v })} />
         </div>
 
-        <div className="mt-5 flex justify-end gap-2">
+        <div className="mt-6 flex justify-end gap-2">
           <button onClick={onClose} className="rounded border border-border/60 px-4 py-2 font-hud text-xs uppercase tracking-widest hover:border-foreground">Cancel</button>
           <button onClick={onSave} className="rounded border border-gold/60 bg-gold/10 px-4 py-2 font-hud text-xs uppercase tracking-widest text-gold hover:bg-gold/20">
-            {draft.id ? "Save Changes" : "Create Match"}
+            {draft.id ? "Save Changes" : "Create"}
           </button>
         </div>
       </div>
