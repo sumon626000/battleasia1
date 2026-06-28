@@ -31,6 +31,7 @@ import { Route as PostPostIdRouteImport } from './routes/post.$postId'
 import { Route as PSlugRouteImport } from './routes/p.$slug'
 import { Route as EmailVerifyRouteImport } from './routes/email.verify'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
+import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedDashboardIndexRouteImport } from './routes/_authenticated/dashboard.index'
 import { Route as AdminAdminIndexRouteImport } from './routes/_admin/admin.index'
@@ -77,6 +78,7 @@ import { Route as AdminAdminFeedRouteImport } from './routes/_admin/admin.feed'
 import { Route as AdminAdminEmailSetupRouteImport } from './routes/_admin/admin.email-setup'
 import { Route as AdminAdminDepositsRouteImport } from './routes/_admin/admin.deposits'
 import { Route as AdminAdminCoinRatesRouteImport } from './routes/_admin/admin.coin-rates'
+import { Route as AdminAdminChatbotRouteImport } from './routes/_admin/admin.chatbot'
 import { Route as AdminAdminChannelsRouteImport } from './routes/_admin/admin.channels'
 import { Route as AdminAdminBusinessWalletsRouteImport } from './routes/_admin/admin.business-wallets'
 import { Route as AdminAdminBalancesRouteImport } from './routes/_admin/admin.balances'
@@ -195,6 +197,11 @@ const AuthCallbackRoute = AuthCallbackRouteImport.update({
   id: '/callback',
   path: '/callback',
   getParentRoute: () => AuthRoute,
+} as any)
+const ApiChatRoute = ApiChatRouteImport.update({
+  id: '/api/chat',
+  path: '/api/chat',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
@@ -444,6 +451,11 @@ const AdminAdminCoinRatesRoute = AdminAdminCoinRatesRouteImport.update({
   path: '/admin/coin-rates',
   getParentRoute: () => AdminRouteRoute,
 } as any)
+const AdminAdminChatbotRoute = AdminAdminChatbotRouteImport.update({
+  id: '/admin/chatbot',
+  path: '/admin/chatbot',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
 const AdminAdminChannelsRoute = AdminAdminChannelsRouteImport.update({
   id: '/admin/channels',
   path: '/admin/channels',
@@ -518,6 +530,7 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/support': typeof SupportRoute
   '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
+  '/api/chat': typeof ApiChatRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/email/verify': typeof EmailVerifyRoute
   '/p/$slug': typeof PSlugRoute
@@ -529,6 +542,7 @@ export interface FileRoutesByFullPath {
   '/admin/balances': typeof AdminAdminBalancesRoute
   '/admin/business-wallets': typeof AdminAdminBusinessWalletsRoute
   '/admin/channels': typeof AdminAdminChannelsRoute
+  '/admin/chatbot': typeof AdminAdminChatbotRoute
   '/admin/coin-rates': typeof AdminAdminCoinRatesRoute
   '/admin/deposits': typeof AdminAdminDepositsRoute
   '/admin/email-setup': typeof AdminAdminEmailSetupRoute
@@ -595,6 +609,7 @@ export interface FileRoutesByTo {
   '/shop': typeof ShopRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/support': typeof SupportRoute
+  '/api/chat': typeof ApiChatRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/email/verify': typeof EmailVerifyRoute
   '/p/$slug': typeof PSlugRoute
@@ -606,6 +621,7 @@ export interface FileRoutesByTo {
   '/admin/balances': typeof AdminAdminBalancesRoute
   '/admin/business-wallets': typeof AdminAdminBusinessWalletsRoute
   '/admin/channels': typeof AdminAdminChannelsRoute
+  '/admin/chatbot': typeof AdminAdminChatbotRoute
   '/admin/coin-rates': typeof AdminAdminCoinRatesRoute
   '/admin/deposits': typeof AdminAdminDepositsRoute
   '/admin/email-setup': typeof AdminAdminEmailSetupRoute
@@ -676,6 +692,7 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/support': typeof SupportRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRouteWithChildren
+  '/api/chat': typeof ApiChatRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/email/verify': typeof EmailVerifyRoute
   '/p/$slug': typeof PSlugRoute
@@ -687,6 +704,7 @@ export interface FileRoutesById {
   '/_admin/admin/balances': typeof AdminAdminBalancesRoute
   '/_admin/admin/business-wallets': typeof AdminAdminBusinessWalletsRoute
   '/_admin/admin/channels': typeof AdminAdminChannelsRoute
+  '/_admin/admin/chatbot': typeof AdminAdminChatbotRoute
   '/_admin/admin/coin-rates': typeof AdminAdminCoinRatesRoute
   '/_admin/admin/deposits': typeof AdminAdminDepositsRoute
   '/_admin/admin/email-setup': typeof AdminAdminEmailSetupRoute
@@ -756,6 +774,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/support'
     | '/dashboard'
+    | '/api/chat'
     | '/auth/callback'
     | '/email/verify'
     | '/p/$slug'
@@ -767,6 +786,7 @@ export interface FileRouteTypes {
     | '/admin/balances'
     | '/admin/business-wallets'
     | '/admin/channels'
+    | '/admin/chatbot'
     | '/admin/coin-rates'
     | '/admin/deposits'
     | '/admin/email-setup'
@@ -833,6 +853,7 @@ export interface FileRouteTypes {
     | '/shop'
     | '/sitemap.xml'
     | '/support'
+    | '/api/chat'
     | '/auth/callback'
     | '/email/verify'
     | '/p/$slug'
@@ -844,6 +865,7 @@ export interface FileRouteTypes {
     | '/admin/balances'
     | '/admin/business-wallets'
     | '/admin/channels'
+    | '/admin/chatbot'
     | '/admin/coin-rates'
     | '/admin/deposits'
     | '/admin/email-setup'
@@ -913,6 +935,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/support'
     | '/_authenticated/dashboard'
+    | '/api/chat'
     | '/auth/callback'
     | '/email/verify'
     | '/p/$slug'
@@ -924,6 +947,7 @@ export interface FileRouteTypes {
     | '/_admin/admin/balances'
     | '/_admin/admin/business-wallets'
     | '/_admin/admin/channels'
+    | '/_admin/admin/chatbot'
     | '/_admin/admin/coin-rates'
     | '/_admin/admin/deposits'
     | '/_admin/admin/email-setup'
@@ -993,6 +1017,7 @@ export interface RootRouteChildren {
   ShopRoute: typeof ShopRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SupportRoute: typeof SupportRoute
+  ApiChatRoute: typeof ApiChatRoute
   EmailVerifyRoute: typeof EmailVerifyRoute
   PSlugRoute: typeof PSlugRoute
   PostPostIdRoute: typeof PostPostIdRoute
@@ -1154,6 +1179,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/auth/callback'
       preLoaderRoute: typeof AuthCallbackRouteImport
       parentRoute: typeof AuthRoute
+    }
+    '/api/chat': {
+      id: '/api/chat'
+      path: '/api/chat'
+      fullPath: '/api/chat'
+      preLoaderRoute: typeof ApiChatRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
@@ -1477,6 +1509,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAdminCoinRatesRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/_admin/admin/chatbot': {
+      id: '/_admin/admin/chatbot'
+      path: '/admin/chatbot'
+      fullPath: '/admin/chatbot'
+      preLoaderRoute: typeof AdminAdminChatbotRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
     '/_admin/admin/channels': {
       id: '/_admin/admin/channels'
       path: '/admin/channels'
@@ -1557,6 +1596,7 @@ interface AdminRouteRouteChildren {
   AdminAdminBalancesRoute: typeof AdminAdminBalancesRoute
   AdminAdminBusinessWalletsRoute: typeof AdminAdminBusinessWalletsRoute
   AdminAdminChannelsRoute: typeof AdminAdminChannelsRoute
+  AdminAdminChatbotRoute: typeof AdminAdminChatbotRoute
   AdminAdminCoinRatesRoute: typeof AdminAdminCoinRatesRoute
   AdminAdminDepositsRoute: typeof AdminAdminDepositsRoute
   AdminAdminEmailSetupRoute: typeof AdminAdminEmailSetupRoute
@@ -1592,6 +1632,7 @@ const AdminRouteRouteChildren: AdminRouteRouteChildren = {
   AdminAdminBalancesRoute: AdminAdminBalancesRoute,
   AdminAdminBusinessWalletsRoute: AdminAdminBusinessWalletsRoute,
   AdminAdminChannelsRoute: AdminAdminChannelsRoute,
+  AdminAdminChatbotRoute: AdminAdminChatbotRoute,
   AdminAdminCoinRatesRoute: AdminAdminCoinRatesRoute,
   AdminAdminDepositsRoute: AdminAdminDepositsRoute,
   AdminAdminEmailSetupRoute: AdminAdminEmailSetupRoute,
@@ -1775,6 +1816,7 @@ const rootRouteChildren: RootRouteChildren = {
   ShopRoute: ShopRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SupportRoute: SupportRoute,
+  ApiChatRoute: ApiChatRoute,
   EmailVerifyRoute: EmailVerifyRoute,
   PSlugRoute: PSlugRoute,
   PostPostIdRoute: PostPostIdRoute,
@@ -1783,13 +1825,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
