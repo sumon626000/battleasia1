@@ -30,6 +30,21 @@ type Row = {
 
 type TF = "all" | "week" | "month";
 type GameTab = "OVERALL" | "BGMI" | "FFMAX" | "CODM";
+type ModeFilter = "ALL" | "Solo" | "Duo" | "Squad";
+
+const COUNTRY_OPTIONS: { code: string; flag: string; name: string }[] = [
+  { code: "ALL", flag: "🌏", name: "All Countries" },
+  { code: "BD", flag: "🇧🇩", name: "Bangladesh" },
+  { code: "IN", flag: "🇮🇳", name: "India" },
+  { code: "PK", flag: "🇵🇰", name: "Pakistan" },
+  { code: "NP", flag: "🇳🇵", name: "Nepal" },
+  { code: "LK", flag: "🇱🇰", name: "Sri Lanka" },
+  { code: "MY", flag: "🇲🇾", name: "Malaysia" },
+  { code: "ID", flag: "🇮🇩", name: "Indonesia" },
+  { code: "TH", flag: "🇹🇭", name: "Thailand" },
+  { code: "VN", flag: "🇻🇳", name: "Vietnam" },
+  { code: "PH", flag: "🇵🇭", name: "Philippines" },
+];
 
 function tierFor(score: number) {
   if (score >= 15000) return { label: "Conqueror", color: "text-amber-400", dot: "bg-amber-400" };
@@ -44,9 +59,11 @@ function FeedLeaderboardPage() {
   const { user } = useAuth() as any;
   const [tf, setTf] = useState<TF>("all");
   const [tab, setTab] = useState<GameTab>("OVERALL");
+  const [country, setCountry] = useState<string>("ALL");
+  const [mode, setMode] = useState<ModeFilter>("ALL");
 
   const q = useQuery({
-    queryKey: ["feed-leaderboard", tf, tab],
+    queryKey: ["feed-leaderboard", tf, tab, country, mode],
     queryFn: async () => {
       let since: string | null = null;
       if (tf === "week") since = new Date(Date.now() - 7 * 86400000).toISOString();
@@ -54,7 +71,7 @@ function FeedLeaderboardPage() {
 
       let pq = supabase
         .from("match_participants")
-        .select("user_id, kills, prize_bac, joined_at, matches!inner(game_id, games!inner(name))")
+        .select("user_id, kills, prize_bac, joined_at, matches!inner(game_id, player_mode, games!inner(game_name))")
         .eq("result_applied", true)
         .limit(10000);
       if (since) pq = pq.gte("joined_at", since);
@@ -71,8 +88,10 @@ function FeedLeaderboardPage() {
 
       const agg = new Map<string, { kills: number; prize: number; matches: number; last: string | null }>();
       (parts ?? []).forEach((p: any) => {
-        const gname = p.matches?.games?.name ?? "";
+        const gname = p.matches?.games?.game_name ?? "";
+        const pmode = String(p.matches?.player_mode ?? "");
         if (!tabFilter(gname)) return;
+        if (mode !== "ALL" && pmode.toLowerCase() !== mode.toLowerCase()) return;
         const cur = agg.get(p.user_id) ?? { kills: 0, prize: 0, matches: 0, last: null };
         cur.kills += p.kills ?? 0;
         cur.prize += Number(p.prize_bac ?? 0);
@@ -84,10 +103,12 @@ function FeedLeaderboardPage() {
       const ids = Array.from(agg.keys());
       if (ids.length === 0) return [] as Row[];
 
-      const { data: profs } = await supabase
+      let profQ = supabase
         .from("profiles")
-        .select("id, username, avatar_url")
+        .select("id, username, avatar_url, country_code")
         .in("id", ids);
+      if (country !== "ALL") profQ = profQ.eq("country_code", country);
+      const { data: profs } = await profQ;
 
       const rows: Row[] = (profs ?? []).map((p: any) => {
         const a = agg.get(p.id)!;
@@ -109,6 +130,7 @@ function FeedLeaderboardPage() {
       return rows.slice(0, 100);
     },
   });
+
 
   const rows = q.data ?? [];
   const podium = rows.slice(0, 3);
@@ -174,8 +196,21 @@ function FeedLeaderboardPage() {
             onClick={() => setTf(tf === "all" ? "week" : tf === "week" ? "month" : "all")}
             color="red"
           />
-          <FilterChip label="🇮🇳 India" />
-          <FilterChip label="Squad" icon={<Users size={13} />} />
+          <SelectChip
+            value={country}
+            onChange={setCountry}
+            options={COUNTRY_OPTIONS.map((c) => ({ value: c.code, label: `${c.flag} ${c.name}` }))}
+          />
+          <SelectChip
+            value={mode}
+            onChange={(v) => setMode(v as ModeFilter)}
+            options={[
+              { value: "ALL", label: "👥 All Modes" },
+              { value: "Solo", label: "👤 Solo" },
+              { value: "Duo", label: "👬 Duo" },
+              { value: "Squad", label: "👥 Squad" },
+            ]}
+          />
         </div>
 
         {/* Podium */}
@@ -262,6 +297,31 @@ function FilterChip({
       <span>{label}</span>
       <ChevronDown size={13} className="opacity-70" />
     </button>
+  );
+}
+
+function SelectChip({
+  value, onChange, options,
+}: { value: string; onChange: (v: string) => void; options: { value: string; label: string }[] }) {
+  const current = options.find((o) => o.value === value) ?? options[0];
+  return (
+    <div className="relative inline-flex items-center">
+      <span className="pointer-events-none inline-flex items-center gap-1.5 rounded-full border border-border/60 px-3 py-1.5 text-[12px] font-medium text-foreground/80">
+        {current.label}
+        <ChevronDown size={13} className="opacity-70" />
+      </span>
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="absolute inset-0 cursor-pointer opacity-0"
+      >
+        {options.map((o) => (
+          <option key={o.value} value={o.value} className="bg-background text-foreground">
+            {o.label}
+          </option>
+        ))}
+      </select>
+    </div>
   );
 }
 
