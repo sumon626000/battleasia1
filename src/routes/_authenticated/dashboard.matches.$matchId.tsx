@@ -48,9 +48,10 @@ function MatchDetailPage() {
     queryFn: async () => {
       const { data } = await supabase
         .from("match_participants")
-        .select("id, status, kills, rank_position, prize_bac, joined_at, profiles:user_id (in_game_username, country_code, pubg_id)")
+        .select("id, status, kills, rank_position, prize_bac, joined_at, profiles:user_id (in_game_username, country_code, pubg_id, avatar_url, email)")
         .eq("match_id", id)
         .order("rank_position", { ascending: true, nullsFirst: false })
+        .order("kills", { ascending: false, nullsFirst: false })
         .order("joined_at", { ascending: true });
       return data ?? [];
     },
