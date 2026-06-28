@@ -1,9 +1,10 @@
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
+import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
-import { Trophy, Eye, Loader2 } from "lucide-react";
+import { Trophy, Eye, Loader2, KeyRound, Copy, Check, ExternalLink } from "lucide-react";
 import { CoinIcon } from "@/components/site/CoinIcon";
 import { randomBanner } from "@/lib/match-banners";
 import { format } from "date-fns";
@@ -43,7 +44,8 @@ function MyMatchesPage() {
             id, match_name, map_name, schedule_at, status, game_mode, player_mode,
             reward_type, kill_rate_type, per_kill_amount_bac,
             rank_1_prize_bac, rank_2_prize_bac, rank_3_prize_bac,
-            entry_fee_bac, banner_image_url, total_players
+            entry_fee_bac, banner_image_url, total_players,
+            room_id, room_password, match_url, private_description
           )
         `)
         .eq("user_id", user!.id)
@@ -162,12 +164,37 @@ function SummaryItem({ label, value, accent }: { label: string; value: number | 
 
 function MatchCard({ p }: { p: any }) {
   const m = p.match;
+  const [showCreds, setShowCreds] = useState(false);
+  const [copied, setCopied] = useState<"id" | "pw" | null>(null);
   if (!m) return null;
   const status = m.status?.toLowerCase();
   const done = p.result_applied || status === "completed";
   const won = done && Number(p.prize_bac || 0) > 0;
   const lost = done && !won;
   const pending = !done;
+
+  async function copyText(e: React.MouseEvent, text: string, which: "id" | "pw") {
+    e.preventDefault();
+    e.stopPropagation();
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(which);
+      toast.success("Copied to clipboard");
+      setTimeout(() => setCopied(null), 1500);
+    } catch {
+      toast.error("Copy failed");
+    }
+  }
+
+  function toggleCreds(e: React.MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!m.room_id && !m.room_password) {
+      toast.info("Room ID & Password will be shared before match starts");
+      return;
+    }
+    setShowCreds((v) => !v);
+  }
   const entryFree = Number(m.entry_fee_bac || 0) === 0;
 
   const badge = won
@@ -245,6 +272,65 @@ function MatchCard({ p }: { p: any }) {
           <div className="font-mono text-[10px] text-muted-foreground uppercase">Kills</div>
           <div className="font-display text-sm">{p.kills ?? 0}</div>
         </div>
+
+
+        {/* Room ID & Password reveal */}
+        <button
+          type="button"
+          onClick={toggleCreds}
+          className="mt-1 inline-flex items-center gap-1 font-mono text-[10px] font-bold uppercase tracking-widest text-amber-300 underline-offset-2 hover:underline"
+        >
+          <KeyRound className="w-3 h-3" /> ID &amp; PASSWORD
+        </button>
+
+        {showCreds && (m.room_id || m.room_password) && (
+          <div className="space-y-1.5 rounded border border-amber-500/40 bg-amber-500/5 p-2">
+            {m.room_id && (
+              <div className="flex items-center justify-between gap-2">
+                <div className="min-w-0">
+                  <div className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">Room ID</div>
+                  <div className="truncate font-mono text-xs text-amber-300">{m.room_id}</div>
+                </div>
+                <button
+                  type="button"
+                  onClick={(e) => copyText(e, String(m.room_id), "id")}
+                  className="flex items-center gap-1 rounded border border-amber-500/60 px-2 py-1 font-mono text-[9px] font-bold uppercase tracking-widest text-amber-300 hover:bg-amber-500 hover:text-black"
+                >
+                  {copied === "id" ? <><Check className="w-2.5 h-2.5"/> COPIED</> : <><Copy className="w-2.5 h-2.5"/> COPY</>}
+                </button>
+              </div>
+            )}
+            {m.room_password && (
+              <div className="flex items-center justify-between gap-2">
+                <div className="min-w-0">
+                  <div className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">Password</div>
+                  <div className="truncate font-mono text-xs text-amber-300">{m.room_password}</div>
+                </div>
+                <button
+                  type="button"
+                  onClick={(e) => copyText(e, String(m.room_password), "pw")}
+                  className="flex items-center gap-1 rounded border border-amber-500/60 px-2 py-1 font-mono text-[9px] font-bold uppercase tracking-widest text-amber-300 hover:bg-amber-500 hover:text-black"
+                >
+                  {copied === "pw" ? <><Check className="w-2.5 h-2.5"/> COPIED</> : <><Copy className="w-2.5 h-2.5"/> COPY</>}
+                </button>
+              </div>
+            )}
+            {m.match_url && (
+              <a
+                href={m.match_url}
+                target="_blank"
+                rel="noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                className="inline-flex items-center gap-1 font-mono text-[10px] text-amber-300 hover:underline"
+              >
+                Open match link <ExternalLink className="w-2.5 h-2.5" />
+              </a>
+            )}
+            {m.private_description && (
+              <p className="text-[10px] text-muted-foreground">{m.private_description}</p>
+            )}
+          </div>
+        )}
 
         <button className="mt-2 w-full inline-flex items-center justify-center gap-2 py-2 rounded bg-rose-500 hover:bg-rose-400 text-white font-mono text-xs uppercase tracking-wider transition">
           <Eye className="w-3.5 h-3.5" /> View Details
