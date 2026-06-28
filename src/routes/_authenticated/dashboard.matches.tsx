@@ -805,7 +805,7 @@ function HubMatchRow({
   // Status badge + button color theme
   const theme = isLive
     ? { badge: "LIVE", badgeCls: "bg-red-500 text-white", btnCls: "bg-red-500 hover:bg-red-600 text-white border-red-500", label: "JOIN NOW", accent: "text-red-400" }
-    : { badge: "UPCOMING", badgeCls: "bg-blue-500/90 text-white", btnCls: "border border-blue-400/70 text-blue-300 hover:bg-blue-500/15", label: "REGISTER", accent: "text-blue-300" };
+    : { badge: "UPCOMING", badgeCls: "bg-blue-500/90 text-white", btnCls: "border border-blue-400/70 text-blue-300 hover:bg-blue-500/15", label: "JOIN NOW", accent: "text-blue-300" };
 
   return (
     <Link
