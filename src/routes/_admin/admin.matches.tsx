@@ -441,7 +441,7 @@ function EditorModal({
             <Select label="Set Kill Rate" required value={draft.kill_rate_type} options={KILL_TYPE} onChange={(v) => upd({ kill_rate_type: v })} />
 
             <Field label="Entry Fee" required>
-              <input type="number" className={inp} value={draft.entry_fee_bac ?? 0} onChange={(e) => upd({ entry_fee_bac: Number(e.target.value) })} />
+              <input type="number" min={0} className={inp} value={draft.entry_fee_bac ?? ""} onChange={(e) => upd({ entry_fee_bac: e.target.value === "" ? undefined : Number(e.target.value) })} />
             </Field>
 
             <Field label="Per Kill">
