@@ -2274,6 +2274,7 @@ export type Database = {
       increment_feed_view: { Args: { p_post_id: number }; Returns: undefined }
       is_admin: { Args: never; Returns: boolean }
       is_blocked_between: { Args: { a: string; b: string }; Returns: boolean }
+      is_super_admin: { Args: never; Returns: boolean }
       join_match: { Args: { p_match_id: number }; Returns: number }
       mark_notifications_read: { Args: { p_ids?: number[] }; Returns: number }
       mark_ticket_read: { Args: { p_ticket_id: number }; Returns: undefined }
