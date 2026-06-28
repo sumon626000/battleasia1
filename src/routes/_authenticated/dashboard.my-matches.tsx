@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { Trophy, Eye, Loader2 } from "lucide-react";
 import { CoinIcon } from "@/components/site/CoinIcon";
+import { randomBanner } from "@/lib/match-banners";
 import { format } from "date-fns";
 
 export const Route = createFileRoute("/_authenticated/dashboard/my-matches")({
@@ -185,19 +186,13 @@ function MatchCard({ p }: { p: any }) {
     >
       {/* Banner */}
       <div className="relative aspect-[4/3] bg-muted/20 overflow-hidden">
-        {m.banner_image_url ? (
-          <img
-            loading="lazy"
-            decoding="async"
-            src={m.banner_image_url}
-            alt={m.match_name}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-            <Trophy className="w-10 h-10" />
-          </div>
-        )}
+        <img
+          loading="lazy"
+          decoding="async"
+          src={m.banner_image_url || randomBanner(m.id)}
+          alt={m.match_name}
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+        />
         {/* Top-left tags */}
         <div className="absolute top-2 left-2 flex gap-1.5">
           <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${entryFree ? "bg-red-500 text-white" : "bg-primary text-primary-foreground"}`}>
