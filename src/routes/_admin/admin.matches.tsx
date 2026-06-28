@@ -50,6 +50,18 @@ const MATCH_TYPE = ["Free", "Paid", "Sponsored"] as const;
 const GAME_MODE = ["Classic", "Arcade", "EvoGround", "Arena", "TDM"] as const;
 const PLAYER_MODE = ["Solo", "Duo", "Squad"] as const;
 const MAP_OPTIONS = ["Erangel", "Miramar", "Sanhok", "Vikendi", "Livik", "Karakin", "Paramo", "Haven", "Rondo", "Nusa"] as const;
+const MAP_IMAGES: Record<string, string> = {
+  Erangel: "/banners/erangel-sunset.jpg",
+  Miramar: "/banners/miramar-convoy.jpg",
+  Sanhok: "/banners/sanhok-jungle.jpg",
+  Vikendi: "/banners/vikendi-snow.jpg",
+  Livik: "/banners/night-ops.jpg",
+  Karakin: "/banners/warzone.jpg",
+  Paramo: "/banners/soldier.jpg",
+  Haven: "/banners/sniper.jpg",
+  Rondo: "/banners/squad-team.jpg",
+  Nusa: "/banners/tdm.jpg",
+};
 const REWARD_TYPE = ["KillBased", "RankBased", "Mixed"] as const;
 const KILL_TYPE = ["PerKill", "Total"] as const;
 
