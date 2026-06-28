@@ -37,6 +37,7 @@ type Post = {
   created_at: string;
   author?: { username: string | null; full_name: string | null; avatar_url: string | null } | null;
   liked_by_me?: boolean;
+  following_author?: boolean;
 };
 
 function timeAgo(d: string) {
@@ -111,7 +112,7 @@ function FeedPage() {
         .in("post_id", list.map((p) => p.id));
       likedSet = new Set((likes ?? []).map((l: any) => l.post_id));
     }
-    setPosts(list.map((p) => ({ ...p, author: profileMap[p.user_id] ?? null, liked_by_me: likedSet.has(p.id) })));
+    setPosts(list.map((p) => ({ ...p, author: profileMap[p.user_id] ?? null, liked_by_me: likedSet.has(p.id), following_author: followingIds.has(p.user_id) })));
     setLoading(false);
   }
 
@@ -152,6 +153,26 @@ function FeedPage() {
       await supabase.from("social_likes").delete().eq("post_id", post.id).eq("user_id", user.id);
     } else {
       await supabase.from("social_likes").insert({ post_id: post.id, user_id: user.id });
+    }
+  }
+
+  async function toggleFollow(post: Post) {
+    if (!user) return toast.error("Sign in to follow");
+    if (post.user_id === user.id) return;
+    const willFollow = !post.following_author;
+    // optimistic across all posts by same author
+    setPosts((prev) => prev.map((p) => (p.user_id === post.user_id ? { ...p, following_author: willFollow } : p)));
+    try {
+      if (willFollow) {
+        const { error } = await supabase.from("user_follows").insert({ follower_id: user.id, following_id: post.user_id });
+        if (error) throw error;
+      } else {
+        const { error } = await supabase.from("user_follows").delete().eq("follower_id", user.id).eq("following_id", post.user_id);
+        if (error) throw error;
+      }
+    } catch (e: any) {
+      toast.error(e.message || "Action failed");
+      setPosts((prev) => prev.map((p) => (p.user_id === post.user_id ? { ...p, following_author: !willFollow } : p)));
     }
   }
 
@@ -210,7 +231,7 @@ function FeedPage() {
         ) : (
           <ul className="space-y-6">
             {posts.map((p) => (
-              <PostCard key={p.id} post={p} onLike={() => toggleLike(p)} />
+              <PostCard key={p.id} post={p} onLike={() => toggleLike(p)} onFollow={() => toggleFollow(p)} isSelf={user?.id === p.user_id} />
             ))}
           </ul>
         )}
@@ -249,7 +270,7 @@ function FeedPage() {
 
 
 
-function PostCard({ post, onLike }: { post: Post; onLike: () => void }) {
+function PostCard({ post, onLike, onFollow, isSelf }: { post: Post; onLike: () => void; onFollow: () => void; isSelf: boolean }) {
   const handle = post.author?.username || post.author?.full_name || "player";
   const initials = handle.slice(0, 2).toUpperCase();
   const [showComments, setShowComments] = useState(false);
@@ -313,6 +334,18 @@ function PostCard({ post, onLike }: { post: Post; onLike: () => void }) {
             {timeAgo(post.created_at)} ago · View post
           </Link>
         </div>
+        {!isSelf && post.author?.username && (
+          <button
+            onClick={onFollow}
+            className={`shrink-0 rounded-md px-2.5 py-1 font-hud text-[10px] font-bold uppercase tracking-widest transition ${
+              post.following_author
+                ? "border border-gold/40 bg-gold/10 text-gold"
+                : "border border-gold bg-gold text-background hover:bg-gold/90"
+            }`}
+          >
+            {post.following_author ? "Following" : "Follow"}
+          </button>
+        )}
         <Link
           to="/post/$postId"
           params={{ postId: post.id }}
