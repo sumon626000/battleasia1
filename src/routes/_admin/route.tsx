@@ -27,13 +27,30 @@ function isAdminFresh(): boolean {
 
 function AdminLayout() {
   const navigate = useNavigate();
-  const [state, setState] = useState<"checking" | "login" | "ok">("checking");
+  const [state, setState] = useState<"checking" | "login" | "no-supabase" | "ok">("checking");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
+  const [supaEmail, setSupaEmail] = useState<string | null>(null);
+
+  async function verifySupabaseAdmin(): Promise<boolean> {
+    const { data: sess } = await supabase.auth.getSession();
+    setSupaEmail(sess.session?.user?.email ?? null);
+    if (!sess.session) return false;
+    const { data, error } = await supabase.rpc("is_admin");
+    if (error) return false;
+    return !!data;
+  }
 
   useEffect(() => {
-    setState(isAdminFresh() ? "ok" : "login");
+    (async () => {
+      if (!isAdminFresh()) {
+        setState("login");
+        return;
+      }
+      const ok = await verifySupabaseAdmin();
+      setState(ok ? "ok" : "no-supabase");
+    })();
   }, []);
 
   function submit(e: React.FormEvent) {
