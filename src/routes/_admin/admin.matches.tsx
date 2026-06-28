@@ -48,6 +48,7 @@ const STATUS = ["Upcoming", "Active", "Ongoing", "Complete", "Cancelled"] as con
 const MATCH_TYPE = ["Free", "Paid", "Sponsored"] as const;
 const GAME_MODE = ["Classic", "Arcade", "EvoGround", "Arena", "TDM"] as const;
 const PLAYER_MODE = ["Solo", "Duo", "Squad"] as const;
+const MAP_OPTIONS = ["Erangel", "Miramar", "Sanhok", "Vikendi", "Livik", "Karakin", "Paramo", "Haven", "Rondo", "Nusa"] as const;
 const REWARD_TYPE = ["KillBased", "RankBased", "Mixed"] as const;
 const KILL_TYPE = ["PerKill", "Total"] as const;
 
@@ -280,7 +281,7 @@ function EditorModal({
 
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
           <Field label="Match Name" required><input className={inp} value={draft.match_name ?? ""} onChange={(e) => upd({ match_name: e.target.value })} /></Field>
-          <Field label="Map" required><input className={inp} value={draft.map_name ?? ""} onChange={(e) => upd({ map_name: e.target.value })} /></Field>
+          <Select label="Map" value={draft.map_name} options={MAP_OPTIONS} onChange={(v) => upd({ map_name: v })} />
           <Field label="Schedule (local)" required><input type="datetime-local" className={inp} value={draft.schedule_at ?? ""} onChange={(e) => upd({ schedule_at: e.target.value })} /></Field>
           <Field label="Total Players" required><input type="number" className={inp} value={draft.total_players ?? 0} onChange={(e) => upd({ total_players: Number(e.target.value) })} /></Field>
 
@@ -369,10 +370,11 @@ function Field({ label, required, children }: { label: string; required?: boolea
   );
 }
 
-function Select<T extends string>({ label, value, options, onChange }: { label: string; value: T | undefined; options: readonly T[]; onChange: (v: T) => void }) {
+function Select<T extends string>({ label, value, options, onChange, required, placeholder }: { label: string; value: T | undefined; options: readonly T[]; onChange: (v: T) => void; required?: boolean; placeholder?: string }) {
   return (
-    <Field label={label}>
+    <Field label={label} required={required}>
       <select className={inp} value={value ?? ""} onChange={(e) => onChange(e.target.value as T)}>
+        <option value="" disabled>{placeholder ?? `Select ${label}`}</option>
         {options.map((o) => <option key={o} value={o}>{o}</option>)}
       </select>
     </Field>
