@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
-import { Trophy, Target, Calendar, ChevronRight, Crosshair, Award, Loader2, Filter } from "lucide-react";
+import { Trophy, Eye, Loader2 } from "lucide-react";
 import { CoinIcon } from "@/components/site/CoinIcon";
 import { format } from "date-fns";
 
@@ -24,7 +24,7 @@ export const Route = createFileRoute("/_authenticated/dashboard/my-matches")({
   notFoundComponent: () => <div className="hud-panel p-6 font-mono">Not found.</div>,
 });
 
-type Tab = "all" | "upcoming" | "active" | "completed";
+type Tab = "all" | "wins" | "losses" | "pending";
 
 function MyMatchesPage() {
   const { user } = useAuth();
@@ -53,28 +53,32 @@ function MyMatchesPage() {
   });
 
   const stats = useMemo(() => {
-    if (!data) return { total: 0, wins: 0, kills: 0, prize: 0, spent: 0 };
+    if (!data) return { total: 0, wins: 0, losses: 0, prize: 0 };
     return data.reduce(
       (acc, p: any) => {
         acc.total += 1;
-        acc.kills += p.kills || 0;
         acc.prize += Number(p.prize_bac || 0);
-        acc.spent += Number(p.entry_fee_bac || 0);
-        if (p.rank_position && p.rank_position <= 3) acc.wins += 1;
+        const done = p.result_applied || p.match?.status?.toLowerCase() === "completed";
+        if (done) {
+          if (Number(p.prize_bac || 0) > 0) acc.wins += 1;
+          else acc.losses += 1;
+        }
         return acc;
       },
-      { total: 0, wins: 0, kills: 0, prize: 0, spent: 0 }
+      { total: 0, wins: 0, losses: 0, prize: 0 }
     );
   }, [data]);
 
   const filtered = useMemo(() => {
     if (!data) return [];
-    if (tab === "all") return data;
     return data.filter((p: any) => {
-      const s = p.match?.status?.toLowerCase();
-      if (tab === "upcoming") return s === "upcoming";
-      if (tab === "active") return s === "active";
-      if (tab === "completed") return s === "completed" || p.result_applied;
+      const done = p.result_applied || p.match?.status?.toLowerCase() === "completed";
+      const won = done && Number(p.prize_bac || 0) > 0;
+      const lost = done && Number(p.prize_bac || 0) <= 0;
+      if (tab === "all") return true;
+      if (tab === "wins") return won;
+      if (tab === "losses") return lost;
+      if (tab === "pending") return !done;
       return true;
     });
   }, [data, tab]);
@@ -93,26 +97,30 @@ function MyMatchesPage() {
         </div>
       </header>
 
-      <section className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <StatTile icon={<Target className="w-4 h-4" />} label="Joined" value={stats.total} />
-        <StatTile icon={<Award className="w-4 h-4" />} label="Top 3 Finishes" value={stats.wins} />
-        <StatTile icon={<Crosshair className="w-4 h-4" />} label="Total Kills" value={stats.kills} />
-        <StatTile
-          icon={<CoinIcon className="w-4 h-4" />}
-          label="Net BAC"
-          value={(stats.prize - stats.spent).toFixed(0)}
-          accent={stats.prize - stats.spent >= 0 ? "text-emerald-400" : "text-red-400"}
-        />
+      {/* Top summary row like reference */}
+      <section className="hud-panel p-4 flex flex-wrap items-center gap-x-8 gap-y-2">
+        <SummaryItem label="Total Matches" value={stats.total} />
+        <SummaryItem label="Wins" value={stats.wins} accent="text-emerald-400" />
+        <SummaryItem label="Losses" value={stats.losses} accent="text-red-400" />
+        <div>
+          <div className="font-mono text-[10px] uppercase tracking-wider text-amber-400">Total Prize</div>
+          <div className="font-display text-lg flex items-center gap-1.5 text-amber-300">
+            <CoinIcon className="w-4 h-4" />
+            {stats.prize.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+          </div>
+        </div>
       </section>
 
-      <div className="hud-panel p-2 flex flex-wrap gap-1">
-        <Filter className="w-4 h-4 ml-2 my-auto text-muted-foreground" />
-        {(["all", "upcoming", "active", "completed"] as Tab[]).map((t) => (
+      {/* Tabs */}
+      <div className="border-b border-border/60 flex gap-1 overflow-x-auto">
+        {(["all", "wins", "losses", "pending"] as Tab[]).map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
-            className={`px-4 py-2 font-mono text-xs uppercase tracking-wider transition ${
-              tab === t ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
+            className={`px-5 py-3 font-mono text-xs uppercase tracking-wider transition border-b-2 -mb-px ${
+              tab === t
+                ? "border-primary text-primary"
+                : "border-transparent text-muted-foreground hover:text-foreground"
             }`}
           >
             {t}
@@ -132,105 +140,121 @@ function MyMatchesPage() {
           </Link>
         </div>
       ) : (
-        <ul className="space-y-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {filtered.map((p: any) => (
-            <MatchRow key={p.id} p={p} />
+            <MatchCard key={p.id} p={p} />
           ))}
-        </ul>
+        </div>
       )}
     </div>
   );
 }
 
-function StatTile({
-  icon, label, value, accent,
-}: { icon: React.ReactNode; label: string; value: number | string; accent?: string }) {
+function SummaryItem({ label, value, accent }: { label: string; value: number | string; accent?: string }) {
   return (
-    <div className="hud-panel p-4">
-      <div className="flex items-center gap-2 text-muted-foreground">
-        {icon}
-        <span className="font-mono text-[10px] uppercase tracking-wider">{label}</span>
-      </div>
-      <div className={`font-display text-2xl mt-1 ${accent ?? "text-foreground"}`}>{value}</div>
+    <div>
+      <div className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">{label}</div>
+      <div className={`font-display text-lg ${accent ?? "text-foreground"}`}>{value}</div>
     </div>
   );
 }
 
-function MatchRow({ p }: { p: any }) {
+function MatchCard({ p }: { p: any }) {
   const m = p.match;
   if (!m) return null;
   const status = m.status?.toLowerCase();
-  const isDone = p.result_applied || status === "completed";
-  const won = p.rank_position && p.rank_position <= 3;
-  const net = Number(p.prize_bac || 0) - Number(p.entry_fee_bac || 0);
+  const done = p.result_applied || status === "completed";
+  const won = done && Number(p.prize_bac || 0) > 0;
+  const lost = done && !won;
+  const pending = !done;
+  const entryFree = Number(m.entry_fee_bac || 0) === 0;
+
+  const badge = won
+    ? { label: "WON", cls: "bg-emerald-500 text-white" }
+    : lost
+    ? { label: "LOST", cls: "bg-zinc-400 text-zinc-900" }
+    : pending
+    ? { label: "PENDING", cls: "bg-amber-400 text-black" }
+    : { label: m.status?.toUpperCase() ?? "—", cls: "bg-zinc-700 text-white" };
 
   return (
-    <li>
-      <Link
-        to="/dashboard/matches/$matchId"
-        params={{ matchId: String(m.id) }}
-        className="hud-panel block p-4 hover:border-primary/50 transition"
-      >
-        <div className="flex items-center gap-4">
-          <div className="hidden sm:block w-16 h-16 border border-border bg-muted/20 overflow-hidden shrink-0">
-            {m.banner_image_url ? (
-              <img loading="lazy" decoding="async" src={m.banner_image_url} alt="" className="w-full h-full object-cover" />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-                <Trophy className="w-6 h-6" />
-              </div>
-            )}
+    <Link
+      to="/dashboard/matches/$matchId"
+      params={{ matchId: String(m.id) }}
+      className="hud-panel group overflow-hidden flex flex-col hover:border-primary/60 transition"
+    >
+      {/* Banner */}
+      <div className="relative aspect-[4/3] bg-muted/20 overflow-hidden">
+        {m.banner_image_url ? (
+          <img
+            loading="lazy"
+            decoding="async"
+            src={m.banner_image_url}
+            alt={m.match_name}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+            <Trophy className="w-10 h-10" />
           </div>
+        )}
+        {/* Top-left tags */}
+        <div className="absolute top-2 left-2 flex gap-1.5">
+          <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${entryFree ? "bg-red-500 text-white" : "bg-primary text-primary-foreground"}`}>
+            {entryFree ? "FREE" : "PAID"}
+          </span>
+          <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-black/60 text-white backdrop-blur-sm">
+            {m.map_name || "—"}
+          </span>
+        </div>
+        {/* Top-right status badge */}
+        <span className={`absolute top-2 right-2 text-[10px] font-bold px-2.5 py-0.5 rounded ${badge.cls}`}>
+          {badge.label}
+        </span>
+      </div>
 
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 flex-wrap">
-              <h3 className="font-display text-base tracking-wide truncate">{m.match_name}</h3>
-              <span className={`font-mono text-[10px] uppercase px-2 py-0.5 border ${
-                status === "active" ? "border-red-500 text-red-400 animate-pulse" :
-                status === "upcoming" ? "border-primary text-primary" :
-                "border-muted text-muted-foreground"
-              }`}>{m.status}</span>
-              {won && (
-                <span className="font-mono text-[10px] uppercase px-2 py-0.5 border border-amber-400 text-amber-400">
-                  RANK #{p.rank_position}
-                </span>
+      {/* Body */}
+      <div className="p-3 flex flex-col gap-2 flex-1">
+        <div className="flex items-center gap-1.5">
+          <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+          <h3 className="font-display text-sm tracking-wide truncate">{m.match_name}</h3>
+        </div>
+        <div className="font-mono text-[11px] text-red-400">
+          {format(new Date(m.schedule_at), "dd/MM/yyyy hh:mm a")}
+        </div>
+
+        <div className="grid grid-cols-2 gap-2 mt-1">
+          <div>
+            <div className="font-mono text-[10px] text-muted-foreground uppercase">Entry Fee</div>
+            <div className="flex items-center gap-1 font-display text-sm">
+              <CoinIcon className="w-3.5 h-3.5" />
+              {Number(p.entry_fee_bac || m.entry_fee_bac || 0).toFixed(0)}
+            </div>
+          </div>
+          <div>
+            <div className="font-mono text-[10px] text-emerald-400 uppercase">Prize Won</div>
+            <div className="flex items-center gap-1 font-display text-sm text-emerald-300">
+              {Number(p.prize_bac || 0) > 0 ? (
+                <>
+                  <CoinIcon className="w-3.5 h-3.5" />
+                  {Number(p.prize_bac).toFixed(2)}
+                </>
+              ) : (
+                <span className="text-muted-foreground">—</span>
               )}
             </div>
-            <div className="flex flex-wrap gap-3 mt-1 font-mono text-[11px] text-muted-foreground uppercase">
-              <span><Calendar className="inline w-3 h-3 mr-1" />{format(new Date(m.schedule_at), "dd MMM, HH:mm")}</span>
-              <span>{m.map_name}</span>
-              <span>{m.player_mode}</span>
-              <span>{m.reward_type}</span>
-            </div>
           </div>
-
-          <div className="text-right shrink-0">
-            {isDone ? (
-              <>
-                <div className="font-mono text-[10px] text-muted-foreground uppercase">Kills / Prize</div>
-                <div className="font-display text-base flex items-center justify-end gap-1">
-                  <Crosshair className="w-3.5 h-3.5 text-primary" />
-                  {p.kills}
-                  <span className="mx-1 text-muted-foreground">·</span>
-                  <CoinIcon className="w-3.5 h-3.5" />
-                  <span className={net >= 0 ? "text-emerald-400" : "text-red-400"}>
-                    {Number(p.prize_bac).toFixed(0)}
-                  </span>
-                </div>
-              </>
-            ) : (
-              <>
-                <div className="font-mono text-[10px] text-muted-foreground uppercase">Entry</div>
-                <div className="font-display text-base flex items-center justify-end gap-1">
-                  <CoinIcon className="w-3.5 h-3.5" />{Number(p.entry_fee_bac).toFixed(0)}
-                </div>
-              </>
-            )}
-          </div>
-
-          <ChevronRight className="w-5 h-5 text-muted-foreground shrink-0" />
         </div>
-      </Link>
-    </li>
+
+        <div>
+          <div className="font-mono text-[10px] text-muted-foreground uppercase">Kills</div>
+          <div className="font-display text-sm">{p.kills ?? 0}</div>
+        </div>
+
+        <button className="mt-2 w-full inline-flex items-center justify-center gap-2 py-2 rounded bg-rose-500 hover:bg-rose-400 text-white font-mono text-xs uppercase tracking-wider transition">
+          <Eye className="w-3.5 h-3.5" /> View Details
+        </button>
+      </div>
+    </Link>
   );
 }
