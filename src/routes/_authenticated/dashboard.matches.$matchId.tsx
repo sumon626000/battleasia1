@@ -48,9 +48,10 @@ function MatchDetailPage() {
     queryFn: async () => {
       const { data } = await supabase
         .from("match_participants")
-        .select("id, status, kills, rank_position, prize_bac, joined_at, profiles:user_id (in_game_username, country_code, pubg_id)")
+        .select("id, status, kills, rank_position, prize_bac, joined_at, profiles:user_id (in_game_username, country_code, pubg_id, avatar_url, email)")
         .eq("match_id", id)
         .order("rank_position", { ascending: true, nullsFirst: false })
+        .order("kills", { ascending: false, nullsFirst: false })
         .order("joined_at", { ascending: true });
       return data ?? [];
     },
@@ -171,28 +172,66 @@ function MatchDetailPage() {
 
           <div className="hud-panel p-4">
             <h2 className="font-hud text-sm font-bold uppercase tracking-widest text-gold">
-              {m.status === "Complete" ? "Results" : "Participants"} ({filled})
+              {m.status === "Complete" ? "Match Results" : "Participants"} ({filled})
             </h2>
-            <div className="mt-3 max-h-[500px] overflow-y-auto">
-              <table className="w-full text-xs">
+            <div className="mt-3 overflow-x-auto">
+              <table className="w-full min-w-[640px] text-xs">
                 <thead className="font-hud text-[10px] uppercase tracking-wider text-foreground/60">
                   <tr className="border-b border-border/60 text-left">
-                    <th className="py-2">#</th><th>Player</th><th className="text-center">Kills</th>
-                    <th className="text-center">Rank</th><th className="text-right">Prize</th>
+                    <th className="py-2 pr-2">Rank</th>
+                    <th className="pr-2">Player</th>
+                    <th className="pr-2 text-center">Entry Fee</th>
+                    <th className="pr-2 text-center">Kills</th>
+                    <th className="pr-2 text-center">Points</th>
+                    <th className="pr-2 text-right">Prize</th>
+                    {m.status === "Complete" && <th className="text-right">Status</th>}
                   </tr>
                 </thead>
                 <tbody className="font-mono">
-                  {(participants.data ?? []).map((p: any, i: number) => (
-                    <tr key={p.id} className="border-b border-border/30">
-                      <td className="py-2 text-foreground/50">{i + 1}</td>
-                      <td className="font-bold">{p.profiles?.in_game_username ?? "—"}</td>
-                      <td className="text-center">{p.kills ?? "—"}</td>
-                      <td className="text-center text-gold">{p.rank_position ? `#${p.rank_position}` : "—"}</td>
-                      <td className="text-right text-gold">{p.prize_bac ? `${p.prize_bac}` : "—"}</td>
-                    </tr>
-                  ))}
+                  {(participants.data ?? []).map((p: any, i: number) => {
+                    const prof = p.profiles ?? {};
+                    const kills = Number(p.kills ?? 0);
+                    const perKill = Number(m.per_kill_amount_bac ?? 0);
+                    const points = kills * (perKill || 1); // points = kills × per-kill rate
+                    const prize = Number(p.prize_bac ?? 0);
+                    const isWinner = prize > 0 || (p.rank_position && p.rank_position <= 3);
+                    const initials = (prof.in_game_username ?? "?").slice(0, 1).toUpperCase();
+                    return (
+                      <tr key={p.id} className="border-b border-border/30 hover:bg-gold/5">
+                        <td className="py-2.5 pr-2 font-bold text-foreground/80">{p.rank_position ?? (i + 1)}</td>
+                        <td className="pr-2">
+                          <div className="flex items-center gap-2">
+                            {prof.avatar_url ? (
+                              <img src={prof.avatar_url} alt="" className="h-7 w-7 rounded-full object-cover" />
+                            ) : (
+                              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-gold/20 font-bold text-gold">{initials}</div>
+                            )}
+                            <div className="min-w-0">
+                              <div className="truncate font-bold text-foreground">{prof.in_game_username ?? "—"}</div>
+                              {prof.email && <div className="truncate text-[10px] text-foreground/50">{prof.email}</div>}
+                            </div>
+                          </div>
+                        </td>
+                        <td className="pr-2 text-center">
+                          <span className="inline-flex items-center gap-1"><CoinIcon size={11} /> {fee}</span>
+                        </td>
+                        <td className="pr-2 text-center font-bold">{kills}</td>
+                        <td className="pr-2 text-center text-sky-400">{points ? points.toFixed(points % 1 ? 1 : 0) : 0}</td>
+                        <td className="pr-2 text-right text-gold">
+                          {prize ? <span className="inline-flex items-center gap-1"><CoinIcon size={11} /> {prize}</span> : "—"}
+                        </td>
+                        {m.status === "Complete" && (
+                          <td className="text-right">
+                            <span className={`rounded-sm px-2 py-0.5 font-hud text-[9px] font-bold uppercase tracking-widest ${
+                              isWinner ? "border border-emerald-500/60 bg-emerald-500/15 text-emerald-400" : "border border-red-500/40 bg-red-500/10 text-red-400"
+                            }`}>{isWinner ? "WINNER" : "LOSE"}</span>
+                          </td>
+                        )}
+                      </tr>
+                    );
+                  })}
                   {!participants.data?.length && (
-                    <tr><td colSpan={5} className="py-6 text-center text-foreground/40">No participants yet</td></tr>
+                    <tr><td colSpan={m.status === "Complete" ? 7 : 6} className="py-6 text-center text-foreground/40">No participants yet</td></tr>
                   )}
                 </tbody>
               </table>
