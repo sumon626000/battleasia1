@@ -22,7 +22,9 @@ export function DashboardBottomNav() {
           const active =
             item.href === "/dashboard"
               ? pathname === "/dashboard"
-              : pathname.startsWith(item.href);
+              : item.href === "/feed"
+                ? pathname === "/feed" || pathname.startsWith("/feed/") && !pathname.startsWith("/feed/leaderboard")
+                : pathname.startsWith(item.href);
           return (
             <li key={item.href}>
               <button
