@@ -97,7 +97,7 @@ export function DashboardTopbar({ profile, onOpenMobileNav }: Props) {
           </Link>
           <button
             onClick={signOut}
-            className="hidden h-9 w-9 place-items-center rounded-md border border-border/70 text-foreground/75 transition hover:border-destructive/60 hover:text-destructive sm:grid"
+            className="grid h-9 w-9 place-items-center rounded-md border border-border/70 text-foreground/75 transition hover:border-destructive/60 hover:text-destructive"
             aria-label="Sign out"
           >
             <LogOut size={15} />
