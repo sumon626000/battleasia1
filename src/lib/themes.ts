@@ -11,7 +11,7 @@ export interface ThemeConfig {
   sort_order: number;
 }
 
-export const DEFAULT_THEME: ThemeId = "amber";
+export const DEFAULT_THEME: ThemeId = "official";
 
 export function applyTheme(themeId: string) {
   if (typeof document === "undefined") return;
