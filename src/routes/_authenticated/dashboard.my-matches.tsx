@@ -273,6 +273,65 @@ function MatchCard({ p }: { p: any }) {
           <div className="font-display text-sm">{p.kills ?? 0}</div>
         </div>
 
+
+        {/* Room ID & Password reveal */}
+        <button
+          type="button"
+          onClick={toggleCreds}
+          className="mt-1 inline-flex items-center gap-1 font-mono text-[10px] font-bold uppercase tracking-widest text-amber-300 underline-offset-2 hover:underline"
+        >
+          <KeyRound className="w-3 h-3" /> ID &amp; PASSWORD
+        </button>
+
+        {showCreds && (m.room_id || m.room_password) && (
+          <div className="space-y-1.5 rounded border border-amber-500/40 bg-amber-500/5 p-2">
+            {m.room_id && (
+              <div className="flex items-center justify-between gap-2">
+                <div className="min-w-0">
+                  <div className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">Room ID</div>
+                  <div className="truncate font-mono text-xs text-amber-300">{m.room_id}</div>
+                </div>
+                <button
+                  type="button"
+                  onClick={(e) => copyText(e, String(m.room_id), "id")}
+                  className="flex items-center gap-1 rounded border border-amber-500/60 px-2 py-1 font-mono text-[9px] font-bold uppercase tracking-widest text-amber-300 hover:bg-amber-500 hover:text-black"
+                >
+                  {copied === "id" ? <><Check className="w-2.5 h-2.5"/> COPIED</> : <><Copy className="w-2.5 h-2.5"/> COPY</>}
+                </button>
+              </div>
+            )}
+            {m.room_password && (
+              <div className="flex items-center justify-between gap-2">
+                <div className="min-w-0">
+                  <div className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">Password</div>
+                  <div className="truncate font-mono text-xs text-amber-300">{m.room_password}</div>
+                </div>
+                <button
+                  type="button"
+                  onClick={(e) => copyText(e, String(m.room_password), "pw")}
+                  className="flex items-center gap-1 rounded border border-amber-500/60 px-2 py-1 font-mono text-[9px] font-bold uppercase tracking-widest text-amber-300 hover:bg-amber-500 hover:text-black"
+                >
+                  {copied === "pw" ? <><Check className="w-2.5 h-2.5"/> COPIED</> : <><Copy className="w-2.5 h-2.5"/> COPY</>}
+                </button>
+              </div>
+            )}
+            {m.match_url && (
+              <a
+                href={m.match_url}
+                target="_blank"
+                rel="noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                className="inline-flex items-center gap-1 font-mono text-[10px] text-amber-300 hover:underline"
+              >
+                Open match link <ExternalLink className="w-2.5 h-2.5" />
+              </a>
+            )}
+            {m.private_description && (
+              <p className="text-[10px] text-muted-foreground">{m.private_description}</p>
+            )}
+          </div>
+        )}
+
         <button className="mt-2 w-full inline-flex items-center justify-center gap-2 py-2 rounded bg-rose-500 hover:bg-rose-400 text-white font-mono text-xs uppercase tracking-wider transition">
           <Eye className="w-3.5 h-3.5" /> View Details
         </button>
