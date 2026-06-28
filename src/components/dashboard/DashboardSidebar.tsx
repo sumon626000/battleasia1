@@ -94,9 +94,9 @@ export function DashNavBody({ onNavigate }: { onNavigate?: () => void }) {
   const isActive = useActive();
   const { t } = useT();
   const isAdmin = useIsAdmin();
-  const initiallyOpen = (g: DashGroup) => g.items.some((i) => isActive(i.href));
-  const [open, setOpen] = useState<Record<string, boolean>>(() =>
-    Object.fromEntries(DASH_GROUPS.map((g) => [g.label, initiallyOpen(g)])),
+
+  const items = DASH_GROUPS.flatMap((g) =>
+    g.items.map((i) => ({ ...i, label: g.items.length === 1 ? g.label : t(i.key) })),
   );
 
   return (
@@ -110,72 +110,23 @@ export function DashNavBody({ onNavigate }: { onNavigate?: () => void }) {
         <span>Back to Home</span>
       </Link>
 
-      {DASH_GROUPS.map((group) => {
-        const Gicon = group.icon;
-        const isOpen = open[group.label] ?? false;
-        const hasActive = group.items.some((i) => isActive(i.href));
-        if (group.items.length === 1) {
-          const item = group.items[0];
-          const Icon = item.icon;
-          const active = isActive(item.href);
-          return (
-            <Link
-              key={group.label}
-              to={item.href}
-              onClick={onNavigate}
-              className={`mb-1 flex items-center gap-2 rounded-md border px-3 py-2 font-hud text-xs font-bold uppercase tracking-widest transition ${
-                active
-                  ? "border-gold/50 bg-gold/5 text-gold"
-                  : "border-transparent text-foreground/80 hover:border-border hover:bg-secondary/60 hover:text-gold"
-              }`}
-            >
-              <Icon size={14} />
-              <span>{group.label}</span>
-            </Link>
-          );
-        }
+      {items.map((item) => {
+        const Icon = item.icon;
+        const active = isActive(item.href);
         return (
-          <div key={group.label} className="mb-1">
-            <button
-              type="button"
-              onClick={() => setOpen((p) => ({ ...p, [group.label]: !p[group.label] }))}
-              className={`group flex w-full items-center gap-2 rounded-md border px-3 py-2 font-hud text-xs font-bold uppercase tracking-widest transition ${
-                hasActive
-                  ? "border-gold/50 bg-gold/5 text-gold"
-                  : "border-transparent text-foreground/80 hover:border-border hover:bg-secondary/60 hover:text-gold"
-              }`}
-            >
-              <Gicon size={14} />
-              <span className="flex-1 text-left">{group.label}</span>
-              <ChevronDown
-                size={14}
-                className={`transition-transform ${isOpen ? "rotate-180" : ""}`}
-              />
-            </button>
-            {isOpen && (
-              <div className="mt-1 ml-2 flex flex-col gap-0.5 border-l border-border/50 pl-2">
-                {group.items.map((item) => {
-                  const Icon = item.icon;
-                  const active = isActive(item.href);
-                  return (
-                    <Link
-                      key={item.href}
-                      to={item.href}
-                      onClick={onNavigate}
-                      className={`flex items-center gap-2 rounded px-3 py-1.5 font-hud text-[12px] tracking-wide transition ${
-                        active
-                          ? "bg-gold/15 text-gold"
-                          : "text-foreground/70 hover:bg-secondary/50 hover:text-gold"
-                      }`}
-                    >
-                      <Icon size={13} />
-                      <span className="uppercase">{t(item.key)}</span>
-                    </Link>
-                  );
-                })}
-              </div>
-            )}
-          </div>
+          <Link
+            key={item.href}
+            to={item.href}
+            onClick={onNavigate}
+            className={`flex items-center gap-2 rounded-md border px-3 py-2 font-hud text-xs font-bold uppercase tracking-widest transition ${
+              active
+                ? "border-gold/50 bg-gold/5 text-gold"
+                : "border-transparent text-foreground/80 hover:border-border hover:bg-secondary/60 hover:text-gold"
+            }`}
+          >
+            <Icon size={14} />
+            <span>{item.label}</span>
+          </Link>
         );
       })}
 
@@ -192,6 +143,7 @@ export function DashNavBody({ onNavigate }: { onNavigate?: () => void }) {
     </nav>
   );
 }
+
 
 export function DashboardSidebar() {
   return (
