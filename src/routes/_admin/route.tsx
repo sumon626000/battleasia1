@@ -53,26 +53,30 @@ function AdminLayout() {
     })();
   }, []);
 
-  function submit(e: React.FormEvent) {
+  async function submit(e: React.FormEvent) {
     e.preventDefault();
     setBusy(true);
-    setTimeout(() => {
-      if (
-        email.trim().toLowerCase() === ADMIN_EMAIL &&
-        password === ADMIN_PASSWORD
-      ) {
-        try {
-          sessionStorage.setItem(ADMIN_KEY, String(Date.now()));
-        } catch {
-          /* noop */
-        }
-        toast.success("Admin access granted");
-        setState("ok");
-      } else {
-        toast.error("Invalid admin credentials");
-      }
+    if (
+      email.trim().toLowerCase() !== ADMIN_EMAIL ||
+      password !== ADMIN_PASSWORD
+    ) {
+      toast.error("Invalid admin credentials");
       setBusy(false);
-    }, 200);
+      return;
+    }
+    try {
+      sessionStorage.setItem(ADMIN_KEY, String(Date.now()));
+    } catch {
+      /* noop */
+    }
+    const ok = await verifySupabaseAdmin();
+    if (ok) {
+      toast.success("Admin access granted");
+      setState("ok");
+    } else {
+      setState("no-supabase");
+    }
+    setBusy(false);
   }
 
   function signOut() {
