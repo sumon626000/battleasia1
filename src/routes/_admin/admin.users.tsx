@@ -194,6 +194,58 @@ function ActionModal({
               <Coins className="mr-1 inline h-3 w-3" /> Adjust
             </button>
           </div>
+
+          <div className="border-t border-border/40 pt-3">
+            <div className="flex items-center justify-between">
+              <label className="font-hud text-[10px] uppercase tracking-widest text-foreground/60">
+                Reset History
+              </label>
+              <button
+                type="button"
+                onClick={() =>
+                  setResetScopes(
+                    allScopesSelected
+                      ? {}
+                      : Object.fromEntries(RESET_SCOPES.map((s) => [s.key, true])),
+                  )
+                }
+                className="font-hud text-[10px] uppercase tracking-widest text-gold hover:underline"
+              >
+                {allScopesSelected ? "Clear all" : "Select all"}
+              </button>
+            </div>
+            <div className="mt-2 grid grid-cols-2 gap-1.5 rounded border border-border/50 bg-background/40 p-2">
+              {RESET_SCOPES.map((s) => (
+                <label key={s.key} className="flex cursor-pointer items-center gap-2 rounded px-1.5 py-1 text-xs hover:bg-secondary/40">
+                  <input
+                    type="checkbox"
+                    checked={!!resetScopes[s.key]}
+                    onChange={() => toggleScope(s.key)}
+                  />
+                  <span>{s.label}</span>
+                </label>
+              ))}
+            </div>
+            <button
+              disabled={busy || !Object.values(resetScopes).some(Boolean)}
+              onClick={() => {
+                const scopes = Object.entries(resetScopes).filter(([, v]) => v).map(([k]) => k);
+                if (!scopes.length) return;
+                if (!window.confirm(`Permanently delete the selected history (${scopes.length} type${scopes.length > 1 ? "s" : ""}) for this user? This cannot be undone.`)) return;
+                run(async () => {
+                  const { error } = await supabase.rpc("admin_reset_user_history", {
+                    p_user_id: user.id,
+                    p_scopes: scopes,
+                  });
+                  if (error) throw error;
+                  setResetScopes({});
+                }, "History reset");
+              }}
+              className="mt-2 inline-flex items-center gap-1.5 rounded border border-destructive/60 bg-destructive/10 px-3 py-1.5 font-hud text-xs uppercase tracking-widest text-destructive hover:bg-destructive/20 disabled:opacity-50"
+            >
+              <RotateCcw className="h-3 w-3" /> Reset Selected
+            </button>
+          </div>
         </div>
       </div>
     </div>
