@@ -1,0 +1,1 @@
+ALTER TYPE public.balance_log_type ADD VALUE IF NOT EXISTS 'theme_purchase';
