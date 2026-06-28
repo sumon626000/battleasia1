@@ -227,14 +227,18 @@ function DashboardPage() {
         </div>
       </section>
 
-      {/* DAILY LOGIN STREAK */}
-      <DailyLoginCard />
-
-      {/* DAILY QUESTS + SPIN WHEEL */}
-      <section className="grid gap-4 lg:grid-cols-2">
+      {/* DAILY LOGIN + QUESTS + SPIN — 3-column on XL desktop */}
+      <section className="grid gap-4 lg:grid-cols-2 xl:grid-cols-3">
+        <div className="xl:col-span-3 lg:col-span-2">
+          <DailyLoginCard />
+        </div>
         <DailyQuestsCard />
         <SpinWheelCard />
+        <div className="hidden xl:block">
+          <RankTierCard wins={stats.wins} kills={stats.totalKills} top3={stats.top3} />
+        </div>
       </section>
+
 
 
 
