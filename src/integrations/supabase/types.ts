@@ -301,6 +301,72 @@ export type Database = {
           },
         ]
       }
+      chatbot_knowledge: {
+        Row: {
+          answer: string
+          created_at: string
+          enabled: boolean
+          id: string
+          question: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          answer: string
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          question: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          answer?: string
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          question?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      chatbot_settings: {
+        Row: {
+          bubble_title: string
+          created_at: string
+          enabled: boolean
+          id: number
+          model: string
+          rate_limit_per_hour: number
+          system_prompt: string
+          updated_at: string
+          welcome_message: string
+        }
+        Insert: {
+          bubble_title?: string
+          created_at?: string
+          enabled?: boolean
+          id?: number
+          model?: string
+          rate_limit_per_hour?: number
+          system_prompt?: string
+          updated_at?: string
+          welcome_message?: string
+        }
+        Update: {
+          bubble_title?: string
+          created_at?: string
+          enabled?: boolean
+          id?: number
+          model?: string
+          rate_limit_per_hour?: number
+          system_prompt?: string
+          updated_at?: string
+          welcome_message?: string
+        }
+        Relationships: []
+      }
       coin_rates: {
         Row: {
           created_at: string
