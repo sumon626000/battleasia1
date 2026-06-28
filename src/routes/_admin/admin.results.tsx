@@ -48,7 +48,7 @@ function AdminResultsPage() {
   const [selectedId, setSelectedId] = useState<number | undefined>(matchId);
   const [description, setDescription] = useState("");
   const [imageUrl, setImageUrl] = useState("");
-  const [rows, setRows] = useState<Record<string, { status: string; kills: string }>>({});
+  const [rows, setRows] = useState<Record<string, { status: string; kills: string; prize: string }>>({});
   const [csvText, setCsvText] = useState("");
 
   useEffect(() => { if (matchId) setSelectedId(matchId); }, [matchId]);
