@@ -6,6 +6,7 @@ import logoShield from "@/assets/logo-shield.png";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import { LanguageSwitcher } from "@/components/site/LanguageSwitcher";
+import { ThemeSwitcher } from "@/components/site/ThemeSwitcher";
 import { useT } from "@/lib/i18n";
 
 const NAV_KEYS: { key: string; href: string; label?: string }[] = [
@@ -52,6 +53,7 @@ export function SiteHeader() {
           ))}
         </nav>
         <div className="hidden items-center gap-2 lg:flex">
+          <ThemeSwitcher />
           <LanguageSwitcher />
           {isAuthenticated ? (
             <>
@@ -72,6 +74,7 @@ export function SiteHeader() {
           )}
         </div>
         <div className="flex items-center gap-1 lg:hidden">
+          <ThemeSwitcher compact />
           <LanguageSwitcher compact />
           {isAuthenticated && (
             <button

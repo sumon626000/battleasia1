@@ -16,6 +16,7 @@ import { SiteShell } from "@/components/site/SiteShell";
 import { I18nProvider } from "@/lib/i18n";
 import { Toaster } from "@/components/ui/sonner";
 import { ChatWidget } from "@/components/site/ChatWidget";
+import { ThemeProvider } from "@/components/site/ThemeProvider";
 
 function NotFoundComponent() {
   return (
@@ -148,16 +149,18 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <I18nProvider>
-        {bareLayout ? (
-          <Outlet />
-        ) : (
-          <SiteShell>
-            {/* Required: nested routes render here. */}
+        <ThemeProvider>
+          {bareLayout ? (
             <Outlet />
-          </SiteShell>
-        )}
-        <Toaster position="top-right" richColors closeButton theme="dark" />
-        <ChatWidget />
+          ) : (
+            <SiteShell>
+              {/* Required: nested routes render here. */}
+              <Outlet />
+            </SiteShell>
+          )}
+          <Toaster position="top-right" richColors closeButton theme="dark" />
+          <ChatWidget />
+        </ThemeProvider>
       </I18nProvider>
     </QueryClientProvider>
   );

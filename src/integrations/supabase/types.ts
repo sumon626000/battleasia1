@@ -1328,6 +1328,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          active_theme: string | null
           avatar_url: string | null
           bac_coin_balance: number
           bio: string | null
@@ -1354,6 +1355,7 @@ export type Database = {
           username: string | null
         }
         Insert: {
+          active_theme?: string | null
           avatar_url?: string | null
           bac_coin_balance?: number
           bio?: string | null
@@ -1380,6 +1382,7 @@ export type Database = {
           username?: string | null
         }
         Update: {
+          active_theme?: string | null
           avatar_url?: string | null
           bac_coin_balance?: number
           bio?: string | null
@@ -2143,6 +2146,45 @@ export type Database = {
         }
         Relationships: []
       }
+      theme_config: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean
+          is_default: boolean
+          name: string
+          preview_color: string
+          price_bac: number
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id: string
+          is_active?: boolean
+          is_default?: boolean
+          name: string
+          preview_color?: string
+          price_bac?: number
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          is_default?: boolean
+          name?: string
+          preview_color?: string
+          price_bac?: number
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       user_blocks: {
         Row: {
           blocked_id: string
@@ -2293,6 +2335,38 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      user_theme_purchases: {
+        Row: {
+          id: string
+          price_paid_bac: number
+          purchased_at: string
+          theme_id: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          price_paid_bac?: number
+          purchased_at?: string
+          theme_id: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          price_paid_bac?: number
+          purchased_at?: string
+          theme_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_theme_purchases_theme_id_fkey"
+            columns: ["theme_id"]
+            isOneToOne: false
+            referencedRelation: "theme_config"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       website_settings: {
         Row: {
@@ -2538,6 +2612,7 @@ export type Database = {
         Args: { p_id: number; p_payload: Json }
         Returns: number
       }
+      admin_save_theme: { Args: { p_payload: Json }; Returns: string }
       admin_send_notification: {
         Args: {
           p_message: string
@@ -2611,6 +2686,7 @@ export type Database = {
         Returns: undefined
       }
       perform_spin: { Args: never; Returns: Json }
+      purchase_theme: { Args: { p_theme_id: string }; Returns: Json }
       record_login_event: {
         Args: {
           _browser: string
