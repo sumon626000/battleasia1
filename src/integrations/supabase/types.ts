@@ -2341,7 +2341,7 @@ export type Database = {
       toggle_feed_like: { Args: { p_post_id: number }; Returns: boolean }
     }
     Enums: {
-      app_role: "admin" | "moderator" | "user"
+      app_role: "admin" | "moderator" | "user" | "sub_admin" | "super_admin"
       audience_type: "all" | "selected"
       balance_log_type:
         | "deposit"
@@ -2528,7 +2528,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "moderator", "user"],
+      app_role: ["admin", "moderator", "user", "sub_admin", "super_admin"],
       audience_type: ["all", "selected"],
       balance_log_type: [
         "deposit",
