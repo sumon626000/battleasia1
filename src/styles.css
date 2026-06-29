@@ -32,9 +32,9 @@
   --color-gold-foreground: var(--gold-foreground);
   --color-success: var(--success);
   --color-live: var(--live);
-  --font-display: "Oswald", "Rajdhani", "Inter", sans-serif;
-  --font-hud: "Rajdhani", "Oswald", sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --font-display: "Rajdhani", "Inter", sans-serif;
+  --font-hud: "Rajdhani", "Inter", sans-serif;
+  --font-mono: ui-monospace, "SFMono-Regular", Menlo, monospace;
 
 }
 
