@@ -394,7 +394,18 @@ function DashboardPage() {
             </Link>
           </div>
           {recent.length === 0 ? (
-            <p className="font-mono text-xs text-foreground/70">No matches played yet.</p>
+            <div className="flex flex-col items-center justify-center gap-2 py-6 text-center">
+              <div className="grid h-12 w-12 place-items-center rounded-full border border-gold/30 bg-gold/5">
+                <Trophy size={20} className="text-gold/70" />
+              </div>
+              <p className="font-mono text-xs text-foreground/60">No matches played yet.</p>
+              <Link
+                to="/dashboard/matches"
+                className="mt-1 rounded border border-gold/60 bg-gold/10 px-3 py-1 font-hud text-[10px] font-bold uppercase tracking-widest text-gold hover:bg-gold hover:text-background"
+              >
+                Join your first match
+              </Link>
+            </div>
           ) : (
             <ul className="space-y-2">
               {recent.slice(0, 3).map((p) => {
