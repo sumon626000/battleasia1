@@ -1,8 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { convertToModelMessages, streamText, type UIMessage } from "ai";
-import { createClient } from "@supabase/supabase-js";
 import { createLovableAiGatewayProvider } from "@/lib/ai-gateway.server";
-import type { Database } from "@/integrations/supabase/types";
 
 export const Route = createFileRoute("/api/chat")({
   server: {
@@ -19,16 +17,12 @@ export const Route = createFileRoute("/api/chat")({
             return new Response("AI not configured", { status: 500 });
           }
 
-          // Fetch admin-configured settings + knowledge using public anon client
-          const supabase = createClient<Database>(
-            process.env.SUPABASE_URL!,
-            process.env.SUPABASE_PUBLISHABLE_KEY!,
-            { auth: { storage: undefined, persistSession: false, autoRefreshToken: false } },
-          );
+          // Use admin client to read chatbot config (system_prompt is now restricted)
+          const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
           const [{ data: settings }, { data: kb }] = await Promise.all([
-            supabase.from("chatbot_settings").select("*").eq("id", 1).maybeSingle(),
-            supabase
+            supabaseAdmin.from("chatbot_settings").select("*").eq("id", 1).maybeSingle(),
+            supabaseAdmin
               .from("chatbot_knowledge")
               .select("question, answer")
               .eq("enabled", true)

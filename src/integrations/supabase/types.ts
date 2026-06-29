@@ -2685,6 +2685,13 @@ export type Database = {
         Args: { p_message: string; p_subject: string }
         Returns: number
       }
+      get_match_credentials: {
+        Args: { _match_id: string }
+        Returns: {
+          room_id: string
+          room_password: string
+        }[]
+      }
       get_or_create_thread: { Args: { other_user: string }; Returns: string }
       has_role: {
         Args: {
