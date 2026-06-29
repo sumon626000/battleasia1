@@ -2648,6 +2648,10 @@ export type Database = {
         Args: { p_reason: string; p_user_id: string }
         Returns: undefined
       }
+      admin_unpublish_match_result: {
+        Args: { p_match_id: number }
+        Returns: number
+      }
       admin_unsuspend_user: { Args: { p_user_id: string }; Returns: undefined }
       admin_update_profile: {
         Args: {
