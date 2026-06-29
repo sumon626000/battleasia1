@@ -200,6 +200,23 @@ function DashboardPage() {
   const recent = (data?.participants ?? []).slice(0, 6);
   const upcoming = data?.upcoming ?? [];
 
+  // Personalized greeting
+  const greeting = useMemo(() => {
+    const h = new Date().getHours();
+    if (h < 5) return "Good night";
+    if (h < 12) return "Good morning";
+    if (h < 17) return "Good afternoon";
+    if (h < 21) return "Good evening";
+    return "Good night";
+  }, []);
+
+  // Level / XP from stats
+  const totalXp = stats.wins * 100 + stats.top3 * 50 + stats.played * 10 + stats.totalKills * 5;
+  const level = Math.max(1, Math.floor(totalXp / 200) + 1);
+  const xpForLevel = level * 200;
+  const xpInLevel = totalXp - (level - 1) * 200;
+  const xpPct = Math.min(100, Math.max(2, Math.round((xpInLevel / xpForLevel) * 100)));
+
   const quick = [
     { label: "Join Match", href: "/dashboard/matches", icon: Swords },
     { label: "Get BAC Coin", href: "/dashboard/vault", icon: WalletIcon },
