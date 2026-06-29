@@ -183,7 +183,8 @@ function DashboardPage() {
           style={{ backgroundImage: `url(${squadHero})` }}
         />
         <div aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-r from-background via-background/85 to-background/50" />
-        <div aria-hidden className="absolute inset-0 -z-10 bg-grid-hud opacity-[0.08]" />
+        <div aria-hidden className="absolute inset-0 -z-10 bg-grid-hud opacity-[0.08] animate-hud-grid-pulse" />
+        <div aria-hidden className="pointer-events-none absolute -top-1/2 left-0 -z-10 h-[200%] w-1/3 -skew-x-12 bg-gradient-to-r from-transparent via-gold/[0.06] to-transparent animate-hud-sweep" />
         <div className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
           <div className="min-w-0">
             <p className="font-hud text-[11px] uppercase tracking-[0.25em] text-gold/80">
