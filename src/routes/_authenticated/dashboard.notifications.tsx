@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
@@ -12,6 +12,7 @@ export const Route = createFileRoute("/_authenticated/dashboard/notifications")(
 type N = {
   id: number; title: string; message: string; type: string | null;
   read_at: string | null; archived_at: string | null; created_at: string;
+  link?: string | null;
 };
 
 function NotificationsPage() {
