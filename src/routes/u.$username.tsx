@@ -22,7 +22,7 @@ type Profile = {
   pubg_id: string | null;
   game_server: string | null;
   created_at: string;
-  premium_expires_at: string | null;
+  is_premium: boolean | null;
 };
 
 function PublicProfilePage() {
@@ -37,7 +37,7 @@ function PublicProfilePage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("profiles")
-        .select("id, username, display_name, avatar_url, country_code, pubg_id, game_server, created_at, premium_expires_at")
+        .select("id, username, display_name, avatar_url, country_code, pubg_id, game_server, created_at, is_premium")
         .ilike("username", username)
         .maybeSingle();
       if (error) throw error;
@@ -144,7 +144,7 @@ function PublicProfilePage() {
   if (q.isLoading) return <div className="p-12 text-center text-foreground/60">Loading…</div>;
   if (!q.data) return null;
   const { profile, stats, posts, followerCount, followingCount, isFollowing, isBlocked } = q.data;
-  const isPremium = profile.premium_expires_at && new Date(profile.premium_expires_at) > new Date();
+  const isPremium = !!profile.is_premium;
   const isSelf = user?.id === profile.id;
 
   return (
