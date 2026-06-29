@@ -45,6 +45,8 @@ import { PersonalBestsCard } from "@/components/dashboard/PersonalBestsCard";
 import { NotificationsDigest } from "@/components/dashboard/NotificationsDigest";
 import { QuickBalanceCard } from "@/components/dashboard/QuickBalanceCard";
 import { TipAndCheckInCard } from "@/components/dashboard/TipAndCheckInCard";
+import { TransactionsTimeline } from "@/components/dashboard/TransactionsTimeline";
+import { ProfileQuickEditDrawer } from "@/components/dashboard/ProfileQuickEditDrawer";
 import squadHero from "@/assets/pubg-squad-action.webp";
 import sniperImg from "@/assets/pubg-sniper-rooftop.webp";
 import airdropImg from "@/assets/pubg-airdrop.webp";
@@ -337,6 +339,9 @@ function DashboardPage() {
             <p className="mt-1 font-mono text-[11px] text-foreground/60">
               PUBG ID: {profile?.pubg_id ?? "—"} · Server: {profile?.game_server ?? "—"}
             </p>
+            <div className="mt-2">
+              <ProfileQuickEditDrawer profile={profile} />
+            </div>
             {/* Next match countdown pill */}
             {nextMatch && (nextSoon || nextLive) && (
               <Link
@@ -525,6 +530,10 @@ function DashboardPage() {
         <NotificationsDigest />
         <QuickBalanceCard balance={balance} />
       </section>
+
+      {/* TRANSACTIONS TIMELINE (Phase 18) */}
+      <TransactionsTimeline userId={uid} />
+
 
       {/* DAILY QUEST PROGRESS MINI */}
       <QuestProgressMini />

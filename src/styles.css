@@ -557,9 +557,50 @@
 }
 .animate-hud-ticker { animation: hud-ticker 40s linear infinite; }
 
-@media (prefers-reduced-motion: reduce) {
-  .animate-hud-grid-pulse, .animate-hud-sweep, .animate-hud-ticker { animation: none; }
+/* === Phase 20 polish: micro-animations === */
+@keyframes hud-fade-up {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
+.animate-hud-fade-up { animation: hud-fade-up 380ms ease-out both; }
+
+@keyframes hud-pop-in {
+  0%   { opacity: 0; transform: scale(0.92); }
+  60%  { opacity: 1; transform: scale(1.02); }
+  100% { transform: scale(1); }
+}
+.animate-hud-pop-in { animation: hud-pop-in 320ms cubic-bezier(.2,.9,.3,1.2) both; }
+
+@keyframes hud-shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.hud-skeleton {
+  background: linear-gradient(90deg,
+    hsl(var(--border) / 0.25) 0%,
+    hsl(var(--border) / 0.5) 50%,
+    hsl(var(--border) / 0.25) 100%);
+  background-size: 200% 100%;
+  animation: hud-shimmer 1.4s ease-in-out infinite;
+}
+
+/* Smooth focus rings on interactive HUD elements */
+.hud-panel { transition: border-color 200ms ease, box-shadow 200ms ease; }
+.hud-panel:hover { box-shadow: 0 0 0 1px hsl(var(--gold) / 0.08), 0 8px 24px -16px hsl(var(--gold) / 0.25); }
+
+/* Smoother scrollbars inside HUD panels */
+.hud-panel ::-webkit-scrollbar { width: 6px; height: 6px; }
+.hud-panel ::-webkit-scrollbar-thumb {
+  background: hsl(var(--gold) / 0.25);
+  border-radius: 3px;
+}
+.hud-panel ::-webkit-scrollbar-thumb:hover { background: hsl(var(--gold) / 0.5); }
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-hud-grid-pulse, .animate-hud-sweep, .animate-hud-ticker,
+  .animate-hud-fade-up, .animate-hud-pop-in, .hud-skeleton { animation: none; }
+}
+
 
 @utility mask-fade {
   mask-image: linear-gradient(90deg, transparent, black 8%, black 92%, transparent);
