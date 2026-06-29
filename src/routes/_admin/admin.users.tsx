@@ -1,13 +1,25 @@
 import { useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import {
   Search, ShieldCheck, ShieldOff, Coins, UserX, UserCheck, X, Download,
-  Columns3, Filter, Rows3, MoreVertical, Trash2, RotateCcw,
+  Columns3, Filter, Rows3, MoreVertical, Trash2, RotateCcw, Save,
 } from "lucide-react";
 import { exportRowsAsCSV } from "@/lib/csv";
+import { adminUpdateUserAuth } from "@/lib/admin-users.functions";
+
+const inpCls = "w-full rounded border border-border bg-background px-2 py-1.5 font-hud text-sm";
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div>
+      <div className="mb-1 font-hud text-[10px] uppercase tracking-widest text-foreground/60">{label}</div>
+      {children}
+    </div>
+  );
+}
 
 const RESET_SCOPES = [
   { key: "balance_logs", label: "Balance History" },
@@ -98,6 +110,7 @@ function ActionModal({
   user, onClose, isSuper,
 }: { user: Row; onClose: () => void; isSuper: boolean }) {
   const qc = useQueryClient();
+  const updateAuth = useServerFn(adminUpdateUserAuth);
   const [reason, setReason] = useState("");
   const [delta, setDelta] = useState("");
   const [note, setNote] = useState("");
@@ -106,6 +119,22 @@ function ActionModal({
   const [resetScopes, setResetScopes] = useState<Record<string, boolean>>({});
   const toggleScope = (k: string) => setResetScopes((s) => ({ ...s, [k]: !s[k] }));
   const allScopesSelected = RESET_SCOPES.every((s) => resetScopes[s.key]);
+
+  // Edit profile form
+  const [form, setForm] = useState({
+    username: user.username ?? "",
+    in_game_username: user.in_game_username ?? "",
+    pubg_id: user.pubg_id ?? "",
+    country_code: user.country_code ?? "",
+    mobile_number: user.mobile_number ?? "",
+    game_server: user.game_server ?? "",
+    referral_code: user.referral_code ?? "",
+    avatar_url: "",
+    email: "",
+    password: "",
+    is_active: !user.is_suspended,
+  });
+  const setF = (k: keyof typeof form, v: string | boolean) => setForm((s) => ({ ...s, [k]: v }));
 
   const refresh = () => {
     qc.invalidateQueries({ queryKey: ["admin-users"] });
@@ -118,16 +147,93 @@ function ActionModal({
     finally { setBusy(false); }
   };
 
+  const saveProfile = () =>
+    run(async () => {
+      const { error } = await supabase.rpc("admin_update_profile", {
+        p_user_id: user.id,
+        p_username: form.username || undefined,
+        p_in_game_username: form.in_game_username || undefined,
+        p_pubg_id: form.pubg_id || undefined,
+        p_country_code: form.country_code || undefined,
+        p_mobile_number: form.mobile_number || undefined,
+        p_game_server: form.game_server || undefined,
+        p_referral_code: form.referral_code || undefined,
+        p_is_active: form.is_active,
+        p_avatar_url: form.avatar_url || undefined,
+      });
+      if (error) throw error;
+      if (form.email || form.password) {
+        await updateAuth({ data: { userId: user.id, email: form.email || undefined, password: form.password || undefined } });
+        setF("password", "");
+      }
+    }, "Profile saved");
+
   return (
     <div className="fixed inset-0 z-50 grid place-items-center bg-background/80 backdrop-blur p-4">
-      <div className="hud-panel relative w-full max-w-lg rounded-md border border-gold/40 bg-card p-5">
+      <div className="hud-panel relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-md border border-gold/40 bg-card p-5">
         <button onClick={onClose} className="absolute right-3 top-3 text-foreground/60 hover:text-foreground"><X size={18} /></button>
         <h3 className="font-display text-lg uppercase tracking-widest text-gold">
-          {user.in_game_username ?? user.username ?? "Operative"}
+          Edit Player — {user.in_game_username ?? user.username ?? "Operative"}
         </h3>
         <p className="font-mono text-[11px] text-foreground/50">PUBG: {user.pubg_id ?? "—"} · {user.id.slice(0, 8)}</p>
 
+
         <div className="mt-4 space-y-4">
+          {/* Edit Profile */}
+          <div className="border-t border-border/40 pt-3">
+            <div className="mb-2 flex items-center justify-between">
+              <label className="font-hud text-[10px] uppercase tracking-widest text-foreground/60">Edit Profile</label>
+              <button onClick={saveProfile} disabled={busy}
+                className="inline-flex items-center gap-1 rounded border border-gold/60 bg-gold/10 px-3 py-1 font-hud text-[10px] uppercase tracking-widest text-gold hover:bg-gold/20 disabled:opacity-50">
+                <Save className="h-3 w-3" /> Save
+              </button>
+            </div>
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+              <Field label="Username">
+                <input value={form.username} onChange={(e) => setF("username", e.target.value)} className={inpCls} />
+              </Field>
+              <Field label="In-Game Username">
+                <input value={form.in_game_username} onChange={(e) => setF("in_game_username", e.target.value)} className={inpCls} />
+              </Field>
+              <Field label="New Email (optional)">
+                <input type="email" value={form.email} onChange={(e) => setF("email", e.target.value)} placeholder="leave blank to keep" className={inpCls} />
+              </Field>
+              <Field label="New Password (optional)">
+                <input type="text" value={form.password} onChange={(e) => setF("password", e.target.value)} placeholder="min 6 chars; blank = keep" className={inpCls} />
+              </Field>
+              <Field label="Country Code">
+                <input value={form.country_code} onChange={(e) => setF("country_code", e.target.value)} placeholder="BD" className={inpCls} />
+              </Field>
+              <Field label="Mobile Number">
+                <input value={form.mobile_number} onChange={(e) => setF("mobile_number", e.target.value)} className={inpCls} />
+              </Field>
+              <Field label="PUBG ID">
+                <input value={form.pubg_id} onChange={(e) => setF("pubg_id", e.target.value)} className={inpCls} />
+              </Field>
+              <Field label="Game Server">
+                <select value={form.game_server} onChange={(e) => setF("game_server", e.target.value)} className={inpCls}>
+                  <option value="">—</option>
+                  <option value="Asia">Asia</option>
+                  <option value="Europe">Europe</option>
+                  <option value="North_America">North America</option>
+                  <option value="South_America">South America</option>
+                  <option value="KRJP">KRJP</option>
+                  <option value="Middle_East">Middle East</option>
+                </select>
+              </Field>
+              <Field label="Referral Code">
+                <input value={form.referral_code} onChange={(e) => setF("referral_code", e.target.value)} className={inpCls} />
+              </Field>
+              <Field label="Avatar URL">
+                <input value={form.avatar_url} onChange={(e) => setF("avatar_url", e.target.value)} placeholder="https://…" className={inpCls} />
+              </Field>
+            </div>
+            <label className="mt-3 flex cursor-pointer items-center gap-2 text-xs">
+              <input type="checkbox" checked={form.is_active} onChange={(e) => setF("is_active", e.target.checked)} />
+              <span className="font-hud uppercase tracking-widest text-foreground/70">Active Status</span>
+            </label>
+          </div>
+
           <div className="border-t border-border/40 pt-3">
             <label className="font-hud text-[10px] uppercase tracking-widest text-foreground/60">Role {isSuper ? "" : "(super admin only)"}</label>
             <div className="mt-2 flex gap-2">

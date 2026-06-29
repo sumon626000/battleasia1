@@ -2647,6 +2647,21 @@ export type Database = {
         Returns: undefined
       }
       admin_unsuspend_user: { Args: { p_user_id: string }; Returns: undefined }
+      admin_update_profile: {
+        Args: {
+          p_avatar_url?: string
+          p_country_code?: string
+          p_game_server?: string
+          p_in_game_username?: string
+          p_is_active?: boolean
+          p_mobile_number?: string
+          p_pubg_id?: string
+          p_referral_code?: string
+          p_user_id: string
+          p_username?: string
+        }
+        Returns: undefined
+      }
       archive_notification: { Args: { p_id: number }; Returns: undefined }
       buy_premium: { Args: { p_plan_id: number }; Returns: number }
       check_rate_limit: {
