@@ -37,6 +37,8 @@ import {
 } from "@/components/dashboard/PlayerHubCards";
 import { RewardsHub } from "@/components/dashboard/RewardsHub";
 import { TournamentsShowcase } from "@/components/dashboard/TournamentsShowcase";
+import { WeeklyPerformanceCard } from "@/components/dashboard/WeeklyPerformanceCard";
+import { WeeklyLeaderboardMini } from "@/components/dashboard/WeeklyLeaderboardMini";
 import { QuestProgressMini } from "@/components/dashboard/QuestProgressMini";
 import { SquadActivityCard } from "@/components/dashboard/SquadActivityCard";
 import { PersonalBestsCard } from "@/components/dashboard/PersonalBestsCard";
@@ -602,11 +604,18 @@ function DashboardPage() {
         totalPrize={stats.totalPrize}
       />
 
+      {/* WEEKLY PERFORMANCE + GOAL RING */}
+      <WeeklyPerformanceCard participants={data?.participants ?? []} />
+
+      {/* TOP OPERATORS — weekly leaderboard */}
+      <WeeklyLeaderboardMini currentUserId={uid} />
+
       {/* PERSONAL BESTS */}
       <PersonalBestsCard participants={data?.participants ?? []} />
 
       {/* SQUAD ACTIVITY */}
       <SquadActivityCard />
+
 
       {/* COMBAT STATISTICS — unified inline panel */}
       <section className="hud-panel overflow-hidden">
