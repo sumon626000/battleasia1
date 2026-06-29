@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { ArrowLeft, Eye, EyeOff, Loader2 } from "lucide-react";
 import { z } from "zod";
-import authHero from "@/assets/auth-hero.jpg";
+import authHero from "@/assets/auth-hero.webp";
 import logoShield from "@/assets/logo-shield.png";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
