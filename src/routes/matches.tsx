@@ -61,7 +61,7 @@ function PublicMatchesPage() {
 
       {q.isLoading && <div className="text-center text-foreground/60 py-12">Loading…</div>}
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2">
         {q.data?.map((m) => (
           <div key={m.id} className="hud-panel group relative overflow-hidden hover:border-gold/60 transition">
             <Link to="/dashboard/matches/$matchId" params={{ matchId: String(m.id) }} className="block">

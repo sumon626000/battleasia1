@@ -244,7 +244,7 @@ function MatchesPage() {
           options={[["all","All"],["Free","Free"],["Paid","Paid"]]} />
       </div>
 
-      <section className="grid gap-3 grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+      <section className="grid gap-3 grid-cols-1 md:grid-cols-2">
         {(matches.data ?? []).map((m: any) => (
           <MatchCard key={m.id} m={m} joined={joined.data?.has(m.id) ?? false} filled={counts.data?.[m.id] ?? 0} balance={balance} isPremium={!!profile?.is_premium} />
         ))}
@@ -351,7 +351,7 @@ function MatchCard({ m, joined, filled, balance, isPremium }: { m: any; joined: 
       className="hud-panel block overflow-hidden transition hover:border-gold/60"
     >
       {banner && (
-        <div className="relative aspect-[16/9] overflow-hidden bg-background/60">
+        <div className="relative aspect-[16/9] md:aspect-[21/7] max-h-44 overflow-hidden bg-background/60">
           <img src={banner} alt={m.match_name} className="h-full w-full object-cover" loading="lazy" />
           <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
           {isLive && (
@@ -467,10 +467,11 @@ function MatchCard({ m, joined, filled, balance, isPremium }: { m: any; joined: 
             type="button"
             onClick={handleJoin}
             disabled={joining}
-            className="flex items-center justify-center gap-1.5 rounded-sm border border-gold/60 bg-gold/15 py-2 font-hud text-[10px] font-bold uppercase tracking-widest text-gold transition hover:bg-gold hover:text-background disabled:opacity-50"
+            className="flex items-center justify-center gap-1.5 rounded-sm border border-red-500/70 bg-red-600 py-2 font-hud text-[10px] font-bold uppercase tracking-widest text-white shadow-[0_0_12px_rgba(239,68,68,0.5)] transition hover:bg-red-500 disabled:opacity-50"
           >
             {joining ? <><Loader2 size={12} className="animate-spin" /> JOINING</> : (m.match_type === "Free" ? "JOIN FREE" : `JOIN · ${fee} BAC`)}
           </button>
+
         )}
         <span className="rounded-sm border border-border/60 px-3 py-2 text-center font-hud text-[10px] font-bold uppercase tracking-widest text-foreground/70">
           VIEW
@@ -924,10 +925,11 @@ function HubMatchRow({
               type="button"
               onClick={handleJoin}
               disabled={joining}
-              className={`w-full rounded-md px-2 py-1.5 font-hud text-[11px] font-bold uppercase tracking-widest transition disabled:opacity-50 ${theme.btnCls}`}
+              className="w-full rounded-md border border-red-500/70 bg-red-600 px-2 py-1.5 font-hud text-[11px] font-bold uppercase tracking-widest text-white shadow-[0_0_12px_rgba(239,68,68,0.5)] transition hover:bg-red-500 disabled:opacity-50"
             >
               {joining ? <Loader2 size={12} className="mx-auto animate-spin" /> : (m.match_type === "Free" || fee === 0 ? "JOIN FREE" : theme.label)}
             </button>
+
           )}
           <div className="font-mono text-[10px] text-foreground/50">
             {filled}/{total || "∞"} Teams
