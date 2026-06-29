@@ -485,6 +485,21 @@ function AdminUsers() {
     }
   };
 
+  const deleteSelected = async () => {
+    if (!isSuper) return toast.error("Super admin only");
+    if (selectedIds.size === 0) return toast.error("No users selected");
+    if (!confirm(`Permanently delete ${selectedIds.size} selected user${selectedIds.size === 1 ? "" : "s"}? Admins are skipped automatically.`)) return;
+    let ok = 0;
+    let fail = 0;
+    for (const id of selectedIds) {
+      const { error } = await supabase.rpc("admin_delete_user", { p_user_id: id });
+      if (error) fail++; else ok++;
+    }
+    toast.success(`${ok} deleted${fail ? `, ${fail} skipped` : ""}`);
+    setSelectedIds(new Set());
+    qc.invalidateQueries({ queryKey: ["admin-users"] });
+  };
+
   const toolBtn = "inline-flex items-center gap-1.5 rounded border border-border/70 px-2.5 py-1.5 font-hud text-[10px] uppercase tracking-widest text-foreground/70 hover:border-gold hover:text-gold";
 
   return (
