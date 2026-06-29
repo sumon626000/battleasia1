@@ -10,6 +10,7 @@ import authHero from "@/assets/auth-hero.webp";
 import logoShield from "@/assets/logo-shield.webp";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
+import { isAppMode } from "@/lib/app-mode";
 import {
   loginSchema,
   registerSchema,
@@ -67,6 +68,8 @@ function AuthPage() {
   const [busy, setBusy] = useState(false);
   const [legal, setLegal] = useState<"terms" | "privacy" | null>(null);
   const [googleEnabled, setGoogleEnabled] = useState(false);
+  const [appMode, setAppMode] = useState(false);
+  useEffect(() => { setAppMode(isAppMode()); }, []);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -140,17 +143,21 @@ function AuthPage() {
                 <div className="text-gold">ASIA</div>
               </div>
             </Link>
-            <Link to="/" className="btn-outline-gold inline-flex items-center gap-1.5 px-3 py-1.5 text-xs">
-              <ArrowLeft size={12} /> HOME
-            </Link>
+            {!appMode && (
+              <Link to="/" className="btn-outline-gold inline-flex items-center gap-1.5 px-3 py-1.5 text-xs">
+                <ArrowLeft size={12} /> HOME
+              </Link>
+            )}
           </div>
 
           {/* Desktop back-home pill */}
-          <div className="mb-4 hidden lg:flex">
-            <Link to="/" className="btn-outline-gold inline-flex items-center gap-1.5 px-3 py-1.5 text-xs">
-              <ArrowLeft size={12} /> BACK TO HOME
-            </Link>
-          </div>
+          {!appMode && (
+            <div className="mb-4 hidden lg:flex">
+              <Link to="/" className="btn-outline-gold inline-flex items-center gap-1.5 px-3 py-1.5 text-xs">
+                <ArrowLeft size={12} /> BACK TO HOME
+              </Link>
+            </div>
+          )}
 
           <div className="hud-panel relative mx-auto w-full max-w-lg overflow-hidden border border-border/80 bg-card/80 p-6 backdrop-blur">
             <span className="hud-bracket hud-bracket-tl" />
