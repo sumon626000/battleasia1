@@ -82,6 +82,38 @@ function StatCard({
 }
 
 
+function RankBadge({ rank }: { rank: number | null | undefined }) {
+  const r = Number(rank ?? 0);
+  if (!r) return <span className="grid h-6 w-7 place-items-center rounded border border-border/50 font-mono text-[10px] text-foreground/50">—</span>;
+  const tone =
+    r === 1 ? "border-yellow-400/60 bg-yellow-400/15 text-yellow-300 shadow-[0_0_8px_rgba(250,204,21,0.4)]" :
+    r === 2 ? "border-zinc-300/50 bg-zinc-300/10 text-zinc-200" :
+    r === 3 ? "border-amber-600/60 bg-amber-700/15 text-amber-400" :
+    r <= 10 ? "border-emerald-400/40 bg-emerald-400/10 text-emerald-300" :
+              "border-border/60 bg-background/40 text-foreground/60";
+  return (
+    <span className={`inline-flex h-6 min-w-7 items-center justify-center gap-0.5 rounded border px-1 font-mono text-[10px] font-bold tabular-nums ${tone}`}>
+      {r <= 3 && <Medal size={10} />}#{r}
+    </span>
+  );
+}
+
+function formatSchedule(iso?: string | null) {
+  if (!iso) return "";
+  const d = new Date(iso);
+  const diff = d.getTime() - Date.now();
+  const abs = Math.abs(diff);
+  const m = Math.round(abs / 60000);
+  const h = Math.round(abs / 3600000);
+  const dy = Math.round(abs / 86400000);
+  if (diff > 0) {
+    if (m < 60) return `in ${m}m`;
+    if (h < 24) return `in ${h}h`;
+    return `in ${dy}d`;
+  }
+  return d.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+}
+
 function StatSkeleton() {
   return (
     <div className="hud-panel p-5">
