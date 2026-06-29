@@ -251,7 +251,7 @@ export function AdminShell({
       </header>
 
 
-      <div className="mx-auto flex max-w-[1600px]">
+      <div className="flex w-full">
         <aside className="hidden w-64 shrink-0 border-r border-border/70 bg-card/40 lg:block">
           <div className="sticky top-14 max-h-[calc(100vh-3.5rem)] overflow-y-auto">
             <NavBody />
