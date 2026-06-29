@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Heart, MessageCircle, Send, Plus, RefreshCw, MoreHorizontal, Bookmark, Eye } from "lucide-react";
+import { Heart, MessageCircle, Send, Plus, RefreshCw, MoreHorizontal, Bookmark, Eye, Search } from "lucide-react";
 import { useRef } from "react";
 import { toast } from "sonner";
 
