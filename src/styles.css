@@ -98,58 +98,93 @@ main::before {
     radial-gradient(650px 460px at 95% 25%, oklch(0.74 0.18 132 / 0.06), transparent 70%);
 }
 
-/* Deeper violet/purple button — less neon glow */
+/* Gaming-style angular parallelogram buttons (violet primary / green outline) */
 .btn-gold {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
   background:
-    linear-gradient(180deg, oklch(1 0 0 / 0.12), transparent 45%),
-    linear-gradient(135deg, #7c3aed 0%, #5b21b6 55%, #3b1378 100%);
+    linear-gradient(180deg, oklch(1 0 0 / 0.14), transparent 50%),
+    linear-gradient(135deg, #8b5cf6 0%, #6d28d9 50%, #3b1378 100%);
   color: #ffffff;
-  font-weight: 900;
-  letter-spacing: 0.12em;
-  text-shadow: 0 1px 2px oklch(0 0 0 / 0.5);
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-shadow: 0 1px 2px oklch(0 0 0 / 0.55);
+  clip-path: polygon(18px 0, 100% 0, calc(100% - 18px) 100%, 0 100%);
+  border-radius: 0;
   box-shadow:
-    inset 0 1px 0 oklch(1 0 0 / 0.3),
-    inset 0 -2px 0 oklch(0 0 0 / 0.3),
-    0 3px 0 #2a0a5a,
-    0 6px 18px -6px oklch(0.4 0.2 300 / 0.55),
-    0 0 0 1px #5b21b6;
+    inset 0 1px 0 oklch(1 0 0 / 0.32),
+    inset 0 -2px 0 oklch(0 0 0 / 0.35),
+    0 4px 14px -4px oklch(0.4 0.2 300 / 0.5);
+  transition: transform 0.2s ease, filter 0.2s ease, box-shadow 0.2s ease;
+}
+.btn-gold::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, transparent 40%, oklch(1 0 0 / 0.35) 50%, transparent 60%);
+  transform: translateX(-120%);
+  transition: transform 0.9s ease;
+  pointer-events: none;
 }
 .btn-gold:hover {
-  filter: brightness(1.06) saturate(1.05);
+  filter: brightness(1.08) saturate(1.08);
+  transform: translateY(-1px);
   box-shadow:
-    inset 0 1px 0 oklch(1 0 0 / 0.4),
-    inset 0 -2px 0 oklch(0 0 0 / 0.34),
-    0 4px 0 #2a0a5a,
-    0 10px 24px -6px oklch(0.4 0.2 300 / 0.65),
-    0 0 0 1px #6d28d9;
+    inset 0 1px 0 oklch(1 0 0 / 0.42),
+    inset 0 -2px 0 oklch(0 0 0 / 0.38),
+    0 8px 22px -6px oklch(0.45 0.22 300 / 0.65);
 }
+.btn-gold:hover::before { transform: translateX(120%); }
 .btn-gold:active {
-  transform: translateY(2px);
-  box-shadow:
-    inset 0 1px 0 oklch(1 0 0 / 0.3),
-    inset 0 -1px 0 oklch(0 0 0 / 0.28),
-    0 1px 0 #2a0a5a,
-    0 3px 10px -4px oklch(0.4 0.2 300 / 0.5),
-    0 0 0 1px #5b21b6;
+  transform: translateY(1px);
+  filter: brightness(0.96);
 }
 
 .btn-outline-gold {
-  border-color: #7c3aed;
-  color: #d8b4fe;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border: none;
+  color: #ffffff;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
   background:
-    linear-gradient(180deg, oklch(0.2 0.08 295 / 0.85), oklch(0.15 0.06 295 / 0.85));
+    linear-gradient(180deg, oklch(1 0 0 / 0.08), transparent 50%),
+    linear-gradient(135deg, oklch(0.45 0.2 145 / 0.55) 0%, oklch(0.25 0.12 145 / 0.55) 60%, oklch(0.16 0.04 145 / 0.6) 100%);
+  clip-path: polygon(18px 0, 100% 0, calc(100% - 18px) 100%, 0 100%);
+  border-radius: 0;
   box-shadow:
-    inset 0 1px 0 oklch(1 0 0 / 0.06),
-    0 0 12px -6px oklch(0.45 0.18 300 / 0.35);
+    inset 0 0 0 1px oklch(0.72 0.22 142 / 0.55),
+    inset 0 1px 0 oklch(1 0 0 / 0.12),
+    0 4px 14px -6px oklch(0.55 0.2 142 / 0.4);
+  transition: transform 0.2s ease, filter 0.2s ease, box-shadow 0.2s ease;
+}
+.btn-outline-gold::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, transparent 40%, oklch(0.85 0.22 142 / 0.28) 50%, transparent 60%);
+  transform: translateX(-120%);
+  transition: transform 1s ease;
+  pointer-events: none;
 }
 .btn-outline-gold:hover {
-  background: linear-gradient(135deg, #7c3aed, #5b21b6);
-  color: #ffffff;
-  border-color: #a855f7;
+  filter: brightness(1.1) saturate(1.1);
+  transform: translateY(-1px);
+  background:
+    linear-gradient(180deg, oklch(1 0 0 / 0.12), transparent 50%),
+    linear-gradient(135deg, oklch(0.55 0.22 145 / 0.7) 0%, oklch(0.3 0.14 145 / 0.7) 100%);
   box-shadow:
-    inset 0 1px 0 oklch(1 0 0 / 0.22),
-    0 0 18px -4px oklch(0.45 0.2 300 / 0.55);
+    inset 0 0 0 1px oklch(0.78 0.24 142 / 0.85),
+    inset 0 1px 0 oklch(1 0 0 / 0.2),
+    0 8px 22px -6px oklch(0.6 0.22 142 / 0.55);
 }
+.btn-outline-gold:hover::before { transform: translateX(120%); }
+.btn-outline-gold:active { transform: translateY(1px); filter: brightness(0.97); }
+
 
 
 
