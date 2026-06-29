@@ -39,19 +39,30 @@
 Keep it minimal — the web app does the heavy lifting.
 
 1. **WebView Shell**
-   - Load `https://battleasia1.lovable.app` full-screen
-   - Use `flutter_inappwebview` (best support for file upload, downloads, JS bridge)
-   - Enable: JavaScript, DOM storage, cookies, localStorage, third-party cookies
-   - Hide URL bar, no browser chrome
+   - Load `https://battleasia1.lovable.app/?app=1` full-screen on first launch
+     (the `?app=1` query tells the web app it's running inside the APK — it
+     will skip the marketing home and go straight to `/auth`, or `/dashboard`
+     if a session already exists, and hide the "HOME" / "BACK TO HOME" links).
+   - Also append `BattleAsiaApp/1.0` to the WebView's `userAgent` so the
+     flag survives OAuth redirects that strip query params.
+   - Use `flutter_inappwebview` (best support for file upload, downloads, JS bridge).
+   - Enable: JavaScript, DOM storage, cookies, localStorage, third-party cookies.
+   - Hide URL bar, no browser chrome.
 
 2. **Splash Screen**
    - Native splash (use `flutter_native_splash` package)
-   - Dark bg + gold logo, ~1.5s
+   - Dark bg + gold logo, ~1.5s, then the WebView is revealed already on `/auth`.
 
 3. **Pull-to-Refresh** inside WebView
 
 4. **Back Button Handling**
-   - Android back → WebView back; if no history → exit confirmation
+   - Android back → WebView back **only while inside `/dashboard/*`** (in-app navigation).
+   - On `/auth`, `/` or any unauthenticated route → back press shows the
+     "Exit Battle Asia?" confirmation dialog. **Never navigate to a marketing
+     home page** — the APK has no home screen, only Login / Register and the
+     authenticated dashboard.
+   - After logout the web app redirects to `/auth`; back press from there
+     must also show the exit dialog (do not pop history back to `/dashboard`).
 
 5. **File Upload Support**
    - For profile pictures, screenshot uploads (Result Center)
