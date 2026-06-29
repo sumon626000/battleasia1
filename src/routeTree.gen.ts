@@ -28,6 +28,7 @@ import { Route as AdminRouteRouteImport } from './routes/_admin/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as FeedIndexRouteImport } from './routes/feed.index'
 import { Route as UUsernameRouteImport } from './routes/u.$username'
+import { Route as TagTagRouteImport } from './routes/tag.$tag'
 import { Route as PostPostIdRouteImport } from './routes/post.$postId'
 import { Route as PSlugRouteImport } from './routes/p.$slug'
 import { Route as FeedLeaderboardRouteImport } from './routes/feed.leaderboard'
@@ -187,6 +188,11 @@ const FeedIndexRoute = FeedIndexRouteImport.update({
 const UUsernameRoute = UUsernameRouteImport.update({
   id: '/u/$username',
   path: '/u/$username',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TagTagRoute = TagTagRouteImport.update({
+  id: '/tag/$tag',
+  path: '/tag/$tag',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PostPostIdRoute = PostPostIdRouteImport.update({
@@ -572,6 +578,7 @@ export interface FileRoutesByFullPath {
   '/feed/leaderboard': typeof FeedLeaderboardRoute
   '/p/$slug': typeof PSlugRoute
   '/post/$postId': typeof PostPostIdRoute
+  '/tag/$tag': typeof TagTagRoute
   '/u/$username': typeof UUsernameRouteWithChildren
   '/feed/': typeof FeedIndexRoute
   '/admin/account-deletions': typeof AdminAdminAccountDeletionsRoute
@@ -656,6 +663,7 @@ export interface FileRoutesByTo {
   '/feed/leaderboard': typeof FeedLeaderboardRoute
   '/p/$slug': typeof PSlugRoute
   '/post/$postId': typeof PostPostIdRoute
+  '/tag/$tag': typeof TagTagRoute
   '/u/$username': typeof UUsernameRouteWithChildren
   '/feed': typeof FeedIndexRoute
   '/admin/account-deletions': typeof AdminAdminAccountDeletionsRoute
@@ -745,6 +753,7 @@ export interface FileRoutesById {
   '/feed/leaderboard': typeof FeedLeaderboardRoute
   '/p/$slug': typeof PSlugRoute
   '/post/$postId': typeof PostPostIdRoute
+  '/tag/$tag': typeof TagTagRoute
   '/u/$username': typeof UUsernameRouteWithChildren
   '/feed/': typeof FeedIndexRoute
   '/_admin/admin/account-deletions': typeof AdminAdminAccountDeletionsRoute
@@ -833,6 +842,7 @@ export interface FileRouteTypes {
     | '/feed/leaderboard'
     | '/p/$slug'
     | '/post/$postId'
+    | '/tag/$tag'
     | '/u/$username'
     | '/feed/'
     | '/admin/account-deletions'
@@ -917,6 +927,7 @@ export interface FileRouteTypes {
     | '/feed/leaderboard'
     | '/p/$slug'
     | '/post/$postId'
+    | '/tag/$tag'
     | '/u/$username'
     | '/feed'
     | '/admin/account-deletions'
@@ -1005,6 +1016,7 @@ export interface FileRouteTypes {
     | '/feed/leaderboard'
     | '/p/$slug'
     | '/post/$postId'
+    | '/tag/$tag'
     | '/u/$username'
     | '/feed/'
     | '/_admin/admin/account-deletions'
@@ -1091,6 +1103,7 @@ export interface RootRouteChildren {
   EmailVerifyRoute: typeof EmailVerifyRoute
   PSlugRoute: typeof PSlugRoute
   PostPostIdRoute: typeof PostPostIdRoute
+  TagTagRoute: typeof TagTagRoute
   UUsernameRoute: typeof UUsernameRouteWithChildren
 }
 
@@ -1227,6 +1240,13 @@ declare module '@tanstack/react-router' {
       path: '/u/$username'
       fullPath: '/u/$username'
       preLoaderRoute: typeof UUsernameRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tag/$tag': {
+      id: '/tag/$tag'
+      path: '/tag/$tag'
+      fullPath: '/tag/$tag'
+      preLoaderRoute: typeof TagTagRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/post/$postId': {
@@ -1952,6 +1972,7 @@ const rootRouteChildren: RootRouteChildren = {
   EmailVerifyRoute: EmailVerifyRoute,
   PSlugRoute: PSlugRoute,
   PostPostIdRoute: PostPostIdRoute,
+  TagTagRoute: TagTagRoute,
   UUsernameRoute: UUsernameRouteWithChildren,
 }
 export const routeTree = rootRouteImport
