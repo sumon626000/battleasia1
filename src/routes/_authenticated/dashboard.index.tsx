@@ -20,6 +20,10 @@ import {
   Calendar,
   Clock,
   Medal,
+  Flame,
+  Award,
+  Star,
+  Lock,
 } from "lucide-react";
 import { CoinIcon } from "@/components/site/CoinIcon";
 import { CountUp } from "@/components/ui/CountUp";
