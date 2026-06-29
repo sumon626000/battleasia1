@@ -781,7 +781,7 @@ function EditorModal({
             <input className={inp} placeholder="https://youtube.com/watch?v=…" value={draft.live_stream_url ?? ""} onChange={(e) => upd({ live_stream_url: e.target.value })} />
           </Field>
           <Select label="Match Status" required value={draft.status} options={STATUS} onChange={(v) => upd({ status: v })} />
-          <Select label="Reward Type" value={draft.reward_type} options={REWARD_TYPE} onChange={(v) => upd({ reward_type: v })} />
+          
         </div>
 
         <div className="mt-6 flex justify-end gap-2">
