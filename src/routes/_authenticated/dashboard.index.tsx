@@ -36,6 +36,8 @@ import {
   NextTournamentCard,
 } from "@/components/dashboard/PlayerHubCards";
 import { RewardsHub } from "@/components/dashboard/RewardsHub";
+import { TournamentsShowcase } from "@/components/dashboard/TournamentsShowcase";
+import { QuestProgressMini } from "@/components/dashboard/QuestProgressMini";
 import squadHero from "@/assets/pubg-squad-action.webp";
 import sniperImg from "@/assets/pubg-sniper-rooftop.webp";
 import airdropImg from "@/assets/pubg-airdrop.webp";
