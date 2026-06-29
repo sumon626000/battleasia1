@@ -267,6 +267,31 @@ function AdminMatchesPage() {
     qc.invalidateQueries({ queryKey: ["admin-matches"] });
   }
 
+  async function deleteSelected() {
+    if (selectedIds.size === 0) return toast.error("No matches selected");
+    if (!confirm(`Delete ${selectedIds.size} selected match${selectedIds.size === 1 ? "" : "es"}?`)) return;
+    let ok = 0;
+    for (const id of selectedIds) {
+      const { error } = await supabase.rpc("admin_delete_match", { p_match_id: id });
+      if (!error) ok++;
+    }
+    toast.success(`${ok} deleted`);
+    setSelectedIds(new Set());
+    qc.invalidateQueries({ queryKey: ["admin-matches"] });
+  }
+
+  async function deleteAllMatches() {
+    if (!confirm("⚠ Soft-delete ALL matches? This cannot be undone from the UI.")) return;
+    if (!confirm("Are you really sure? Type OK in the next prompt to confirm.")) return;
+    const c = prompt("Type DELETE ALL to confirm:");
+    if (c !== "DELETE ALL") return toast.error("Cancelled");
+    const { data: n, error } = await supabase.rpc("admin_delete_all_matches");
+    if (error) return toast.error(error.message);
+    toast.success(`${n ?? 0} matches deleted`);
+    setSelectedIds(new Set());
+    qc.invalidateQueries({ queryKey: ["admin-matches"] });
+  }
+
   async function cancelMatch(id: number) {
     const reason = prompt("Reason for cancellation (will be shown in refund logs):", "Match cancelled by admin");
     if (reason == null) return;
