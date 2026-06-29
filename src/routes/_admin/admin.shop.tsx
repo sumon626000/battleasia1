@@ -336,8 +336,8 @@ function Modal({ title, onClose, onSave, children }: { title: string; onClose: (
         </div>
         {children}
         <div className="mt-5 flex justify-end gap-2">
-          <button onClick={onClose} className="rounded border border-border/60 px-4 py-2 font-hud text-xs uppercase tracking-widest hover:border-foreground">Cancel</button>
-          <button onClick={onSave} className="rounded border border-gold/60 bg-gold/10 px-4 py-2 font-hud text-xs uppercase tracking-widest text-gold hover:bg-gold/20">Save</button>
+          <button onClick={onClose} className="hud-btn hud-btn-ghost">Cancel</button>
+          <button onClick={onSave} className="hud-btn hud-btn-primary">Save</button>
         </div>
       </div>
     </div>
