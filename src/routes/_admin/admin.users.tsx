@@ -101,6 +101,7 @@ function ActionModal({
   user, onClose, isSuper,
 }: { user: Row; onClose: () => void; isSuper: boolean }) {
   const qc = useQueryClient();
+  const updateAuth = useServerFn(adminUpdateUserAuth);
   const [reason, setReason] = useState("");
   const [delta, setDelta] = useState("");
   const [note, setNote] = useState("");
@@ -109,6 +110,22 @@ function ActionModal({
   const [resetScopes, setResetScopes] = useState<Record<string, boolean>>({});
   const toggleScope = (k: string) => setResetScopes((s) => ({ ...s, [k]: !s[k] }));
   const allScopesSelected = RESET_SCOPES.every((s) => resetScopes[s.key]);
+
+  // Edit profile form
+  const [form, setForm] = useState({
+    username: user.username ?? "",
+    in_game_username: user.in_game_username ?? "",
+    pubg_id: user.pubg_id ?? "",
+    country_code: user.country_code ?? "",
+    mobile_number: user.mobile_number ?? "",
+    game_server: user.game_server ?? "",
+    referral_code: user.referral_code ?? "",
+    avatar_url: "",
+    email: "",
+    password: "",
+    is_active: !user.is_suspended,
+  });
+  const setF = (k: keyof typeof form, v: string | boolean) => setForm((s) => ({ ...s, [k]: v }));
 
   const refresh = () => {
     qc.invalidateQueries({ queryKey: ["admin-users"] });
@@ -121,14 +138,36 @@ function ActionModal({
     finally { setBusy(false); }
   };
 
+  const saveProfile = () =>
+    run(async () => {
+      const { error } = await supabase.rpc("admin_update_profile", {
+        p_user_id: user.id,
+        p_username: form.username || null,
+        p_in_game_username: form.in_game_username || null,
+        p_pubg_id: form.pubg_id || null,
+        p_country_code: form.country_code || null,
+        p_mobile_number: form.mobile_number || null,
+        p_game_server: form.game_server || null,
+        p_referral_code: form.referral_code || null,
+        p_is_active: form.is_active,
+        p_avatar_url: form.avatar_url || null,
+      });
+      if (error) throw error;
+      if (form.email || form.password) {
+        await updateAuth({ data: { userId: user.id, email: form.email || undefined, password: form.password || undefined } });
+        setF("password", "");
+      }
+    }, "Profile saved");
+
   return (
     <div className="fixed inset-0 z-50 grid place-items-center bg-background/80 backdrop-blur p-4">
-      <div className="hud-panel relative w-full max-w-lg rounded-md border border-gold/40 bg-card p-5">
+      <div className="hud-panel relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-md border border-gold/40 bg-card p-5">
         <button onClick={onClose} className="absolute right-3 top-3 text-foreground/60 hover:text-foreground"><X size={18} /></button>
         <h3 className="font-display text-lg uppercase tracking-widest text-gold">
-          {user.in_game_username ?? user.username ?? "Operative"}
+          Edit Player — {user.in_game_username ?? user.username ?? "Operative"}
         </h3>
         <p className="font-mono text-[11px] text-foreground/50">PUBG: {user.pubg_id ?? "—"} · {user.id.slice(0, 8)}</p>
+
 
         <div className="mt-4 space-y-4">
           <div className="border-t border-border/40 pt-3">
