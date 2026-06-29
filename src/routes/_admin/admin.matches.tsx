@@ -426,6 +426,7 @@ function AdminMatchesPage() {
                     </button>
                   </div>
                 </td>
+                )}
               </tr>
             ))}
           </tbody>
