@@ -410,6 +410,12 @@ function DashboardPage() {
         )}
       </section>
 
+      {/* TIP OF THE DAY + TODAY CHECK-IN */}
+      <TipAndCheckInCard
+        participants={data?.participants ?? []}
+        balanceLogs={data?.balanceLogs ?? []}
+      />
+
       {/* LIVE ACTIVITY TICKER */}
       {activity.length > 0 && (
         <section className="hud-panel relative overflow-hidden">
