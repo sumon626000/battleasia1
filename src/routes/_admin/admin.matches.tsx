@@ -304,43 +304,38 @@ function AdminMatchesPage() {
 
       {/* Toolbar */}
       <div className="hud-panel relative flex flex-wrap items-center gap-2 rounded-md border border-border/70 bg-card/40 px-3 py-2">
-        <div className="relative">
-          <button className={tBtn} onClick={() => setOpenMenu(openMenu === "cols" ? null : "cols")}>
-            <Columns3 className="h-3.5 w-3.5" /> Columns
-          </button>
-          {openMenu === "cols" && (
-            <>
-              <div className="fixed inset-0 z-30" onClick={() => setOpenMenu(null)} />
-              <div className="absolute left-0 top-full z-40 mt-1 w-48 rounded-md border border-border bg-popover p-2 shadow-lg">
-                {ALL_M_COLS.map((c) => (
-                  <label key={c.key} className="flex cursor-pointer items-center gap-2 rounded px-2 py-1 text-sm hover:bg-secondary/40">
-                    <input type="checkbox" checked={visibleCols[c.key]} onChange={(e) =>
-                      setVisibleCols((v) => ({ ...v, [c.key]: e.target.checked }))} />
-                    <span>{c.label}</span>
-                  </label>
-                ))}
-              </div>
-            </>
-          )}
-        </div>
-        <div className="relative">
-          <button className={tBtn} onClick={() => setOpenMenu(openMenu === "density" ? null : "density")}>
-            <Rows3 className="h-3.5 w-3.5" /> Density
-          </button>
-          {openMenu === "density" && (
-            <>
-              <div className="fixed inset-0 z-30" onClick={() => setOpenMenu(null)} />
-              <div className="absolute left-0 top-full z-40 mt-1 w-40 rounded-md border border-border bg-popover p-1 shadow-lg">
-                {(["compact", "standard", "comfortable"] as const).map((d) => (
-                  <button key={d} onClick={() => { setDensity(d); setOpenMenu(null); }}
-                    className={`block w-full rounded px-2 py-1 text-left text-sm capitalize hover:bg-secondary/40 ${density === d ? "text-gold" : ""}`}>
-                    {d}
-                  </button>
-                ))}
-              </div>
-            </>
-          )}
-        </div>
+        <PortalMenu
+          label={<><Columns3 className="h-3.5 w-3.5" /> Columns</>}
+          btnCls={tBtn}
+          open={openMenu === "cols"}
+          onToggle={() => setOpenMenu(openMenu === "cols" ? null : "cols")}
+          onClose={() => setOpenMenu(null)}
+          width={200}
+        >
+          {ALL_M_COLS.map((c) => (
+            <label key={c.key} className="flex cursor-pointer items-center gap-2 rounded px-2 py-1 text-sm hover:bg-secondary/40">
+              <input type="checkbox" checked={visibleCols[c.key]} onChange={(e) =>
+                setVisibleCols((v) => ({ ...v, [c.key]: e.target.checked }))} />
+              <span>{c.label}</span>
+            </label>
+          ))}
+        </PortalMenu>
+        <PortalMenu
+          label={<><Rows3 className="h-3.5 w-3.5" /> Density</>}
+          btnCls={tBtn}
+          open={openMenu === "density"}
+          onToggle={() => setOpenMenu(openMenu === "density" ? null : "density")}
+          onClose={() => setOpenMenu(null)}
+          width={160}
+        >
+          {(["compact", "standard", "comfortable"] as const).map((d) => (
+            <button key={d} onClick={() => { setDensity(d); setOpenMenu(null); }}
+              className={`block w-full rounded px-2 py-1 text-left text-sm capitalize hover:bg-secondary/40 ${density === d ? "text-gold" : ""}`}>
+              {d}
+            </button>
+          ))}
+        </PortalMenu>
+
         <button className={tBtn} onClick={exportCSV}>
           <Download className="h-3.5 w-3.5" /> Export
         </button>
