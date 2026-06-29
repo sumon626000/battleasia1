@@ -12,13 +12,13 @@ type Comment = {
   user_id: string;
   body: string;
   created_at: string;
-  author?: { username: string | null; full_name: string | null; avatar_url: string | null } | null;
+  author?: { username: string | null; display_name: string | null; avatar_url: string | null } | null;
 };
 
 type ProfileSuggestion = {
   id: string;
   username: string | null;
-  full_name: string | null;
+  display_name: string | null;
   avatar_url: string | null;
 };
 
@@ -46,7 +46,7 @@ export function CommentsThread({ postId, onCountChange }: { postId: string; onCo
     const ids = Array.from(new Set(list.map((c) => c.user_id)));
     let map: Record<string, Comment["author"]> = {};
     if (ids.length) {
-      const { data: profs } = await supabase.from("profiles").select("id,username,full_name,avatar_url").in("id", ids);
+      const { data: profs } = await supabase.from("profiles").select("id,username,display_name,avatar_url").in("id", ids);
       map = Object.fromEntries((profs ?? []).map((p: any) => [p.id, p]));
     }
     const merged = list.map((c) => ({ ...c, author: map[c.user_id] ?? null }));
@@ -93,7 +93,7 @@ export function CommentsThread({ postId, onCountChange }: { postId: string; onCo
     const t = setTimeout(async () => {
       const query = supabase
         .from("profiles")
-        .select("id,username,full_name,avatar_url")
+        .select("id,username,display_name,avatar_url")
         .not("username", "is", null)
         .limit(6);
       const { data } = q
@@ -163,7 +163,7 @@ export function CommentsThread({ postId, onCountChange }: { postId: string; onCo
       ) : (
         <ul className="mb-3 space-y-2.5 max-h-72 overflow-y-auto">
           {items.map((c) => {
-            const handle = c.author?.username || c.author?.full_name || "player";
+            const handle = c.author?.username || c.author?.display_name || "player";
             const mine = user?.id === c.user_id;
             return (
               <li key={c.id} className="flex gap-2 text-sm">
@@ -236,8 +236,8 @@ export function CommentsThread({ postId, onCountChange }: { postId: string; onCo
                         </span>
                         <span className="min-w-0 flex-1">
                           <span className="block truncate font-hud text-[12px] font-bold text-gold">@{handle}</span>
-                          {s.full_name && (
-                            <span className="block truncate text-[11px] text-foreground/60">{s.full_name}</span>
+                          {s.display_name && (
+                            <span className="block truncate text-[11px] text-foreground/60">{s.display_name}</span>
                           )}
                         </span>
                       </button>
