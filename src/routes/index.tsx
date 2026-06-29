@@ -9,6 +9,8 @@ import {
   Crown, Medal, Award,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { isAppMode } from "@/lib/app-mode";
+import { useNavigate } from "@tanstack/react-router";
 import {
   Accordion, AccordionContent, AccordionItem, AccordionTrigger,
 } from "@/components/ui/accordion";
@@ -161,6 +163,14 @@ function mergeKills(live: Array<{ name: string; avatar: string | null; kills: nu
 
 function BattleAsiaLanding() {
   const { t } = useT();
+  const navigate = useNavigate();
+  /* ---------- APK SHELL: skip marketing home, go straight to auth/dashboard ---------- */
+  useEffect(() => {
+    if (!isAppMode()) return;
+    supabase.auth.getSession().then(({ data }) => {
+      navigate({ to: data.session ? "/dashboard" : "/auth", replace: true });
+    });
+  }, [navigate]);
   /* ---------- LIVE DATA ---------- */
   const pulse = useQuery({
     queryKey: ["home", "pulse"],
