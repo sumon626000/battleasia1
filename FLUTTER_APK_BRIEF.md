@@ -21,12 +21,16 @@
 - Package name: `com.battleasia.app` (suggestion)
 - App icon: **1024×1024 PNG** (transparent + solid version)
 - Adaptive icon: foreground + background layers (Android 8+)
-- Splash screen image: **1242×2688 PNG** (dark bg `#0a0a0a`, gold logo `#d4af37`)
+- Splash screen image: **1242×2688 PNG** (deep violet bg, neon-green shield)
 - Notification icon: **96×96 white PNG** (monochrome silhouette)
-- Brand colors:
-  - Primary / Gold: `#d4af37`
-  - Background: `#0a0a0a`
-- Fonts: Rajdhani + JetBrains Mono (already in web; not needed for native shell)
+- Brand colors (match the live site — Cyberpunk violet + neon green):
+  - Background (deep): `#0E0820` (oklch 0.13 0.04 295)
+  - Surface / splash bg: `#0A0617` (oklch 0.08 0.03 295)
+  - Primary (neon green): `#7CD44A` (oklch 0.74 0.18 132)
+  - Accent (violet): `#6A32B8` (oklch 0.45 0.18 300)
+  - Status bar: match background `#0A0617`
+- Fonts: Rajdhani + Inter (already in web; not needed for native shell)
+
 
 ### C. Existing Web Manifest (already done, share for reference)
 - `/manifest.webmanifest`
