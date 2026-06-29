@@ -577,7 +577,7 @@ function BattleAsiaLanding() {
       </section>
 
       {/* ============ TOURNAMENT RULES ============ */}
-      <section className="border-y border-border/60 bg-card/30 py-14">
+      <section id="rules" className="border-y border-border/60 bg-card/30 py-14 scroll-mt-24">
         <div className="mx-auto max-w-4xl px-4 sm:px-6">
           <div className="text-center">
             <div className="chip-tag mx-auto mb-3 inline-flex"><Shield size={12} /> REGULATIONS</div>
