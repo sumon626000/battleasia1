@@ -48,8 +48,8 @@ export function TipAndCheckInCard({ participants, balanceLogs }: {
     const prize = finished.reduce((s, p) => s + Number(p.prize_bac ?? 0), 0);
     const wins = finished.filter((p) => Number(p.rank ?? 0) === 1).length;
     const earnings = (balanceLogs ?? [])
-      .filter((l) => isSameLocalDay(l.created_at, now) && Number(l.amount) > 0)
-      .reduce((s, l) => s + Number(l.amount), 0);
+      .filter((l) => isSameLocalDay(l.created_at, now) && Number(l.amount_bac) > 0)
+      .reduce((s, l) => s + Number(l.amount_bac), 0);
     return {
       played: todays.length,
       finished: finished.length,
