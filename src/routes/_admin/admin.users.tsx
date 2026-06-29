@@ -11,6 +11,15 @@ import {
 import { exportRowsAsCSV } from "@/lib/csv";
 import { adminUpdateUserAuth } from "@/lib/admin-users.functions";
 
+const inpCls = "w-full rounded border border-border bg-background px-2 py-1.5 font-hud text-sm";
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div>
+      <div className="mb-1 font-hud text-[10px] uppercase tracking-widest text-foreground/60">{label}</div>
+      {children}
+    </div>
+  );
+}
 
 const RESET_SCOPES = [
   { key: "balance_logs", label: "Balance History" },
