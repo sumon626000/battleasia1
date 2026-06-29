@@ -268,38 +268,28 @@ function FeedPage() {
       <div className="min-w-0">
 
         {/* HUD header */}
-        <header className="mb-5 flex items-center justify-between border-b border-border/60 pb-3">
-          <div className="min-w-0">
-            <h1 className="font-display text-2xl font-black tracking-wider text-foreground">
-              <span className="text-gold">BATTLE</span> FEED
-            </h1>
-            <div className="flex items-center gap-2 font-hud text-[10px] uppercase tracking-widest text-foreground/50">
-              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-gold" />
-              Live drops from the squad
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <Link to="/explore" className="rounded border border-border/70 p-2 text-foreground/70 transition hover:border-gold/60 hover:text-gold" aria-label="Explore">
-              <Search size={14} />
-            </Link>
-            <NotificationBell />
-            <button onClick={load} className="rounded border border-border/70 p-2 text-foreground/70 transition hover:border-gold/60 hover:text-gold" aria-label="Refresh">
-              <RefreshCw size={14} />
-            </button>
-            {isAuthenticated ? (
-              <>
-                <Link to="/dashboard/story/new" className="btn-outline-gold inline-flex items-center gap-1.5 px-3 py-2 text-xs">
-                  <Plus size={14} /> Story
-                </Link>
-                <Link to="/feed/new" className="btn-gold inline-flex items-center gap-1.5 px-3 py-2 text-xs">
-                  <Plus size={14} /> Post
-                </Link>
-              </>
-            ) : (
-              <Link to="/auth" className="btn-gold px-3 py-2 text-xs">Sign in</Link>
-            )}
-          </div>
+        <header className="mb-5 flex items-center justify-end gap-2 border-b border-border/60 pb-3">
+          <Link to="/explore" className="rounded border border-border/70 p-2 text-foreground/70 transition hover:border-gold/60 hover:text-gold" aria-label="Explore">
+            <Search size={14} />
+          </Link>
+          <NotificationBell />
+          <button onClick={load} className="rounded border border-border/70 p-2 text-foreground/70 transition hover:border-gold/60 hover:text-gold" aria-label="Refresh">
+            <RefreshCw size={14} />
+          </button>
+          {isAuthenticated ? (
+            <>
+              <Link to="/dashboard/story/new" className="btn-outline-gold inline-flex items-center gap-1.5 px-3 py-2 text-xs">
+                <Plus size={14} /> Story
+              </Link>
+              <Link to="/feed/new" className="btn-gold inline-flex items-center gap-1.5 px-3 py-2 text-xs">
+                <Plus size={14} /> Post
+              </Link>
+            </>
+          ) : (
+            <Link to="/auth" className="btn-gold px-3 py-2 text-xs">Sign in</Link>
+          )}
         </header>
+
 
         <StoriesRail />
 
