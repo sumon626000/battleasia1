@@ -191,21 +191,15 @@
 
 [data-theme="official"] { color-scheme: light; }
 
-/* PUBG-style background imagery layered behind content (official theme only) */
+/* Clean light surface — no photo bleed-through */
 [data-theme="official"] body {
   background:
-    linear-gradient(180deg,
-      oklch(0.94 0.006 80 / 0.92) 0%,
-      oklch(0.93 0.006 80 / 0.88) 40%,
-      oklch(0.9 0.008 80 / 0.94) 100%),
-    url("/banners/erangel-sunset.jpg");
-  background-attachment: fixed, fixed;
-  background-size: cover, cover;
-  background-position: center, center;
-  background-repeat: no-repeat, no-repeat;
+    radial-gradient(1200px 600px at 50% -10%, oklch(0.97 0.02 70 / 0.6), transparent 70%),
+    linear-gradient(180deg, oklch(0.985 0.004 80) 0%, oklch(0.965 0.005 80) 100%);
+  background-attachment: fixed;
 }
 
-/* Decorative image strips on key sections */
+/* Subtle ambient warmth — no images */
 [data-theme="official"] main::before {
   content: "";
   position: fixed;
@@ -213,21 +207,22 @@
   pointer-events: none;
   z-index: -1;
   background:
-    radial-gradient(800px 400px at 10% 0%, oklch(0.7 0.17 65 / 0.10), transparent 60%),
-    radial-gradient(700px 500px at 95% 30%, oklch(0.7 0.17 65 / 0.08), transparent 65%),
-    radial-gradient(900px 600px at 50% 100%, oklch(0.5 0.05 80 / 0.18), transparent 70%);
+    radial-gradient(700px 380px at 8% 0%, oklch(0.78 0.13 65 / 0.07), transparent 65%),
+    radial-gradient(650px 460px at 95% 25%, oklch(0.78 0.13 65 / 0.05), transparent 70%);
 }
 
-/* Cards gain a subtle tactical image overlay */
+/* Clean cards — solid surface, no photo overlay */
 [data-theme="official"] .card-dark,
 [data-theme="official"] .hud-panel {
-  background:
-    linear-gradient(180deg, oklch(0.98 0.004 80 / 0.96), oklch(0.96 0.004 80 / 0.98)),
-    url("/banners/warzone.jpg");
-  background-size: cover;
-  background-position: center;
-  background-blend-mode: luminosity;
+  background: linear-gradient(180deg, oklch(0.995 0.003 80), oklch(0.975 0.004 80));
+  background-blend-mode: normal;
 }
+
+/* Dim dashboard hero/section background photos on light theme */
+[data-theme="official"] .hud-panel > [aria-hidden][style*="background-image"] {
+  opacity: 0.06 !important;
+}
+
 
 /* PUBG official-site button: bold orange, sharp angle, punchy hover */
 [data-theme="official"] .btn-gold {
