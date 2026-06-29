@@ -42,6 +42,7 @@ import { SquadActivityCard } from "@/components/dashboard/SquadActivityCard";
 import { PersonalBestsCard } from "@/components/dashboard/PersonalBestsCard";
 import { NotificationsDigest } from "@/components/dashboard/NotificationsDigest";
 import { QuickBalanceCard } from "@/components/dashboard/QuickBalanceCard";
+import { TipAndCheckInCard } from "@/components/dashboard/TipAndCheckInCard";
 import squadHero from "@/assets/pubg-squad-action.webp";
 import sniperImg from "@/assets/pubg-sniper-rooftop.webp";
 import airdropImg from "@/assets/pubg-airdrop.webp";
@@ -156,7 +157,7 @@ function DashboardPage() {
           .order("created_at", { ascending: false }),
         supabase
           .from("balance_logs")
-          .select("amount, type, created_at")
+          .select("amount_bac, type, created_at")
           .eq("user_id", uid!)
           .order("created_at", { ascending: false })
           .limit(10),
@@ -409,6 +410,12 @@ function DashboardPage() {
           </>
         )}
       </section>
+
+      {/* TIP OF THE DAY + TODAY CHECK-IN */}
+      <TipAndCheckInCard
+        participants={data?.participants ?? []}
+        balanceLogs={data?.balanceLogs ?? []}
+      />
 
       {/* LIVE ACTIVITY TICKER */}
       {activity.length > 0 && (
