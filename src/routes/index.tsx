@@ -15,17 +15,17 @@ import {
 import { CoinIcon } from "@/components/site/CoinIcon";
 import { ApkIcon } from "@/components/site/ApkIcon";
 import { useT } from "@/lib/i18n";
-import heroSoldier from "@/assets/hero-soldier.jpg";
-import phoneApp from "@/assets/phone-app.jpg";
+import heroSoldier from "@/assets/hero-soldier.webp";
+import phoneApp from "@/assets/phone-app.webp";
 import bacCoin from "@/assets/battleasia-coin.png";
-import modeSoloBg from "@/assets/mode-solo.jpg";
-import modeDuoBg from "@/assets/mode-duo.jpg";
-import modeSquadBg from "@/assets/mode-squad.jpg";
-import modeTdmBg from "@/assets/mode-tdm.jpg";
-import pubgSquadAction from "@/assets/pubg-squad-action.jpg";
-import pubgVehicleChase from "@/assets/pubg-vehicle-chase.jpg";
-import pubgSniperRooftop from "@/assets/pubg-sniper-rooftop.jpg";
-import pubgAirdrop from "@/assets/pubg-airdrop.jpg";
+import modeSoloBg from "@/assets/mode-solo.webp";
+import modeDuoBg from "@/assets/mode-duo.webp";
+import modeSquadBg from "@/assets/mode-squad.webp";
+import modeTdmBg from "@/assets/mode-tdm.webp";
+import pubgSquadAction from "@/assets/pubg-squad-action.webp";
+import pubgVehicleChase from "@/assets/pubg-vehicle-chase.webp";
+import pubgSniperRooftop from "@/assets/pubg-sniper-rooftop.webp";
+import pubgAirdrop from "@/assets/pubg-airdrop.webp";
 
 
 

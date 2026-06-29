@@ -28,9 +28,9 @@ import {
 import { DailyLoginCard } from "@/components/dashboard/DailyLoginCard";
 import { DailyQuestsCard } from "@/components/dashboard/DailyQuestsCard";
 import { SpinWheelCard } from "@/components/dashboard/SpinWheelCard";
-import squadHero from "@/assets/pubg-squad-action.jpg";
-import sniperImg from "@/assets/pubg-sniper-rooftop.jpg";
-import airdropImg from "@/assets/pubg-airdrop.jpg";
+import squadHero from "@/assets/pubg-squad-action.webp";
+import sniperImg from "@/assets/pubg-sniper-rooftop.webp";
+import airdropImg from "@/assets/pubg-airdrop.webp";
 
 export const Route = createFileRoute("/_authenticated/dashboard/")({
   head: () => ({
