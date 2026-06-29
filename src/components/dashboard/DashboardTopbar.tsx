@@ -6,7 +6,7 @@ import { CoinIcon } from "@/components/site/CoinIcon";
 import { supabase } from "@/integrations/supabase/client";
 import { useNotifications } from "@/hooks/use-notifications";
 import type { Profile } from "@/hooks/use-profile";
-import { ThemeSwitcher } from "@/components/site/ThemeSwitcher";
+
 
 interface Props {
   profile: Profile | null;
@@ -69,7 +69,7 @@ export function DashboardTopbar({ profile, onOpenMobileNav }: Props) {
         </div>
 
         <div className="flex items-center gap-2">
-          <ThemeSwitcher compact />
+          
           <Link
             to="/dashboard/notifications"
             className="relative grid h-9 w-9 place-items-center rounded-md border border-border/70 text-foreground/75 transition hover:border-gold/60 hover:text-gold"
