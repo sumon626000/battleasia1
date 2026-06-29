@@ -34,7 +34,7 @@ type Post = {
   likes_count: number;
   comments_count: number;
   created_at: string;
-  author?: { username: string | null; full_name: string | null; avatar_url: string | null } | null;
+  author?: { username: string | null; full_name: string | null; avatar_url: string | null; in_game_username: string | null } | null;
   liked_by_me?: boolean;
   media?: CarouselMedia[];
 };
@@ -63,7 +63,7 @@ function PostView() {
       .maybeSingle();
     if (!row) { setPost(null); setLoading(false); return; }
     const [{ data: prof }, likeRes, mediaRes] = await Promise.all([
-      supabase.from("profiles").select("username,full_name,avatar_url").eq("id", row.user_id).maybeSingle(),
+      supabase.from("profiles").select("username,full_name,avatar_url,in_game_username").eq("id", row.user_id).maybeSingle(),
       user
         ? supabase.from("social_likes").select("post_id").eq("post_id", row.id).eq("user_id", user.id).maybeSingle()
         : Promise.resolve({ data: null }),
@@ -127,7 +127,12 @@ function PostView() {
             </span>
           </Link>
           <div className="min-w-0 flex-1">
-            <Link to="/u/$username" params={{ username: handle }} className="block truncate font-hud text-sm font-bold text-foreground hover:text-gold">{handle}</Link>
+            <Link to="/u/$username" params={{ username: handle }} className="block truncate font-hud text-sm font-bold text-foreground hover:text-gold">
+              {handle}
+              {post.author?.in_game_username && (
+                <span className="ml-1.5 font-hud text-[11px] font-semibold text-gold/80">· 🎮 {post.author.in_game_username}</span>
+              )}
+            </Link>
             <div className="font-hud text-[10px] uppercase tracking-wider text-foreground/50">{timeAgo(post.created_at)} ago</div>
           </div>
         </div>
