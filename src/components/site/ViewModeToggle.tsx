@@ -13,7 +13,7 @@ function apply(mode: Mode) {
   }
   meta.content =
     mode === "desktop"
-      ? "width=1280, initial-scale=0.3, viewport-fit=cover"
+      ? "width=1440, viewport-fit=cover"
       : "width=device-width, initial-scale=1, viewport-fit=cover";
 }
 
