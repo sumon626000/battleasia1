@@ -418,7 +418,7 @@ function EditorModal({
               </select>
             </Field>
 
-            <Select label="Map" required error={errors.map_name} value={draft.map_name} options={MAP_OPTIONS} onChange={(v) => upd({ map_name: v, map_image_url: MAP_IMAGES[v] ?? draft.map_image_url ?? null, banner_image_url: draft.banner_image_url ?? MAP_IMAGES[v] ?? null })} />
+            <Select label="Map" required error={errors.map_name} value={draft.map_name} options={draft.game_mode === "TDM" ? TDM_MAPS : CLASSIC_MAPS} onChange={(v) => upd({ map_name: v, map_image_url: MAP_IMAGES[v] ?? draft.map_image_url ?? null, banner_image_url: draft.banner_image_url ?? MAP_IMAGES[v] ?? null })} />
 
             {/* Map preview */}
             <div className="overflow-hidden rounded border border-border/60 bg-secondary/30">
