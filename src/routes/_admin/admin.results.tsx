@@ -4,7 +4,7 @@ import { z } from "zod";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Trophy, Save, Upload, FileSpreadsheet } from "lucide-react";
+import { Trophy } from "lucide-react";
 import { CoinIcon } from "@/components/site/CoinIcon";
 
 const search = z.object({ matchId: z.coerce.number().optional() });
@@ -21,8 +21,6 @@ type Participant = {
   kills: number;
   prize_bac: number;
   kill_prize_bac: number;
-  win_prize_bac: number;
-  bonus_bac: number;
   status: string;
   result_applied: boolean;
 };
@@ -33,11 +31,7 @@ type Match = {
   id: number;
   match_name: string;
   status: string;
-  reward_type: string;
   per_kill_amount_bac: number;
-  rank_1_prize_bac: number;
-  rank_2_prize_bac: number;
-  rank_3_prize_bac: number;
   result_applied: boolean;
   entry_fee_bac: number;
   total_players: number;
@@ -45,16 +39,11 @@ type Match = {
   player_mode: string;
 };
 
-type RowState = { status: string; kills: string; winPrize: string; bonus: string };
-
 function AdminResultsPage() {
   const qc = useQueryClient();
   const { matchId } = Route.useSearch();
   const [selectedId, setSelectedId] = useState<number | undefined>(matchId);
-  const [description, setDescription] = useState("");
-  const [imageUrl, setImageUrl] = useState("");
-  const [rows, setRows] = useState<Record<string, RowState>>({});
-  const [csvText, setCsvText] = useState("");
+  const [kills, setKills] = useState<Record<string, string>>({});
 
   useEffect(() => { if (matchId) setSelectedId(matchId); }, [matchId]);
 
@@ -63,7 +52,7 @@ function AdminResultsPage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("matches")
-        .select("id, match_name, status, reward_type, per_kill_amount_bac, rank_1_prize_bac, rank_2_prize_bac, rank_3_prize_bac, result_applied, schedule_at")
+        .select("id, match_name, status, per_kill_amount_bac, result_applied, schedule_at")
         .is("deleted_at", null)
         .order("schedule_at", { ascending: false })
         .limit(100);
@@ -78,7 +67,7 @@ function AdminResultsPage() {
     queryFn: async () => {
       const [{ data: m, error: e1 }, { data: parts, error: e2 }] = await Promise.all([
         supabase.from("matches").select("*").eq("id", selectedId!).maybeSingle(),
-        supabase.from("match_participants").select("id, user_id, rank_position, kills, prize_bac, kill_prize_bac, win_prize_bac, bonus_bac, status, result_applied").eq("match_id", selectedId!),
+        supabase.from("match_participants").select("id, user_id, rank_position, kills, prize_bac, kill_prize_bac, status, result_applied").eq("match_id", selectedId!),
       ]);
       if (e1) throw e1;
       if (e2) throw e2;
@@ -98,20 +87,11 @@ function AdminResultsPage() {
 
   useEffect(() => {
     if (!detail) return;
-    const seed: Record<string, RowState> = {};
-    for (const p of detail.participants) {
-      const isWin = p.rank_position === 1;
-      seed[p.user_id] = {
-        status: isWin ? "Winner" : (p.rank_position || p.kills) ? "Loser" : "",
-        kills: p.kills ? String(p.kills) : "",
-        winPrize: p.win_prize_bac ? String(p.win_prize_bac) : "",
-        bonus: p.bonus_bac ? String(p.bonus_bac) : "",
-      };
-    }
-    setRows(seed);
+    const seed: Record<string, string> = {};
+    for (const p of detail.participants) seed[p.user_id] = p.kills ? String(p.kills) : "";
+    setKills(seed);
   }, [detail]);
 
-  // Pool breakdown using BattleAsia formula
   const pool = useMemo(() => {
     if (!detail) return { totalIncome: 0, platformFee: 0, prizePool: 0, perKill: 0, killCount: 0, teamSize: 1 };
     const m = detail.match;
@@ -129,46 +109,22 @@ function AdminResultsPage() {
     return { totalIncome, platformFee, prizePool, perKill, killCount, teamSize };
   }, [detail]);
 
-  // Live per-row totals
-  const computed = useMemo(() => {
-    const out: Record<string, { killWin: number; total: number }> = {};
-    if (!detail) return out;
-    for (const p of detail.participants) {
-      const r = rows[p.user_id];
-      if (!r) { out[p.user_id] = { killWin: 0, total: 0 }; continue; }
-      const kills = parseInt(r.kills, 10) || 0;
-      const killWin = Math.round(kills * pool.perKill * 100) / 100;
-      const win = r.status === "Winner" ? (Number(r.winPrize) || 0) : 0;
-      const bonus = r.status === "Winner" ? (Number(r.bonus) || 0) : 0;
-      out[p.user_id] = { killWin, total: Math.round((killWin + win + bonus) * 100) / 100 };
-    }
-    return out;
-  }, [detail, rows, pool.perKill]);
-
   async function publish() {
     if (!detail) return;
     if (detail.match.result_applied) return toast.error("Results already published for this match.");
     const results = detail.participants
       .map((p) => {
-        const r = rows[p.user_id];
-        if (!r || !r.status) return null;
-        const kills = parseInt(r.kills, 10) || 0;
-        return {
-          user_id: p.user_id,
-          status: r.status,
-          kills,
-          win_prize: r.status === "Winner" ? (Number(r.winPrize) || 0) : 0,
-          bonus: r.status === "Winner" ? (Number(r.bonus) || 0) : 0,
-        };
-      })
-      .filter(Boolean);
-    if (results.length === 0) return toast.error("Fill at least one row.");
-    if (!confirm(`Publish results for ${results.length} player(s)? Prizes will be credited to wallets and cannot be undone.`)) return;
+        const k = parseInt(kills[p.user_id] ?? "", 10) || 0;
+        return { user_id: p.user_id, status: k > 0 ? "Winner" : "Loser", kills: k, win_prize: 0, bonus: 0 };
+      });
+    if (results.every((r) => r.kills === 0)) {
+      if (!confirm("All players have 0 kills. Publish anyway (no prizes will be credited)?")) return;
+    } else if (!confirm(`Publish results for ${results.length} player(s)? Kill prizes will be credited to wallets and cannot be undone.`)) {
+      return;
+    }
     const { error, data } = await supabase.rpc("admin_publish_match_result", {
       p_match_id: detail.match.id,
       p_results: results as never,
-      p_result_description: (description || undefined) as never,
-      p_result_image_url: (imageUrl || undefined) as never,
     });
     if (error) return toast.error(error.message);
     toast.success(`Published — ${data} row(s) credited.`);
@@ -176,82 +132,11 @@ function AdminResultsPage() {
     qc.invalidateQueries({ queryKey: ["admin-results-matches"] });
   }
 
-  async function uploadImage(file: File) {
-    if (!/^image\/(png|jpe?g|webp|gif)$/.test(file.type)) {
-      toast.error("Please choose a PNG, JPG, WEBP or GIF image");
-      return;
-    }
-    if (file.size > 8 * 1024 * 1024) {
-      toast.error("Image must be 8MB or less");
-      return;
-    }
-
-    const { data: auth } = await supabase.auth.getUser();
-    const userId = auth.user?.id;
-    if (!userId) return toast.error("Please sign in again before uploading.");
-
-    const ext = file.name.split(".").pop()?.toLowerCase() || "png";
-    const path = `${userId}/match-results/match-${detail?.match.id ?? "x"}-${Date.now()}.${ext}`;
-    const { error } = await supabase.storage.from("avatars").upload(path, file, {
-      upsert: true,
-      contentType: file.type,
-    });
-    if (error) return toast.error(error.message);
-    const { data, error: signError } = await supabase.storage.from("avatars").createSignedUrl(path, 60 * 60 * 24 * 365);
-    if (signError || !data?.signedUrl) return toast.error(signError?.message ?? "Image upload failed");
-    setImageUrl(data.signedUrl);
-    toast.success("Image uploaded");
-  }
-
-
-
-  function importCsv(text: string) {
-    if (!detail) return;
-    const lines = text.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
-    if (lines.length === 0) return toast.error("Empty CSV");
-    // Build lookup by pubg_id and in_game_username (case-insensitive)
-    const byPubg = new Map<string, string>();
-    const byName = new Map<string, string>();
-    for (const p of detail.participants) {
-      const pr = detail.profMap.get(p.user_id);
-      if (pr?.pubg_id) byPubg.set(String(pr.pubg_id).trim().toLowerCase(), p.user_id);
-      if (pr?.in_game_username) byName.set(pr.in_game_username.trim().toLowerCase(), p.user_id);
-      if (pr?.username) byName.set(pr.username.trim().toLowerCase(), p.user_id);
-    }
-    const next = { ...rows };
-    let matched = 0;
-    let skipped = 0;
-    const startIdx = /^(pubg|player|name|id|user)/i.test(lines[0]) ? 1 : 0;
-    for (let i = startIdx; i < lines.length; i++) {
-      const cols = lines[i].split(/[,\t;]/).map((c) => c.trim());
-      if (cols.length < 2) { skipped++; continue; }
-      const key = cols[0].toLowerCase();
-      const uid = byPubg.get(key) || byName.get(key);
-      if (!uid) { skipped++; continue; }
-      const rankNum = parseInt(cols[1] || "", 10);
-      const kills = cols[2] || "0";
-      next[uid] = {
-        status: rankNum === 1 ? "Winner" : Number.isFinite(rankNum) ? "Loser" : "",
-        kills,
-        winPrize: cols[3] || "",
-        bonus: cols[4] || "",
-      };
-      matched++;
-    }
-    setRows(next);
-    toast.success(`Imported ${matched} row(s)${skipped ? `, skipped ${skipped}` : ""}`);
-  }
-
-  async function importCsvFile(file: File) {
-    const text = await file.text();
-    importCsv(text);
-  }
-
   return (
     <div className="space-y-6">
       <div>
         <h1 className="font-display text-2xl uppercase tracking-[0.2em] text-foreground">Result Center</h1>
-        <p className="font-hud text-xs uppercase tracking-widest text-foreground/60">Publish rankings and distribute prize BAC</p>
+        <p className="font-hud text-xs uppercase tracking-widest text-foreground/60">Enter kills · auto pay per-kill prize</p>
       </div>
 
       <div className="flex flex-wrap items-center gap-3">
@@ -286,7 +171,7 @@ function AdminResultsPage() {
               <div>
                 <div className="font-display text-lg text-foreground">{detail.match.match_name}</div>
                 <div className="font-hud text-[10px] uppercase tracking-widest text-foreground/55">
-                  Reward: {detail.match.reward_type} · Mode: {detail.match.player_mode} · Per Kill: {pool.perKill} coins · Platform Fee: {detail.match.platform_fee_pct}%
+                  Mode: {detail.match.player_mode} · Per Kill: {pool.perKill} coins
                 </div>
               </div>
               {detail.match.result_applied && (
@@ -295,94 +180,41 @@ function AdminResultsPage() {
             </div>
           </section>
 
-          {/* Prize Pool Breakdown */}
-          <section className="hud-panel rounded-md border border-border/70 bg-card/40 p-4">
-            <h2 className="mb-3 font-display text-sm uppercase tracking-widest text-gold">Prize Pool Breakdown</h2>
-            <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
-              <Stat label="Total Income" value={pool.totalIncome.toLocaleString()} sub={`${detail.match.total_players} × ${Number(detail.match.entry_fee_bac).toLocaleString()}`} />
-              <Stat label={`Platform Fee (${detail.match.platform_fee_pct}%)`} value={`-${pool.platformFee.toLocaleString()}`} tone="negative" />
-              <Stat label="Prize Pool" value={pool.prizePool.toLocaleString()} />
-              <Stat label="Kill Money Pool" value={pool.prizePool.toLocaleString()} tone="positive" />
-              <Stat label={`Per Kill (÷${pool.killCount})`} value={pool.perKill.toLocaleString()} tone="positive" sub={`${pool.prizePool.toLocaleString()} ÷ ${pool.killCount}`} />
-            </div>
-            <p className="mt-3 font-hud text-[10px] uppercase tracking-widest text-foreground/60">
-              Mode: {detail.match.player_mode} · Winner team size: {pool.teamSize} · Kill Count = Players − {pool.teamSize}
-            </p>
-          </section>
-
           <section className="hud-panel overflow-x-auto rounded-md border border-border/70 bg-card/40">
-            <table className="w-full min-w-[1000px] text-sm">
+            <table className="w-full min-w-[640px] text-sm">
               <thead className="border-b border-border/60 bg-secondary/40 text-left font-hud text-[10px] uppercase tracking-widest text-foreground/60">
                 <tr>
-                  <th className="px-3 py-2">User Name</th>
-                  <th className="px-3 py-2 w-32">Player Status</th>
-                  <th className="px-3 py-2 w-20">Killed</th>
-                  <th className="px-3 py-2 w-28">Kill Win</th>
-                  <th className="px-3 py-2 w-28">Win Prize</th>
-                  <th className="px-3 py-2 w-28">Bonus</th>
-                  <th className="px-3 py-2 w-32">TOTAL WIN</th>
+                  <th className="px-3 py-2">User</th>
+                  <th className="px-3 py-2 w-24">Killed</th>
+                  <th className="px-3 py-2 w-32">Prize</th>
                 </tr>
               </thead>
               <tbody>
                 {detail.participants.length === 0 && (
-                  <tr><td colSpan={7} className="px-3 py-6 text-center font-hud text-xs uppercase tracking-widest text-foreground/50">No participants joined.</td></tr>
+                  <tr><td colSpan={3} className="px-3 py-6 text-center font-hud text-xs uppercase tracking-widest text-foreground/50">No participants joined.</td></tr>
                 )}
                 {detail.participants.map((p) => {
                   const prof = detail.profMap.get(p.user_id);
-                  const r = rows[p.user_id] ?? { status: "", kills: "", winPrize: "", bonus: "" };
-                  const isWinner = r.status === "Winner";
-                  const c = computed[p.user_id] ?? { killWin: 0, total: 0 };
+                  const k = parseInt(kills[p.user_id] ?? "", 10) || 0;
+                  const prize = Math.round(k * pool.perKill * 100) / 100;
                   return (
-                    <tr key={p.id} className={`border-b border-border/40 last:border-0 ${isWinner ? "bg-emerald-500/5" : ""}`}>
+                    <tr key={p.id} className={`border-b border-border/40 last:border-0 ${k > 0 ? "bg-emerald-500/5" : ""}`}>
                       <td className="px-3 py-2">
                         <div className="font-display text-foreground">{prof?.in_game_username || prof?.username || p.user_id.slice(0, 8)}</div>
                         <div className="font-mono text-[10px] text-foreground/55">PUBG: {prof?.pubg_id ?? "—"}</div>
                       </td>
                       <td className="px-3 py-2">
-                        <select
-                          disabled={detail.match.result_applied}
-                          value={r.status}
-                          onChange={(e) => setRows({ ...rows, [p.user_id]: { ...r, status: e.target.value } })}
-                          className="w-28 rounded border border-border/60 bg-secondary/40 px-2 py-1 font-hud text-xs outline-none focus:border-gold"
-                        >
-                          <option value="">—</option>
-                          <option value="Winner">Winner</option>
-                          <option value="Loser">Loser</option>
-                        </select>
-                      </td>
-                      <td className="px-3 py-2">
                         <input
                           type="number" min={0}
                           disabled={detail.match.result_applied}
-                          value={r.kills}
-                          onChange={(e) => setRows({ ...rows, [p.user_id]: { ...r, kills: e.target.value } })}
+                          value={kills[p.user_id] ?? ""}
+                          onChange={(e) => setKills({ ...kills, [p.user_id]: e.target.value })}
                           className="w-20 rounded border border-border/60 bg-secondary/40 px-2 py-1 font-mono text-sm outline-none focus:border-gold"
-                        />
-                      </td>
-                      <td className="px-3 py-2 tabular-nums font-mono text-emerald-400">{c.killWin.toLocaleString()}</td>
-                      <td className="px-3 py-2">
-                        <input
-                          type="number" min={0} step="0.01"
-                          disabled={detail.match.result_applied || !isWinner}
-                          value={isWinner ? r.winPrize : ""}
-                          placeholder={isWinner ? "0" : "—"}
-                          onChange={(e) => setRows({ ...rows, [p.user_id]: { ...r, winPrize: e.target.value } })}
-                          className="w-28 rounded border border-gold/40 bg-secondary/40 px-2 py-1 font-mono text-sm text-gold outline-none focus:border-gold disabled:opacity-30"
-                        />
-                      </td>
-                      <td className="px-3 py-2">
-                        <input
-                          type="number" min={0} step="0.01"
-                          disabled={detail.match.result_applied || !isWinner}
-                          value={isWinner ? r.bonus : ""}
-                          placeholder={isWinner ? "0" : "—"}
-                          onChange={(e) => setRows({ ...rows, [p.user_id]: { ...r, bonus: e.target.value } })}
-                          className="w-28 rounded border border-gold/40 bg-secondary/40 px-2 py-1 font-mono text-sm text-gold outline-none focus:border-gold disabled:opacity-30"
                         />
                       </td>
                       <td className="px-3 py-2 tabular-nums font-display text-base text-gold">
                         <span className="inline-flex items-center gap-1">
-                          {c.total.toLocaleString()}
+                          {prize.toLocaleString()}
                           <CoinIcon size={12} />
                         </span>
                       </td>
@@ -393,82 +225,18 @@ function AdminResultsPage() {
             </table>
           </section>
 
-          {!detail.match.result_applied && (
-            <section className="hud-panel rounded-md border border-border/70 bg-card/40 p-4 space-y-3">
-              <div className="flex items-center justify-between gap-3 flex-wrap">
-                <h2 className="font-display text-sm uppercase tracking-widest text-gold flex items-center gap-2"><FileSpreadsheet size={14}/> Bulk Import (CSV)</h2>
-                <label className="flex cursor-pointer items-center gap-2 rounded border border-border/60 px-3 py-1.5 font-hud text-[10px] uppercase tracking-widest hover:border-gold hover:text-gold">
-                  <Upload size={12} /> Upload .csv
-                  <input type="file" accept=".csv,text/csv,text/plain" className="hidden" onChange={(e) => e.target.files && importCsvFile(e.target.files[0])} />
-                </label>
-              </div>
-              <p className="font-hud text-[10px] uppercase tracking-widest text-foreground/55">
-                Format per line: <span className="text-gold">pubg_id_or_username, rank, kills</span> — header row optional. Unmatched players are skipped.
-              </p>
-              <textarea
-                value={csvText}
-                onChange={(e) => setCsvText(e.target.value)}
-                placeholder={"pubg_id,rank,kills\n5123456789,1,12\n5123459999,2,7"}
-                className="h-24 w-full rounded border border-border/60 bg-secondary/40 px-3 py-2 font-mono text-xs outline-none focus:border-gold"
-              />
-              <div className="flex justify-end">
-                <button
-                  onClick={() => { importCsv(csvText); }}
-                  className="rounded border border-border/60 px-4 py-1.5 font-hud text-[10px] uppercase tracking-widest hover:border-gold hover:text-gold"
-                >
-                  Apply CSV to table
-                </button>
-              </div>
-            </section>
-          )}
-
-          {!detail.match.result_applied && (
-            <section className="hud-panel rounded-md border border-border/70 bg-card/40 p-4 space-y-3">
-              <h2 className="font-display text-sm uppercase tracking-widest text-gold">Result Media (optional)</h2>
-              <textarea
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder="Summary, MVP highlight, notes…"
-                className="h-20 w-full rounded border border-border/60 bg-secondary/40 px-3 py-2 font-mono text-sm outline-none focus:border-gold"
-              />
-              <div className="flex flex-wrap items-center gap-2">
-                <label className="flex cursor-pointer items-center gap-2 rounded border border-border/60 px-3 py-2 font-hud text-xs uppercase tracking-widest hover:border-gold hover:text-gold">
-                  <Upload size={14} /> Upload screenshot
-                  <input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files && uploadImage(e.target.files[0])} />
-                </label>
-                <input
-                  value={imageUrl}
-                  onChange={(e) => setImageUrl(e.target.value)}
-                  placeholder="Or paste image URL"
-                  className="flex-1 min-w-[200px] rounded border border-border/60 bg-secondary/40 px-3 py-2 font-mono text-xs outline-none focus:border-gold"
-                />
-              </div>
-              <div className="flex justify-end">
-                <button
-                  onClick={publish}
-                  className="flex items-center gap-2 rounded border border-gold/60 bg-gold/15 px-5 py-2 font-hud text-xs uppercase tracking-widest text-gold hover:bg-gold/25"
-                >
-                  <Trophy size={14} /> Publish Results & Credit Prizes
-                  <Save size={14} />
-                </button>
-              </div>
-            </section>
+          {!detail.match.result_applied && detail.participants.length > 0 && (
+            <div className="flex justify-end">
+              <button
+                onClick={publish}
+                className="flex items-center gap-2 rounded border border-gold/60 bg-gold/15 px-5 py-2 font-hud text-xs uppercase tracking-widest text-gold hover:bg-gold/25"
+              >
+                <Trophy size={14} /> Publish Results & Credit Prizes
+              </button>
+            </div>
           )}
         </>
       )}
-    </div>
-  );
-}
-
-function Stat({ label, value, tone, sub }: { label: string; value: string; tone?: "positive" | "negative"; sub?: string }) {
-  const color = tone === "negative" ? "text-destructive" : tone === "positive" ? "text-emerald-400" : "text-foreground";
-  return (
-    <div className="rounded border border-border/60 bg-secondary/30 p-3">
-      <div className="font-hud text-[10px] uppercase tracking-widest text-foreground/55">{label}</div>
-      <div className={`mt-1 flex items-center gap-1 font-display text-lg ${color}`}>
-        {value} <CoinIcon size={14} />
-      </div>
-      {sub && <div className="mt-0.5 font-mono text-[10px] text-foreground/50">{sub}</div>}
     </div>
   );
 }
