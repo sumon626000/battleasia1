@@ -73,9 +73,10 @@ type Match = {
 
 const STATUS = ["Upcoming", "Active", "Ongoing", "Complete", "Cancelled"] as const;
 const MATCH_TYPE = ["Free", "Paid", "Sponsored"] as const;
-const GAME_MODE = ["Classic", "Arcade", "EvoGround", "Arena", "TDM"] as const;
+const GAME_MODE = ["Classic", "TDM"] as const;
 const PLAYER_MODE = ["Solo", "Duo", "Squad"] as const;
-const MAP_OPTIONS = ["Erangel", "Miramar", "Sanhok", "Vikendi", "Livik", "Karakin", "Paramo", "Haven", "Rondo", "Nusa"] as const;
+const CLASSIC_MAPS = ["Erangel", "Miramar", "Sanhok", "Vikendi", "Livik", "Karakin", "Paramo", "Haven", "Rondo", "Nusa"] as const;
+const TDM_MAPS = ["Warehouse", "Hangar", "Ruins", "Town", "Library", "Arena"] as const;
 const MAP_IMAGES: Record<string, string> = {
   Erangel: "/maps/erangel.jpg",
   Miramar: "/maps/miramar.jpg",
@@ -87,7 +88,14 @@ const MAP_IMAGES: Record<string, string> = {
   Haven: "/maps/haven.jpg",
   Rondo: "/maps/rondo.jpg",
   Nusa: "/maps/nusa.jpg",
+  Warehouse: "/maps/warehouse.jpg",
+  Hangar: "/maps/hangar.jpg",
+  Ruins: "/maps/ruins.jpg",
+  Town: "/maps/town.jpg",
+  Library: "/maps/library.jpg",
+  Arena: "/maps/arena.jpg",
 };
+
 const REWARD_TYPE = ["KillBased", "RankBased", "Mixed"] as const;
 const KILL_TYPE = ["Automatic", "Manual"] as const;
 
@@ -410,7 +418,7 @@ function EditorModal({
               </select>
             </Field>
 
-            <Select label="Map" required error={errors.map_name} value={draft.map_name} options={MAP_OPTIONS} onChange={(v) => upd({ map_name: v, map_image_url: MAP_IMAGES[v] ?? draft.map_image_url ?? null, banner_image_url: draft.banner_image_url ?? MAP_IMAGES[v] ?? null })} />
+            <Select label="Map" required error={errors.map_name} value={draft.map_name} options={draft.game_mode === "TDM" ? TDM_MAPS : CLASSIC_MAPS} onChange={(v) => upd({ map_name: v, map_image_url: MAP_IMAGES[v] ?? draft.map_image_url ?? null, banner_image_url: draft.banner_image_url ?? MAP_IMAGES[v] ?? null })} />
 
             {/* Map preview */}
             <div className="overflow-hidden rounded border border-border/60 bg-secondary/30">
@@ -448,7 +456,12 @@ function EditorModal({
 
           {/* RIGHT COLUMN */}
           <div className="space-y-3">
-            <Select label="Game Mode" required error={errors.game_mode} value={draft.game_mode} options={GAME_MODE} onChange={(v) => upd({ game_mode: v })} />
+            <Select label="Game Mode" required error={errors.game_mode} value={draft.game_mode} options={GAME_MODE} onChange={(v) => {
+              const maps = v === "TDM" ? TDM_MAPS : CLASSIC_MAPS;
+              const nextMap = (maps as readonly string[]).includes(draft.map_name ?? "") ? draft.map_name : maps[0];
+              upd({ game_mode: v, map_name: nextMap, map_image_url: MAP_IMAGES[nextMap as string] ?? null, banner_image_url: MAP_IMAGES[nextMap as string] ?? null });
+            }} />
+
 
             <Field label={`Total Kills (${draft.game_mode ?? "Classic"})`}>
               <input
