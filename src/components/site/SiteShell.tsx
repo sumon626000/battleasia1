@@ -3,6 +3,7 @@ import { useRouterState } from "@tanstack/react-router";
 import { SiteHeader } from "./SiteHeader";
 import { SiteTicker } from "./SiteTicker";
 import { SiteFooter } from "./SiteFooter";
+import pageBgPubg from "@/assets/page-bg-pubg.jpg";
 import { AnnouncementBar } from "./AnnouncementBar";
 import { FeedBottomNav } from "@/components/feed/FeedBottomNav";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
