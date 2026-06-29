@@ -37,7 +37,7 @@ function PublicProfilePage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("profiles")
-        .select("id, username, display_name, avatar_url, country_code, pubg_id, game_server, created_at, premium_expires_at")
+        .select("id, username, display_name, avatar_url, country_code, pubg_id, game_server, created_at, is_premium")
         .ilike("username", username)
         .maybeSingle();
       if (error) throw error;
