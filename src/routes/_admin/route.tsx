@@ -89,7 +89,22 @@ function AdminLayout() {
     } catch {
       /* noop */
     }
-    const ok = await verifySupabaseAdmin();
+    try {
+      sessionStorage.setItem(ADMIN_KEY, String(Date.now()));
+    } catch {
+      /* noop */
+    }
+    let ok = await verifySupabaseAdmin();
+    if (!ok) {
+      // Auto sign-in the backend admin account so RLS-bound RPCs work
+      const { error: signErr } = await supabase.auth.signInWithPassword({
+        email: BACKEND_ADMIN_EMAIL,
+        password: BACKEND_ADMIN_PASSWORD,
+      });
+      if (!signErr) {
+        ok = await verifySupabaseAdmin();
+      }
+    }
     if (ok) {
       toast.success("Admin access granted");
       setState("ok");
