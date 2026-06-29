@@ -53,19 +53,29 @@ function StatCard({
   accent?: string;
 }) {
   return (
-    <div className="hud-panel relative overflow-hidden p-4">
-      <div className="flex items-start justify-between">
+    <div className="hud-panel relative overflow-hidden p-5 transition hover:-translate-y-0.5 hover:border-gold/50">
+      <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="font-mono text-[10px] uppercase tracking-widest text-foreground/55">
             {label}
           </div>
-          <div className={`mt-1 font-display text-2xl font-bold ${accent ?? "text-gold"}`}>
+          <div className={`mt-1.5 font-display text-2xl font-bold tabular-nums ${accent ?? "text-gold"}`}>
             {value}
           </div>
-          {hint && <div className="mt-0.5 text-[11px] text-foreground/55">{hint}</div>}
+          {hint && <div className="mt-1 text-[11px] text-foreground/55">{hint}</div>}
         </div>
-        <Icon size={18} className="text-foreground/40" />
+        <Icon size={18} className="shrink-0 text-foreground/40" />
       </div>
+    </div>
+  );
+}
+
+function StatSkeleton() {
+  return (
+    <div className="hud-panel p-5">
+      <div className="h-3 w-20 animate-pulse rounded bg-foreground/10" />
+      <div className="mt-2 h-7 w-16 animate-pulse rounded bg-foreground/10" />
+      <div className="mt-2 h-3 w-24 animate-pulse rounded bg-foreground/10" />
     </div>
   );
 }
@@ -154,19 +164,19 @@ function DashboardPage() {
   ];
 
   return (
-    <div className="space-y-5">
-      {/* HERO */}
+    <div className="space-y-4">
+      {/* HERO with merged balance */}
       <section className="hud-panel relative overflow-hidden p-5 sm:p-6">
         <div
           aria-hidden
-          className="absolute inset-0 -z-10 bg-cover bg-center opacity-30"
+          className="absolute inset-0 -z-10 bg-cover bg-center opacity-25"
           style={{ backgroundImage: `url(${squadHero})` }}
         />
-        <div aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-r from-background via-background/80 to-background/40" />
-        <div aria-hidden className="absolute inset-0 -z-10 bg-grid-hud opacity-20" />
-        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4">
+        <div aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-r from-background via-background/85 to-background/50" />
+        <div aria-hidden className="absolute inset-0 -z-10 bg-grid-hud opacity-[0.08]" />
+        <div className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
           <div className="min-w-0">
-            <p className="font-hud text-xs uppercase tracking-[0.25em] text-gold/80">
+            <p className="font-hud text-[11px] uppercase tracking-[0.25em] text-gold/80">
               Welcome back, Operator
             </p>
             <h1 className="mt-1 truncate font-display text-2xl font-bold tracking-wide sm:text-3xl">
@@ -176,29 +186,43 @@ function DashboardPage() {
               PUBG ID: {profile?.pubg_id ?? "—"} · Server: {profile?.game_server ?? "—"}
             </p>
           </div>
-          <div className="hidden sm:block">
-            <TrendingUp className="h-12 w-12 text-gold/60" />
+          <div className="flex items-center gap-3 rounded-lg border border-gold/40 bg-background/60 px-4 py-3 backdrop-blur">
+            <CoinIcon size={22} />
+            <div className="min-w-0">
+              <div className="font-hud text-[10px] uppercase tracking-widest text-foreground/55">
+                BAC Balance
+              </div>
+              <div className="font-mono text-2xl font-bold tabular-nums text-gold leading-tight">
+                {balance.toLocaleString()}
+              </div>
+            </div>
+            <Link
+              to="/dashboard/vault"
+              className="ml-1 shrink-0 rounded border border-gold/60 bg-gold/10 px-3 py-1.5 font-hud text-[10px] font-bold uppercase tracking-widest text-gold transition hover:bg-gold hover:text-background"
+            >
+              + Add
+            </Link>
           </div>
         </div>
       </section>
 
-      {/* BALANCE + QUICK SUMMARY */}
-      <section className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <div className="hud-panel border-gold/40 p-3 sm:p-4">
-          <div className="flex items-center justify-between">
-            <span className="font-hud text-[10px] uppercase tracking-wider text-foreground/60">
-              BAC Balance
-            </span>
-            <CoinIcon size={16} />
-          </div>
-          <div className="mt-2 font-mono text-xl font-bold tabular-nums text-gold sm:text-2xl">
-            {balance.toLocaleString()}
-          </div>
-        </div>
-        <StatCard icon={Swords} label="Matches Played" value={stats.played} hint={`${stats.finished} finished`} />
-        <StatCard icon={Trophy} label="Wins" value={stats.wins} accent="text-emerald-400" hint={`${stats.winRate}% win rate`} />
-        <StatCard icon={Users} label="Referrals" value={0} />
+      {/* STATS — 3 cards (Matches, Wins, Win Rate) */}
+      <section className="grid grid-cols-3 gap-3">
+        {isLoading ? (
+          <>
+            <StatSkeleton />
+            <StatSkeleton />
+            <StatSkeleton />
+          </>
+        ) : (
+          <>
+            <StatCard icon={Swords} label="Matches" value={stats.played} hint={`${stats.finished} finished`} />
+            <StatCard icon={Trophy} label="Wins" value={stats.wins} accent="text-emerald-400" hint={`Top3: ${stats.top3}`} />
+            <StatCard icon={TrendingUp} label="Win Rate" value={`${stats.winRate}%`} accent="text-gold" hint={`${stats.avgKills} avg K`} />
+          </>
+        )}
       </section>
+
 
       {/* QUICK ACTIONS */}
       <section>
