@@ -11,6 +11,7 @@ import { StoriesRail } from "@/components/feed/StoriesRail";
 // SignedMedia handled inside PostMediaCarousel
 import { PeopleToFollow } from "@/components/feed/PeopleToFollow";
 import { PostMediaCarousel, type CarouselMedia } from "@/components/feed/PostMediaCarousel";
+import { RichText } from "@/components/feed/RichText";
 
 
 export const Route = createFileRoute("/feed/")({
@@ -467,7 +468,7 @@ function PostCard({ post, onLike, onDoubleTapLike, onFollow, isSelf }: { post: P
             <Link to="/u/$username" params={{ username: handle }} className="mr-2 font-hud font-bold text-foreground hover:text-gold">
               {handle}
             </Link>
-            {post.caption}
+            <RichText text={post.caption} />
           </p>
         ) : null}
         {post.comments_count > 0 && !showComments && (
