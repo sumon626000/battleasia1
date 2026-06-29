@@ -38,6 +38,8 @@ import {
 import { RewardsHub } from "@/components/dashboard/RewardsHub";
 import { TournamentsShowcase } from "@/components/dashboard/TournamentsShowcase";
 import { QuestProgressMini } from "@/components/dashboard/QuestProgressMini";
+import { SquadActivityCard } from "@/components/dashboard/SquadActivityCard";
+import { PersonalBestsCard } from "@/components/dashboard/PersonalBestsCard";
 import squadHero from "@/assets/pubg-squad-action.webp";
 import sniperImg from "@/assets/pubg-sniper-rooftop.webp";
 import airdropImg from "@/assets/pubg-airdrop.webp";
