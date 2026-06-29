@@ -6,6 +6,7 @@ import logoShield from "@/assets/logo-shield.webp";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import { LanguageSwitcher } from "@/components/site/LanguageSwitcher";
+import { ViewModeToggle } from "@/components/site/ViewModeToggle";
 
 import { useT } from "@/lib/i18n";
 
