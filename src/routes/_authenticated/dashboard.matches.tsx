@@ -794,11 +794,11 @@ function HubMatchRow({
   const total = m.total_players ?? 0;
   const isFull = total > 0 && filled >= total;
   const fee = Number(m.entry_fee_bac ?? 0);
-  const feePct = Number(m.platform_fee_pct ?? 0);
-  // Real prize pool = total entry income − platform fee. For Free matches, fall back to configured 1st-place prize.
-  const prizePool = m.match_type === "Free"
-    ? Number(m.rank_1_prize_bac ?? 0)
-    : Math.max(0, Math.round(fee * (total || 0) * (1 - feePct / 100)));
+  // Prize pool = sum of all rank prizes configured by admin (rank 1 + 2 + 3).
+  const prizePool =
+    Number(m.rank_1_prize_bac ?? 0) +
+    Number(m.rank_2_prize_bac ?? 0) +
+    Number(m.rank_3_prize_bac ?? 0);
   const when = m.schedule_at ? new Date(m.schedule_at) : null;
   const [countdown, setCountdown] = useState<string>("");
 
@@ -940,27 +940,32 @@ function HubMatchRow({
         </div>
       </div>
 
-      {/* Room credentials — visible only after join */}
-      {joined && (m.room_id || m.room_password) && (
-        <div className="mt-2 grid grid-cols-2 gap-2 border-t border-gold/20 pt-2">
-          {m.room_id && (
-            <RoomCredChip label="ROOM ID" value={String(m.room_id)} />
-          )}
-          {m.room_password && (
-            <RoomCredChip label="PASSWORD" value={String(m.room_password)} />
-          )}
-        </div>
-      )}
+      {/* Room credentials — labels always visible; masked until joined */}
+      <div className="mt-2 grid grid-cols-2 gap-2 border-t border-gold/20 pt-2">
+        <RoomCredChip
+          label="ROOM ID"
+          value={joined ? (m.room_id || "— TBA —") : "•••••••"}
+          locked={!joined}
+          onLockedClick={(e) => { e.preventDefault(); e.stopPropagation(); toast.info("Join this match to reveal Room ID"); }}
+        />
+        <RoomCredChip
+          label="PASSWORD"
+          value={joined ? (m.room_password || "— TBA —") : "•••••••"}
+          locked={!joined}
+          onLockedClick={(e) => { e.preventDefault(); e.stopPropagation(); toast.info("Join this match to reveal Password"); }}
+        />
+      </div>
     </Link>
 
   );
 }
 
-function RoomCredChip({ label, value }: { label: string; value: string }) {
+function RoomCredChip({ label, value, locked, onLockedClick }: { label: string; value: string; locked?: boolean; onLockedClick?: (e: React.MouseEvent) => void }) {
   const [copied, setCopied] = useState(false);
   async function copy(e: React.MouseEvent) {
     e.preventDefault();
     e.stopPropagation();
+    if (locked) { onLockedClick?.(e); return; }
     try {
       await navigator.clipboard.writeText(value);
       setCopied(true);
@@ -978,9 +983,9 @@ function RoomCredChip({ label, value }: { label: string; value: string }) {
     >
       <div className="min-w-0 flex-1">
         <div className="font-hud text-[8px] uppercase tracking-widest text-foreground/50">{label}</div>
-        <div className="truncate font-mono text-xs font-bold text-gold">{value}</div>
+        <div className={`truncate font-mono text-xs font-bold ${locked ? "text-foreground/40" : "text-gold"}`}>{value}</div>
       </div>
-      {copied ? <Check size={12} className="text-emerald-400" /> : <Copy size={12} className="text-foreground/60 group-hover:text-gold" />}
+      {locked ? <Lock size={12} className="text-foreground/50" /> : copied ? <Check size={12} className="text-emerald-400" /> : <Copy size={12} className="text-foreground/60 group-hover:text-gold" />}
     </button>
   );
 }
