@@ -244,7 +244,7 @@ function MatchesPage() {
           options={[["all","All"],["Free","Free"],["Paid","Paid"]]} />
       </div>
 
-      <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+      <section className="grid gap-3 grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
         {(matches.data ?? []).map((m: any) => (
           <MatchCard key={m.id} m={m} joined={joined.data?.has(m.id) ?? false} filled={counts.data?.[m.id] ?? 0} balance={balance} isPremium={!!profile?.is_premium} />
         ))}
@@ -255,6 +255,7 @@ function MatchesPage() {
           </div>
         )}
       </section>
+
     </div>
   );
 }
