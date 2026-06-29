@@ -100,7 +100,7 @@ export function QuickBalanceCard({ balance }: { balance: number }) {
           Wallet
         </h2>
         <Link
-          to="/wallet"
+          to="/dashboard/wallet"
           className="flex items-center gap-1 font-mono text-[10px] uppercase tracking-wider text-gold/80 hover:text-gold"
         >
           Open <ArrowRight size={11} />
@@ -120,14 +120,14 @@ export function QuickBalanceCard({ balance }: { balance: number }) {
 
         <div className="mt-3 grid grid-cols-2 gap-2">
           <Link
-            to="/wallet/deposit"
+            to="/dashboard/wallet" search={{ tab: "deposit" }}
             className="hud-panel group flex items-center justify-center gap-2 border-emerald-400/30 bg-emerald-400/5 px-3 py-2.5 font-hud text-xs font-semibold uppercase tracking-wider text-emerald-300 transition-all hover:-translate-y-0.5 hover:border-emerald-400/60 hover:bg-emerald-400/10 hover:shadow-[0_8px_24px_-12px_rgba(52,211,153,0.55)]"
           >
             <ArrowDownToLine size={14} className="transition-transform group-hover:-translate-y-0.5" />
             Deposit
           </Link>
           <Link
-            to="/wallet/withdraw"
+            to="/dashboard/wallet" search={{ tab: "withdraw" }}
             className="hud-panel group flex items-center justify-center gap-2 border-gold/30 bg-gold/5 px-3 py-2.5 font-hud text-xs font-semibold uppercase tracking-wider text-gold transition-all hover:-translate-y-0.5 hover:border-gold/60 hover:bg-gold/10 hover:shadow-[0_8px_24px_-12px_rgba(212,175,55,0.55)]"
           >
             <ArrowUpFromLine size={14} className="transition-transform group-hover:translate-y-0.5" />
@@ -142,7 +142,7 @@ export function QuickBalanceCard({ balance }: { balance: number }) {
             Recent transactions
           </div>
           <Link
-            to="/wallet"
+            to="/dashboard/wallet"
             className="font-mono text-[10px] uppercase tracking-wider text-foreground/55 hover:text-gold"
           >
             History

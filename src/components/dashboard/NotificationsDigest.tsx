@@ -105,7 +105,7 @@ export function NotificationsDigest() {
             </button>
           )}
           <Link
-            to="/notifications"
+            to="/dashboard/notifications"
             className="flex items-center gap-1 font-mono text-[10px] uppercase tracking-wider text-gold/80 hover:text-gold"
           >
             All <ArrowRight size={11} />
