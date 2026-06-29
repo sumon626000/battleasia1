@@ -72,7 +72,7 @@ function FeedPage() {
     if (!rows.length) return [];
     const ids = Array.from(new Set(rows.map((p) => p.user_id)));
     const [{ data: profs }, likesRes, { data: mediaRows }] = await Promise.all([
-      supabase.from("profiles").select("id,username,full_name,avatar_url").in("id", ids),
+      supabase.from("profiles").select("id,username,full_name,avatar_url,in_game_username").in("id", ids),
       user
         ? supabase
             .from("social_likes")
@@ -87,7 +87,7 @@ function FeedPage() {
         .order("position", { ascending: true }),
     ]);
     const profileMap: Record<string, Post["author"]> = Object.fromEntries(
-      (profs ?? []).map((p: any) => [p.id, { username: p.username, full_name: p.full_name, avatar_url: p.avatar_url }]),
+      (profs ?? []).map((p: any) => [p.id, { username: p.username, full_name: p.full_name, avatar_url: p.avatar_url, in_game_username: p.in_game_username }]),
     );
     const likedSet = new Set(((likesRes as any).data ?? []).map((l: any) => l.post_id));
     const mediaByPost: Record<string, CarouselMedia[]> = {};
