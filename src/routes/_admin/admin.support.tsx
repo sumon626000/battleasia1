@@ -42,14 +42,24 @@ function AdminSupportPage() {
     queryFn: async () => {
       let q = supabase
         .from("support_tickets")
-        .select("id, user_id, subject, status, last_message_at, unread_admin, created_at, profiles:profiles!support_tickets_user_id_fkey(username, in_game_username, pubg_id)")
+        .select("id, user_id, subject, status, last_message_at, unread_admin, created_at")
         .order("last_message_at", { ascending: false })
         .limit(200);
       if (statusFilter !== "all") q = q.eq("status", statusFilter as "Open" | "Closed" | "Pending");
       if (search) q = q.ilike("subject", `%${search}%`);
       const { data, error } = await q;
       if (error) throw error;
-      return (data ?? []) as unknown as Ticket[];
+      const rows = data ?? [];
+      const userIds = Array.from(new Set(rows.map((r) => r.user_id).filter(Boolean)));
+      const profileMap = new Map<string, { username: string | null; in_game_username: string | null; pubg_id: string | null }>();
+      if (userIds.length) {
+        const { data: profs } = await supabase
+          .from("profiles")
+          .select("id, username, in_game_username, pubg_id")
+          .in("id", userIds);
+        (profs ?? []).forEach((p: any) => profileMap.set(p.id, { username: p.username, in_game_username: p.in_game_username, pubg_id: p.pubg_id }));
+      }
+      return rows.map((r) => ({ ...r, profiles: profileMap.get(r.user_id) ?? null })) as unknown as Ticket[];
     },
   });
 
