@@ -243,6 +243,7 @@ function FeedPage() {
             <Link to="/explore" className="rounded border border-border/70 p-2 text-foreground/70 transition hover:border-gold/60 hover:text-gold" aria-label="Explore">
               <Search size={14} />
             </Link>
+            <NotificationBell />
             <button onClick={load} className="rounded border border-border/70 p-2 text-foreground/70 transition hover:border-gold/60 hover:text-gold" aria-label="Refresh">
               <RefreshCw size={14} />
             </button>
