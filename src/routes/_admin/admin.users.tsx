@@ -1,13 +1,16 @@
 import { useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import {
   Search, ShieldCheck, ShieldOff, Coins, UserX, UserCheck, X, Download,
-  Columns3, Filter, Rows3, MoreVertical, Trash2, RotateCcw,
+  Columns3, Filter, Rows3, MoreVertical, Trash2, RotateCcw, Save,
 } from "lucide-react";
 import { exportRowsAsCSV } from "@/lib/csv";
+import { adminUpdateUserAuth } from "@/lib/admin-users.functions";
+
 
 const RESET_SCOPES = [
   { key: "balance_logs", label: "Balance History" },
