@@ -185,6 +185,7 @@ function AdminMatchesPage() {
   const rowPad = density === "compact" ? "py-1" : density === "comfortable" ? "py-3" : "py-2";
   const [editing, setEditingState] = useState<Partial<Match> | null>(null);
   const [errors, setErrors] = useState<Partial<Record<FieldKey, boolean>>>({});
+  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
   const setEditing = (d: Partial<Match> | null) => {
     setEditingState(d);
     saveDraft(d);
