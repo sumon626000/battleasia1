@@ -56,6 +56,7 @@ export function SiteHeader() {
         <div className="hidden items-center gap-2 lg:flex">
           
           <LanguageSwitcher />
+          <ViewModeToggle />
           {isAuthenticated ? (
             <>
               <Link to="/dashboard" className="flex items-center gap-2 rounded-md border border-border/70 bg-background/60 px-3 py-1.5 transition hover:border-gold/60 hover:text-gold">
