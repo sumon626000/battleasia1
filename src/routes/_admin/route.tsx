@@ -12,6 +12,9 @@ export const Route = createFileRoute("/_admin")({
 
 const ADMIN_EMAIL = "admin@gmail.com";
 const ADMIN_PASSWORD = "12345678";
+// Real backend admin account auto-signed-in when standalone gate passes
+const BACKEND_ADMIN_EMAIL = "admin@battleasia.test";
+const BACKEND_ADMIN_PASSWORD = "AdminBac!2026";
 const ADMIN_KEY = "ba_standalone_admin_v1";
 const ADMIN_TTL_MS = 1000 * 60 * 60 * 8; // 8h
 const BYPASS_EMAILS = new Set(["nixhyip@gmail.com"]);
