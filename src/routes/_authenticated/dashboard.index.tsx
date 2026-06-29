@@ -226,9 +226,9 @@ function DashboardPage() {
           </>
         ) : (
           <>
-            <StatCard icon={Swords} label="Matches" value={<CountUp value={stats.played} />} hint={`${stats.finished} finished`} />
-            <StatCard icon={Trophy} label="Wins" value={<CountUp value={stats.wins} />} accent="text-emerald-400" hint={`Top3: ${stats.top3}`} />
-            <StatCard icon={TrendingUp} label="Win Rate" value={<><CountUp value={stats.winRate} />%</>} accent="text-gold" hint={`${stats.avgKills} avg K`} />
+            <StatCard icon={Swords} label="Matches" value={<CountUp value={stats.played} />} hint={`${stats.finished} finished`} stripe="bg-gold/70" />
+            <StatCard icon={Trophy} label="Wins" value={<CountUp value={stats.wins} />} accent="text-emerald-400" hint={`Top3: ${stats.top3}`} stripe="bg-emerald-400/70" trend={stats.wins > 0 ? "up" : "flat"} />
+            <StatCard icon={TrendingUp} label="Win Rate" value={<><CountUp value={stats.winRate} />%</>} accent="text-gold" hint={`${stats.avgKills} avg K`} stripe="bg-gold/70" trend={stats.winRate >= 50 ? "up" : stats.winRate > 0 ? "down" : "flat"} />
           </>
         )}
       </section>
