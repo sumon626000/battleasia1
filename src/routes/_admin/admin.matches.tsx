@@ -185,6 +185,7 @@ function AdminMatchesPage() {
   const rowPad = density === "compact" ? "py-1" : density === "comfortable" ? "py-3" : "py-2";
   const [editing, setEditingState] = useState<Partial<Match> | null>(null);
   const [errors, setErrors] = useState<Partial<Record<FieldKey, boolean>>>({});
+  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
   const setEditing = (d: Partial<Match> | null) => {
     setEditingState(d);
     saveDraft(d);
@@ -263,6 +264,31 @@ function AdminMatchesPage() {
     const { error } = await supabase.rpc("admin_delete_match", { p_match_id: id });
     if (error) return toast.error(error.message);
     toast.success("Match deleted");
+    qc.invalidateQueries({ queryKey: ["admin-matches"] });
+  }
+
+  async function deleteSelected() {
+    if (selectedIds.size === 0) return toast.error("No matches selected");
+    if (!confirm(`Delete ${selectedIds.size} selected match${selectedIds.size === 1 ? "" : "es"}?`)) return;
+    let ok = 0;
+    for (const id of selectedIds) {
+      const { error } = await supabase.rpc("admin_delete_match", { p_match_id: id });
+      if (!error) ok++;
+    }
+    toast.success(`${ok} deleted`);
+    setSelectedIds(new Set());
+    qc.invalidateQueries({ queryKey: ["admin-matches"] });
+  }
+
+  async function deleteAllMatches() {
+    if (!confirm("⚠ Soft-delete ALL matches? This cannot be undone from the UI.")) return;
+    if (!confirm("Are you really sure? Type OK in the next prompt to confirm.")) return;
+    const c = prompt("Type DELETE ALL to confirm:");
+    if (c !== "DELETE ALL") return toast.error("Cancelled");
+    const { data: n, error } = await supabase.rpc("admin_delete_all_matches");
+    if (error) return toast.error(error.message);
+    toast.success(`${n ?? 0} matches deleted`);
+    setSelectedIds(new Set());
     qc.invalidateQueries({ queryKey: ["admin-matches"] });
   }
 
@@ -373,6 +399,20 @@ function AdminMatchesPage() {
         <button className={tBtn} onClick={exportCSV}>
           <Download className="h-3.5 w-3.5" /> Export
         </button>
+        {selectedIds.size > 0 && (
+          <button
+            className="inline-flex items-center gap-1.5 rounded border border-destructive/70 bg-destructive/10 px-2.5 py-1.5 font-hud text-[10px] uppercase tracking-widest text-destructive hover:bg-destructive/20"
+            onClick={deleteSelected}
+          >
+            <Trash2 className="h-3.5 w-3.5" /> Delete Selected ({selectedIds.size})
+          </button>
+        )}
+        <button
+          className="inline-flex items-center gap-1.5 rounded border border-destructive/70 bg-destructive/10 px-2.5 py-1.5 font-hud text-[10px] uppercase tracking-widest text-destructive hover:bg-destructive/20"
+          onClick={deleteAllMatches}
+        >
+          <Trash2 className="h-3.5 w-3.5" /> Delete All
+        </button>
         <span className="ml-auto font-hud text-[10px] uppercase tracking-widest text-foreground/50">
           {matches.length} match{matches.length === 1 ? "" : "es"}
         </span>
@@ -382,6 +422,16 @@ function AdminMatchesPage() {
         <table className="w-full min-w-[900px] text-sm">
           <thead className="border-b border-border/60 bg-secondary/40 text-left font-hud text-[10px] uppercase tracking-widest text-foreground/60">
             <tr>
+              <th className="px-3 py-2 w-8">
+                <input
+                  type="checkbox"
+                  checked={matches.length > 0 && matches.every((m) => selectedIds.has(m.id))}
+                  onChange={(e) => {
+                    if (e.target.checked) setSelectedIds(new Set(matches.map((m) => m.id)));
+                    else setSelectedIds(new Set());
+                  }}
+                />
+              </th>
               {showCol("match") && <th className="px-3 py-2">Match</th>}
               {showCol("schedule") && <th className="px-3 py-2">Schedule</th>}
               {showCol("status") && <th className="px-3 py-2">Status</th>}
@@ -393,13 +443,25 @@ function AdminMatchesPage() {
           </thead>
           <tbody>
             {isLoading && (
-              <tr><td colSpan={7} className="px-3 py-6 text-center font-hud text-xs uppercase tracking-widest text-foreground/50">Loading…</td></tr>
+              <tr><td colSpan={8} className="px-3 py-6 text-center font-hud text-xs uppercase tracking-widest text-foreground/50">Loading…</td></tr>
             )}
             {!isLoading && matches.length === 0 && (
-              <tr><td colSpan={7} className="px-3 py-6 text-center font-hud text-xs uppercase tracking-widest text-foreground/50">No matches</td></tr>
+              <tr><td colSpan={8} className="px-3 py-6 text-center font-hud text-xs uppercase tracking-widest text-foreground/50">No matches</td></tr>
             )}
             {matches.map((m) => (
               <tr key={m.id} className="border-b border-border/40 last:border-0">
+                <td className={`px-3 ${rowPad}`}>
+                  <input
+                    type="checkbox"
+                    checked={selectedIds.has(m.id)}
+                    onChange={(e) => {
+                      const next = new Set(selectedIds);
+                      if (e.target.checked) next.add(m.id);
+                      else next.delete(m.id);
+                      setSelectedIds(next);
+                    }}
+                  />
+                </td>
                 {showCol("match") && (
                 <td className={`px-3 ${rowPad}`}>
                   <div className="font-display text-foreground">{m.match_name}</div>

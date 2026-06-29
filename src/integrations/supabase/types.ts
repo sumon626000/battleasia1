@@ -2525,6 +2525,7 @@ export type Database = {
         Args: { p_match_id: number; p_reason: string }
         Returns: number
       }
+      admin_delete_all_matches: { Args: never; Returns: number }
       admin_delete_all_non_admin_users: { Args: never; Returns: number }
       admin_delete_feed_category: { Args: { p_id: number }; Returns: undefined }
       admin_delete_feed_post: { Args: { p_id: number }; Returns: undefined }
@@ -2536,6 +2537,7 @@ export type Database = {
       admin_delete_premium_plan: { Args: { p_id: number }; Returns: undefined }
       admin_delete_shop_category: { Args: { p_id: number }; Returns: undefined }
       admin_delete_shop_package: { Args: { p_id: number }; Returns: undefined }
+      admin_delete_user: { Args: { p_user_id: string }; Returns: undefined }
       admin_force_logout_all: { Args: never; Returns: number }
       admin_force_logout_user: { Args: { _user_id: string }; Returns: number }
       admin_publish_match_result: {

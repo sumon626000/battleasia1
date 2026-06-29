@@ -401,6 +401,7 @@ function AdminUsers() {
   const qc = useQueryClient();
   const [q, setQ] = useState("");
   const [selected, setSelected] = useState<Row | null>(null);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [visible, setVisible] = useState<Record<ColKey, boolean>>(() =>
     Object.fromEntries(ALL_COLUMNS.map((c) => [c.key, true])) as Record<ColKey, boolean>
   );
@@ -482,6 +483,21 @@ function AdminUsers() {
     } catch (e) {
       toast.error((e as Error).message);
     }
+  };
+
+  const deleteSelected = async () => {
+    if (!isSuper) return toast.error("Super admin only");
+    if (selectedIds.size === 0) return toast.error("No users selected");
+    if (!confirm(`Permanently delete ${selectedIds.size} selected user${selectedIds.size === 1 ? "" : "s"}? Admins are skipped automatically.`)) return;
+    let ok = 0;
+    let fail = 0;
+    for (const id of selectedIds) {
+      const { error } = await supabase.rpc("admin_delete_user", { p_user_id: id });
+      if (error) fail++; else ok++;
+    }
+    toast.success(`${ok} deleted${fail ? `, ${fail} skipped` : ""}`);
+    setSelectedIds(new Set());
+    qc.invalidateQueries({ queryKey: ["admin-users"] });
   };
 
   const toolBtn = "inline-flex items-center gap-1.5 rounded border border-border/70 px-2.5 py-1.5 font-hud text-[10px] uppercase tracking-widest text-foreground/70 hover:border-gold hover:text-gold";
@@ -612,6 +628,15 @@ function AdminUsers() {
           <Download className="h-3.5 w-3.5" /> Export
         </button>
 
+        {selectedIds.size > 0 && (
+          <button
+            className="inline-flex items-center gap-1.5 rounded border border-destructive/70 bg-destructive/10 px-2.5 py-1.5 font-hud text-[10px] uppercase tracking-widest text-destructive hover:bg-destructive/20"
+            onClick={deleteSelected}
+          >
+            <Trash2 className="h-3.5 w-3.5" /> Delete Selected ({selectedIds.size})
+          </button>
+        )}
+
         {/* More: Delete all users */}
         <div className="relative ml-auto">
           <button className={toolBtn} onClick={() => setOpenMenu(openMenu === "more" ? null : "more")}>
@@ -632,6 +657,16 @@ function AdminUsers() {
         <table className="w-full min-w-[900px] text-sm">
           <thead>
             <tr className="border-b border-border/60 text-left font-hud text-[10px] uppercase tracking-widest text-foreground/60">
+              <th className="px-3 py-2 w-8">
+                <input
+                  type="checkbox"
+                  checked={filtered.length > 0 && filtered.every((r) => selectedIds.has(r.id))}
+                  onChange={(e) => {
+                    if (e.target.checked) setSelectedIds(new Set(filtered.map((r) => r.id)));
+                    else setSelectedIds(new Set());
+                  }}
+                />
+              </th>
               {show("actions") && <th className="px-3 py-2">Actions</th>}
               {show("id") && <th className="px-3 py-2">User ID</th>}
               {show("user") && <th className="px-3 py-2">User</th>}
@@ -648,15 +683,27 @@ function AdminUsers() {
           </thead>
           <tbody>
             {isLoading && (
-              <tr><td colSpan={12} className="px-3 py-6 text-center text-foreground/50">Loading…</td></tr>
+              <tr><td colSpan={13} className="px-3 py-6 text-center text-foreground/50">Loading…</td></tr>
             )}
             {!isLoading && filtered.length === 0 && (
-              <tr><td colSpan={12} className="px-3 py-6 text-center text-foreground/50">No users found.</td></tr>
+              <tr><td colSpan={13} className="px-3 py-6 text-center text-foreground/50">No users found.</td></tr>
             )}
             {filtered.map((u) => {
               const role = u.roles?.[0]?.role ?? "user";
               return (
                 <tr key={u.id} className="border-b border-border/30 hover:bg-secondary/30">
+                  <td className={`px-3 ${rowPad}`}>
+                    <input
+                      type="checkbox"
+                      checked={selectedIds.has(u.id)}
+                      onChange={(e) => {
+                        const next = new Set(selectedIds);
+                        if (e.target.checked) next.add(u.id);
+                        else next.delete(u.id);
+                        setSelectedIds(next);
+                      }}
+                    />
+                  </td>
                   {show("actions") && (
                     <td className={`px-3 ${rowPad}`}>
                       <button onClick={() => setSelected(u)}

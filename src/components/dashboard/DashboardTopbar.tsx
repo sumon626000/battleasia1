@@ -84,7 +84,7 @@ export function DashboardTopbar({ profile, onOpenMobileNav }: Props) {
           </Link>
           <Link
             to="/dashboard/profile"
-            className="flex items-center gap-2 rounded-md border border-border/70 bg-background/60 px-2 py-1 transition hover:border-gold/60"
+            className="hidden items-center gap-2 rounded-md border border-border/70 bg-background/60 px-2 py-1 transition hover:border-gold/60 lg:flex"
           >
             {profile?.avatar_url ? (
               <img loading="lazy" decoding="async" src={profile.avatar_url} alt="" className="h-7 w-7 rounded-sm object-cover" />
@@ -93,7 +93,7 @@ export function DashboardTopbar({ profile, onOpenMobileNav }: Props) {
                 {initials}
               </div>
             )}
-            <span className="hidden font-hud text-xs font-semibold uppercase tracking-wide sm:inline">
+            <span className="font-hud text-xs font-semibold uppercase tracking-wide">
               {username}
             </span>
           </Link>
