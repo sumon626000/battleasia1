@@ -585,7 +585,7 @@ function EditorModal({
           <h2 className="font-display text-lg uppercase tracking-widest text-gold">
             {draft.id ? `Edit Match #${draft.id}` : "Create Match"}
           </h2>
-          <button onClick={onClose} className="font-hud text-xs uppercase tracking-widest text-foreground/60 hover:text-gold">Close</button>
+          <button onClick={onClose} className="hud-btn hud-btn-ghost">Close</button>
         </div>
 
         {/* Top two-column section: left = identity + preview, right = combat settings */}
