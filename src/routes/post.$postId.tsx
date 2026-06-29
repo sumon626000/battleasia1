@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { CommentsThread, LikeBurst } from "@/components/feed/CommentsThread";
-import { SignedImage, SignedVideo } from "@/components/feed/SignedMedia";
+import { PostMediaCarousel, type CarouselMedia } from "@/components/feed/PostMediaCarousel";
 
 export const Route = createFileRoute("/post/$postId")({
   head: () => ({
