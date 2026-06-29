@@ -101,6 +101,40 @@ const MAP_IMAGES: Record<string, string> = {
 const REWARD_TYPE = ["KillBased", "RankBased", "Mixed"] as const;
 const KILL_TYPE = ["Automatic", "Manual"] as const;
 
+function PortalMenu({ label, btnCls, open, onToggle, onClose, width, children }: {
+  label: React.ReactNode; btnCls: string; open: boolean; onToggle: () => void; onClose: () => void; width: number; children: React.ReactNode;
+}) {
+  const btnRef = useRef<HTMLButtonElement>(null);
+  const [pos, setPos] = useState<{ top: number; left: number } | null>(null);
+  useLayoutEffect(() => {
+    if (!open || !btnRef.current) return;
+    const r = btnRef.current.getBoundingClientRect();
+    setPos({ top: r.bottom + 6, left: Math.min(r.left, window.innerWidth - width - 8) });
+  }, [open, width]);
+  useEffect(() => {
+    if (!open) return;
+    const f = () => onClose();
+    window.addEventListener("scroll", f, true);
+    window.addEventListener("resize", f);
+    return () => { window.removeEventListener("scroll", f, true); window.removeEventListener("resize", f); };
+  }, [open, onClose]);
+  return (
+    <>
+      <button ref={btnRef} className={btnCls} onClick={onToggle}>{label}</button>
+      {open && pos && typeof document !== "undefined" && createPortal(
+        <>
+          <div className="fixed inset-0 z-[9998]" onClick={onClose} />
+          <div style={{ top: pos.top, left: pos.left, width }}
+            className="fixed z-[9999] max-h-[70vh] overflow-y-auto rounded-md border border-border bg-popover p-2 shadow-xl">
+            {children}
+          </div>
+        </>,
+        document.body,
+      )}
+    </>
+  );
+}
+
 function emptyDraft(): Partial<Match> {
   return {
     match_name: "",
