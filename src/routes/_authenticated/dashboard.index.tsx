@@ -25,9 +25,7 @@ import {
   AchievementsCard,
   NextTournamentCard,
 } from "@/components/dashboard/PlayerHubCards";
-import { DailyLoginCard } from "@/components/dashboard/DailyLoginCard";
-import { DailyQuestsCard } from "@/components/dashboard/DailyQuestsCard";
-import { SpinWheelCard } from "@/components/dashboard/SpinWheelCard";
+import { RewardsHub } from "@/components/dashboard/RewardsHub";
 import squadHero from "@/assets/pubg-squad-action.webp";
 import sniperImg from "@/assets/pubg-sniper-rooftop.webp";
 import airdropImg from "@/assets/pubg-airdrop.webp";
@@ -251,13 +249,9 @@ function DashboardPage() {
         </div>
       </section>
 
-      {/* DAILY LOGIN + QUESTS + SPIN — 3-column on XL desktop */}
-      <section className="grid gap-4 lg:grid-cols-2 xl:grid-cols-3">
-        <div className="xl:col-span-3 lg:col-span-2">
-          <DailyLoginCard />
-        </div>
-        <DailyQuestsCard />
-        <SpinWheelCard />
+      {/* REWARDS HUB — Daily Login + Quests + Spin (tabbed) */}
+      <section className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+        <RewardsHub />
         <div className="hidden xl:block">
           <RankTierCard wins={stats.wins} kills={stats.totalKills} top3={stats.top3} />
         </div>
