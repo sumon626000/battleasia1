@@ -440,16 +440,25 @@ function AdminResultsPage() {
               </table>
             </div>
 
-            {!detail.match.result_applied && detail.participants.length > 0 && (
-              <div className="flex justify-end pt-2">
+            <div className="flex justify-end pt-2">
+              {detail.match.result_applied ? (
                 <button
-                  onClick={publish}
-                  className="flex items-center gap-2 rounded border border-gold/60 bg-gold/15 px-5 py-2 font-hud text-xs uppercase tracking-widest text-gold hover:bg-gold/25"
+                  onClick={unpublish}
+                  className="flex items-center gap-2 rounded border border-amber-500/60 bg-amber-500/15 px-5 py-2 font-hud text-xs uppercase tracking-widest text-amber-400 hover:bg-amber-500/25"
                 >
-                  <Trophy size={14} /> Publish Results & Credit Prizes
+                  <Trophy size={14} /> Edit Published · Unpublish & Refund
                 </button>
-              </div>
-            )}
+              ) : (
+                detail.participants.length > 0 && (
+                  <button
+                    onClick={publish}
+                    className="flex items-center gap-2 rounded border border-gold/60 bg-gold/15 px-5 py-2 font-hud text-xs uppercase tracking-widest text-gold hover:bg-gold/25"
+                  >
+                    <Trophy size={14} /> Publish Results & Credit Prizes
+                  </button>
+                )
+              )}
+            </div>
           </section>
         </>
       )}
