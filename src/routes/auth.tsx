@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { ArrowLeft, Eye, EyeOff, Loader2 } from "lucide-react";
 import { z } from "zod";
 import authHero from "@/assets/auth-hero.webp";
-import logoShield from "@/assets/logo-shield.png";
+import logoShield from "@/assets/logo-shield.webp";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import {

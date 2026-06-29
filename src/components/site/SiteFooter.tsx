@@ -1,5 +1,5 @@
 import { Facebook, Twitter, Send, Shield, Mail, MessageCircle } from "lucide-react";
-import logoShield from "@/assets/logo-shield.png";
+import logoShield from "@/assets/logo-shield.webp";
 import { useT } from "@/lib/i18n";
 
 const COLS: { titleKey: string; links: { labelKey: string; href: string }[] }[] = [

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { Menu, X, LogOut, User as UserIcon } from "lucide-react";
 import { toast } from "sonner";
-import logoShield from "@/assets/logo-shield.png";
+import logoShield from "@/assets/logo-shield.webp";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import { LanguageSwitcher } from "@/components/site/LanguageSwitcher";

@@ -1,4 +1,4 @@
-import coin from "@/assets/battleasia-coin.png";
+import coin from "@/assets/battleasia-coin.webp";
 
 interface Props {
   size?: number;
