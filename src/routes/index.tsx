@@ -501,7 +501,7 @@ function BattleAsiaLanding() {
 
 
       {/* ============ ABOUT ============ */}
-      <section className="relative overflow-hidden border-y border-border/60 bg-card/30 py-14">
+      <section id="about" className="relative overflow-hidden border-y border-border/60 bg-card/30 py-14 scroll-mt-24">
         <img loading="lazy" decoding="async" src={pubgAirdrop} alt="" aria-hidden width={1600} height={900} className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-25" />
         <div aria-hidden className="pointer-events-none absolute inset-0 bg-gradient-to-b from-background/85 via-background/75 to-background/90 lg:bg-gradient-to-r lg:from-background lg:via-background/70 lg:to-background/30" />
         <div aria-hidden className="pointer-events-none absolute inset-0 bg-grid-hud opacity-10" />
