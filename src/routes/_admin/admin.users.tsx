@@ -299,8 +299,16 @@ function AdminUsers() {
     if (fStatus === "suspended") rows = rows.filter((r) => !!r.is_suspended);
     if (fPremium === "yes") rows = rows.filter((r) => !!r.is_premium);
     if (fPremium === "no") rows = rows.filter((r) => !r.is_premium);
+    if (fDateStart) {
+      const t = new Date(fDateStart).getTime();
+      rows = rows.filter((r) => new Date(r.created_at).getTime() >= t);
+    }
+    if (fDateEnd) {
+      const t = new Date(fDateEnd).getTime() + 86400000 - 1;
+      rows = rows.filter((r) => new Date(r.created_at).getTime() <= t);
+    }
     return rows;
-  }, [data, fRole, fStatus, fPremium]);
+  }, [data, fRole, fStatus, fPremium, fDateStart, fDateEnd]);
 
   const rowPad = density === "compact" ? "py-1" : density === "comfortable" ? "py-3" : "py-2";
 
