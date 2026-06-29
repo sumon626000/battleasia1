@@ -27,7 +27,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
   }
 
   return (
-    <div className="relative flex min-h-screen flex-col overflow-x-hidden bg-background text-foreground">
+    <div className="relative flex min-h-screen flex-col overflow-x-hidden text-foreground">
       {/* Global PUBG background — spans header → footer */}
       <div aria-hidden className="pointer-events-none fixed inset-0 -z-10">
         <div
