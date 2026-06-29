@@ -11,6 +11,7 @@ import { StoriesRail } from "@/components/feed/StoriesRail";
 // SignedMedia handled inside PostMediaCarousel
 import { PeopleToFollow } from "@/components/feed/PeopleToFollow";
 import { PostMediaCarousel, type CarouselMedia } from "@/components/feed/PostMediaCarousel";
+import { RichText } from "@/components/feed/RichText";
 
 
 export const Route = createFileRoute("/feed/")({
