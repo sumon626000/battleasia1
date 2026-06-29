@@ -20,6 +20,7 @@ import {
   Calendar,
 } from "lucide-react";
 import { CoinIcon } from "@/components/site/CoinIcon";
+import { CountUp } from "@/components/ui/CountUp";
 import {
   RankTierCard,
   AchievementsCard,
@@ -46,7 +47,7 @@ function StatCard({
 }: {
   icon: typeof Trophy;
   label: string;
-  value: string | number;
+  value: React.ReactNode;
   hint?: string;
   accent?: string;
 }) {
@@ -191,7 +192,7 @@ function DashboardPage() {
                 BAC Balance
               </div>
               <div className="font-mono text-2xl font-bold tabular-nums text-gold leading-tight">
-                {balance.toLocaleString()}
+                <CountUp value={balance} />
               </div>
             </div>
             <Link
@@ -214,9 +215,9 @@ function DashboardPage() {
           </>
         ) : (
           <>
-            <StatCard icon={Swords} label="Matches" value={stats.played} hint={`${stats.finished} finished`} />
-            <StatCard icon={Trophy} label="Wins" value={stats.wins} accent="text-emerald-400" hint={`Top3: ${stats.top3}`} />
-            <StatCard icon={TrendingUp} label="Win Rate" value={`${stats.winRate}%`} accent="text-gold" hint={`${stats.avgKills} avg K`} />
+            <StatCard icon={Swords} label="Matches" value={<CountUp value={stats.played} />} hint={`${stats.finished} finished`} />
+            <StatCard icon={Trophy} label="Wins" value={<CountUp value={stats.wins} />} accent="text-emerald-400" hint={`Top3: ${stats.top3}`} />
+            <StatCard icon={TrendingUp} label="Win Rate" value={<><CountUp value={stats.winRate} />%</>} accent="text-gold" hint={`${stats.avgKills} avg K`} />
           </>
         )}
       </section>
