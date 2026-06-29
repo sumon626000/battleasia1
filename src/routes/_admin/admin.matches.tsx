@@ -399,6 +399,20 @@ function AdminMatchesPage() {
         <button className={tBtn} onClick={exportCSV}>
           <Download className="h-3.5 w-3.5" /> Export
         </button>
+        {selectedIds.size > 0 && (
+          <button
+            className="inline-flex items-center gap-1.5 rounded border border-destructive/70 bg-destructive/10 px-2.5 py-1.5 font-hud text-[10px] uppercase tracking-widest text-destructive hover:bg-destructive/20"
+            onClick={deleteSelected}
+          >
+            <Trash2 className="h-3.5 w-3.5" /> Delete Selected ({selectedIds.size})
+          </button>
+        )}
+        <button
+          className="inline-flex items-center gap-1.5 rounded border border-destructive/70 bg-destructive/10 px-2.5 py-1.5 font-hud text-[10px] uppercase tracking-widest text-destructive hover:bg-destructive/20"
+          onClick={deleteAllMatches}
+        >
+          <Trash2 className="h-3.5 w-3.5" /> Delete All
+        </button>
         <span className="ml-auto font-hud text-[10px] uppercase tracking-widest text-foreground/50">
           {matches.length} match{matches.length === 1 ? "" : "es"}
         </span>
@@ -408,6 +422,16 @@ function AdminMatchesPage() {
         <table className="w-full min-w-[900px] text-sm">
           <thead className="border-b border-border/60 bg-secondary/40 text-left font-hud text-[10px] uppercase tracking-widest text-foreground/60">
             <tr>
+              <th className="px-3 py-2 w-8">
+                <input
+                  type="checkbox"
+                  checked={matches.length > 0 && matches.every((m) => selectedIds.has(m.id))}
+                  onChange={(e) => {
+                    if (e.target.checked) setSelectedIds(new Set(matches.map((m) => m.id)));
+                    else setSelectedIds(new Set());
+                  }}
+                />
+              </th>
               {showCol("match") && <th className="px-3 py-2">Match</th>}
               {showCol("schedule") && <th className="px-3 py-2">Schedule</th>}
               {showCol("status") && <th className="px-3 py-2">Status</th>}
