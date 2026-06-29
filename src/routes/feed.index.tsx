@@ -39,7 +39,7 @@ type Post = {
   comments_count: number;
   views_count: number;
   created_at: string;
-  author?: { username: string | null; full_name: string | null; avatar_url: string | null; in_game_username: string | null } | null;
+  author?: { username: string | null; display_name: string | null; avatar_url: string | null; in_game_username: string | null } | null;
   liked_by_me?: boolean;
   following_author?: boolean;
   media?: CarouselMedia[];
@@ -72,7 +72,7 @@ function FeedPage() {
     if (!rows.length) return [];
     const ids = Array.from(new Set(rows.map((p) => p.user_id)));
     const [{ data: profs }, likesRes, { data: mediaRows }] = await Promise.all([
-      supabase.from("profiles").select("id,username,full_name,avatar_url,in_game_username").in("id", ids),
+      supabase.from("profiles").select("id,username,display_name,avatar_url,in_game_username").in("id", ids),
       user
         ? supabase
             .from("social_likes")
@@ -87,7 +87,7 @@ function FeedPage() {
         .order("position", { ascending: true }),
     ]);
     const profileMap: Record<string, Post["author"]> = Object.fromEntries(
-      (profs ?? []).map((p: any) => [p.id, { username: p.username, full_name: p.full_name, avatar_url: p.avatar_url, in_game_username: p.in_game_username }]),
+      (profs ?? []).map((p: any) => [p.id, { username: p.username, display_name: p.display_name, avatar_url: p.avatar_url, in_game_username: p.in_game_username }]),
     );
     const likedSet = new Set(((likesRes as any).data ?? []).map((l: any) => l.post_id));
     const mediaByPost: Record<string, CarouselMedia[]> = {};
@@ -381,7 +381,7 @@ function FeedPage() {
 
 
 function PostCard({ post, onLike, onDoubleTapLike, onFollow, isSelf }: { post: Post; onLike: () => void; onDoubleTapLike: () => void; onFollow: () => void; isSelf: boolean }) {
-  const handle = post.author?.username || post.author?.full_name || "player";
+  const handle = post.author?.username || post.author?.display_name || "player";
   const initials = handle.slice(0, 2).toUpperCase();
   const [showComments, setShowComments] = useState(false);
   const [views, setViews] = useState<number>(post.views_count ?? 0);

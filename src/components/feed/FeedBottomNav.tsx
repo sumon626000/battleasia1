@@ -6,7 +6,7 @@ import { useAuth } from "@/hooks/use-auth";
 export function FeedBottomNav() {
   const { user, profile, isAuthenticated } = useAuth() as any;
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const username = profile?.username || profile?.full_name || user?.email?.split("@")[0];
+  const username = profile?.username || profile?.display_name || user?.email?.split("@")[0];
 
   const items: any[] = [
     { key: "home", label: "Home", icon: Home, to: "/feed", active: pathname === "/feed" },

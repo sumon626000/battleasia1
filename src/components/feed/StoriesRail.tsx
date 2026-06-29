@@ -15,7 +15,7 @@ type Story = {
   caption: string | null;
   created_at: string;
 };
-type Author = { username: string | null; full_name?: string | null; avatar_url: string | null };
+type Author = { username: string | null; display_name?: string | null; avatar_url: string | null };
 type Group = { user_id: string; author: Author | null; stories: Story[] };
 
 export function StoriesRail() {
@@ -127,7 +127,7 @@ export function StoriesRail() {
           </Link>
         )}
         {groups.map((g, gi) => {
-          const handle = g.author?.username || g.author?.full_name || "player";
+          const handle = g.author?.username || g.author?.display_name || "player";
           const initials = handle.slice(0, 2).toUpperCase();
           return (
             <button
@@ -168,7 +168,7 @@ export function StoriesRail() {
             </div>
             <div className="absolute left-3 top-5 z-10 flex items-center gap-2 text-white">
               <span className="font-hud text-xs font-bold drop-shadow">
-                {groups[viewer.gi].author?.username || groups[viewer.gi].author?.full_name || "player"}
+                {groups[viewer.gi].author?.username || groups[viewer.gi].author?.display_name || "player"}
               </span>
             </div>
             <button onClick={close} className="absolute right-2 top-4 z-10 rounded-full p-1.5 text-white hover:bg-white/10" aria-label="Close">

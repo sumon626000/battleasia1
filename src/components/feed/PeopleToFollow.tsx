@@ -8,7 +8,7 @@ import { useAuth } from "@/hooks/use-auth";
 type Row = {
   id: string;
   username: string | null;
-  full_name: string | null;
+  display_name: string | null;
   avatar_url: string | null;
   country_code: string | null;
   followers: number;
@@ -37,11 +37,11 @@ export function PeopleToFollow({ limit = 8, title = "Players to follow" }: { lim
 
     const { data: profs } = await supabase
       .from("profiles")
-      .select("id,username,full_name,avatar_url,country_code,created_at")
+      .select("id,username,display_name,avatar_url,country_code,created_at")
       .order("created_at", { ascending: false })
       .limit(50);
 
-    let pool = (profs ?? []).filter((p: any) => p.id !== user?.id && !blocked.has(p.id) && (p.username || p.full_name));
+    let pool = (profs ?? []).filter((p: any) => p.id !== user?.id && !blocked.has(p.id) && (p.username || p.display_name));
     const ids = pool.map((p: any) => p.id);
 
     // counts + my follows
@@ -60,7 +60,7 @@ export function PeopleToFollow({ limit = 8, title = "Players to follow" }: { lim
     const enriched: Row[] = pool.map((p: any) => ({
       id: p.id,
       username: p.username,
-      full_name: p.full_name,
+      display_name: p.display_name,
       avatar_url: p.avatar_url,
       country_code: p.country_code,
       followers: cmap[p.id] ?? 0,
@@ -130,7 +130,7 @@ export function PeopleToFollow({ limit = 8, title = "Players to follow" }: { lim
       ) : (
         <ul className="space-y-3">
           {rows.map((r) => {
-            const handle = r.username || r.full_name || "player";
+            const handle = r.username || r.display_name || "player";
             const initials = handle.slice(0, 2).toUpperCase();
             return (
               <li key={r.id} className="flex items-center gap-3">
