@@ -22,10 +22,10 @@ export function SiteHeader() {
           </span>
         </Link>
         <nav className="hidden md:flex items-center gap-7 font-display text-sm font-semibold tracking-wider uppercase">
-          <Link to="/" activeOptions={{ exact: true }} activeProps={{ className: "text-gold" }} inactiveProps={{ className: "text-foreground/80 hover:text-gold" }} className="transition">Home</Link>
-          <Link to="/about" activeProps={{ className: "text-gold" }} inactiveProps={{ className: "text-foreground/80 hover:text-gold" }} className="transition">About Us</Link>
-          <Link to="/how-to-play" activeProps={{ className: "text-gold" }} inactiveProps={{ className: "text-foreground/80 hover:text-gold" }} className="transition">How to Play</Link>
-          <Link to="/rules" activeProps={{ className: "text-gold" }} inactiveProps={{ className: "text-foreground/80 hover:text-gold" }} className="transition">Rules</Link>
+          <Link to="/" hash="" className="text-foreground/80 transition hover:text-gold">Home</Link>
+          <Link to="/" hash="about" className="text-foreground/80 transition hover:text-gold">About Us</Link>
+          <Link to="/" hash="how-to-play" className="text-foreground/80 transition hover:text-gold">How to Play</Link>
+          <Link to="/" hash="rules" className="text-foreground/80 transition hover:text-gold">Rules</Link>
         </nav>
         <div className="flex items-center gap-2">
           <LanguageSwitcher compact />
