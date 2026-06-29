@@ -290,36 +290,50 @@ function DashboardPage() {
         totalPrize={stats.totalPrize}
       />
 
-      {/* COMBAT STATISTICS */}
-      <section>
-        <div className="mb-3 flex items-end justify-between">
-          <h2 className="font-hud text-sm font-bold uppercase tracking-widest text-foreground/80">
+      {/* COMBAT STATISTICS — unified inline panel */}
+      <section className="hud-panel overflow-hidden">
+        <div className="flex items-center justify-between gap-3 border-b border-border/40 px-4 py-3">
+          <h2 className="font-hud text-xs font-bold uppercase tracking-widest text-foreground/80">
             Combat Statistics
           </h2>
           <Link
             to="/dashboard/my-matches"
-            className="rounded border border-border/60 px-3 py-1 font-hud text-[10px] uppercase tracking-widest hover:border-gold hover:text-gold"
+            className="rounded border border-border/60 px-2.5 py-1 font-hud text-[10px] uppercase tracking-widest hover:border-gold hover:text-gold"
           >
             My Matches →
           </Link>
         </div>
         {isLoading ? (
-          <div className="hud-panel p-8 text-center text-sm text-foreground/60">Loading…</div>
+          <div className="p-8 text-center text-sm text-foreground/60">Loading…</div>
         ) : (
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
-            <StatCard icon={Crown} label="Top 3 Finishes" value={stats.top3} />
-            <StatCard icon={Target} label="Top 10 Finishes" value={stats.top10} />
-            <StatCard icon={Crosshair} label="Total Kills" value={stats.totalKills} hint={`${stats.avgKills} avg/match`} />
-            <StatCard icon={Coins} label="Total Prize Won" value={stats.totalPrize.toLocaleString()} accent="text-gold" hint="BAC" />
-            <StatCard icon={Activity} label="Total Entry Spent" value={stats.totalEntry.toLocaleString()} hint="BAC" />
-            <StatCard
-              icon={Calendar}
-              label="Net P/L"
-              value={(stats.totalPrize - stats.totalEntry).toLocaleString()}
-              accent={stats.totalPrize - stats.totalEntry >= 0 ? "text-emerald-400" : "text-destructive"}
-              hint="BAC"
-            />
-          </div>
+          <dl className="divide-y divide-border/30">
+            {[
+              { icon: Crown, label: "Top 3 Finishes", value: stats.top3, accent: "text-gold" },
+              { icon: Target, label: "Top 10 Finishes", value: stats.top10 },
+              { icon: Crosshair, label: "Total Kills", value: `${stats.totalKills} · ${stats.avgKills} avg` },
+              { icon: Coins, label: "Total Prize Won", value: `${stats.totalPrize.toLocaleString()} BAC`, accent: "text-gold" },
+              { icon: Activity, label: "Total Entry Spent", value: `${stats.totalEntry.toLocaleString()} BAC` },
+              {
+                icon: Calendar,
+                label: "Net P/L",
+                value: `${(stats.totalPrize - stats.totalEntry).toLocaleString()} BAC`,
+                accent: stats.totalPrize - stats.totalEntry >= 0 ? "text-emerald-400" : "text-destructive",
+              },
+            ].map((row) => {
+              const Icon = row.icon;
+              return (
+                <div key={row.label} className="flex items-center justify-between gap-3 px-4 py-2.5">
+                  <dt className="flex min-w-0 items-center gap-2.5 text-xs text-foreground/70">
+                    <Icon size={14} className="shrink-0 text-foreground/40" />
+                    <span className="truncate">{row.label}</span>
+                  </dt>
+                  <dd className={`shrink-0 font-mono text-sm font-bold tabular-nums ${row.accent ?? "text-foreground"}`}>
+                    {row.value}
+                  </dd>
+                </div>
+              );
+            })}
+          </dl>
         )}
       </section>
 
