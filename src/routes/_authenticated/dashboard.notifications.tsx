@@ -92,6 +92,12 @@ function NotificationsPage() {
                 </div>
                 <h3 className="mt-1 font-display text-base uppercase tracking-wide text-foreground">{n.title}</h3>
                 <p className="mt-1 font-mono text-sm text-foreground/80">{n.message}</p>
+                {n.link && (
+                  <Link to={n.link as any} onClick={() => !n.read_at && markOne(n.id)}
+                    className="mt-1 inline-block font-hud text-[11px] uppercase tracking-wider text-gold hover:underline">
+                    Open →
+                  </Link>
+                )}
               </div>
               <div className="flex shrink-0 flex-col gap-1">
                 {!n.read_at && !n.archived_at && (
