@@ -381,7 +381,7 @@
       0 12px 30px -8px color-mix(in oklab, var(--gold) 55%, transparent),
       0 0 0 1px var(--gold);
   }
-  &:hover::before { animation-duration: 1.6s; }
+  &:hover::before { transform: translateX(120%); }
   &:active { transform: translateY(0); }
 }
 
