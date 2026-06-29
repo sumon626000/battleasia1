@@ -17,9 +17,23 @@ export function useAuth() {
 
   useEffect(() => {
     let stopped = false;
+    let enforceEnabled = false;
+
+    async function loadSetting() {
+      try {
+        const { data } = await supabase
+          .from("website_settings")
+          .select("value")
+          .eq("key", "single_device_login")
+          .maybeSingle();
+        enforceEnabled = String(data?.value ?? "false").toLowerCase() === "true";
+      } catch {
+        enforceEnabled = false;
+      }
+    }
 
     async function enforceSingleDevice() {
-      if (stopped) return;
+      if (stopped || !enforceEnabled) return;
       const ok = await isActiveSession();
       if (!ok && !stopped) {
         toast.error(
@@ -36,12 +50,14 @@ export function useAuth() {
       if (event === "SIGNED_IN") {
         setTimeout(() => {
           void recordLoginEvent();
-          void claimActiveSession();
+          if (enforceEnabled) void claimActiveSession();
         }, 0);
       } else if (event === "SIGNED_OUT") {
         clearLocalSessionToken();
       }
     });
+
+    void loadSetting();
 
     supabase.auth.getSession().then(({ data }) => {
       setSession(data.session);
@@ -49,13 +65,13 @@ export function useAuth() {
       setLoading(false);
       if (data.session) {
         void heartbeatSession();
-        void enforceSingleDevice();
+        void loadSetting().then(() => enforceSingleDevice());
       }
     });
 
     const hb = setInterval(() => {
       void heartbeatSession();
-      void enforceSingleDevice();
+      void loadSetting().then(() => enforceSingleDevice());
     }, 30_000);
 
     return () => {
@@ -64,6 +80,7 @@ export function useAuth() {
       clearInterval(hb);
     };
   }, []);
+
 
   return { session, user, loading, isAuthenticated: !!user };
 }
