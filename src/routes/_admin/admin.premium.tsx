@@ -92,7 +92,7 @@ function AdminPremiumPage() {
 
       {editing && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4" onClick={() => setEditing(null)}>
-          <div className="hud-panel w-full max-w-md space-y-3 p-5" onClick={(e) => e.stopPropagation()}>
+          <div className="hud-panel w-full max-w-md max-h-[90vh] overflow-y-auto space-y-3 p-5" onClick={(e) => e.stopPropagation()}>
             <h2 className="font-display text-lg uppercase tracking-wider text-gold">{editing.id ? "Edit" : "New"} Plan</h2>
             <label className="block text-xs uppercase text-foreground/60">Duration (days)
               <input type="number" className="hud-input mt-1 w-full" value={editing.duration_days ?? ""} onChange={(e) => setEditing({ ...editing, duration_days: Number(e.target.value) })} />
