@@ -61,7 +61,6 @@ import { Route as AdminAdminWithdrawalsRouteImport } from './routes/_admin/admin
 import { Route as AdminAdminWithdrawConfigRouteImport } from './routes/_admin/admin.withdraw-config'
 import { Route as AdminAdminUsersRouteImport } from './routes/_admin/admin.users'
 import { Route as AdminAdminTwoFactorRouteImport } from './routes/_admin/admin.two-factor'
-import { Route as AdminAdminThemesRouteImport } from './routes/_admin/admin.themes'
 import { Route as AdminAdminTemplatesRouteImport } from './routes/_admin/admin.templates'
 import { Route as AdminAdminSupportRouteImport } from './routes/_admin/admin.support'
 import { Route as AdminAdminSpinWheelRouteImport } from './routes/_admin/admin.spin-wheel'
@@ -373,11 +372,6 @@ const AdminAdminTwoFactorRoute = AdminAdminTwoFactorRouteImport.update({
   path: '/admin/two-factor',
   getParentRoute: () => AdminRouteRoute,
 } as any)
-const AdminAdminThemesRoute = AdminAdminThemesRouteImport.update({
-  id: '/admin/themes',
-  path: '/admin/themes',
-  getParentRoute: () => AdminRouteRoute,
-} as any)
 const AdminAdminTemplatesRoute = AdminAdminTemplatesRouteImport.update({
   id: '/admin/templates',
   path: '/admin/templates',
@@ -619,7 +613,6 @@ export interface FileRoutesByFullPath {
   '/admin/spin-wheel': typeof AdminAdminSpinWheelRoute
   '/admin/support': typeof AdminAdminSupportRoute
   '/admin/templates': typeof AdminAdminTemplatesRoute
-  '/admin/themes': typeof AdminAdminThemesRoute
   '/admin/two-factor': typeof AdminAdminTwoFactorRoute
   '/admin/users': typeof AdminAdminUsersRoute
   '/admin/withdraw-config': typeof AdminAdminWithdrawConfigRoute
@@ -705,7 +698,6 @@ export interface FileRoutesByTo {
   '/admin/spin-wheel': typeof AdminAdminSpinWheelRoute
   '/admin/support': typeof AdminAdminSupportRoute
   '/admin/templates': typeof AdminAdminTemplatesRoute
-  '/admin/themes': typeof AdminAdminThemesRoute
   '/admin/two-factor': typeof AdminAdminTwoFactorRoute
   '/admin/users': typeof AdminAdminUsersRoute
   '/admin/withdraw-config': typeof AdminAdminWithdrawConfigRoute
@@ -796,7 +788,6 @@ export interface FileRoutesById {
   '/_admin/admin/spin-wheel': typeof AdminAdminSpinWheelRoute
   '/_admin/admin/support': typeof AdminAdminSupportRoute
   '/_admin/admin/templates': typeof AdminAdminTemplatesRoute
-  '/_admin/admin/themes': typeof AdminAdminThemesRoute
   '/_admin/admin/two-factor': typeof AdminAdminTwoFactorRoute
   '/_admin/admin/users': typeof AdminAdminUsersRoute
   '/_admin/admin/withdraw-config': typeof AdminAdminWithdrawConfigRoute
@@ -886,7 +877,6 @@ export interface FileRouteTypes {
     | '/admin/spin-wheel'
     | '/admin/support'
     | '/admin/templates'
-    | '/admin/themes'
     | '/admin/two-factor'
     | '/admin/users'
     | '/admin/withdraw-config'
@@ -972,7 +962,6 @@ export interface FileRouteTypes {
     | '/admin/spin-wheel'
     | '/admin/support'
     | '/admin/templates'
-    | '/admin/themes'
     | '/admin/two-factor'
     | '/admin/users'
     | '/admin/withdraw-config'
@@ -1062,7 +1051,6 @@ export interface FileRouteTypes {
     | '/_admin/admin/spin-wheel'
     | '/_admin/admin/support'
     | '/_admin/admin/templates'
-    | '/_admin/admin/themes'
     | '/_admin/admin/two-factor'
     | '/_admin/admin/users'
     | '/_admin/admin/withdraw-config'
@@ -1486,13 +1474,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAdminTwoFactorRouteImport
       parentRoute: typeof AdminRouteRoute
     }
-    '/_admin/admin/themes': {
-      id: '/_admin/admin/themes'
-      path: '/admin/themes'
-      fullPath: '/admin/themes'
-      preLoaderRoute: typeof AdminAdminThemesRouteImport
-      parentRoute: typeof AdminRouteRoute
-    }
     '/_admin/admin/templates': {
       id: '/_admin/admin/templates'
       path: '/admin/templates'
@@ -1773,7 +1754,6 @@ interface AdminRouteRouteChildren {
   AdminAdminSpinWheelRoute: typeof AdminAdminSpinWheelRoute
   AdminAdminSupportRoute: typeof AdminAdminSupportRoute
   AdminAdminTemplatesRoute: typeof AdminAdminTemplatesRoute
-  AdminAdminThemesRoute: typeof AdminAdminThemesRoute
   AdminAdminTwoFactorRoute: typeof AdminAdminTwoFactorRoute
   AdminAdminUsersRoute: typeof AdminAdminUsersRoute
   AdminAdminWithdrawConfigRoute: typeof AdminAdminWithdrawConfigRoute
@@ -1813,7 +1793,6 @@ const AdminRouteRouteChildren: AdminRouteRouteChildren = {
   AdminAdminSpinWheelRoute: AdminAdminSpinWheelRoute,
   AdminAdminSupportRoute: AdminAdminSupportRoute,
   AdminAdminTemplatesRoute: AdminAdminTemplatesRoute,
-  AdminAdminThemesRoute: AdminAdminThemesRoute,
   AdminAdminTwoFactorRoute: AdminAdminTwoFactorRoute,
   AdminAdminUsersRoute: AdminAdminUsersRoute,
   AdminAdminWithdrawConfigRoute: AdminAdminWithdrawConfigRoute,
@@ -1999,13 +1978,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
