@@ -277,6 +277,8 @@ function AdminUsers() {
   const [fRole, setFRole] = useState<string>("all");
   const [fStatus, setFStatus] = useState<string>("all");
   const [fPremium, setFPremium] = useState<string>("all");
+  const [fDateStart, setFDateStart] = useState<string>("");
+  const [fDateEnd, setFDateEnd] = useState<string>("");
 
   const { data: isSuper = false } = useQuery({
     queryKey: ["is-super-admin"],
