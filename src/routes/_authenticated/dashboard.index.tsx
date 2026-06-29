@@ -419,20 +419,30 @@ function DashboardPage() {
             </div>
           ) : (
             <ul className="space-y-2">
-              {upcoming.slice(0, 3).map((m) => (
+              {upcoming.slice(0, 3).map((m) => {
+                const when = formatSchedule(m.schedule_at as string | null);
+                return (
                 <li key={m.id}>
                   <Link
                     to="/dashboard/matches/$matchId"
                     params={{ matchId: String(m.id) }}
-                    className="flex items-center justify-between rounded border border-border/40 bg-background/40 px-3 py-2 text-xs hover:border-gold/60 hover:text-gold"
+                    className="group flex items-center justify-between gap-3 rounded border border-border/40 bg-background/40 px-3 py-2 text-xs transition hover:border-gold/60 hover:bg-gold/5"
                   >
-                    <span className="truncate">{m.match_name}</span>
-                    <span className="ml-3 shrink-0 font-mono text-gold">
-                      {Number(m.entry_fee_bac ?? 0).toLocaleString()} BAC
+                    <div className="flex min-w-0 flex-col">
+                      <span className="truncate font-semibold group-hover:text-gold">{m.match_name}</span>
+                      {when && (
+                        <span className="mt-0.5 flex items-center gap-1 font-mono text-[10px] text-foreground/55">
+                          <Clock size={10} />{when}
+                        </span>
+                      )}
+                    </div>
+                    <span className="ml-3 inline-flex shrink-0 items-center gap-1 rounded border border-gold/40 bg-gold/10 px-2 py-0.5 font-mono text-[11px] font-bold text-gold">
+                      <CoinIcon size={10} />{Number(m.entry_fee_bac ?? 0).toLocaleString()}
                     </span>
                   </Link>
                 </li>
-              ))}
+                );
+              })}
             </ul>
           )}
         </div>
