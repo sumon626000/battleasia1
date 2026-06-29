@@ -146,13 +146,23 @@ function AuthPage() {
         <section className="flex flex-col justify-center">
           {/* Mobile header */}
           <div className="mb-5 flex items-center justify-between lg:hidden">
-            <Link to="/" className="flex items-center gap-2">
-              <img src={logoShield} alt="Battle Asia" className="h-12 w-12 object-contain drop-shadow-[0_0_14px_rgba(255,176,32,0.5)]" />
-              <div className="font-display text-base font-bold leading-none">
-                <div>BATTLE</div>
-                <div className="text-gold">ASIA</div>
+            {appMode ? (
+              <div className="flex items-center gap-2 select-none">
+                <img src={logoShield} alt="Battle Asia" className="h-12 w-12 object-contain drop-shadow-[0_0_14px_rgba(255,176,32,0.5)]" />
+                <div className="font-display text-base font-bold leading-none">
+                  <div>BATTLE</div>
+                  <div className="text-gold">ASIA</div>
+                </div>
               </div>
-            </Link>
+            ) : (
+              <Link to="/" className="flex items-center gap-2">
+                <img src={logoShield} alt="Battle Asia" className="h-12 w-12 object-contain drop-shadow-[0_0_14px_rgba(255,176,32,0.5)]" />
+                <div className="font-display text-base font-bold leading-none">
+                  <div>BATTLE</div>
+                  <div className="text-gold">ASIA</div>
+                </div>
+              </Link>
+            )}
             {!appMode && (
               <Link to="/" className="btn-outline-gold inline-flex items-center gap-1.5 px-3 py-1.5 text-xs">
                 <ArrowLeft size={12} /> HOME
