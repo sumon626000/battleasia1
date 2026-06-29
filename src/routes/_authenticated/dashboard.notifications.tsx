@@ -25,7 +25,7 @@ function NotificationsPage() {
     if (!user) return;
     setLoading(true);
     const { data } = await supabase.from("user_notifications")
-      .select("id,title,message,type,read_at,archived_at,created_at")
+      .select("id,title,message,type,read_at,archived_at,created_at,link")
       .eq("user_id", user.id).order("created_at", { ascending: false }).limit(100);
     setItems((data as N[]) ?? []);
     setLoading(false);
