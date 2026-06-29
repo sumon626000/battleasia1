@@ -143,6 +143,9 @@ function RootComponent() {
   useEffect(() => {
     applySavedViewMode();
     detectAndPersistAppMode();
+    if (typeof navigator !== "undefined" && "serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/sw-push.js").catch(() => undefined);
+    }
   }, []);
   const bareLayout =
     pathname.startsWith("/dashboard") ||
