@@ -120,14 +120,14 @@ export function QuickBalanceCard({ balance }: { balance: number }) {
 
         <div className="mt-3 grid grid-cols-2 gap-2">
           <Link
-            to="/dashboard/wallet" search={{ tab: "deposit" }}
+            to="/dashboard/wallet"
             className="hud-panel group flex items-center justify-center gap-2 border-emerald-400/30 bg-emerald-400/5 px-3 py-2.5 font-hud text-xs font-semibold uppercase tracking-wider text-emerald-300 transition-all hover:-translate-y-0.5 hover:border-emerald-400/60 hover:bg-emerald-400/10 hover:shadow-[0_8px_24px_-12px_rgba(52,211,153,0.55)]"
           >
             <ArrowDownToLine size={14} className="transition-transform group-hover:-translate-y-0.5" />
             Deposit
           </Link>
           <Link
-            to="/dashboard/wallet" search={{ tab: "withdraw" }}
+            to="/dashboard/wallet"
             className="hud-panel group flex items-center justify-center gap-2 border-gold/30 bg-gold/5 px-3 py-2.5 font-hud text-xs font-semibold uppercase tracking-wider text-gold transition-all hover:-translate-y-0.5 hover:border-gold/60 hover:bg-gold/10 hover:shadow-[0_8px_24px_-12px_rgba(212,175,55,0.55)]"
           >
             <ArrowUpFromLine size={14} className="transition-transform group-hover:translate-y-0.5" />
