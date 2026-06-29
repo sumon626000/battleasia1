@@ -53,19 +53,29 @@ function StatCard({
   accent?: string;
 }) {
   return (
-    <div className="hud-panel relative overflow-hidden p-4">
-      <div className="flex items-start justify-between">
+    <div className="hud-panel relative overflow-hidden p-5 transition hover:-translate-y-0.5 hover:border-gold/50">
+      <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="font-mono text-[10px] uppercase tracking-widest text-foreground/55">
             {label}
           </div>
-          <div className={`mt-1 font-display text-2xl font-bold ${accent ?? "text-gold"}`}>
+          <div className={`mt-1.5 font-display text-2xl font-bold tabular-nums ${accent ?? "text-gold"}`}>
             {value}
           </div>
-          {hint && <div className="mt-0.5 text-[11px] text-foreground/55">{hint}</div>}
+          {hint && <div className="mt-1 text-[11px] text-foreground/55">{hint}</div>}
         </div>
-        <Icon size={18} className="text-foreground/40" />
+        <Icon size={18} className="shrink-0 text-foreground/40" />
       </div>
+    </div>
+  );
+}
+
+function StatSkeleton() {
+  return (
+    <div className="hud-panel p-5">
+      <div className="h-3 w-20 animate-pulse rounded bg-foreground/10" />
+      <div className="mt-2 h-7 w-16 animate-pulse rounded bg-foreground/10" />
+      <div className="mt-2 h-3 w-24 animate-pulse rounded bg-foreground/10" />
     </div>
   );
 }
