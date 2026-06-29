@@ -35,14 +35,32 @@ function TagView() {
   useEffect(() => {
     let mounted = true;
     (async () => {
-      // case-insensitive search for #tag inside caption
-      const pattern = `%#${tag}%`;
+      // Fast path: normalized hashtag join (uses indexes; no full-table ILIKE)
+      const { data: ht } = await supabase
+        .from("social_hashtags")
+        .select("id")
+        .eq("tag", tag.toLowerCase())
+        .maybeSingle();
+      if (!ht) {
+        if (mounted) setItems([]);
+        return;
+      }
+      const { data: links } = await supabase
+        .from("social_post_hashtags")
+        .select("post_id")
+        .eq("hashtag_id", ht.id)
+        .order("created_at", { ascending: false })
+        .limit(60);
+      const ids = (links ?? []).map((r: { post_id: string }) => r.post_id);
+      if (ids.length === 0) {
+        if (mounted) setItems([]);
+        return;
+      }
       const { data } = await supabase
         .from("social_posts")
         .select("id,caption,media_url,likes_count,comments_count,created_at")
-        .ilike("caption", pattern)
-        .order("created_at", { ascending: false })
-        .limit(60);
+        .in("id", ids)
+        .order("created_at", { ascending: false });
       if (!mounted) return;
       setItems((data ?? []) as Row[]);
     })();
@@ -50,6 +68,7 @@ function TagView() {
       mounted = false;
     };
   }, [tag]);
+
 
   return (
     <div className="mx-auto max-w-3xl px-3 pb-20 pt-3">
