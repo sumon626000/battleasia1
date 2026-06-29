@@ -30,13 +30,24 @@ export function DashboardBottomNav() {
               <button
                 type="button"
                 onClick={() => navigate({ to: item.href })}
-                className={`flex w-full flex-col items-center gap-0.5 py-2.5 font-hud text-[10px] font-semibold uppercase tracking-wide transition ${
+                className={`relative flex w-full flex-col items-center gap-1 py-2.5 font-hud text-[10px] font-semibold uppercase tracking-wide transition ${
                   active ? "text-gold" : "text-foreground/60 hover:text-gold"
                 }`}
               >
-                <Icon size={18} />
+                {active && (
+                  <span
+                    aria-hidden
+                    className="absolute inset-x-3 top-0 h-[2px] rounded-b-full bg-gold shadow-[0_0_10px_2px_rgba(212,175,55,0.6)]"
+                  />
+                )}
+                <span
+                  className={`grid place-items-center rounded-md p-1 transition ${
+                    active ? "bg-gold/15" : ""
+                  }`}
+                >
+                  <Icon size={18} />
+                </span>
                 <span>{(item as any).label ?? t(item.key)}</span>
-                {active && <span className="mt-0.5 h-0.5 w-6 bg-gold" />}
               </button>
             </li>
           );
