@@ -34,7 +34,7 @@ type Post = {
   likes_count: number;
   comments_count: number;
   created_at: string;
-  author?: { username: string | null; full_name: string | null; avatar_url: string | null; in_game_username: string | null } | null;
+  author?: { username: string | null; display_name: string | null; avatar_url: string | null; in_game_username: string | null } | null;
   liked_by_me?: boolean;
   media?: CarouselMedia[];
 };
@@ -63,7 +63,7 @@ function PostView() {
       .maybeSingle();
     if (!row) { setPost(null); setLoading(false); return; }
     const [{ data: prof }, likeRes, mediaRes] = await Promise.all([
-      supabase.from("profiles").select("username,full_name,avatar_url,in_game_username").eq("id", row.user_id).maybeSingle(),
+      supabase.from("profiles").select("username,display_name,avatar_url,in_game_username").eq("id", row.user_id).maybeSingle(),
       user
         ? supabase.from("social_likes").select("post_id").eq("post_id", row.id).eq("user_id", user.id).maybeSingle()
         : Promise.resolve({ data: null }),
@@ -107,7 +107,7 @@ function PostView() {
     return <div className="mx-auto max-w-[600px] p-6 font-hud text-sm text-foreground/60">Post not found.</div>;
   }
 
-  const handle = post.author?.username || post.author?.full_name || "player";
+  const handle = post.author?.username || post.author?.display_name || "player";
   const initials = handle.slice(0, 2).toUpperCase();
 
   return (
