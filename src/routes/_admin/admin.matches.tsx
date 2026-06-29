@@ -131,6 +131,23 @@ function AdminMatchesPage() {
   const qc = useQueryClient();
   const [q, setQ] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [openMenu, setOpenMenu] = useState<null | "cols" | "density">(null);
+  const [density, setDensity] = useState<"compact" | "standard" | "comfortable">("standard");
+  type MCol = "match" | "schedule" | "status" | "type" | "entry" | "slots" | "actions";
+  const ALL_M_COLS: { key: MCol; label: string }[] = [
+    { key: "match", label: "Match" },
+    { key: "schedule", label: "Schedule" },
+    { key: "status", label: "Status" },
+    { key: "type", label: "Type" },
+    { key: "entry", label: "Entry" },
+    { key: "slots", label: "Slots" },
+    { key: "actions", label: "Actions" },
+  ];
+  const [visibleCols, setVisibleCols] = useState<Record<MCol, boolean>>({
+    match: true, schedule: true, status: true, type: true, entry: true, slots: true, actions: true,
+  });
+  const showCol = (k: MCol) => visibleCols[k];
+  const rowPad = density === "compact" ? "py-1" : density === "comfortable" ? "py-3" : "py-2";
   const [editing, setEditingState] = useState<Partial<Match> | null>(null);
   const [errors, setErrors] = useState<Partial<Record<FieldKey, boolean>>>({});
   const setEditing = (d: Partial<Match> | null) => {
