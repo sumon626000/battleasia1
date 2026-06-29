@@ -24,7 +24,6 @@ type Match = {
   schedule_at: string;
   entry_fee_bac: number;
   per_kill_amount_bac: number;
-  per_kill_amount_bac: number;
   total_players: number;
   premium_only: boolean;
   status: string;
