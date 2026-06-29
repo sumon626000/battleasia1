@@ -38,7 +38,7 @@ export function TournamentsShowcase() {
     queryFn: async () => {
       const res = await supabase
         .from("matches")
-        .select("id, match_name, schedule_at, entry_fee_bac, prize_pool_bac, status, max_slots")
+        .select("id, match_name, schedule_at, entry_fee_bac, rank_1_prize_bac, status, total_players")
         .in("status", ["Upcoming", "Active"])
         .order("schedule_at", { ascending: true })
         .limit(6);
@@ -136,17 +136,17 @@ export function TournamentsShowcase() {
               {current.match_name}
             </h3>
             <div className="flex flex-wrap items-center gap-2 text-[11px]">
-              {Number(current.prize_pool_bac ?? 0) > 0 && (
+              {Number(current.rank_1_prize_bac ?? 0) > 0 && (
                 <span className="inline-flex items-center gap-1 rounded border border-gold/40 bg-gold/10 px-2 py-1 font-mono text-gold">
-                  <Trophy size={11} /> {Number(current.prize_pool_bac).toLocaleString()} Pool
+                  <Trophy size={11} /> {Number(current.rank_1_prize_bac).toLocaleString()} Pool
                 </span>
               )}
               <span className="inline-flex items-center gap-1 rounded border border-border/60 bg-background/60 px-2 py-1 font-mono text-foreground/80">
                 <CoinIcon size={11} /> {Number(current.entry_fee_bac ?? 0).toLocaleString()} Entry
               </span>
-              {Number(current.max_slots ?? 0) > 0 && (
+              {Number(current.total_players ?? 0) > 0 && (
                 <span className="inline-flex items-center gap-1 rounded border border-border/60 bg-background/60 px-2 py-1 font-mono text-foreground/70">
-                  <Users size={11} /> {current.max_slots} slots
+                  <Users size={11} /> {current.total_players} slots
                 </span>
               )}
             </div>
