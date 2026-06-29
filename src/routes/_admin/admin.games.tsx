@@ -152,12 +152,12 @@ function AdminGamesPage() {
       </div>
 
       {editing && (
-        <div className="fixed inset-0 z-50 grid place-items-center bg-black/70 p-4">
-          <div className="hud-panel w-full max-w-lg p-5">
-            <h2 className="mb-4 font-display text-lg uppercase tracking-widest text-gold">
+        <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/70 p-4 sm:items-center">
+          <div className="hud-panel my-auto flex max-h-[90vh] w-full max-w-lg flex-col">
+            <h2 className="shrink-0 border-b border-border/40 p-5 pb-3 font-display text-lg uppercase tracking-widest text-gold">
               {editing.id ? "Edit Game" : "New Game"}
             </h2>
-            <div className="grid gap-3">
+            <div className="grid gap-3 overflow-y-auto p-5">
               <Field label="Name">
                 <input value={editing.game_name ?? ""} onChange={(e) => setEditing({ ...editing, game_name: e.target.value })} className="w-full rounded border border-border/60 bg-background/60 px-3 py-2 font-hud text-sm" />
               </Field>
@@ -187,7 +187,7 @@ function AdminGamesPage() {
                 <Checkbox label="Coming Soon" checked={editing.coming_soon ?? false} onChange={(v) => setEditing({ ...editing, coming_soon: v })} />
               </div>
             </div>
-            <div className="mt-5 flex justify-end gap-2">
+            <div className="shrink-0 flex justify-end gap-2 border-t border-border/40 p-4 bg-background/80">
               <button onClick={() => setEditing(null)} className="rounded border border-border/60 px-3 py-1.5 font-hud text-xs uppercase">
                 Cancel
               </button>
