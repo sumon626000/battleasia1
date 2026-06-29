@@ -170,6 +170,61 @@ function ActionModal({
 
 
         <div className="mt-4 space-y-4">
+          {/* Edit Profile */}
+          <div className="border-t border-border/40 pt-3">
+            <div className="mb-2 flex items-center justify-between">
+              <label className="font-hud text-[10px] uppercase tracking-widest text-foreground/60">Edit Profile</label>
+              <button onClick={saveProfile} disabled={busy}
+                className="inline-flex items-center gap-1 rounded border border-gold/60 bg-gold/10 px-3 py-1 font-hud text-[10px] uppercase tracking-widest text-gold hover:bg-gold/20 disabled:opacity-50">
+                <Save className="h-3 w-3" /> Save
+              </button>
+            </div>
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+              <Field label="Username">
+                <input value={form.username} onChange={(e) => setF("username", e.target.value)} className={inpCls} />
+              </Field>
+              <Field label="In-Game Username">
+                <input value={form.in_game_username} onChange={(e) => setF("in_game_username", e.target.value)} className={inpCls} />
+              </Field>
+              <Field label="New Email (optional)">
+                <input type="email" value={form.email} onChange={(e) => setF("email", e.target.value)} placeholder="leave blank to keep" className={inpCls} />
+              </Field>
+              <Field label="New Password (optional)">
+                <input type="text" value={form.password} onChange={(e) => setF("password", e.target.value)} placeholder="min 6 chars; blank = keep" className={inpCls} />
+              </Field>
+              <Field label="Country Code">
+                <input value={form.country_code} onChange={(e) => setF("country_code", e.target.value)} placeholder="BD" className={inpCls} />
+              </Field>
+              <Field label="Mobile Number">
+                <input value={form.mobile_number} onChange={(e) => setF("mobile_number", e.target.value)} className={inpCls} />
+              </Field>
+              <Field label="PUBG ID">
+                <input value={form.pubg_id} onChange={(e) => setF("pubg_id", e.target.value)} className={inpCls} />
+              </Field>
+              <Field label="Game Server">
+                <select value={form.game_server} onChange={(e) => setF("game_server", e.target.value)} className={inpCls}>
+                  <option value="">—</option>
+                  <option value="Asia">Asia</option>
+                  <option value="Europe">Europe</option>
+                  <option value="North_America">North America</option>
+                  <option value="South_America">South America</option>
+                  <option value="KRJP">KRJP</option>
+                  <option value="Middle_East">Middle East</option>
+                </select>
+              </Field>
+              <Field label="Referral Code">
+                <input value={form.referral_code} onChange={(e) => setF("referral_code", e.target.value)} className={inpCls} />
+              </Field>
+              <Field label="Avatar URL">
+                <input value={form.avatar_url} onChange={(e) => setF("avatar_url", e.target.value)} placeholder="https://…" className={inpCls} />
+              </Field>
+            </div>
+            <label className="mt-3 flex cursor-pointer items-center gap-2 text-xs">
+              <input type="checkbox" checked={form.is_active} onChange={(e) => setF("is_active", e.target.checked)} />
+              <span className="font-hud uppercase tracking-widest text-foreground/70">Active Status</span>
+            </label>
+          </div>
+
           <div className="border-t border-border/40 pt-3">
             <label className="font-hud text-[10px] uppercase tracking-widest text-foreground/60">Role {isSuper ? "" : "(super admin only)"}</label>
             <div className="mt-2 flex gap-2">
