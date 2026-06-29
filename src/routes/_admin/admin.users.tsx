@@ -401,6 +401,7 @@ function AdminUsers() {
   const qc = useQueryClient();
   const [q, setQ] = useState("");
   const [selected, setSelected] = useState<Row | null>(null);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [visible, setVisible] = useState<Record<ColKey, boolean>>(() =>
     Object.fromEntries(ALL_COLUMNS.map((c) => [c.key, true])) as Record<ColKey, boolean>
   );
