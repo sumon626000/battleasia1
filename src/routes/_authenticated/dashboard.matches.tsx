@@ -899,6 +899,19 @@ function HubMatchRow({
           )}
         </div>
       </div>
+
+      {/* Room credentials — visible only after join */}
+      {joined && (m.room_id || m.room_password) && (
+        <div className="mt-2 grid grid-cols-2 gap-2 border-t border-gold/20 pt-2">
+          {m.room_id && (
+            <RoomCredChip label="ROOM ID" value={String(m.room_id)} />
+          )}
+          {m.room_password && (
+            <RoomCredChip label="PASSWORD" value={String(m.room_password)} />
+          )}
+        </div>
+      )}
     </Link>
+
   );
 }
