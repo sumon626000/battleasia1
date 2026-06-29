@@ -805,18 +805,17 @@ function HubMatchRow({
 
   // Live countdown for upcoming, or time elapsed for live
   useEffect(() => {
-    if (!when) return;
+    if (isLive) { setCountdown("LIVE"); return; }
+    if (!when) { setCountdown("TBA"); return; }
     const tick = () => {
       const diff = when.getTime() - Date.now();
-      if (isLive) {
-        setCountdown("LIVE");
-        return;
-      }
-      if (diff <= 0) { setCountdown("STARTING"); return; }
-      const h = Math.floor(diff / 3600000);
+      if (diff <= 0) { setCountdown("STARTING NOW"); return; }
+      const d = Math.floor(diff / 86400000);
+      const h = Math.floor((diff % 86400000) / 3600000);
       const mm = Math.floor((diff % 3600000) / 60000);
       const ss = Math.floor((diff % 60000) / 1000);
-      setCountdown(`${String(h).padStart(2,"0")}:${String(mm).padStart(2,"0")}:${String(ss).padStart(2,"0")}`);
+      const hms = `${String(h).padStart(2,"0")}:${String(mm).padStart(2,"0")}:${String(ss).padStart(2,"0")}`;
+      setCountdown(d > 0 ? `${d}d ${hms}` : hms);
     };
     tick();
     const id = setInterval(tick, 1000);
@@ -910,7 +909,7 @@ function HubMatchRow({
             {isLive ? "LIVE" : "Starts in"}
           </div>
           {!isLive && (
-            <div className="font-mono text-sm font-bold text-foreground">{countdown}</div>
+            <div className={`font-mono text-sm font-bold ${countdown === "STARTING NOW" ? "text-red-400 animate-pulse" : "text-foreground"}`}>{countdown}</div>
           )}
           {joined ? (
             <span className="w-full rounded-md border border-emerald-500/50 bg-emerald-500/10 px-2 py-1.5 text-center font-hud text-[10px] font-bold uppercase tracking-widest text-emerald-400">
