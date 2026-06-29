@@ -12,6 +12,7 @@ import { StoriesRail } from "@/components/feed/StoriesRail";
 import { PeopleToFollow } from "@/components/feed/PeopleToFollow";
 import { PostMediaCarousel, type CarouselMedia } from "@/components/feed/PostMediaCarousel";
 import { RichText } from "@/components/feed/RichText";
+import { NotificationBell } from "@/components/feed/NotificationBell";
 
 
 export const Route = createFileRoute("/feed/")({
