@@ -58,25 +58,76 @@ function FeedPage() {
   const { user, isAuthenticated } = useAuth();
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [cursor, setCursor] = useState<string | null>(null); // ISO created_at of last row
+  const [hasMore, setHasMore] = useState(true);
+  const blockedRef = useRef<Set<string>>(new Set());
+  const followingRef = useRef<Set<string>>(new Set());
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
+
+  const PAGE_SIZE = 20;
+
+  // Enrich a chunk of post rows with author/likes/media in batch
+  async function enrich(rows: Post[]): Promise<Post[]> {
+    if (!rows.length) return [];
+    const ids = Array.from(new Set(rows.map((p) => p.user_id)));
+    const [{ data: profs }, likesRes, { data: mediaRows }] = await Promise.all([
+      supabase.from("profiles").select("id,username,full_name,avatar_url").in("id", ids),
+      user
+        ? supabase
+            .from("social_likes")
+            .select("post_id")
+            .eq("user_id", user.id)
+            .in("post_id", rows.map((p) => p.id))
+        : Promise.resolve({ data: [] as any[] }),
+      supabase
+        .from("social_post_media")
+        .select("post_id,url,media_type,position")
+        .in("post_id", rows.map((p) => p.id))
+        .order("position", { ascending: true }),
+    ]);
+    const profileMap: Record<string, Post["author"]> = Object.fromEntries(
+      (profs ?? []).map((p: any) => [p.id, { username: p.username, full_name: p.full_name, avatar_url: p.avatar_url }]),
+    );
+    const likedSet = new Set(((likesRes as any).data ?? []).map((l: any) => l.post_id));
+    const mediaByPost: Record<string, CarouselMedia[]> = {};
+    for (const r of (mediaRows ?? []) as any[]) {
+      (mediaByPost[r.post_id] ||= []).push({ url: r.url, media_type: r.media_type });
+    }
+    return rows.map((p) => {
+      const extra = mediaByPost[p.id];
+      const media: CarouselMedia[] = extra && extra.length
+        ? extra
+        : p.media_url ? [{ url: p.media_url, media_type: p.media_type ?? "image" }] : [];
+      return {
+        ...p,
+        author: profileMap[p.user_id] ?? null,
+        liked_by_me: likedSet.has(p.id),
+        following_author: followingRef.current.has(p.user_id),
+        media,
+      };
+    });
+  }
 
   async function load() {
     setLoading(true);
+    setHasMore(true);
+    setCursor(null);
 
-    // Blocked users (both directions) — exclude from feed
-    let blockedIds = new Set<string>();
-    let followingIds = new Set<string>();
+    blockedRef.current = new Set();
+    followingRef.current = new Set();
     if (user) {
       const [a, b, f] = await Promise.all([
         supabase.from("user_blocks").select("blocked_id").eq("blocker_id", user.id),
         supabase.from("user_blocks").select("blocker_id").eq("blocked_id", user.id),
         supabase.from("user_follows").select("following_id").eq("follower_id", user.id),
       ]);
-      (a.data ?? []).forEach((r: any) => blockedIds.add(r.blocked_id));
-      (b.data ?? []).forEach((r: any) => blockedIds.add(r.blocker_id));
-      (f.data ?? []).forEach((r: any) => followingIds.add(r.following_id));
+      (a.data ?? []).forEach((r: any) => blockedRef.current.add(r.blocked_id));
+      (b.data ?? []).forEach((r: any) => blockedRef.current.add(r.blocker_id));
+      (f.data ?? []).forEach((r: any) => followingRef.current.add(r.following_id));
     }
 
-    // Pull a larger window so we can mix followed + viral
+    // First page: pull a ranked window (150 most recent) and score for relevance
     const { data: rows } = await supabase
       .from("social_posts")
       .select("id,user_id,caption,media_url,media_type,likes_count,comments_count,views_count,created_at")
@@ -84,72 +135,71 @@ function FeedPage() {
       .order("created_at", { ascending: false })
       .limit(150);
     let pool = (rows ?? []) as Post[];
-    if (blockedIds.size) pool = pool.filter((p) => !blockedIds.has(p.user_id));
+    if (blockedRef.current.size) pool = pool.filter((p) => !blockedRef.current.has(p.user_id));
 
-    // Rank: followed first (recent), then viral (likes), then fresh discovery
     const now = Date.now();
     const scored = pool.map((p) => {
       const ageH = Math.max(1, (now - new Date(p.created_at).getTime()) / 3.6e6);
       const viral = (p.likes_count * 3 + p.comments_count * 2) / Math.pow(ageH + 2, 0.8);
-      const followBoost = followingIds.has(p.user_id) ? 1000 - ageH : 0;
+      const followBoost = followingRef.current.has(p.user_id) ? 1000 - ageH : 0;
       return { p, score: followBoost + viral };
     });
     scored.sort((x, y) => y.score - x.score);
-    const list = scored.slice(0, 50).map((s) => s.p);
+    const list = scored.slice(0, PAGE_SIZE).map((s) => s.p);
 
-    const ids = Array.from(new Set(list.map((p) => p.user_id)));
-    let profileMap: Record<string, Post["author"]> = {};
-    if (ids.length) {
-      const { data: profs } = await supabase
-        .from("profiles")
-        .select("id,username,full_name,avatar_url")
-        .in("id", ids);
-      profileMap = Object.fromEntries(
-        (profs ?? []).map((p: any) => [p.id, { username: p.username, full_name: p.full_name, avatar_url: p.avatar_url }]),
-      );
+    const enriched = await enrich(list);
+    setPosts(enriched);
+    // Cursor = oldest created_at in this page → next page continues from there
+    if (pool.length > 0) {
+      const oldest = pool.reduce((acc, p) => (p.created_at < acc ? p.created_at : acc), pool[0].created_at);
+      setCursor(oldest);
+    } else {
+      setHasMore(false);
     }
-    let likedSet = new Set<string>();
-    if (user && list.length) {
-      const { data: likes } = await supabase
-        .from("social_likes")
-        .select("post_id")
-        .eq("user_id", user.id)
-        .in("post_id", list.map((p) => p.id));
-      likedSet = new Set((likes ?? []).map((l: any) => l.post_id));
-    }
-
-    // Batch-fetch carousel media for all posts
-    const mediaByPost: Record<string, CarouselMedia[]> = {};
-    if (list.length) {
-      const { data: mediaRows } = await supabase
-        .from("social_post_media")
-        .select("post_id,url,media_type,position")
-        .in("post_id", list.map((p) => p.id))
-        .order("position", { ascending: true });
-      for (const r of (mediaRows ?? []) as any[]) {
-        (mediaByPost[r.post_id] ||= []).push({ url: r.url, media_type: r.media_type });
-      }
-    }
-
-    setPosts(
-      list.map((p) => {
-        const extra = mediaByPost[p.id];
-        const media: CarouselMedia[] = extra && extra.length
-          ? extra
-          : p.media_url
-            ? [{ url: p.media_url, media_type: p.media_type ?? "image" }]
-            : [];
-        return {
-          ...p,
-          author: profileMap[p.user_id] ?? null,
-          liked_by_me: likedSet.has(p.id),
-          following_author: followingIds.has(p.user_id),
-          media,
-        };
-      }),
-    );
     setLoading(false);
   }
+
+  async function loadMore() {
+    if (loadingMore || !hasMore || !cursor) return;
+    setLoadingMore(true);
+    // Keyset pagination — strictly older than the cursor, no OFFSET scan
+    const { data: rows } = await supabase
+      .from("social_posts")
+      .select("id,user_id,caption,media_url,media_type,likes_count,comments_count,views_count,created_at")
+      .eq("visibility", "public")
+      .lt("created_at", cursor)
+      .order("created_at", { ascending: false })
+      .limit(PAGE_SIZE);
+    let pool = (rows ?? []) as Post[];
+    if (blockedRef.current.size) pool = pool.filter((p) => !blockedRef.current.has(p.user_id));
+    if (pool.length === 0) {
+      setHasMore(false);
+      setLoadingMore(false);
+      return;
+    }
+    const enriched = await enrich(pool);
+    setPosts((prev) => {
+      const seen = new Set(prev.map((p) => p.id));
+      return [...prev, ...enriched.filter((p) => !seen.has(p.id))];
+    });
+    setCursor(pool[pool.length - 1].created_at);
+    if (pool.length < PAGE_SIZE) setHasMore(false);
+    setLoadingMore(false);
+  }
+
+  // Infinite-scroll sentinel
+  useEffect(() => {
+    const el = sentinelRef.current;
+    if (!el) return;
+    const obs = new IntersectionObserver((entries) => {
+      for (const e of entries) if (e.isIntersecting) loadMore();
+    }, { rootMargin: "600px 0px" });
+    obs.observe(el);
+    return () => obs.disconnect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cursor, hasMore, loadingMore]);
+
+
 
   useEffect(() => {
     load();
