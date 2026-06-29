@@ -785,8 +785,8 @@ function EditorModal({
         </div>
 
         <div className="mt-6 flex justify-end gap-2">
-          <button onClick={onClose} className="rounded border border-border/60 px-4 py-2 font-hud text-xs uppercase tracking-widest hover:border-foreground">Cancel</button>
-          <button onClick={onSave} className="rounded border border-gold/60 bg-gold/10 px-4 py-2 font-hud text-xs uppercase tracking-widest text-gold hover:bg-gold/20">
+          <button onClick={onClose} className="hud-btn hud-btn-ghost">Cancel</button>
+          <button onClick={onSave} className="hud-btn hud-btn-primary">
             {draft.id ? "Save Changes" : "Create"}
           </button>
         </div>
