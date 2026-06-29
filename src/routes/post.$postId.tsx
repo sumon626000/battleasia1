@@ -34,7 +34,7 @@ type Post = {
   likes_count: number;
   comments_count: number;
   created_at: string;
-  author?: { username: string | null; full_name: string | null; avatar_url: string | null } | null;
+  author?: { username: string | null; full_name: string | null; avatar_url: string | null; in_game_username: string | null } | null;
   liked_by_me?: boolean;
   media?: CarouselMedia[];
 };
