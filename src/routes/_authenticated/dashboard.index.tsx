@@ -200,6 +200,23 @@ function DashboardPage() {
   const recent = (data?.participants ?? []).slice(0, 6);
   const upcoming = data?.upcoming ?? [];
 
+  // Personalized greeting
+  const greeting = useMemo(() => {
+    const h = new Date().getHours();
+    if (h < 5) return "Good night";
+    if (h < 12) return "Good morning";
+    if (h < 17) return "Good afternoon";
+    if (h < 21) return "Good evening";
+    return "Good night";
+  }, []);
+
+  // Level / XP from stats
+  const totalXp = stats.wins * 100 + stats.top3 * 50 + stats.played * 10 + stats.totalKills * 5;
+  const level = Math.max(1, Math.floor(totalXp / 200) + 1);
+  const xpForLevel = level * 200;
+  const xpInLevel = totalXp - (level - 1) * 200;
+  const xpPct = Math.min(100, Math.max(2, Math.round((xpInLevel / xpForLevel) * 100)));
+
   const quick = [
     { label: "Join Match", href: "/dashboard/matches", icon: Swords },
     { label: "Get BAC Coin", href: "/dashboard/vault", icon: WalletIcon },
@@ -222,7 +239,7 @@ function DashboardPage() {
         <div className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
           <div className="min-w-0">
             <p className="font-hud text-[11px] uppercase tracking-[0.25em] text-gold/80">
-              Welcome back, Operator
+              {greeting}, Operator
             </p>
             <h1 className="mt-1 truncate font-display text-2xl font-bold tracking-wide sm:text-3xl">
               {name}
@@ -230,6 +247,19 @@ function DashboardPage() {
             <p className="mt-1 font-mono text-[11px] text-foreground/60">
               PUBG ID: {profile?.pubg_id ?? "—"} · Server: {profile?.game_server ?? "—"}
             </p>
+            {/* Level / XP bar */}
+            <div className="mt-3 max-w-sm">
+              <div className="flex items-center justify-between font-mono text-[10px] uppercase tracking-widest text-foreground/60">
+                <span className="text-gold">Lv {level}</span>
+                <span className="tabular-nums">{xpInLevel} / {xpForLevel} XP</span>
+              </div>
+              <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full border border-gold/30 bg-background/60">
+                <div
+                  className="h-full bg-gradient-to-r from-gold/70 via-gold to-amber-300 shadow-[0_0_8px_rgba(212,175,55,0.6)] transition-all duration-700"
+                  style={{ width: `${xpPct}%` }}
+                />
+              </div>
+            </div>
           </div>
           <div className="flex items-center gap-3 rounded-lg border border-gold/40 bg-background/60 px-4 py-3 backdrop-blur">
             <CoinIcon size={22} />
