@@ -18,6 +18,8 @@ import {
   Crosshair,
   Activity,
   Calendar,
+  Clock,
+  Medal,
 } from "lucide-react";
 import { CoinIcon } from "@/components/site/CoinIcon";
 import { CountUp } from "@/components/ui/CountUp";
@@ -79,6 +81,38 @@ function StatCard({
   );
 }
 
+
+function RankBadge({ rank }: { rank: number | null | undefined }) {
+  const r = Number(rank ?? 0);
+  if (!r) return <span className="grid h-6 w-7 place-items-center rounded border border-border/50 font-mono text-[10px] text-foreground/50">—</span>;
+  const tone =
+    r === 1 ? "border-yellow-400/60 bg-yellow-400/15 text-yellow-300 shadow-[0_0_8px_rgba(250,204,21,0.4)]" :
+    r === 2 ? "border-zinc-300/50 bg-zinc-300/10 text-zinc-200" :
+    r === 3 ? "border-amber-600/60 bg-amber-700/15 text-amber-400" :
+    r <= 10 ? "border-emerald-400/40 bg-emerald-400/10 text-emerald-300" :
+              "border-border/60 bg-background/40 text-foreground/60";
+  return (
+    <span className={`inline-flex h-6 min-w-7 items-center justify-center gap-0.5 rounded border px-1 font-mono text-[10px] font-bold tabular-nums ${tone}`}>
+      {r <= 3 && <Medal size={10} />}#{r}
+    </span>
+  );
+}
+
+function formatSchedule(iso?: string | null) {
+  if (!iso) return "";
+  const d = new Date(iso);
+  const diff = d.getTime() - Date.now();
+  const abs = Math.abs(diff);
+  const m = Math.round(abs / 60000);
+  const h = Math.round(abs / 3600000);
+  const dy = Math.round(abs / 86400000);
+  if (diff > 0) {
+    if (m < 60) return `in ${m}m`;
+    if (h < 24) return `in ${h}h`;
+    return `in ${dy}d`;
+  }
+  return d.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+}
 
 function StatSkeleton() {
   return (
@@ -385,20 +419,30 @@ function DashboardPage() {
             </div>
           ) : (
             <ul className="space-y-2">
-              {upcoming.slice(0, 3).map((m) => (
+              {upcoming.slice(0, 3).map((m) => {
+                const when = formatSchedule(m.schedule_at as string | null);
+                return (
                 <li key={m.id}>
                   <Link
                     to="/dashboard/matches/$matchId"
                     params={{ matchId: String(m.id) }}
-                    className="flex items-center justify-between rounded border border-border/40 bg-background/40 px-3 py-2 text-xs hover:border-gold/60 hover:text-gold"
+                    className="group flex items-center justify-between gap-3 rounded border border-border/40 bg-background/40 px-3 py-2 text-xs transition hover:border-gold/60 hover:bg-gold/5"
                   >
-                    <span className="truncate">{m.match_name}</span>
-                    <span className="ml-3 shrink-0 font-mono text-gold">
-                      {Number(m.entry_fee_bac ?? 0).toLocaleString()} BAC
+                    <div className="flex min-w-0 flex-col">
+                      <span className="truncate font-semibold group-hover:text-gold">{m.match_name}</span>
+                      {when && (
+                        <span className="mt-0.5 flex items-center gap-1 font-mono text-[10px] text-foreground/55">
+                          <Clock size={10} />{when}
+                        </span>
+                      )}
+                    </div>
+                    <span className="ml-3 inline-flex shrink-0 items-center gap-1 rounded border border-gold/40 bg-gold/10 px-2 py-0.5 font-mono text-[11px] font-bold text-gold">
+                      <CoinIcon size={10} />{Number(m.entry_fee_bac ?? 0).toLocaleString()}
                     </span>
                   </Link>
                 </li>
-              ))}
+                );
+              })}
             </ul>
           )}
         </div>
@@ -430,13 +474,27 @@ function DashboardPage() {
             <ul className="space-y-2">
               {recent.slice(0, 3).map((p) => {
                 const m = p.matches as { id?: number; match_name?: string } | null;
+                const rank = Number(p.rank_position ?? 0);
+                const prize = Number(p.prize_bac ?? 0);
+                const isWin = rank === 1;
+                const tintBorder = isWin
+                  ? "border-l-2 border-l-yellow-400/70"
+                  : rank > 0 && rank <= 10
+                    ? "border-l-2 border-l-emerald-400/60"
+                    : prize > 0
+                      ? "border-l-2 border-l-gold/50"
+                      : "";
                 const inner = (
-                  <div className="flex items-center justify-between gap-2 rounded border border-border/40 bg-background/40 px-3 py-2 text-xs hover:border-gold/60 hover:text-gold">
-                    <span className="truncate">{m?.match_name ?? "Match"}</span>
-                    <span className="flex shrink-0 items-center gap-3 font-mono">
-                      <span className="text-foreground/60">{p.rank_position ? `#${p.rank_position}` : "—"}</span>
-                      <span className="text-foreground/60">{p.kills ?? 0}K</span>
-                      <span className="text-gold">{Number(p.prize_bac ?? 0).toLocaleString()}</span>
+                  <div className={`group flex items-center justify-between gap-2 rounded border border-border/40 bg-background/40 px-3 py-2 text-xs transition hover:border-gold/60 hover:bg-gold/5 ${tintBorder}`}>
+                    <span className="truncate font-semibold group-hover:text-gold">{m?.match_name ?? "Match"}</span>
+                    <span className="flex shrink-0 items-center gap-2 font-mono">
+                      <RankBadge rank={p.rank_position} />
+                      <span className="inline-flex items-center gap-0.5 text-foreground/70">
+                        <Crosshair size={10} className="text-foreground/45" />{p.kills ?? 0}
+                      </span>
+                      <span className={`inline-flex items-center gap-0.5 ${prize > 0 ? "text-gold" : "text-foreground/40"}`}>
+                        <CoinIcon size={10} />{prize.toLocaleString()}
+                      </span>
                     </span>
                   </div>
                 );
