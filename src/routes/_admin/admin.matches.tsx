@@ -585,7 +585,7 @@ function EditorModal({
           <h2 className="font-display text-lg uppercase tracking-widest text-gold">
             {draft.id ? `Edit Match #${draft.id}` : "Create Match"}
           </h2>
-          <button onClick={onClose} className="font-hud text-xs uppercase tracking-widest text-foreground/60 hover:text-gold">Close</button>
+          <button onClick={onClose} className="hud-btn hud-btn-ghost">Close</button>
         </div>
 
         {/* Top two-column section: left = identity + preview, right = combat settings */}
@@ -785,8 +785,8 @@ function EditorModal({
         </div>
 
         <div className="mt-6 flex justify-end gap-2">
-          <button onClick={onClose} className="rounded border border-border/60 px-4 py-2 font-hud text-xs uppercase tracking-widest hover:border-foreground">Cancel</button>
-          <button onClick={onSave} className="rounded border border-gold/60 bg-gold/10 px-4 py-2 font-hud text-xs uppercase tracking-widest text-gold hover:bg-gold/20">
+          <button onClick={onClose} className="hud-btn hud-btn-ghost">Cancel</button>
+          <button onClick={onSave} className="hud-btn hud-btn-primary">
             {draft.id ? "Save Changes" : "Create"}
           </button>
         </div>
