@@ -73,9 +73,10 @@ type Match = {
 
 const STATUS = ["Upcoming", "Active", "Ongoing", "Complete", "Cancelled"] as const;
 const MATCH_TYPE = ["Free", "Paid", "Sponsored"] as const;
-const GAME_MODE = ["Classic", "Arcade", "EvoGround", "Arena", "TDM"] as const;
+const GAME_MODE = ["Classic", "TDM"] as const;
 const PLAYER_MODE = ["Solo", "Duo", "Squad"] as const;
-const MAP_OPTIONS = ["Erangel", "Miramar", "Sanhok", "Vikendi", "Livik", "Karakin", "Paramo", "Haven", "Rondo", "Nusa"] as const;
+const CLASSIC_MAPS = ["Erangel", "Miramar", "Sanhok", "Vikendi", "Livik", "Karakin", "Paramo", "Haven", "Rondo", "Nusa"] as const;
+const TDM_MAPS = ["Warehouse", "Hangar", "Ruins", "Town", "Library", "Arena"] as const;
 const MAP_IMAGES: Record<string, string> = {
   Erangel: "/maps/erangel.jpg",
   Miramar: "/maps/miramar.jpg",
@@ -87,7 +88,14 @@ const MAP_IMAGES: Record<string, string> = {
   Haven: "/maps/haven.jpg",
   Rondo: "/maps/rondo.jpg",
   Nusa: "/maps/nusa.jpg",
+  Warehouse: "/maps/warehouse.jpg",
+  Hangar: "/maps/hangar.jpg",
+  Ruins: "/maps/ruins.jpg",
+  Town: "/maps/town.jpg",
+  Library: "/maps/library.jpg",
+  Arena: "/maps/arena.jpg",
 };
+
 const REWARD_TYPE = ["KillBased", "RankBased", "Mixed"] as const;
 const KILL_TYPE = ["Automatic", "Manual"] as const;
 
