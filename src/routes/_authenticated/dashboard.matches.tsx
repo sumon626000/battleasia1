@@ -899,6 +899,48 @@ function HubMatchRow({
           )}
         </div>
       </div>
+
+      {/* Room credentials — visible only after join */}
+      {joined && (m.room_id || m.room_password) && (
+        <div className="mt-2 grid grid-cols-2 gap-2 border-t border-gold/20 pt-2">
+          {m.room_id && (
+            <RoomCredChip label="ROOM ID" value={String(m.room_id)} />
+          )}
+          {m.room_password && (
+            <RoomCredChip label="PASSWORD" value={String(m.room_password)} />
+          )}
+        </div>
+      )}
     </Link>
+
+  );
+}
+
+function RoomCredChip({ label, value }: { label: string; value: string }) {
+  const [copied, setCopied] = useState(false);
+  async function copy(e: React.MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    try {
+      await navigator.clipboard.writeText(value);
+      setCopied(true);
+      toast.success(`${label} copied`);
+      setTimeout(() => setCopied(false), 1500);
+    } catch {
+      toast.error("Copy failed");
+    }
+  }
+  return (
+    <button
+      type="button"
+      onClick={copy}
+      className="group flex items-center justify-between gap-2 rounded-md border border-gold/30 bg-gold/5 px-2 py-1.5 text-left transition hover:border-gold/60 hover:bg-gold/10"
+    >
+      <div className="min-w-0 flex-1">
+        <div className="font-hud text-[8px] uppercase tracking-widest text-foreground/50">{label}</div>
+        <div className="truncate font-mono text-xs font-bold text-gold">{value}</div>
+      </div>
+      {copied ? <Check size={12} className="text-emerald-400" /> : <Copy size={12} className="text-foreground/60 group-hover:text-gold" />}
+    </button>
   );
 }
