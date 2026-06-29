@@ -173,7 +173,7 @@ function PostView() {
           {post.caption ? (
             <p className="mt-1.5 whitespace-pre-wrap text-sm leading-relaxed text-foreground/90">
               <Link to="/u/$username" params={{ username: handle }} className="mr-2 font-hud font-bold text-foreground hover:text-gold">{handle}</Link>
-              {post.caption}
+              <RichText text={post.caption} />
             </p>
           ) : null}
         </div>
