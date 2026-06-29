@@ -26,7 +26,7 @@ function isSameLocalDay(iso: string, now: Date) {
 
 export function TipAndCheckInCard({ participants, balanceLogs }: {
   participants: Participant[];
-  balanceLogs: { amount: number; type: string; created_at: string }[];
+  balanceLogs: { amount_bac: number; type: string; created_at: string }[];
 }) {
   const [idx, setIdx] = useState(0);
 
