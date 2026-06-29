@@ -58,22 +58,18 @@ export function SiteHeader() {
           <LanguageSwitcher />
           <ViewModeToggle />
           {isAuthenticated ? (
-            <>
-              <Link to="/dashboard" className="flex items-center gap-2 rounded-md border border-border/70 bg-background/60 px-3 py-1.5 transition hover:border-gold/60 hover:text-gold">
-                <UserIcon size={14} className="text-gold" />
-                <span className="font-hud text-xs font-semibold tracking-wide">{userBadge}</span>
-              </Link>
-              <Link to="/dashboard" className="btn-gold px-4 py-2 text-sm">{t("auth.dashboard")}</Link>
-              <button onClick={signOut} className="btn-outline-gold px-3 py-2 text-sm" aria-label="Sign out">
-                <LogOut size={14} />
-              </button>
-            </>
+            <Link
+              to="/dashboard"
+              className="grid h-10 w-10 place-items-center rounded-full border border-gold/60 bg-background/60 text-gold transition hover:border-gold hover:shadow-[0_0_18px_rgba(255,176,32,0.45)]"
+              aria-label={userBadge}
+              title={userBadge}
+            >
+              <UserIcon size={16} />
+            </Link>
           ) : (
-            <>
-              <Link to="/auth" className="btn-outline-gold px-5 py-2 text-sm">{t("auth.login")}</Link>
-              <Link to="/auth" className="btn-gold px-5 py-2 text-sm">{t("auth.register")}</Link>
-            </>
+            <Link to="/auth" className="btn-gold px-5 py-2 text-sm">{t("auth.login")}</Link>
           )}
+
         </div>
         <div className="flex items-center gap-1 lg:hidden">
           
