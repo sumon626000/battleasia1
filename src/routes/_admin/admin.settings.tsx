@@ -148,10 +148,10 @@ function AdminSettingsPage() {
                       onChange={(e) => setLocal({ ...local, [s.id]: e.target.value })}
                     />
                   )}
-                  <button onClick={() => saveOne(s)} className="rounded border border-gold bg-gold/20 px-4 py-2 text-sm text-gold">
+                  <button onClick={() => saveOne(s)} className="hud-btn hud-btn-primary">
                     Save
                   </button>
-                  <button onClick={() => remove(s.id)} className="rounded border border-red-500/40 px-3 text-red-400">
+                  <button onClick={() => remove(s.id)} className="hud-btn hud-btn-danger !px-3" aria-label="Delete">
                     <Trash2 size={14} />
                   </button>
                 </div>
