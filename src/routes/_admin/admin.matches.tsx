@@ -703,7 +703,7 @@ function EditorModal({
               />
               <span className="mt-1 block font-hud text-[10px] tracking-wider text-foreground/55">
                 {isAutoKill
-                  ? `Auto: max(entry × players × (1 − fee%), rank1+2+3) ÷ loserCount = max(${totalIncome}, ${rankSum}) ÷ ${loserCount} = ${autoPerKill}`
+                  ? `Auto: entry × players × (1 − fee%) ÷ loserCount = ${totalIncome} ÷ ${loserCount} = ${autoPerKill}`
                   : "Manual — enter custom per-kill BAC reward"}
               </span>
             </Field>
