@@ -551,8 +551,14 @@
 }
 .animate-hud-sweep { animation: hud-sweep 9s ease-in-out infinite; }
 
+@keyframes hud-ticker {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.animate-hud-ticker { animation: hud-ticker 40s linear infinite; }
+
 @media (prefers-reduced-motion: reduce) {
-  .animate-hud-grid-pulse, .animate-hud-sweep { animation: none; }
+  .animate-hud-grid-pulse, .animate-hud-sweep, .animate-hud-ticker { animation: none; }
 }
 
 @utility mask-fade {
