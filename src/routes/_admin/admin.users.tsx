@@ -408,7 +408,7 @@ function AdminUsers() {
         <div className="relative">
           <button className={toolBtn} onClick={() => setOpenMenu(openMenu === "filters" ? null : "filters")}>
             <Filter className="h-3.5 w-3.5" /> Filters
-            {(fRole !== "all" || fStatus !== "all" || fPremium !== "all") && (
+            {(fRole !== "all" || fStatus !== "all" || fPremium !== "all" || fDateStart || fDateEnd) && (
               <span className="ml-1 rounded bg-gold/20 px-1 text-[9px] text-gold">ON</span>
             )}
           </button>
