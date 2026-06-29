@@ -628,6 +628,15 @@ function AdminUsers() {
           <Download className="h-3.5 w-3.5" /> Export
         </button>
 
+        {selectedIds.size > 0 && (
+          <button
+            className="inline-flex items-center gap-1.5 rounded border border-destructive/70 bg-destructive/10 px-2.5 py-1.5 font-hud text-[10px] uppercase tracking-widest text-destructive hover:bg-destructive/20"
+            onClick={deleteSelected}
+          >
+            <Trash2 className="h-3.5 w-3.5" /> Delete Selected ({selectedIds.size})
+          </button>
+        )}
+
         {/* More: Delete all users */}
         <div className="relative ml-auto">
           <button className={toolBtn} onClick={() => setOpenMenu(openMenu === "more" ? null : "more")}>
@@ -648,6 +657,16 @@ function AdminUsers() {
         <table className="w-full min-w-[900px] text-sm">
           <thead>
             <tr className="border-b border-border/60 text-left font-hud text-[10px] uppercase tracking-widest text-foreground/60">
+              <th className="px-3 py-2 w-8">
+                <input
+                  type="checkbox"
+                  checked={filtered.length > 0 && filtered.every((r) => selectedIds.has(r.id))}
+                  onChange={(e) => {
+                    if (e.target.checked) setSelectedIds(new Set(filtered.map((r) => r.id)));
+                    else setSelectedIds(new Set());
+                  }}
+                />
+              </th>
               {show("actions") && <th className="px-3 py-2">Actions</th>}
               {show("id") && <th className="px-3 py-2">User ID</th>}
               {show("user") && <th className="px-3 py-2">User</th>}
