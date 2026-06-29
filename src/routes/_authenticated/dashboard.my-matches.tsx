@@ -200,7 +200,7 @@ function MatchCard({ p }: { p: any }) {
   const badge = won
     ? { label: "WON", cls: "bg-emerald-500 text-white" }
     : lost
-    ? { label: "LOST", cls: "bg-zinc-400 text-zinc-900" }
+    ? { label: "LOST", cls: "bg-red-600 text-white" }
     : pending
     ? { label: "PENDING", cls: "bg-amber-400 text-black" }
     : { label: m.status?.toUpperCase() ?? "—", cls: "bg-zinc-700 text-white" };
