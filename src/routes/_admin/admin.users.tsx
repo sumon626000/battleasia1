@@ -683,15 +683,27 @@ function AdminUsers() {
           </thead>
           <tbody>
             {isLoading && (
-              <tr><td colSpan={12} className="px-3 py-6 text-center text-foreground/50">Loading…</td></tr>
+              <tr><td colSpan={13} className="px-3 py-6 text-center text-foreground/50">Loading…</td></tr>
             )}
             {!isLoading && filtered.length === 0 && (
-              <tr><td colSpan={12} className="px-3 py-6 text-center text-foreground/50">No users found.</td></tr>
+              <tr><td colSpan={13} className="px-3 py-6 text-center text-foreground/50">No users found.</td></tr>
             )}
             {filtered.map((u) => {
               const role = u.roles?.[0]?.role ?? "user";
               return (
                 <tr key={u.id} className="border-b border-border/30 hover:bg-secondary/30">
+                  <td className={`px-3 ${rowPad}`}>
+                    <input
+                      type="checkbox"
+                      checked={selectedIds.has(u.id)}
+                      onChange={(e) => {
+                        const next = new Set(selectedIds);
+                        if (e.target.checked) next.add(u.id);
+                        else next.delete(u.id);
+                        setSelectedIds(next);
+                      }}
+                    />
+                  </td>
                   {show("actions") && (
                     <td className={`px-3 ${rowPad}`}>
                       <button onClick={() => setSelected(u)}
