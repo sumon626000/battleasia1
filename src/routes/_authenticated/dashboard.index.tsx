@@ -266,6 +266,38 @@ function DashboardPage() {
   );
   const unlockedCount = achievements.filter((a) => a.unlocked).length;
 
+  // Live ticking clock (1s) for countdown
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    const id = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  // Next match countdown
+  const nextMatch = upcoming[0] as { id: string; match_name: string; schedule_at: string | null; entry_fee_bac: number | null } | undefined;
+  const nextDiff = nextMatch?.schedule_at ? new Date(nextMatch.schedule_at).getTime() - now : null;
+  const nextSoon = nextDiff !== null && nextDiff > 0 && nextDiff < 3600_000; // within 1hr
+  const nextLive = nextDiff !== null && nextDiff <= 0 && nextDiff > -3600_000;
+  const fmtCountdown = (ms: number) => {
+    const s = Math.max(0, Math.floor(ms / 1000));
+    const h = Math.floor(s / 3600);
+    const m = Math.floor((s % 3600) / 60);
+    const sec = s % 60;
+    const pad = (n: number) => String(n).padStart(2, "0");
+    return h > 0 ? `${pad(h)}:${pad(m)}:${pad(sec)}` : `${pad(m)}:${pad(sec)}`;
+  };
+
+  // Live activity feed — last 8 finished participations
+  const activity = useMemo(() => {
+    const parts = data?.participants ?? [];
+    return parts
+      .filter((p) => {
+        const m = p.matches as { status?: string; match_name?: string } | null;
+        return m && (m.status === "completed" || m.status === "result_published");
+      })
+      .slice(0, 8);
+  }, [data]);
+
   const quick = [
     { label: "Join Match", href: "/dashboard/matches", icon: Swords },
     { label: "Get BAC Coin", href: "/dashboard/vault", icon: WalletIcon },
