@@ -134,14 +134,14 @@ function PostView() {
           </div>
         </div>
 
-        {post.media_url ? (
-          <div className="relative bg-black">
-            {post.media_type === "video" ? (
-              <SignedVideo src={post.media_url} controls className="max-h-[80vh] w-full object-contain" />
-            ) : (
-              <SignedImage src={post.media_url} alt="post" className="max-h-[80vh] w-full object-contain" loading="eager" decoding="async" fetchPriority="high" />
-            )}
-          </div>
+        {post.media && post.media.length > 0 ? (
+          <PostMediaCarousel
+            media={post.media}
+            liked={post.liked_by_me}
+            onDoubleTapLike={() => {
+              if (!post.liked_by_me) toggleLike();
+            }}
+          />
         ) : null}
 
         <div className="flex items-center gap-1 px-2.5 pt-2.5">
