@@ -71,6 +71,7 @@ import { Route as AdminAdminResultsRouteImport } from './routes/_admin/admin.res
 import { Route as AdminAdminReferralConfigRouteImport } from './routes/_admin/admin.referral-config'
 import { Route as AdminAdminQuestsRouteImport } from './routes/_admin/admin.quests'
 import { Route as AdminAdminPushRouteImport } from './routes/_admin/admin.push'
+import { Route as AdminAdminProfitRouteImport } from './routes/_admin/admin.profit'
 import { Route as AdminAdminPremiumRouteImport } from './routes/_admin/admin.premium'
 import { Route as AdminAdminParticipantsRouteImport } from './routes/_admin/admin.participants'
 import { Route as AdminAdminPagesRouteImport } from './routes/_admin/admin.pages'
@@ -421,6 +422,11 @@ const AdminAdminPushRoute = AdminAdminPushRouteImport.update({
   path: '/admin/push',
   getParentRoute: () => AdminRouteRoute,
 } as any)
+const AdminAdminProfitRoute = AdminAdminProfitRouteImport.update({
+  id: '/admin/profit',
+  path: '/admin/profit',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
 const AdminAdminPremiumRoute = AdminAdminPremiumRouteImport.update({
   id: '/admin/premium',
   path: '/admin/premium',
@@ -587,6 +593,7 @@ export interface FileRoutesByFullPath {
   '/admin/pages': typeof AdminAdminPagesRoute
   '/admin/participants': typeof AdminAdminParticipantsRoute
   '/admin/premium': typeof AdminAdminPremiumRoute
+  '/admin/profit': typeof AdminAdminProfitRoute
   '/admin/push': typeof AdminAdminPushRoute
   '/admin/quests': typeof AdminAdminQuestsRoute
   '/admin/referral-config': typeof AdminAdminReferralConfigRoute
@@ -670,6 +677,7 @@ export interface FileRoutesByTo {
   '/admin/pages': typeof AdminAdminPagesRoute
   '/admin/participants': typeof AdminAdminParticipantsRoute
   '/admin/premium': typeof AdminAdminPremiumRoute
+  '/admin/profit': typeof AdminAdminProfitRoute
   '/admin/push': typeof AdminAdminPushRoute
   '/admin/quests': typeof AdminAdminQuestsRoute
   '/admin/referral-config': typeof AdminAdminReferralConfigRoute
@@ -758,6 +766,7 @@ export interface FileRoutesById {
   '/_admin/admin/pages': typeof AdminAdminPagesRoute
   '/_admin/admin/participants': typeof AdminAdminParticipantsRoute
   '/_admin/admin/premium': typeof AdminAdminPremiumRoute
+  '/_admin/admin/profit': typeof AdminAdminProfitRoute
   '/_admin/admin/push': typeof AdminAdminPushRoute
   '/_admin/admin/quests': typeof AdminAdminQuestsRoute
   '/_admin/admin/referral-config': typeof AdminAdminReferralConfigRoute
@@ -845,6 +854,7 @@ export interface FileRouteTypes {
     | '/admin/pages'
     | '/admin/participants'
     | '/admin/premium'
+    | '/admin/profit'
     | '/admin/push'
     | '/admin/quests'
     | '/admin/referral-config'
@@ -928,6 +938,7 @@ export interface FileRouteTypes {
     | '/admin/pages'
     | '/admin/participants'
     | '/admin/premium'
+    | '/admin/profit'
     | '/admin/push'
     | '/admin/quests'
     | '/admin/referral-config'
@@ -1015,6 +1026,7 @@ export interface FileRouteTypes {
     | '/_admin/admin/pages'
     | '/_admin/admin/participants'
     | '/_admin/admin/premium'
+    | '/_admin/admin/profit'
     | '/_admin/admin/push'
     | '/_admin/admin/quests'
     | '/_admin/admin/referral-config'
@@ -1518,6 +1530,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAdminPushRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/_admin/admin/profit': {
+      id: '/_admin/admin/profit'
+      path: '/admin/profit'
+      fullPath: '/admin/profit'
+      preLoaderRoute: typeof AdminAdminProfitRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
     '/_admin/admin/premium': {
       id: '/_admin/admin/premium'
       path: '/admin/premium'
@@ -1702,6 +1721,7 @@ interface AdminRouteRouteChildren {
   AdminAdminPagesRoute: typeof AdminAdminPagesRoute
   AdminAdminParticipantsRoute: typeof AdminAdminParticipantsRoute
   AdminAdminPremiumRoute: typeof AdminAdminPremiumRoute
+  AdminAdminProfitRoute: typeof AdminAdminProfitRoute
   AdminAdminPushRoute: typeof AdminAdminPushRoute
   AdminAdminQuestsRoute: typeof AdminAdminQuestsRoute
   AdminAdminReferralConfigRoute: typeof AdminAdminReferralConfigRoute
@@ -1741,6 +1761,7 @@ const AdminRouteRouteChildren: AdminRouteRouteChildren = {
   AdminAdminPagesRoute: AdminAdminPagesRoute,
   AdminAdminParticipantsRoute: AdminAdminParticipantsRoute,
   AdminAdminPremiumRoute: AdminAdminPremiumRoute,
+  AdminAdminProfitRoute: AdminAdminProfitRoute,
   AdminAdminPushRoute: AdminAdminPushRoute,
   AdminAdminQuestsRoute: AdminAdminQuestsRoute,
   AdminAdminReferralConfigRoute: AdminAdminReferralConfigRoute,
@@ -1936,13 +1957,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
