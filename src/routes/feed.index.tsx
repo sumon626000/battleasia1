@@ -115,7 +115,37 @@ function FeedPage() {
         .in("post_id", list.map((p) => p.id));
       likedSet = new Set((likes ?? []).map((l: any) => l.post_id));
     }
-    setPosts(list.map((p) => ({ ...p, author: profileMap[p.user_id] ?? null, liked_by_me: likedSet.has(p.id), following_author: followingIds.has(p.user_id) })));
+
+    // Batch-fetch carousel media for all posts
+    const mediaByPost: Record<string, CarouselMedia[]> = {};
+    if (list.length) {
+      const { data: mediaRows } = await supabase
+        .from("social_post_media")
+        .select("post_id,url,media_type,position")
+        .in("post_id", list.map((p) => p.id))
+        .order("position", { ascending: true });
+      for (const r of (mediaRows ?? []) as any[]) {
+        (mediaByPost[r.post_id] ||= []).push({ url: r.url, media_type: r.media_type });
+      }
+    }
+
+    setPosts(
+      list.map((p) => {
+        const extra = mediaByPost[p.id];
+        const media: CarouselMedia[] = extra && extra.length
+          ? extra
+          : p.media_url
+            ? [{ url: p.media_url, media_type: p.media_type ?? "image" }]
+            : [];
+        return {
+          ...p,
+          author: profileMap[p.user_id] ?? null,
+          liked_by_me: likedSet.has(p.id),
+          following_author: followingIds.has(p.user_id),
+          media,
+        };
+      }),
+    );
     setLoading(false);
   }
 
