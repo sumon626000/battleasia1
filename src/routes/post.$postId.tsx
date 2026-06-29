@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { CommentsThread, LikeBurst } from "@/components/feed/CommentsThread";
-import { SignedImage, SignedVideo } from "@/components/feed/SignedMedia";
+import { PostMediaCarousel, type CarouselMedia } from "@/components/feed/PostMediaCarousel";
 
 export const Route = createFileRoute("/post/$postId")({
   head: () => ({
@@ -35,6 +35,7 @@ type Post = {
   created_at: string;
   author?: { username: string | null; full_name: string | null; avatar_url: string | null } | null;
   liked_by_me?: boolean;
+  media?: CarouselMedia[];
 };
 
 function timeAgo(d: string) {
@@ -60,13 +61,20 @@ function PostView() {
       .eq("id", postId)
       .maybeSingle();
     if (!row) { setPost(null); setLoading(false); return; }
-    const [{ data: prof }, likeRes] = await Promise.all([
+    const [{ data: prof }, likeRes, mediaRes] = await Promise.all([
       supabase.from("profiles").select("username,full_name,avatar_url").eq("id", row.user_id).maybeSingle(),
       user
         ? supabase.from("social_likes").select("post_id").eq("post_id", row.id).eq("user_id", user.id).maybeSingle()
         : Promise.resolve({ data: null }),
+      supabase.from("social_post_media").select("url,media_type,position").eq("post_id", row.id).order("position", { ascending: true }),
     ]);
-    setPost({ ...(row as Post), author: prof as any, liked_by_me: !!likeRes.data });
+    const extra = (mediaRes.data ?? []) as { url: string; media_type: string }[];
+    const media: CarouselMedia[] = extra.length
+      ? extra.map((m) => ({ url: m.url, media_type: m.media_type }))
+      : row.media_url
+        ? [{ url: row.media_url, media_type: row.media_type ?? "image" }]
+        : [];
+    setPost({ ...(row as Post), author: prof as any, liked_by_me: !!likeRes.data, media });
     setLoading(false);
   }
 
@@ -126,14 +134,14 @@ function PostView() {
           </div>
         </div>
 
-        {post.media_url ? (
-          <div className="relative bg-black">
-            {post.media_type === "video" ? (
-              <SignedVideo src={post.media_url} controls className="max-h-[80vh] w-full object-contain" />
-            ) : (
-              <SignedImage src={post.media_url} alt="post" className="max-h-[80vh] w-full object-contain" loading="eager" decoding="async" fetchPriority="high" />
-            )}
-          </div>
+        {post.media && post.media.length > 0 ? (
+          <PostMediaCarousel
+            media={post.media}
+            liked={post.liked_by_me}
+            onDoubleTapLike={() => {
+              if (!post.liked_by_me) toggleLike();
+            }}
+          />
         ) : null}
 
         <div className="flex items-center gap-1 px-2.5 pt-2.5">

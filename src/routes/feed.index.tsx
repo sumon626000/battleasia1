@@ -8,8 +8,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { CommentsThread, LikeBurst } from "@/components/feed/CommentsThread";
 import { StoriesRail } from "@/components/feed/StoriesRail";
-import { SignedImage, SignedVideo } from "@/components/feed/SignedMedia";
+// SignedMedia handled inside PostMediaCarousel
 import { PeopleToFollow } from "@/components/feed/PeopleToFollow";
+import { PostMediaCarousel, type CarouselMedia } from "@/components/feed/PostMediaCarousel";
 
 
 export const Route = createFileRoute("/feed/")({
@@ -39,6 +40,7 @@ type Post = {
   author?: { username: string | null; full_name: string | null; avatar_url: string | null } | null;
   liked_by_me?: boolean;
   following_author?: boolean;
+  media?: CarouselMedia[];
 };
 
 function timeAgo(d: string) {
@@ -113,7 +115,37 @@ function FeedPage() {
         .in("post_id", list.map((p) => p.id));
       likedSet = new Set((likes ?? []).map((l: any) => l.post_id));
     }
-    setPosts(list.map((p) => ({ ...p, author: profileMap[p.user_id] ?? null, liked_by_me: likedSet.has(p.id), following_author: followingIds.has(p.user_id) })));
+
+    // Batch-fetch carousel media for all posts
+    const mediaByPost: Record<string, CarouselMedia[]> = {};
+    if (list.length) {
+      const { data: mediaRows } = await supabase
+        .from("social_post_media")
+        .select("post_id,url,media_type,position")
+        .in("post_id", list.map((p) => p.id))
+        .order("position", { ascending: true });
+      for (const r of (mediaRows ?? []) as any[]) {
+        (mediaByPost[r.post_id] ||= []).push({ url: r.url, media_type: r.media_type });
+      }
+    }
+
+    setPosts(
+      list.map((p) => {
+        const extra = mediaByPost[p.id];
+        const media: CarouselMedia[] = extra && extra.length
+          ? extra
+          : p.media_url
+            ? [{ url: p.media_url, media_type: p.media_type ?? "image" }]
+            : [];
+        return {
+          ...p,
+          author: profileMap[p.user_id] ?? null,
+          liked_by_me: likedSet.has(p.id),
+          following_author: followingIds.has(p.user_id),
+          media,
+        };
+      }),
+    );
     setLoading(false);
   }
 
@@ -155,6 +187,18 @@ function FeedPage() {
     } else {
       await supabase.from("social_likes").insert({ post_id: post.id, user_id: user.id });
     }
+  }
+
+  // Instagram-style double-tap: only likes, never unlikes
+  async function doLikeOnly(post: Post) {
+    if (!user) return;
+    if (post.liked_by_me) return; // already liked — just show burst (handled by carousel)
+    setPosts((prev) =>
+      prev.map((p) =>
+        p.id === post.id ? { ...p, liked_by_me: true, likes_count: p.likes_count + 1 } : p,
+      ),
+    );
+    await supabase.from("social_likes").insert({ post_id: post.id, user_id: user.id });
   }
 
   async function toggleFollow(post: Post) {
@@ -232,7 +276,14 @@ function FeedPage() {
         ) : (
           <ul className="space-y-6">
             {posts.map((p) => (
-              <PostCard key={p.id} post={p} onLike={() => toggleLike(p)} onFollow={() => toggleFollow(p)} isSelf={user?.id === p.user_id} />
+              <PostCard
+                key={p.id}
+                post={p}
+                onLike={() => toggleLike(p)}
+                onDoubleTapLike={() => doLikeOnly(p)}
+                onFollow={() => toggleFollow(p)}
+                isSelf={user?.id === p.user_id}
+              />
             ))}
           </ul>
         )}
@@ -271,7 +322,7 @@ function FeedPage() {
 
 
 
-function PostCard({ post, onLike, onFollow, isSelf }: { post: Post; onLike: () => void; onFollow: () => void; isSelf: boolean }) {
+function PostCard({ post, onLike, onDoubleTapLike, onFollow, isSelf }: { post: Post; onLike: () => void; onDoubleTapLike: () => void; onFollow: () => void; isSelf: boolean }) {
   const handle = post.author?.username || post.author?.full_name || "player";
   const initials = handle.slice(0, 2).toUpperCase();
   const [showComments, setShowComments] = useState(false);
@@ -357,20 +408,9 @@ function PostCard({ post, onLike, onFollow, isSelf }: { post: Post; onLike: () =
         </Link>
       </div>
 
-      {/* media */}
-      {post.media_url ? (
-        <div className="relative bg-black">
-          {post.media_type === "video" ? (
-            <SignedVideo src={post.media_url} controls className="max-h-[640px] w-full object-contain" />
-          ) : (
-            <SignedImage src={post.media_url} alt="post" className="max-h-[640px] w-full object-contain" loading="lazy" />
-          )}
-          {/* corner HUD bracket */}
-          <span className="pointer-events-none absolute left-2 top-2 h-3 w-3 border-l-2 border-t-2 border-gold/70" />
-          <span className="pointer-events-none absolute right-2 top-2 h-3 w-3 border-r-2 border-t-2 border-gold/70" />
-          <span className="pointer-events-none absolute bottom-2 left-2 h-3 w-3 border-b-2 border-l-2 border-gold/70" />
-          <span className="pointer-events-none absolute bottom-2 right-2 h-3 w-3 border-b-2 border-r-2 border-gold/70" />
-        </div>
+      {/* media — carousel + double-tap to like */}
+      {post.media && post.media.length > 0 ? (
+        <PostMediaCarousel media={post.media} onDoubleTapLike={onDoubleTapLike} liked={post.liked_by_me} />
       ) : null}
 
       {/* action bar — Instagram-style */}
