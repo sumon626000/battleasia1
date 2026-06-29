@@ -240,6 +240,30 @@ function AdminMatchesPage() {
     qc.invalidateQueries({ queryKey: ["admin-matches"] });
   }
 
+  function exportCSV() {
+    if (!matches.length) return toast.error("Nothing to export");
+    const rows = matches.map((m) => ({
+      id: m.id,
+      match_name: m.match_name,
+      map_name: m.map_name,
+      game_mode: m.game_mode,
+      player_mode: m.player_mode,
+      schedule_at: new Date(m.schedule_at).toISOString(),
+      status: m.status,
+      match_type: m.match_type,
+      premium_only: m.premium_only,
+      entry_fee_bac: m.entry_fee_bac,
+      total_players: m.total_players,
+      rank_1_prize_bac: m.rank_1_prize_bac,
+      rank_2_prize_bac: m.rank_2_prize_bac,
+      rank_3_prize_bac: m.rank_3_prize_bac,
+      per_kill_amount_bac: m.per_kill_amount_bac,
+    }));
+    exportRowsAsCSV(`matches-${Date.now()}`, rows);
+  }
+
+  const tBtn = "inline-flex items-center gap-1.5 rounded border border-border/70 px-2.5 py-1.5 font-hud text-[10px] uppercase tracking-widest text-foreground/70 hover:border-gold hover:text-gold";
+
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
