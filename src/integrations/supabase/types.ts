@@ -2921,6 +2921,9 @@ export type Database = {
         | "admin_withdraw"
         | "referral_bonus"
         | "theme_purchase"
+        | "admin_adjust"
+        | "withdraw_refund"
+        | "match_refund"
       deposit_status: "Pending" | "Approved" | "Rejected"
       entity_status: "active" | "inactive"
       feed_status: "Draft" | "Published"
@@ -3109,6 +3112,9 @@ export const Constants = {
         "admin_withdraw",
         "referral_bonus",
         "theme_purchase",
+        "admin_adjust",
+        "withdraw_refund",
+        "match_refund",
       ],
       deposit_status: ["Pending", "Approved", "Rejected"],
       entity_status: ["active", "inactive"],
