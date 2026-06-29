@@ -301,17 +301,64 @@ function AdminMatchesPage() {
         </select>
       </div>
 
+      {/* Toolbar */}
+      <div className="hud-panel relative flex flex-wrap items-center gap-2 rounded-md border border-border/70 bg-card/40 px-3 py-2">
+        <div className="relative">
+          <button className={tBtn} onClick={() => setOpenMenu(openMenu === "cols" ? null : "cols")}>
+            <Columns3 className="h-3.5 w-3.5" /> Columns
+          </button>
+          {openMenu === "cols" && (
+            <>
+              <div className="fixed inset-0 z-30" onClick={() => setOpenMenu(null)} />
+              <div className="absolute left-0 top-full z-40 mt-1 w-48 rounded-md border border-border bg-popover p-2 shadow-lg">
+                {ALL_M_COLS.map((c) => (
+                  <label key={c.key} className="flex cursor-pointer items-center gap-2 rounded px-2 py-1 text-sm hover:bg-secondary/40">
+                    <input type="checkbox" checked={visibleCols[c.key]} onChange={(e) =>
+                      setVisibleCols((v) => ({ ...v, [c.key]: e.target.checked }))} />
+                    <span>{c.label}</span>
+                  </label>
+                ))}
+              </div>
+            </>
+          )}
+        </div>
+        <div className="relative">
+          <button className={tBtn} onClick={() => setOpenMenu(openMenu === "density" ? null : "density")}>
+            <Rows3 className="h-3.5 w-3.5" /> Density
+          </button>
+          {openMenu === "density" && (
+            <>
+              <div className="fixed inset-0 z-30" onClick={() => setOpenMenu(null)} />
+              <div className="absolute left-0 top-full z-40 mt-1 w-40 rounded-md border border-border bg-popover p-1 shadow-lg">
+                {(["compact", "standard", "comfortable"] as const).map((d) => (
+                  <button key={d} onClick={() => { setDensity(d); setOpenMenu(null); }}
+                    className={`block w-full rounded px-2 py-1 text-left text-sm capitalize hover:bg-secondary/40 ${density === d ? "text-gold" : ""}`}>
+                    {d}
+                  </button>
+                ))}
+              </div>
+            </>
+          )}
+        </div>
+        <button className={tBtn} onClick={exportCSV}>
+          <Download className="h-3.5 w-3.5" /> Export
+        </button>
+        <span className="ml-auto font-hud text-[10px] uppercase tracking-widest text-foreground/50">
+          {matches.length} match{matches.length === 1 ? "" : "es"}
+        </span>
+      </div>
+
       <div className="hud-panel overflow-x-auto rounded-md border border-border/70 bg-card/40">
         <table className="w-full min-w-[900px] text-sm">
           <thead className="border-b border-border/60 bg-secondary/40 text-left font-hud text-[10px] uppercase tracking-widest text-foreground/60">
             <tr>
-              <th className="px-3 py-2">Match</th>
-              <th className="px-3 py-2">Schedule</th>
-              <th className="px-3 py-2">Status</th>
-              <th className="px-3 py-2">Type</th>
-              <th className="px-3 py-2">Entry</th>
-              <th className="px-3 py-2">Slots</th>
-              <th className="px-3 py-2 text-right">Actions</th>
+              {showCol("match") && <th className="px-3 py-2">Match</th>}
+              {showCol("schedule") && <th className="px-3 py-2">Schedule</th>}
+              {showCol("status") && <th className="px-3 py-2">Status</th>}
+              {showCol("type") && <th className="px-3 py-2">Type</th>}
+              {showCol("entry") && <th className="px-3 py-2">Entry</th>}
+              {showCol("slots") && <th className="px-3 py-2">Slots</th>}
+              {showCol("actions") && <th className="px-3 py-2 text-right">Actions</th>}
             </tr>
           </thead>
           <tbody>
@@ -323,7 +370,28 @@ function AdminMatchesPage() {
             )}
             {matches.map((m) => (
               <tr key={m.id} className="border-b border-border/40 last:border-0">
-                <td className="px-3 py-2">
+                {showCol("match") && (
+                <td className={`px-3 ${rowPad}`}>
+                  <div className="font-display text-foreground">{m.match_name}</div>
+                  <div className="font-hud text-[10px] uppercase tracking-widest text-foreground/55">{m.map_name} · {m.game_mode} · {m.player_mode}</div>
+                </td>
+                )}
+                {showCol("schedule") && <td className={`px-3 ${rowPad} font-mono text-[11px] text-foreground/80`}>{new Date(m.schedule_at).toLocaleString()}</td>}
+                {showCol("status") && (
+                <td className={`px-3 ${rowPad}`}>
+                  <span className={`rounded border px-2 py-0.5 font-hud text-[10px] uppercase tracking-widest ${
+                    m.status === "Upcoming" ? "border-cyan-500/50 text-cyan-300" :
+                    m.status === "Active" ? "border-emerald-500/50 text-emerald-300" :
+                    m.status === "Completed" ? "border-gold/50 text-gold" :
+                    "border-destructive/50 text-destructive"
+                  }`}>{m.status}</span>
+                </td>
+                )}
+                {showCol("type") && <td className={`px-3 ${rowPad} font-hud text-[10px] uppercase tracking-widest text-foreground/70`}>{m.match_type}{m.premium_only ? " · PRO" : ""}</td>}
+                {showCol("entry") && <td className={`px-3 ${rowPad} tabular-nums`}>{Number(m.entry_fee_bac).toLocaleString()}</td>}
+                {showCol("slots") && <td className={`px-3 ${rowPad} tabular-nums`}>{m.total_players}</td>}
+                {showCol("actions") && (
+                <td className={`px-3 ${rowPad}`}>
                   <div className="font-display text-foreground">{m.match_name}</div>
                   <div className="font-hud text-[10px] uppercase tracking-widest text-foreground/55">{m.map_name} · {m.game_mode} · {m.player_mode}</div>
                 </td>
