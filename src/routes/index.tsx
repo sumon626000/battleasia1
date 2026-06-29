@@ -243,9 +243,9 @@ function BattleAsiaLanding() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("matches")
-        .select("id, match_name, map_name, player_mode, schedule_at, rank_1_prize_bac, total_players, banner_image_url")
+        .select("id, match_name, map_name, player_mode, schedule_at, per_kill_amount_bac, total_players, banner_image_url")
         .in("status", ["Upcoming", "Active"])
-        .order("rank_1_prize_bac", { ascending: false })
+        .order("per_kill_amount_bac", { ascending: false })
         .limit(6);
       if (error) throw error;
       return data ?? [];
