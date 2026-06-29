@@ -501,7 +501,7 @@ function BattleAsiaLanding() {
 
 
       {/* ============ ABOUT ============ */}
-      <section className="relative overflow-hidden border-y border-border/60 bg-card/30 py-14">
+      <section id="about" className="relative overflow-hidden border-y border-border/60 bg-card/30 py-14 scroll-mt-24">
         <img loading="lazy" decoding="async" src={pubgAirdrop} alt="" aria-hidden width={1600} height={900} className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-25" />
         <div aria-hidden className="pointer-events-none absolute inset-0 bg-gradient-to-b from-background/85 via-background/75 to-background/90 lg:bg-gradient-to-r lg:from-background lg:via-background/70 lg:to-background/30" />
         <div aria-hidden className="pointer-events-none absolute inset-0 bg-grid-hud opacity-10" />
@@ -538,7 +538,7 @@ function BattleAsiaLanding() {
       </section>
 
       {/* ============ HOW TO PLAY ============ */}
-      <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6">
+      <section id="how-to-play" className="mx-auto max-w-7xl px-4 py-14 sm:px-6 scroll-mt-24">
         <div className="text-center">
           <div className="chip-tag mx-auto mb-3 inline-flex"><Swords size={12} /> GUIDE</div>
           <h2 className="font-display text-3xl font-bold sm:text-4xl">
@@ -577,7 +577,7 @@ function BattleAsiaLanding() {
       </section>
 
       {/* ============ TOURNAMENT RULES ============ */}
-      <section className="border-y border-border/60 bg-card/30 py-14">
+      <section id="rules" className="border-y border-border/60 bg-card/30 py-14 scroll-mt-24">
         <div className="mx-auto max-w-4xl px-4 sm:px-6">
           <div className="text-center">
             <div className="chip-tag mx-auto mb-3 inline-flex"><Shield size={12} /> REGULATIONS</div>

@@ -12,14 +12,12 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as SupportRouteImport } from './routes/support'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ShopRouteImport } from './routes/shop'
-import { Route as RulesRouteImport } from './routes/rules'
 import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as PremiumRouteImport } from './routes/premium'
 import { Route as NewsRouteImport } from './routes/news'
 import { Route as MatchesRouteImport } from './routes/matches'
 import { Route as LeaderboardRouteImport } from './routes/leaderboard'
-import { Route as HowToPlayRouteImport } from './routes/how-to-play'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as FeedRouteImport } from './routes/feed'
 import { Route as ExploreRouteImport } from './routes/explore'
@@ -114,11 +112,6 @@ const ShopRoute = ShopRouteImport.update({
   path: '/shop',
   getParentRoute: () => rootRouteImport,
 } as any)
-const RulesRoute = RulesRouteImport.update({
-  id: '/rules',
-  path: '/rules',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const RobotsDottxtRoute = RobotsDottxtRouteImport.update({
   id: '/robots.txt',
   path: '/robots.txt',
@@ -147,11 +140,6 @@ const MatchesRoute = MatchesRouteImport.update({
 const LeaderboardRoute = LeaderboardRouteImport.update({
   id: '/leaderboard',
   path: '/leaderboard',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const HowToPlayRoute = HowToPlayRouteImport.update({
-  id: '/how-to-play',
-  path: '/how-to-play',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
@@ -575,14 +563,12 @@ export interface FileRoutesByFullPath {
   '/explore': typeof ExploreRoute
   '/feed': typeof FeedRouteWithChildren
   '/forgot-password': typeof ForgotPasswordRoute
-  '/how-to-play': typeof HowToPlayRoute
   '/leaderboard': typeof LeaderboardRoute
   '/matches': typeof MatchesRoute
   '/news': typeof NewsRoute
   '/premium': typeof PremiumRoute
   '/reset-password': typeof ResetPasswordRoute
   '/robots.txt': typeof RobotsDottxtRoute
-  '/rules': typeof RulesRoute
   '/shop': typeof ShopRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/support': typeof SupportRoute
@@ -663,14 +649,12 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRouteWithChildren
   '/explore': typeof ExploreRoute
   '/forgot-password': typeof ForgotPasswordRoute
-  '/how-to-play': typeof HowToPlayRoute
   '/leaderboard': typeof LeaderboardRoute
   '/matches': typeof MatchesRoute
   '/news': typeof NewsRoute
   '/premium': typeof PremiumRoute
   '/reset-password': typeof ResetPasswordRoute
   '/robots.txt': typeof RobotsDottxtRoute
-  '/rules': typeof RulesRoute
   '/shop': typeof ShopRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/support': typeof SupportRoute
@@ -754,14 +738,12 @@ export interface FileRoutesById {
   '/explore': typeof ExploreRoute
   '/feed': typeof FeedRouteWithChildren
   '/forgot-password': typeof ForgotPasswordRoute
-  '/how-to-play': typeof HowToPlayRoute
   '/leaderboard': typeof LeaderboardRoute
   '/matches': typeof MatchesRoute
   '/news': typeof NewsRoute
   '/premium': typeof PremiumRoute
   '/reset-password': typeof ResetPasswordRoute
   '/robots.txt': typeof RobotsDottxtRoute
-  '/rules': typeof RulesRoute
   '/shop': typeof ShopRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/support': typeof SupportRoute
@@ -845,14 +827,12 @@ export interface FileRouteTypes {
     | '/explore'
     | '/feed'
     | '/forgot-password'
-    | '/how-to-play'
     | '/leaderboard'
     | '/matches'
     | '/news'
     | '/premium'
     | '/reset-password'
     | '/robots.txt'
-    | '/rules'
     | '/shop'
     | '/sitemap.xml'
     | '/support'
@@ -933,14 +913,12 @@ export interface FileRouteTypes {
     | '/auth'
     | '/explore'
     | '/forgot-password'
-    | '/how-to-play'
     | '/leaderboard'
     | '/matches'
     | '/news'
     | '/premium'
     | '/reset-password'
     | '/robots.txt'
-    | '/rules'
     | '/shop'
     | '/sitemap.xml'
     | '/support'
@@ -1023,14 +1001,12 @@ export interface FileRouteTypes {
     | '/explore'
     | '/feed'
     | '/forgot-password'
-    | '/how-to-play'
     | '/leaderboard'
     | '/matches'
     | '/news'
     | '/premium'
     | '/reset-password'
     | '/robots.txt'
-    | '/rules'
     | '/shop'
     | '/sitemap.xml'
     | '/support'
@@ -1115,14 +1091,12 @@ export interface RootRouteChildren {
   ExploreRoute: typeof ExploreRoute
   FeedRoute: typeof FeedRouteWithChildren
   ForgotPasswordRoute: typeof ForgotPasswordRoute
-  HowToPlayRoute: typeof HowToPlayRoute
   LeaderboardRoute: typeof LeaderboardRoute
   MatchesRoute: typeof MatchesRoute
   NewsRoute: typeof NewsRoute
   PremiumRoute: typeof PremiumRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   RobotsDottxtRoute: typeof RobotsDottxtRoute
-  RulesRoute: typeof RulesRoute
   ShopRoute: typeof ShopRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SupportRoute: typeof SupportRoute
@@ -1155,13 +1129,6 @@ declare module '@tanstack/react-router' {
       path: '/shop'
       fullPath: '/shop'
       preLoaderRoute: typeof ShopRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/rules': {
-      id: '/rules'
-      path: '/rules'
-      fullPath: '/rules'
-      preLoaderRoute: typeof RulesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/robots.txt': {
@@ -1204,13 +1171,6 @@ declare module '@tanstack/react-router' {
       path: '/leaderboard'
       fullPath: '/leaderboard'
       preLoaderRoute: typeof LeaderboardRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/how-to-play': {
-      id: '/how-to-play'
-      path: '/how-to-play'
-      fullPath: '/how-to-play'
-      preLoaderRoute: typeof HowToPlayRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/forgot-password': {
@@ -1999,14 +1959,12 @@ const rootRouteChildren: RootRouteChildren = {
   ExploreRoute: ExploreRoute,
   FeedRoute: FeedRouteWithChildren,
   ForgotPasswordRoute: ForgotPasswordRoute,
-  HowToPlayRoute: HowToPlayRoute,
   LeaderboardRoute: LeaderboardRoute,
   MatchesRoute: MatchesRoute,
   NewsRoute: NewsRoute,
   PremiumRoute: PremiumRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   RobotsDottxtRoute: RobotsDottxtRoute,
-  RulesRoute: RulesRoute,
   ShopRoute: ShopRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SupportRoute: SupportRoute,
