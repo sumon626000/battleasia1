@@ -441,7 +441,17 @@ function AdminUsers() {
                   <option value="no">Free</option>
                 </select>
               </div>
-              <button onClick={() => { setFRole("all"); setFStatus("all"); setFPremium("all"); }}
+              <div>
+                <div className="mb-1 font-hud text-[10px] uppercase tracking-widest text-foreground/60">Registered Date</div>
+                <div className="flex items-center gap-1">
+                  <input type="date" value={fDateStart} onChange={(e) => setFDateStart(e.target.value)}
+                    className="w-full rounded border border-border bg-background px-2 py-1 text-sm" />
+                  <span className="text-foreground/50">–</span>
+                  <input type="date" value={fDateEnd} onChange={(e) => setFDateEnd(e.target.value)}
+                    className="w-full rounded border border-border bg-background px-2 py-1 text-sm" />
+                </div>
+              </div>
+              <button onClick={() => { setFRole("all"); setFStatus("all"); setFPremium("all"); setFDateStart(""); setFDateEnd(""); }}
                 className="w-full rounded border border-border/60 px-2 py-1 text-[10px] uppercase tracking-widest hover:border-gold hover:text-gold">
                 Reset Filters
               </button>
