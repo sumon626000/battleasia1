@@ -25,9 +25,7 @@ import {
   AchievementsCard,
   NextTournamentCard,
 } from "@/components/dashboard/PlayerHubCards";
-import { DailyLoginCard } from "@/components/dashboard/DailyLoginCard";
-import { DailyQuestsCard } from "@/components/dashboard/DailyQuestsCard";
-import { SpinWheelCard } from "@/components/dashboard/SpinWheelCard";
+import { RewardsHub } from "@/components/dashboard/RewardsHub";
 import squadHero from "@/assets/pubg-squad-action.webp";
 import sniperImg from "@/assets/pubg-sniper-rooftop.webp";
 import airdropImg from "@/assets/pubg-airdrop.webp";
