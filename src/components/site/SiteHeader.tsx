@@ -76,14 +76,15 @@ export function SiteHeader() {
           <LanguageSwitcher compact />
           <ViewModeToggle compact />
           {isAuthenticated && (
-            <button
-              onClick={signOut}
-              className="grid h-9 w-9 place-items-center rounded-md border border-border/70 text-foreground/75 transition hover:border-destructive/60 hover:text-destructive"
-              aria-label="Sign out"
+            <Link
+              to="/dashboard"
+              className="grid h-9 w-9 place-items-center rounded-full border border-gold/60 text-gold transition hover:border-gold hover:shadow-[0_0_14px_rgba(255,176,32,0.45)]"
+              aria-label={userBadge}
             >
-              <LogOut size={15} />
-            </button>
+              <UserIcon size={15} />
+            </Link>
           )}
+
           <button onClick={() => setOpen(!open)} className="rounded-md p-2 text-gold" aria-label="Toggle menu">
             {open ? <X size={24} /> : <Menu size={24} />}
           </button>
