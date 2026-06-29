@@ -207,7 +207,7 @@ export function AdminShell({
   return (
     <div className="min-h-screen bg-background">
       <header className="sticky top-0 z-30 border-b border-gold/30 bg-card/80 backdrop-blur">
-        <div className="mx-auto flex h-14 max-w-[1600px] items-center justify-between px-3 sm:px-4">
+        <div className="flex h-14 w-full items-center justify-between px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-2 min-w-0">
             <button
               type="button"
