@@ -6,6 +6,7 @@ import { CoinIcon } from "@/components/site/CoinIcon";
 import { supabase } from "@/integrations/supabase/client";
 import { useNotifications } from "@/hooks/use-notifications";
 import type { Profile } from "@/hooks/use-profile";
+import { ViewModeToggle } from "@/components/site/ViewModeToggle";
 
 
 interface Props {
