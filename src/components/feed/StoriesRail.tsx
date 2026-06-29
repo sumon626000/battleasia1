@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Plus, X, ChevronLeft, ChevronRight } from "lucide-react";
+import { Plus, X, ChevronLeft, ChevronRight, Eye } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { SignedImage, SignedVideo } from "@/components/feed/SignedMedia";
+
+const STORY_REACTIONS = ["🔥", "❤️", "😂", "😮", "👏", "💀"];
 
 type Story = {
   id: string;
