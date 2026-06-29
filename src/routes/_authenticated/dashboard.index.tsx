@@ -44,30 +44,41 @@ function StatCard({
   value,
   hint,
   accent,
+  stripe,
+  trend,
 }: {
   icon: typeof Trophy;
   label: string;
   value: React.ReactNode;
   hint?: string;
   accent?: string;
+  stripe?: string;
+  trend?: "up" | "down" | "flat";
 }) {
   return (
-    <div className="hud-panel relative overflow-hidden p-5 transition hover:-translate-y-0.5 hover:border-gold/50">
+    <div className="hud-panel group relative overflow-hidden p-5 transition-all duration-300 hover:-translate-y-0.5 hover:border-gold/50 hover:shadow-[0_8px_24px_-12px_rgba(212,175,55,0.45)]">
+      <span
+        aria-hidden
+        className={`absolute inset-y-0 left-0 w-[3px] ${stripe ?? "bg-gold/60"} opacity-70 transition-all duration-300 group-hover:opacity-100 group-hover:shadow-[0_0_10px_rgba(212,175,55,0.7)]`}
+      />
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="font-mono text-[10px] uppercase tracking-widest text-foreground/55">
             {label}
           </div>
-          <div className={`mt-1.5 font-display text-2xl font-bold tabular-nums ${accent ?? "text-gold"}`}>
-            {value}
+          <div className={`mt-1.5 flex items-baseline gap-1.5 font-display text-2xl font-bold tabular-nums ${accent ?? "text-gold"}`}>
+            <span>{value}</span>
+            {trend === "up" && <TrendingUp size={12} className="text-emerald-400" />}
+            {trend === "down" && <TrendingUp size={12} className="rotate-180 text-destructive" />}
           </div>
           {hint && <div className="mt-1 text-[11px] text-foreground/55">{hint}</div>}
         </div>
-        <Icon size={18} className="shrink-0 text-foreground/40" />
+        <Icon size={18} className="shrink-0 text-foreground/40 transition-all duration-300 group-hover:scale-110 group-hover:text-gold" />
       </div>
     </div>
   );
 }
+
 
 function StatSkeleton() {
   return (
