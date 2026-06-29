@@ -539,6 +539,22 @@
   .ticker { animation: none; }
 }
 
+@keyframes hud-grid-pulse {
+  0%, 100% { opacity: 0.06; }
+  50%      { opacity: 0.14; }
+}
+.animate-hud-grid-pulse { animation: hud-grid-pulse 6s ease-in-out infinite; }
+
+@keyframes hud-sweep {
+  0%   { transform: translateX(-120%) skewX(-12deg); }
+  100% { transform: translateX(420%)  skewX(-12deg); }
+}
+.animate-hud-sweep { animation: hud-sweep 9s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-hud-grid-pulse, .animate-hud-sweep { animation: none; }
+}
+
 @utility mask-fade {
   mask-image: linear-gradient(90deg, transparent, black 8%, black 92%, transparent);
   -webkit-mask-image: linear-gradient(90deg, transparent, black 8%, black 92%, transparent);
