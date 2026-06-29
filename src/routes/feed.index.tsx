@@ -189,6 +189,18 @@ function FeedPage() {
     }
   }
 
+  // Instagram-style double-tap: only likes, never unlikes
+  async function doLikeOnly(post: Post) {
+    if (!user) return;
+    if (post.liked_by_me) return; // already liked — just show burst (handled by carousel)
+    setPosts((prev) =>
+      prev.map((p) =>
+        p.id === post.id ? { ...p, liked_by_me: true, likes_count: p.likes_count + 1 } : p,
+      ),
+    );
+    await supabase.from("social_likes").insert({ post_id: post.id, user_id: user.id });
+  }
+
   async function toggleFollow(post: Post) {
     if (!user) return toast.error("Sign in to follow");
     if (post.user_id === user.id) return;
