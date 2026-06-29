@@ -9,6 +9,30 @@ import { Crown, Users, Map, Trophy, Clock, Filter, Sword, ArrowLeft, Gamepad2, L
 import { CoinIcon } from "@/components/site/CoinIcon";
 import { PlayHeroCarousel } from "@/components/dashboard/PlayHeroCarousel";
 
+function useLiveMatchUpdates() {
+  const qc = useQueryClient();
+  useEffect(() => {
+    const ch = supabase
+      .channel("live-matches-games")
+      .on("postgres_changes", { event: "*", schema: "public", table: "matches" }, () => {
+        qc.invalidateQueries({ queryKey: ["matches"] });
+        qc.invalidateQueries({ queryKey: ["match-tab-counts"] });
+        qc.invalidateQueries({ queryKey: ["match-counts"] });
+        qc.invalidateQueries({ queryKey: ["public-matches"] });
+      })
+      .on("postgres_changes", { event: "*", schema: "public", table: "games" }, () => {
+        qc.invalidateQueries({ queryKey: ["play-games"] });
+        qc.invalidateQueries({ queryKey: ["admin-games"] });
+      })
+      .on("postgres_changes", { event: "*", schema: "public", table: "match_participants" }, () => {
+        qc.invalidateQueries({ queryKey: ["match-counts"] });
+        qc.invalidateQueries({ queryKey: ["my-match-ids"] });
+      })
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, [qc]);
+}
+
 export const Route = createFileRoute("/_authenticated/dashboard/matches")({
   validateSearch: (s: Record<string, unknown>) => ({ game: s.game ? Number(s.game) : undefined }),
   head: () => ({ meta: [{ title: "Play — Battle Asia" }] }),
