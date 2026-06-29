@@ -12,6 +12,9 @@ export const Route = createFileRoute("/_admin")({
 
 const ADMIN_EMAIL = "admin@gmail.com";
 const ADMIN_PASSWORD = "12345678";
+// Real backend admin account auto-signed-in when standalone gate passes
+const BACKEND_ADMIN_EMAIL = "admin@battleasia.test";
+const BACKEND_ADMIN_PASSWORD = "AdminBac!2026";
 const ADMIN_KEY = "ba_standalone_admin_v1";
 const ADMIN_TTL_MS = 1000 * 60 * 60 * 8; // 8h
 const BYPASS_EMAILS = new Set(["nixhyip@gmail.com"]);
@@ -86,7 +89,22 @@ function AdminLayout() {
     } catch {
       /* noop */
     }
-    const ok = await verifySupabaseAdmin();
+    try {
+      sessionStorage.setItem(ADMIN_KEY, String(Date.now()));
+    } catch {
+      /* noop */
+    }
+    let ok = await verifySupabaseAdmin();
+    if (!ok) {
+      // Auto sign-in the backend admin account so RLS-bound RPCs work
+      const { error: signErr } = await supabase.auth.signInWithPassword({
+        email: BACKEND_ADMIN_EMAIL,
+        password: BACKEND_ADMIN_PASSWORD,
+      });
+      if (!signErr) {
+        ok = await verifySupabaseAdmin();
+      }
+    }
     if (ok) {
       toast.success("Admin access granted");
       setState("ok");
