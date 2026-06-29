@@ -856,9 +856,10 @@ function HubMatchRow({
               <div className="font-hud text-[9px] uppercase tracking-widest text-foreground/50">Prize Pool</div>
               <div className="flex items-center gap-1 font-mono font-bold text-emerald-400">
                 <CoinIcon size={11} />
-                {Number(m.rank_1_prize_bac ?? 0).toLocaleString()}
+                {prizePool.toLocaleString()}
               </div>
             </div>
+
             <div>
               <div className="font-hud text-[9px] uppercase tracking-widest text-foreground/50">Entry Fee</div>
               <div className="flex items-center gap-1 font-mono font-bold text-foreground">
