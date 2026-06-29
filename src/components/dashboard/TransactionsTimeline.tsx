@@ -8,7 +8,7 @@ type TxRow = {
   amount_bac: number;
   type: string | null;
   created_at: string;
-  description?: string | null;
+  note?: string | null;
 };
 
 type FilterKey = "all" | "in" | "out";
@@ -60,7 +60,7 @@ export function TransactionsTimeline({ userId }: { userId?: string }) {
       setLoading(true);
       const { data } = await supabase
         .from("balance_logs")
-        .select("id, amount_bac, type, created_at, description")
+        .select("id, amount_bac, type, created_at, note")
         .eq("user_id", userId)
         .order("created_at", { ascending: false })
         .limit(25);
@@ -172,7 +172,7 @@ export function TransactionsTimeline({ userId }: { userId?: string }) {
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="truncate text-sm font-medium text-foreground/90">
-                    {r.description || prettyType(r.type)}
+                    {r.note || prettyType(r.type)}
                   </div>
                   <div className="font-hud text-[10px] uppercase tracking-widest text-foreground/45">
                     {prettyType(r.type)} · {fmtTime(r.created_at)}
