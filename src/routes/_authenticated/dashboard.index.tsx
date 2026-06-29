@@ -340,16 +340,21 @@ function DashboardPage() {
       {/* UPCOMING + RECENT */}
       <section className="grid gap-4 lg:grid-cols-2">
         <div className="hud-panel relative overflow-hidden p-5">
-          <div aria-hidden className="absolute inset-0 -z-10 bg-cover bg-center opacity-20" style={{ backgroundImage: `url(${airdropImg})` }} />
-          <div aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-t from-background via-background/85 to-transparent" />
-          <h3 className="mb-3 font-hud text-sm font-bold uppercase tracking-widest text-gold">
-            Upcoming Matches
-          </h3>
+          <div aria-hidden className="absolute inset-0 -z-10 bg-cover bg-center opacity-15" style={{ backgroundImage: `url(${airdropImg})` }} />
+          <div aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-t from-background via-background/90 to-transparent" />
+          <div className="mb-3 flex items-center justify-between gap-2">
+            <h3 className="font-hud text-xs font-bold uppercase tracking-widest text-gold">
+              Upcoming Matches
+            </h3>
+            <Link to="/dashboard/matches" className="font-hud text-[10px] uppercase tracking-widest text-foreground/55 hover:text-gold">
+              View all →
+            </Link>
+          </div>
           {upcoming.length === 0 ? (
             <p className="font-mono text-xs text-foreground/70">No upcoming matches yet.</p>
           ) : (
             <ul className="space-y-2">
-              {upcoming.map((m) => (
+              {upcoming.slice(0, 3).map((m) => (
                 <li key={m.id}>
                   <Link
                     to="/dashboard/matches/$matchId"
@@ -367,51 +372,45 @@ function DashboardPage() {
           )}
         </div>
         <div className="hud-panel relative overflow-hidden p-5">
-          <div aria-hidden className="absolute inset-0 -z-10 bg-cover bg-center opacity-20" style={{ backgroundImage: `url(${sniperImg})` }} />
-          <div aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-t from-background via-background/85 to-transparent" />
-          <h3 className="mb-3 font-hud text-sm font-bold uppercase tracking-widest text-gold">
-            Recent Matches
-          </h3>
+          <div aria-hidden className="absolute inset-0 -z-10 bg-cover bg-center opacity-15" style={{ backgroundImage: `url(${sniperImg})` }} />
+          <div aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-t from-background via-background/90 to-transparent" />
+          <div className="mb-3 flex items-center justify-between gap-2">
+            <h3 className="font-hud text-xs font-bold uppercase tracking-widest text-gold">
+              Recent Matches
+            </h3>
+            <Link to="/dashboard/my-matches" className="font-hud text-[10px] uppercase tracking-widest text-foreground/55 hover:text-gold">
+              View all →
+            </Link>
+          </div>
           {recent.length === 0 ? (
             <p className="font-mono text-xs text-foreground/70">No matches played yet.</p>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-xs">
-                <thead className="font-mono uppercase tracking-widest text-foreground/55">
-                  <tr className="border-b border-border/40">
-                    <th className="py-2 text-left">Match</th>
-                    <th className="py-2 text-right">Rank</th>
-                    <th className="py-2 text-right">Kills</th>
-                    <th className="py-2 text-right">Prize</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {recent.map((p) => {
-                    const m = p.matches as { id?: number; match_name?: string } | null;
-                    return (
-                      <tr key={p.id} className="border-b border-border/20">
-                        <td className="py-2">
-                          {m?.id ? (
-                            <Link to="/dashboard/matches/$matchId" params={{ matchId: String(m.id) }} className="hover:text-gold">
-                              {m.match_name ?? "Match"}
-                            </Link>
-                          ) : (
-                            "Match"
-                          )}
-                        </td>
-                        <td className="py-2 text-right font-mono">
-                          {p.rank_position ? `#${p.rank_position}` : "—"}
-                        </td>
-                        <td className="py-2 text-right font-mono">{p.kills ?? 0}</td>
-                        <td className="py-2 text-right font-mono text-gold">
-                          {Number(p.prize_bac ?? 0).toLocaleString()}
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
+            <ul className="space-y-2">
+              {recent.slice(0, 3).map((p) => {
+                const m = p.matches as { id?: number; match_name?: string } | null;
+                const inner = (
+                  <div className="flex items-center justify-between gap-2 rounded border border-border/40 bg-background/40 px-3 py-2 text-xs hover:border-gold/60 hover:text-gold">
+                    <span className="truncate">{m?.match_name ?? "Match"}</span>
+                    <span className="flex shrink-0 items-center gap-3 font-mono">
+                      <span className="text-foreground/60">{p.rank_position ? `#${p.rank_position}` : "—"}</span>
+                      <span className="text-foreground/60">{p.kills ?? 0}K</span>
+                      <span className="text-gold">{Number(p.prize_bac ?? 0).toLocaleString()}</span>
+                    </span>
+                  </div>
+                );
+                return (
+                  <li key={p.id}>
+                    {m?.id ? (
+                      <Link to="/dashboard/matches/$matchId" params={{ matchId: String(m.id) }}>
+                        {inner}
+                      </Link>
+                    ) : (
+                      inner
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
           )}
         </div>
       </section>
