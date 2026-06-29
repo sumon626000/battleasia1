@@ -1,29 +1,35 @@
 import { useEffect } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { useProfile } from "@/hooks/use-profile";
-import { applyTheme, getStoredTheme } from "@/lib/themes";
+import { applyTheme, DEFAULT_THEME } from "@/lib/themes";
 
 /**
- * Mounts once at the root. Applies the user's chosen theme to <html data-theme="..."> .
- * - Loads from localStorage immediately for instant paint
- * - Syncs from profiles.active_theme once user is loaded
+ * Theme rules:
+ * - First-time / logged-out visitors always see the default "Official Light" theme.
+ * - Once a user logs in, their saved profile.active_theme is applied.
+ * - On logout we reset back to the default so the next visitor sees Official.
  */
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const { profile } = useProfile(user?.id);
 
-  // Immediate paint from localStorage
+  // Always paint default on first mount (fresh visitor experience).
   useEffect(() => {
-    applyTheme(getStoredTheme());
+    applyTheme(DEFAULT_THEME);
   }, []);
 
-  // Sync from profile when available
+  // Apply user's saved theme once profile loads; reset to default when signed out.
   useEffect(() => {
+    if (loading) return;
+    if (!user) {
+      applyTheme(DEFAULT_THEME);
+      return;
+    }
     const active = (profile as any)?.active_theme;
     if (active && typeof active === "string") {
       applyTheme(active);
     }
-  }, [profile]);
+  }, [user, loading, profile]);
 
   return <>{children}</>;
 }
