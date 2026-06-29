@@ -176,7 +176,7 @@ function AdminApkPage() {
 
       {editing && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
-          <div className="w-full max-w-lg space-y-3 rounded border border-gold/40 bg-card p-6">
+          <div className="w-full max-w-lg max-h-[90vh] overflow-y-auto space-y-3 rounded border border-gold/40 bg-card p-6">
             <h2 className="font-display text-lg uppercase tracking-widest text-gold">{editing.id ? "Edit Version" : "New Version"}</h2>
             <div className="grid grid-cols-2 gap-3">
               <Field label="App Name"><input className="hud-input" value={editing.app_name ?? ""} onChange={(e) => setEditing({ ...editing, app_name: e.target.value })} /></Field>
