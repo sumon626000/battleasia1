@@ -725,18 +725,7 @@ function EditorModal({
           </div>
         </div>
 
-        {/* Rank prizes — drive Auto Per Kill for Free / low-entry matches */}
-        <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-3">
-          <Field label="Rank 1 Prize (BAC)">
-            <input type="number" min={0} className={inp} value={draft.rank_1_prize_bac ?? ""} onChange={(e) => upd({ rank_1_prize_bac: e.target.value === "" ? undefined : Number(e.target.value) })} />
-          </Field>
-          <Field label="Rank 2 Prize (BAC)">
-            <input type="number" min={0} className={inp} value={draft.rank_2_prize_bac ?? ""} onChange={(e) => upd({ rank_2_prize_bac: e.target.value === "" ? undefined : Number(e.target.value) })} />
-          </Field>
-          <Field label="Rank 3 Prize (BAC)">
-            <input type="number" min={0} className={inp} value={draft.rank_3_prize_bac ?? ""} onChange={(e) => upd({ rank_3_prize_bac: e.target.value === "" ? undefined : Number(e.target.value) })} />
-          </Field>
-        </div>
+        {/* Rank prizes removed — kill-based rewards only */}
 
         {/* Banner + Prize Description side by side */}
         <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2">
