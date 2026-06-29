@@ -77,6 +77,7 @@ export function SiteHeader() {
         <div className="flex items-center gap-1 lg:hidden">
           
           <LanguageSwitcher compact />
+          <ViewModeToggle compact />
           {isAuthenticated && (
             <button
               onClick={signOut}
