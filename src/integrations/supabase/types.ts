@@ -873,10 +873,12 @@ export type Database = {
       }
       match_participants: {
         Row: {
+          bonus_bac: number
           created_at: string
           entry_fee_bac: number
           id: number
           joined_at: string
+          kill_prize_bac: number
           kills: number
           match_id: number
           prize_bac: number
@@ -886,12 +888,15 @@ export type Database = {
           status: Database["public"]["Enums"]["participant_status"]
           updated_at: string
           user_id: string
+          win_prize_bac: number
         }
         Insert: {
+          bonus_bac?: number
           created_at?: string
           entry_fee_bac?: number
           id?: number
           joined_at?: string
+          kill_prize_bac?: number
           kills?: number
           match_id: number
           prize_bac?: number
@@ -901,12 +906,15 @@ export type Database = {
           status?: Database["public"]["Enums"]["participant_status"]
           updated_at?: string
           user_id: string
+          win_prize_bac?: number
         }
         Update: {
+          bonus_bac?: number
           created_at?: string
           entry_fee_bac?: number
           id?: number
           joined_at?: string
+          kill_prize_bac?: number
           kills?: number
           match_id?: number
           prize_bac?: number
@@ -916,6 +924,7 @@ export type Database = {
           status?: Database["public"]["Enums"]["participant_status"]
           updated_at?: string
           user_id?: string
+          win_prize_bac?: number
         }
         Relationships: [
           {

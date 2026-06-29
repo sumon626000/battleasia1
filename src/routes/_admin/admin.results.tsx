@@ -20,6 +20,9 @@ type Participant = {
   rank_position: number | null;
   kills: number;
   prize_bac: number;
+  kill_prize_bac: number;
+  win_prize_bac: number;
+  bonus_bac: number;
   status: string;
   result_applied: boolean;
 };
@@ -42,13 +45,15 @@ type Match = {
   player_mode: string;
 };
 
+type RowState = { status: string; kills: string; winPrize: string; bonus: string };
+
 function AdminResultsPage() {
   const qc = useQueryClient();
   const { matchId } = Route.useSearch();
   const [selectedId, setSelectedId] = useState<number | undefined>(matchId);
   const [description, setDescription] = useState("");
   const [imageUrl, setImageUrl] = useState("");
-  const [rows, setRows] = useState<Record<string, { status: string; kills: string; prize: string }>>({});
+  const [rows, setRows] = useState<Record<string, RowState>>({});
   const [csvText, setCsvText] = useState("");
 
   useEffect(() => { if (matchId) setSelectedId(matchId); }, [matchId]);
@@ -73,7 +78,7 @@ function AdminResultsPage() {
     queryFn: async () => {
       const [{ data: m, error: e1 }, { data: parts, error: e2 }] = await Promise.all([
         supabase.from("matches").select("*").eq("id", selectedId!).maybeSingle(),
-        supabase.from("match_participants").select("id, user_id, rank_position, kills, prize_bac, status, result_applied").eq("match_id", selectedId!),
+        supabase.from("match_participants").select("id, user_id, rank_position, kills, prize_bac, kill_prize_bac, win_prize_bac, bonus_bac, status, result_applied").eq("match_id", selectedId!),
       ]);
       if (e1) throw e1;
       if (e2) throw e2;
@@ -93,20 +98,22 @@ function AdminResultsPage() {
 
   useEffect(() => {
     if (!detail) return;
-    const seed: Record<string, { status: string; kills: string; prize: string }> = {};
+    const seed: Record<string, RowState> = {};
     for (const p of detail.participants) {
+      const isWin = p.rank_position === 1;
       seed[p.user_id] = {
-        status: p.rank_position === 1 ? "Winner" : (p.rank_position || p.kills) ? "Loser" : "",
+        status: isWin ? "Winner" : (p.rank_position || p.kills) ? "Loser" : "",
         kills: p.kills ? String(p.kills) : "",
-        prize: p.prize_bac ? String(p.prize_bac) : "",
+        winPrize: p.win_prize_bac ? String(p.win_prize_bac) : "",
+        bonus: p.bonus_bac ? String(p.bonus_bac) : "",
       };
     }
     setRows(seed);
   }, [detail]);
 
-  // Pool breakdown
+  // Pool breakdown using BattleAsia formula
   const pool = useMemo(() => {
-    if (!detail) return { totalIncome: 0, platformFee: 0, prizePool: 0, killPool: 0, perKill: 0, loserCount: 0 };
+    if (!detail) return { totalIncome: 0, platformFee: 0, prizePool: 0, perKill: 0, killCount: 0, teamSize: 1 };
     const m = detail.match;
     const entry = Number(m.entry_fee_bac ?? 0);
     const total = Number(m.total_players ?? 0);
@@ -115,26 +122,25 @@ function AdminResultsPage() {
     const platformFee = totalIncome * (feePct / 100);
     const prizePool = totalIncome - platformFee;
     const teamSize = m.player_mode === "Solo" ? 1 : m.player_mode === "Duo" ? 2 : 4;
-    const loserCount = Math.max(0, total - teamSize);
-    const perKill = Number(m.per_kill_amount_bac ?? 0) || (loserCount > 0 ? Math.round((prizePool / loserCount) * 100) / 100 : 0);
-    const killPool = prizePool;
-    return { totalIncome, platformFee, prizePool, killPool, perKill, loserCount };
+    const killCount = Math.max(total - teamSize, 1);
+    const perKill = Number(m.per_kill_amount_bac ?? 0) > 0
+      ? Number(m.per_kill_amount_bac)
+      : Math.round((prizePool / killCount) * 100) / 100;
+    return { totalIncome, platformFee, prizePool, perKill, killCount, teamSize };
   }, [detail]);
 
-  const computedPrize = useMemo(() => {
-    if (!detail) return {} as Record<string, number>;
-    const m = detail.match;
-    const out: Record<string, number> = {};
+  // Live per-row totals
+  const computed = useMemo(() => {
+    const out: Record<string, { killWin: number; total: number }> = {};
+    if (!detail) return out;
     for (const p of detail.participants) {
       const r = rows[p.user_id];
-      if (!r) continue;
+      if (!r) { out[p.user_id] = { killWin: 0, total: 0 }; continue; }
       const kills = parseInt(r.kills, 10) || 0;
-      let prize = 0;
-      if (m.reward_type === "KillBased" || m.reward_type === "Mixed") prize += kills * pool.perKill;
-      if (m.reward_type === "RankBased" || m.reward_type === "Mixed") {
-        if (r.status === "Winner") prize += Number(m.rank_1_prize_bac || 0);
-      }
-      out[p.user_id] = Math.round(prize * 100) / 100;
+      const killWin = Math.round(kills * pool.perKill * 100) / 100;
+      const win = r.status === "Winner" ? (Number(r.winPrize) || 0) : 0;
+      const bonus = r.status === "Winner" ? (Number(r.bonus) || 0) : 0;
+      out[p.user_id] = { killWin, total: Math.round((killWin + win + bonus) * 100) / 100 };
     }
     return out;
   }, [detail, rows, pool.perKill]);
@@ -145,16 +151,19 @@ function AdminResultsPage() {
     const results = detail.participants
       .map((p) => {
         const r = rows[p.user_id];
-        if (!r) return null;
+        if (!r || !r.status) return null;
         const kills = parseInt(r.kills, 10) || 0;
-        const prizeOverride = r.prize.trim() === "" ? null : Number(r.prize);
-        if (!r.status && !r.kills && prizeOverride === null) return null;
-        const rank = r.status === "Winner" ? 1 : r.status === "Loser" ? 2 : null;
-        return { user_id: p.user_id, rank, kills, prize: prizeOverride };
+        return {
+          user_id: p.user_id,
+          status: r.status,
+          kills,
+          win_prize: r.status === "Winner" ? (Number(r.winPrize) || 0) : 0,
+          bonus: r.status === "Winner" ? (Number(r.bonus) || 0) : 0,
+        };
       })
       .filter(Boolean);
     if (results.length === 0) return toast.error("Fill at least one row.");
-    if (!confirm(`Publish results for ${results.length} player(s)? This will credit prizes and cannot be undone.`)) return;
+    if (!confirm(`Publish results for ${results.length} player(s)? Prizes will be credited to wallets and cannot be undone.`)) return;
     const { error, data } = await supabase.rpc("admin_publish_match_result", {
       p_match_id: detail.match.id,
       p_results: results as never,
@@ -162,7 +171,7 @@ function AdminResultsPage() {
       p_result_image_url: (imageUrl || undefined) as never,
     });
     if (error) return toast.error(error.message);
-    toast.success(`Published — ${data} row(s) processed.`);
+    toast.success(`Published — ${data} row(s) credited.`);
     qc.invalidateQueries({ queryKey: ["admin-result-detail", selectedId] });
     qc.invalidateQueries({ queryKey: ["admin-results-matches"] });
   }
@@ -205,7 +214,12 @@ function AdminResultsPage() {
       if (!uid) { skipped++; continue; }
       const rankNum = parseInt(cols[1] || "", 10);
       const kills = cols[2] || "0";
-      next[uid] = { status: rankNum === 1 ? "Winner" : Number.isFinite(rankNum) ? "Loser" : "", kills, prize: cols[3] || "" };
+      next[uid] = {
+        status: rankNum === 1 ? "Winner" : Number.isFinite(rankNum) ? "Loser" : "",
+        kills,
+        winPrize: cols[3] || "",
+        bonus: cols[4] || "",
+      };
       matched++;
     }
     setRows(next);
@@ -265,28 +279,32 @@ function AdminResultsPage() {
             </div>
           </section>
 
-          {/* Prize Breakdown */}
+          {/* Prize Pool Breakdown */}
           <section className="hud-panel rounded-md border border-border/70 bg-card/40 p-4">
-            <h2 className="mb-3 font-display text-sm uppercase tracking-widest text-gold">Prize Breakdown</h2>
-            <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+            <h2 className="mb-3 font-display text-sm uppercase tracking-widest text-gold">Prize Pool Breakdown</h2>
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
+              <Stat label="Total Income" value={pool.totalIncome.toLocaleString()} sub={`${detail.match.total_players} × ${Number(detail.match.entry_fee_bac).toLocaleString()}`} />
               <Stat label={`Platform Fee (${detail.match.platform_fee_pct}%)`} value={`-${pool.platformFee.toLocaleString()}`} tone="negative" />
               <Stat label="Prize Pool" value={pool.prizePool.toLocaleString()} />
-              <Stat label="Kill Money Pool" value={pool.killPool.toLocaleString()} tone="positive" />
-              <Stat label={`Per Kill (÷${pool.loserCount} W.kills)`} value={pool.perKill.toLocaleString()} tone="positive" sub={`${pool.prizePool.toLocaleString()} ÷ ${pool.loserCount}`} />
+              <Stat label="Kill Money Pool" value={pool.prizePool.toLocaleString()} tone="positive" />
+              <Stat label={`Per Kill (÷${pool.killCount})`} value={pool.perKill.toLocaleString()} tone="positive" sub={`${pool.prizePool.toLocaleString()} ÷ ${pool.killCount}`} />
             </div>
+            <p className="mt-3 font-hud text-[10px] uppercase tracking-widest text-foreground/60">
+              Mode: {detail.match.player_mode} · Winner team size: {pool.teamSize} · Kill Count = Players − {pool.teamSize}
+            </p>
           </section>
 
           <section className="hud-panel overflow-x-auto rounded-md border border-border/70 bg-card/40">
-            <table className="w-full min-w-[860px] text-sm">
+            <table className="w-full min-w-[1000px] text-sm">
               <thead className="border-b border-border/60 bg-secondary/40 text-left font-hud text-[10px] uppercase tracking-widest text-foreground/60">
                 <tr>
-                  <th className="px-3 py-2">In-game ID</th>
                   <th className="px-3 py-2">User Name</th>
                   <th className="px-3 py-2 w-32">Player Status</th>
-                  <th className="px-3 py-2 w-24">Killed</th>
-                  <th className="px-3 py-2 w-36">Manual Prize</th>
-                  <th className="px-3 py-2 w-32">Total Credit</th>
-                  <th className="px-3 py-2 w-28">Status</th>
+                  <th className="px-3 py-2 w-20">Killed</th>
+                  <th className="px-3 py-2 w-28">Kill Win</th>
+                  <th className="px-3 py-2 w-28">Win Prize</th>
+                  <th className="px-3 py-2 w-28">Bonus</th>
+                  <th className="px-3 py-2 w-32">TOTAL WIN</th>
                 </tr>
               </thead>
               <tbody>
@@ -295,21 +313,20 @@ function AdminResultsPage() {
                 )}
                 {detail.participants.map((p) => {
                   const prof = detail.profMap.get(p.user_id);
-                  const r = rows[p.user_id] ?? { status: "", kills: "", prize: "" };
-                  const isLoser = r.status === "Loser";
-                  const manualPrize = r.prize.trim() === "" ? null : Number(r.prize);
-                  const totalCredit = manualPrize !== null ? manualPrize : (computedPrize[p.user_id] ?? p.prize_bac ?? 0);
+                  const r = rows[p.user_id] ?? { status: "", kills: "", winPrize: "", bonus: "" };
+                  const isWinner = r.status === "Winner";
+                  const c = computed[p.user_id] ?? { killWin: 0, total: 0 };
                   return (
-                    <tr key={p.id} className="border-b border-border/40 last:border-0">
-                      <td className="px-3 py-2 font-mono text-xs text-foreground/70">{prof?.pubg_id ?? "—"}</td>
+                    <tr key={p.id} className={`border-b border-border/40 last:border-0 ${isWinner ? "bg-emerald-500/5" : ""}`}>
                       <td className="px-3 py-2">
                         <div className="font-display text-foreground">{prof?.in_game_username || prof?.username || p.user_id.slice(0, 8)}</div>
+                        <div className="font-mono text-[10px] text-foreground/55">PUBG: {prof?.pubg_id ?? "—"}</div>
                       </td>
                       <td className="px-3 py-2">
                         <select
                           disabled={detail.match.result_applied}
                           value={r.status}
-                          onChange={(e) => setRows({ ...rows, [p.user_id]: { ...r, status: e.target.value, kills: e.target.value === "Winner" ? "" : r.kills } })}
+                          onChange={(e) => setRows({ ...rows, [p.user_id]: { ...r, status: e.target.value } })}
                           className="w-28 rounded border border-border/60 bg-secondary/40 px-2 py-1 font-hud text-xs outline-none focus:border-gold"
                         >
                           <option value="">—</option>
@@ -320,29 +337,39 @@ function AdminResultsPage() {
                       <td className="px-3 py-2">
                         <input
                           type="number" min={0}
-                          disabled={detail.match.result_applied || !isLoser}
-                          value={isLoser ? r.kills : ""}
+                          disabled={detail.match.result_applied}
+                          value={r.kills}
                           onChange={(e) => setRows({ ...rows, [p.user_id]: { ...r, kills: e.target.value } })}
-                          className="w-20 rounded border border-border/60 bg-secondary/40 px-2 py-1 font-mono text-sm outline-none focus:border-gold disabled:opacity-40"
+                          className="w-20 rounded border border-border/60 bg-secondary/40 px-2 py-1 font-mono text-sm outline-none focus:border-gold"
+                        />
+                      </td>
+                      <td className="px-3 py-2 tabular-nums font-mono text-emerald-400">{c.killWin.toLocaleString()}</td>
+                      <td className="px-3 py-2">
+                        <input
+                          type="number" min={0} step="0.01"
+                          disabled={detail.match.result_applied || !isWinner}
+                          value={isWinner ? r.winPrize : ""}
+                          placeholder={isWinner ? "0" : "—"}
+                          onChange={(e) => setRows({ ...rows, [p.user_id]: { ...r, winPrize: e.target.value } })}
+                          className="w-28 rounded border border-gold/40 bg-secondary/40 px-2 py-1 font-mono text-sm text-gold outline-none focus:border-gold disabled:opacity-30"
                         />
                       </td>
                       <td className="px-3 py-2">
                         <input
                           type="number" min={0} step="0.01"
-                          disabled={detail.match.result_applied}
-                          value={r.prize}
-                          placeholder="auto"
-                          onChange={(e) => setRows({ ...rows, [p.user_id]: { ...r, prize: e.target.value } })}
-                          className="w-28 rounded border border-gold/40 bg-secondary/40 px-2 py-1 font-mono text-sm text-gold outline-none focus:border-gold disabled:opacity-40"
+                          disabled={detail.match.result_applied || !isWinner}
+                          value={isWinner ? r.bonus : ""}
+                          placeholder={isWinner ? "0" : "—"}
+                          onChange={(e) => setRows({ ...rows, [p.user_id]: { ...r, bonus: e.target.value } })}
+                          className="w-28 rounded border border-gold/40 bg-secondary/40 px-2 py-1 font-mono text-sm text-gold outline-none focus:border-gold disabled:opacity-30"
                         />
                       </td>
-                      <td className="px-3 py-2 tabular-nums text-gold">
+                      <td className="px-3 py-2 tabular-nums font-display text-base text-gold">
                         <span className="inline-flex items-center gap-1">
-                          {Number(totalCredit).toLocaleString()}
+                          {c.total.toLocaleString()}
                           <CoinIcon size={12} />
                         </span>
                       </td>
-                      <td className="px-3 py-2 font-hud text-[10px] uppercase tracking-widest">{p.status}</td>
                     </tr>
                   );
                 })}
