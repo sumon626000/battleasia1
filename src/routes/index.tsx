@@ -484,8 +484,8 @@ function BattleAsiaLanding() {
           empty="No high-prize battles right now."
           items={(highPrize.data ?? []).map((m: any) => ({
             id: m.id, name: m.match_name, mode: m.player_mode, map: m.map_name,
-            value: formatBAC(Number(m.rank_1_prize_bac)),
-            valueLabel: "RANK 1 PRIZE",
+            value: formatBAC(Number(m.per_kill_amount_bac)),
+            valueLabel: "PER KILL",
           }))}
         />
         <MatchStrip title="ONGOING" highlight="MATCHES" tag="LIVE" icon={Radio}
@@ -493,8 +493,8 @@ function BattleAsiaLanding() {
           empty="No ongoing matches right now. Check back soon."
           items={(ongoingMatches.data ?? []).map((m: any) => ({
             id: m.id, name: m.match_name, mode: m.player_mode, map: m.map_name,
-            value: formatBAC(Number(m.rank_1_prize_bac)),
-            valueLabel: "TOP PRIZE",
+            value: formatBAC(Number(m.per_kill_amount_bac)),
+            valueLabel: "PER KILL",
           }))}
         />
       </section>
