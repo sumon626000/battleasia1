@@ -456,7 +456,12 @@ function EditorModal({
 
           {/* RIGHT COLUMN */}
           <div className="space-y-3">
-            <Select label="Game Mode" required error={errors.game_mode} value={draft.game_mode} options={GAME_MODE} onChange={(v) => upd({ game_mode: v })} />
+            <Select label="Game Mode" required error={errors.game_mode} value={draft.game_mode} options={GAME_MODE} onChange={(v) => {
+              const maps = v === "TDM" ? TDM_MAPS : CLASSIC_MAPS;
+              const nextMap = (maps as readonly string[]).includes(draft.map_name ?? "") ? draft.map_name : maps[0];
+              upd({ game_mode: v, map_name: nextMap, map_image_url: MAP_IMAGES[nextMap as string] ?? null, banner_image_url: MAP_IMAGES[nextMap as string] ?? null });
+            }} />
+
 
             <Field label={`Total Kills (${draft.game_mode ?? "Classic"})`}>
               <input
