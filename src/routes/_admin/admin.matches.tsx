@@ -392,22 +392,6 @@ function AdminMatchesPage() {
                 {showCol("slots") && <td className={`px-3 ${rowPad} tabular-nums`}>{m.total_players}</td>}
                 {showCol("actions") && (
                 <td className={`px-3 ${rowPad}`}>
-                  <div className="font-display text-foreground">{m.match_name}</div>
-                  <div className="font-hud text-[10px] uppercase tracking-widest text-foreground/55">{m.map_name} · {m.game_mode} · {m.player_mode}</div>
-                </td>
-                <td className="px-3 py-2 font-mono text-[11px] text-foreground/80">{new Date(m.schedule_at).toLocaleString()}</td>
-                <td className="px-3 py-2">
-                  <span className={`rounded border px-2 py-0.5 font-hud text-[10px] uppercase tracking-widest ${
-                    m.status === "Upcoming" ? "border-cyan-500/50 text-cyan-300" :
-                    m.status === "Active" ? "border-emerald-500/50 text-emerald-300" :
-                    m.status === "Completed" ? "border-gold/50 text-gold" :
-                    "border-destructive/50 text-destructive"
-                  }`}>{m.status}</span>
-                </td>
-                <td className="px-3 py-2 font-hud text-[10px] uppercase tracking-widest text-foreground/70">{m.match_type}{m.premium_only ? " · PRO" : ""}</td>
-                <td className="px-3 py-2 tabular-nums">{Number(m.entry_fee_bac).toLocaleString()}</td>
-                <td className="px-3 py-2 tabular-nums">{m.total_players}</td>
-                <td className="px-3 py-2">
                   <div className="flex items-center justify-end gap-1">
                     <Link
                       to="/admin/results"
