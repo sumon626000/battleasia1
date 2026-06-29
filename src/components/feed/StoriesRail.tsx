@@ -81,6 +81,36 @@ export function StoriesRail() {
     return () => clearTimeout(t);
   }, [viewer, groups]);
 
+  // Record view + load view count when current story changes
+  useEffect(() => {
+    if (!currentStory || !user) return;
+    const sid = currentStory.id;
+    const isOwn = currentStory.user_id === user.id;
+    (async () => {
+      if (!isOwn) {
+        await supabase.from("social_story_views").insert({ story_id: sid, viewer_id: user.id }).select();
+      }
+      if (isOwn) {
+        const { count } = await supabase
+          .from("social_story_views")
+          .select("viewer_id", { count: "exact", head: true })
+          .eq("story_id", sid);
+        setViewCounts((p) => ({ ...p, [sid]: count ?? 0 }));
+      }
+    })();
+  }, [currentStory?.id, user?.id]);
+
+  async function sendReaction(emoji: string) {
+    if (!user || !currentStory) return;
+    setReactionFlash(emoji);
+    window.setTimeout(() => setReactionFlash(null), 900);
+    await supabase.from("social_story_reactions").insert({
+      story_id: currentStory.id,
+      user_id: user.id,
+      emoji,
+    });
+  }
+
   return (
     <>
       <div className="mb-4 flex gap-3 overflow-x-auto pb-2 scrollbar-thin">
