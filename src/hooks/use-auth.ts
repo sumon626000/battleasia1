@@ -23,7 +23,7 @@ export function useAuth() {
       const ok = await isActiveSession();
       if (!ok && !stopped) {
         toast.error(
-          "অন্য একটি ডিভাইসে এই অ্যাকাউন্ট লগিন হয়েছে — এই ডিভাইস থেকে লগআউট করা হচ্ছে।",
+          "This account was logged in on another device — signing out from this device.",
         );
         clearLocalSessionToken();
         await supabase.auth.signOut();
