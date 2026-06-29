@@ -225,9 +225,12 @@ function DashboardPage() {
 
       {/* QUICK ACTIONS */}
       <section>
-        <h2 className="mb-3 font-hud text-sm font-bold uppercase tracking-widest text-foreground/80">
-          Quick Actions
-        </h2>
+        <div className="mb-3 flex items-center gap-3">
+          <h2 className="font-hud text-sm font-bold uppercase tracking-widest text-foreground/80">
+            Quick Actions
+          </h2>
+          <span aria-hidden className="h-px flex-1 bg-gradient-to-r from-gold/40 via-border/40 to-transparent" />
+        </div>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           {quick.map((q) => {
             const Icon = q.icon;
@@ -235,15 +238,19 @@ function DashboardPage() {
               <Link
                 key={q.href}
                 to={q.href}
-                className="hud-panel group flex items-center justify-between p-4 transition hover:border-gold/60 hover:bg-gold/5"
+                className="hud-panel group relative flex items-center justify-between overflow-hidden p-4 transition-all duration-300 hover:-translate-y-0.5 hover:border-gold/60 hover:bg-gold/5 hover:shadow-[0_8px_24px_-12px_rgba(212,175,55,0.55)]"
               >
-                <div className="flex items-center gap-3">
-                  <div className="grid h-9 w-9 place-items-center rounded-md bg-gold/15 text-gold">
+                <span
+                  aria-hidden
+                  className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-gold/10 to-transparent transition-transform duration-700 group-hover:translate-x-full"
+                />
+                <div className="relative flex items-center gap-3">
+                  <div className="grid h-9 w-9 place-items-center rounded-md bg-gold/15 text-gold transition-all duration-300 group-hover:scale-110 group-hover:bg-gold/25 group-hover:shadow-[0_0_14px_rgba(212,175,55,0.55)]">
                     <Icon size={16} />
                   </div>
                   <span className="font-hud text-sm font-semibold uppercase">{q.label}</span>
                 </div>
-                <ArrowRight size={14} className="text-foreground/40 transition group-hover:text-gold" />
+                <ArrowRight size={14} className="relative text-foreground/40 transition-all duration-300 group-hover:translate-x-1 group-hover:text-gold" />
               </Link>
             );
           })}
