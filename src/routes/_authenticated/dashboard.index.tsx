@@ -164,15 +164,6 @@ function DashboardPage() {
   ];
 
   return (
-    <div className="space-y-5">
-      {/* HERO */}
-      <section className="hud-panel relative overflow-hidden p-5 sm:p-6">
-        <div
-          aria-hidden
-          className="absolute inset-0 -z-10 bg-cover bg-center opacity-30"
-          style={{ backgroundImage: `url(${squadHero})` }}
-        />
-        <div aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-r from-background via-background/80 to-background/40" />
     <div className="space-y-4">
       {/* HERO with merged balance */}
       <section className="hud-panel relative overflow-hidden p-5 sm:p-6">
