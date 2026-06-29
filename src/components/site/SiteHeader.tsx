@@ -6,6 +6,7 @@ import logoShield from "@/assets/logo-shield.webp";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import { LanguageSwitcher } from "@/components/site/LanguageSwitcher";
+import { ViewModeToggle } from "@/components/site/ViewModeToggle";
 
 import { useT } from "@/lib/i18n";
 
@@ -55,6 +56,7 @@ export function SiteHeader() {
         <div className="hidden items-center gap-2 lg:flex">
           
           <LanguageSwitcher />
+          <ViewModeToggle />
           {isAuthenticated ? (
             <>
               <Link to="/dashboard" className="flex items-center gap-2 rounded-md border border-border/70 bg-background/60 px-3 py-1.5 transition hover:border-gold/60 hover:text-gold">
@@ -76,6 +78,7 @@ export function SiteHeader() {
         <div className="flex items-center gap-1 lg:hidden">
           
           <LanguageSwitcher compact />
+          <ViewModeToggle compact />
           {isAuthenticated && (
             <button
               onClick={signOut}

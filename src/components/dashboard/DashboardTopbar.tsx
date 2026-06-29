@@ -6,6 +6,7 @@ import { CoinIcon } from "@/components/site/CoinIcon";
 import { supabase } from "@/integrations/supabase/client";
 import { useNotifications } from "@/hooks/use-notifications";
 import type { Profile } from "@/hooks/use-profile";
+import { ViewModeToggle } from "@/components/site/ViewModeToggle";
 
 
 interface Props {
@@ -69,6 +70,8 @@ export function DashboardTopbar({ profile, onOpenMobileNav }: Props) {
         </div>
 
         <div className="flex items-center gap-2">
+          <ViewModeToggle compact />
+
           
           <Link
             to="/dashboard/notifications"
