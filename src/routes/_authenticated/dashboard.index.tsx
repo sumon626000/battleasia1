@@ -290,52 +290,71 @@ function DashboardPage() {
         totalPrize={stats.totalPrize}
       />
 
-      {/* COMBAT STATISTICS */}
-      <section>
-        <div className="mb-3 flex items-end justify-between">
-          <h2 className="font-hud text-sm font-bold uppercase tracking-widest text-foreground/80">
+      {/* COMBAT STATISTICS — unified inline panel */}
+      <section className="hud-panel overflow-hidden">
+        <div className="flex items-center justify-between gap-3 border-b border-border/40 px-4 py-3">
+          <h2 className="font-hud text-xs font-bold uppercase tracking-widest text-foreground/80">
             Combat Statistics
           </h2>
           <Link
             to="/dashboard/my-matches"
-            className="rounded border border-border/60 px-3 py-1 font-hud text-[10px] uppercase tracking-widest hover:border-gold hover:text-gold"
+            className="rounded border border-border/60 px-2.5 py-1 font-hud text-[10px] uppercase tracking-widest hover:border-gold hover:text-gold"
           >
             My Matches →
           </Link>
         </div>
         {isLoading ? (
-          <div className="hud-panel p-8 text-center text-sm text-foreground/60">Loading…</div>
+          <div className="p-8 text-center text-sm text-foreground/60">Loading…</div>
         ) : (
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
-            <StatCard icon={Crown} label="Top 3 Finishes" value={stats.top3} />
-            <StatCard icon={Target} label="Top 10 Finishes" value={stats.top10} />
-            <StatCard icon={Crosshair} label="Total Kills" value={stats.totalKills} hint={`${stats.avgKills} avg/match`} />
-            <StatCard icon={Coins} label="Total Prize Won" value={stats.totalPrize.toLocaleString()} accent="text-gold" hint="BAC" />
-            <StatCard icon={Activity} label="Total Entry Spent" value={stats.totalEntry.toLocaleString()} hint="BAC" />
-            <StatCard
-              icon={Calendar}
-              label="Net P/L"
-              value={(stats.totalPrize - stats.totalEntry).toLocaleString()}
-              accent={stats.totalPrize - stats.totalEntry >= 0 ? "text-emerald-400" : "text-destructive"}
-              hint="BAC"
-            />
-          </div>
+          <dl className="divide-y divide-border/30">
+            {[
+              { icon: Crown, label: "Top 3 Finishes", value: stats.top3, accent: "text-gold" },
+              { icon: Target, label: "Top 10 Finishes", value: stats.top10 },
+              { icon: Crosshair, label: "Total Kills", value: `${stats.totalKills} · ${stats.avgKills} avg` },
+              { icon: Coins, label: "Total Prize Won", value: `${stats.totalPrize.toLocaleString()} BAC`, accent: "text-gold" },
+              { icon: Activity, label: "Total Entry Spent", value: `${stats.totalEntry.toLocaleString()} BAC` },
+              {
+                icon: Calendar,
+                label: "Net P/L",
+                value: `${(stats.totalPrize - stats.totalEntry).toLocaleString()} BAC`,
+                accent: stats.totalPrize - stats.totalEntry >= 0 ? "text-emerald-400" : "text-destructive",
+              },
+            ].map((row) => {
+              const Icon = row.icon;
+              return (
+                <div key={row.label} className="flex items-center justify-between gap-3 px-4 py-2.5">
+                  <dt className="flex min-w-0 items-center gap-2.5 text-xs text-foreground/70">
+                    <Icon size={14} className="shrink-0 text-foreground/40" />
+                    <span className="truncate">{row.label}</span>
+                  </dt>
+                  <dd className={`shrink-0 font-mono text-sm font-bold tabular-nums ${row.accent ?? "text-foreground"}`}>
+                    {row.value}
+                  </dd>
+                </div>
+              );
+            })}
+          </dl>
         )}
       </section>
 
       {/* UPCOMING + RECENT */}
       <section className="grid gap-4 lg:grid-cols-2">
         <div className="hud-panel relative overflow-hidden p-5">
-          <div aria-hidden className="absolute inset-0 -z-10 bg-cover bg-center opacity-20" style={{ backgroundImage: `url(${airdropImg})` }} />
-          <div aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-t from-background via-background/85 to-transparent" />
-          <h3 className="mb-3 font-hud text-sm font-bold uppercase tracking-widest text-gold">
-            Upcoming Matches
-          </h3>
+          <div aria-hidden className="absolute inset-0 -z-10 bg-cover bg-center opacity-15" style={{ backgroundImage: `url(${airdropImg})` }} />
+          <div aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-t from-background via-background/90 to-transparent" />
+          <div className="mb-3 flex items-center justify-between gap-2">
+            <h3 className="font-hud text-xs font-bold uppercase tracking-widest text-gold">
+              Upcoming Matches
+            </h3>
+            <Link to="/dashboard/matches" className="font-hud text-[10px] uppercase tracking-widest text-foreground/55 hover:text-gold">
+              View all →
+            </Link>
+          </div>
           {upcoming.length === 0 ? (
             <p className="font-mono text-xs text-foreground/70">No upcoming matches yet.</p>
           ) : (
             <ul className="space-y-2">
-              {upcoming.map((m) => (
+              {upcoming.slice(0, 3).map((m) => (
                 <li key={m.id}>
                   <Link
                     to="/dashboard/matches/$matchId"
@@ -353,51 +372,45 @@ function DashboardPage() {
           )}
         </div>
         <div className="hud-panel relative overflow-hidden p-5">
-          <div aria-hidden className="absolute inset-0 -z-10 bg-cover bg-center opacity-20" style={{ backgroundImage: `url(${sniperImg})` }} />
-          <div aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-t from-background via-background/85 to-transparent" />
-          <h3 className="mb-3 font-hud text-sm font-bold uppercase tracking-widest text-gold">
-            Recent Matches
-          </h3>
+          <div aria-hidden className="absolute inset-0 -z-10 bg-cover bg-center opacity-15" style={{ backgroundImage: `url(${sniperImg})` }} />
+          <div aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-t from-background via-background/90 to-transparent" />
+          <div className="mb-3 flex items-center justify-between gap-2">
+            <h3 className="font-hud text-xs font-bold uppercase tracking-widest text-gold">
+              Recent Matches
+            </h3>
+            <Link to="/dashboard/my-matches" className="font-hud text-[10px] uppercase tracking-widest text-foreground/55 hover:text-gold">
+              View all →
+            </Link>
+          </div>
           {recent.length === 0 ? (
             <p className="font-mono text-xs text-foreground/70">No matches played yet.</p>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-xs">
-                <thead className="font-mono uppercase tracking-widest text-foreground/55">
-                  <tr className="border-b border-border/40">
-                    <th className="py-2 text-left">Match</th>
-                    <th className="py-2 text-right">Rank</th>
-                    <th className="py-2 text-right">Kills</th>
-                    <th className="py-2 text-right">Prize</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {recent.map((p) => {
-                    const m = p.matches as { id?: number; match_name?: string } | null;
-                    return (
-                      <tr key={p.id} className="border-b border-border/20">
-                        <td className="py-2">
-                          {m?.id ? (
-                            <Link to="/dashboard/matches/$matchId" params={{ matchId: String(m.id) }} className="hover:text-gold">
-                              {m.match_name ?? "Match"}
-                            </Link>
-                          ) : (
-                            "Match"
-                          )}
-                        </td>
-                        <td className="py-2 text-right font-mono">
-                          {p.rank_position ? `#${p.rank_position}` : "—"}
-                        </td>
-                        <td className="py-2 text-right font-mono">{p.kills ?? 0}</td>
-                        <td className="py-2 text-right font-mono text-gold">
-                          {Number(p.prize_bac ?? 0).toLocaleString()}
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
+            <ul className="space-y-2">
+              {recent.slice(0, 3).map((p) => {
+                const m = p.matches as { id?: number; match_name?: string } | null;
+                const inner = (
+                  <div className="flex items-center justify-between gap-2 rounded border border-border/40 bg-background/40 px-3 py-2 text-xs hover:border-gold/60 hover:text-gold">
+                    <span className="truncate">{m?.match_name ?? "Match"}</span>
+                    <span className="flex shrink-0 items-center gap-3 font-mono">
+                      <span className="text-foreground/60">{p.rank_position ? `#${p.rank_position}` : "—"}</span>
+                      <span className="text-foreground/60">{p.kills ?? 0}K</span>
+                      <span className="text-gold">{Number(p.prize_bac ?? 0).toLocaleString()}</span>
+                    </span>
+                  </div>
+                );
+                return (
+                  <li key={p.id}>
+                    {m?.id ? (
+                      <Link to="/dashboard/matches/$matchId" params={{ matchId: String(m.id) }}>
+                        {inner}
+                      </Link>
+                    ) : (
+                      inner
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
           )}
         </div>
       </section>
