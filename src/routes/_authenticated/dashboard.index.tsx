@@ -222,7 +222,7 @@ function DashboardPage() {
         <div className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
           <div className="min-w-0">
             <p className="font-hud text-[11px] uppercase tracking-[0.25em] text-gold/80">
-              Welcome back, Operator
+              {greeting}, Operator
             </p>
             <h1 className="mt-1 truncate font-display text-2xl font-bold tracking-wide sm:text-3xl">
               {name}
@@ -230,6 +230,19 @@ function DashboardPage() {
             <p className="mt-1 font-mono text-[11px] text-foreground/60">
               PUBG ID: {profile?.pubg_id ?? "—"} · Server: {profile?.game_server ?? "—"}
             </p>
+            {/* Level / XP bar */}
+            <div className="mt-3 max-w-sm">
+              <div className="flex items-center justify-between font-mono text-[10px] uppercase tracking-widest text-foreground/60">
+                <span className="text-gold">Lv {level}</span>
+                <span className="tabular-nums">{xpInLevel} / {xpForLevel} XP</span>
+              </div>
+              <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full border border-gold/30 bg-background/60">
+                <div
+                  className="h-full bg-gradient-to-r from-gold/70 via-gold to-amber-300 shadow-[0_0_8px_rgba(212,175,55,0.6)] transition-all duration-700"
+                  style={{ width: `${xpPct}%` }}
+                />
+              </div>
+            </div>
           </div>
           <div className="flex items-center gap-3 rounded-lg border border-gold/40 bg-background/60 px-4 py-3 backdrop-blur">
             <CoinIcon size={22} />
