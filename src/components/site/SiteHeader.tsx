@@ -40,7 +40,7 @@ export function SiteHeader() {
               <UserIcon size={16} />
             </Link>
           ) : (
-            <Link to="/auth" className="btn-gold px-5 py-2 text-sm">{t("auth.login")}</Link>
+            <Link to="/auth" className="btn-gold px-5 py-2 text-sm !border-red-400/60 !bg-[linear-gradient(180deg,oklch(0.7_0.18_25)_0%,oklch(0.58_0.2_25)_50%,oklch(0.45_0.18_25)_100%)] !shadow-[inset_0_1px_0_oklch(1_0_0_/_0.3),inset_0_-1px_0_oklch(0_0_0_/_0.35),0_2px_6px_oklch(0_0_0_/_0.4),0_0_14px_oklch(0.65_0.22_25_/_0.35)]">{t("auth.login")}</Link>
           )}
         </div>
       </div>
