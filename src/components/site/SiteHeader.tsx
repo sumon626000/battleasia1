@@ -99,16 +99,11 @@ export function SiteHeader() {
               </a>
             ))}
             {isAuthenticated ? (
-              <div className="mt-2 grid grid-cols-1 gap-2">
-                <Link to="/dashboard" className="btn-gold py-2 text-center text-sm">{t("auth.dashboard")}</Link>
-                <button onClick={signOut} className="btn-outline-gold py-2 text-center text-sm">{t("auth.logout")}</button>
-              </div>
+              <Link to="/dashboard" className="btn-gold mt-2 py-2 text-center text-sm">{t("auth.dashboard")}</Link>
             ) : (
-              <div className="mt-2 grid grid-cols-2 gap-2">
-                <Link to="/auth" className="btn-outline-gold py-2 text-center text-sm">{t("auth.login")}</Link>
-                <Link to="/auth" className="btn-gold py-2 text-center text-sm">{t("auth.register")}</Link>
-              </div>
+              <Link to="/auth" className="btn-gold mt-2 py-2 text-center text-sm">{t("auth.login")}</Link>
             )}
+
           </div>
         </div>
       )}
