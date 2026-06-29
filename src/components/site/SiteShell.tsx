@@ -31,10 +31,10 @@ export function SiteShell({ children }: { children: ReactNode }) {
       {/* Global PUBG background — spans header → footer */}
       <div aria-hidden className="pointer-events-none fixed inset-0 -z-10">
         <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-[0.28]"
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-[0.38]"
           style={{ backgroundImage: `url(${pageBgPubg})`, backgroundAttachment: "fixed" }}
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/85 via-background/75 to-background/95" />
+        <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/55 to-background/85" />
         <div className="absolute -left-32 top-20 h-72 w-72 rounded-full bg-primary/15 blur-[120px]" />
         <div className="absolute -right-24 top-[40%] h-80 w-80 rounded-full bg-accent/10 blur-[140px]" />
       </div>
