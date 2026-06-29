@@ -322,7 +322,7 @@ function FeedPage() {
 
 
 
-function PostCard({ post, onLike, onFollow, isSelf }: { post: Post; onLike: () => void; onFollow: () => void; isSelf: boolean }) {
+function PostCard({ post, onLike, onDoubleTapLike, onFollow, isSelf }: { post: Post; onLike: () => void; onDoubleTapLike: () => void; onFollow: () => void; isSelf: boolean }) {
   const handle = post.author?.username || post.author?.full_name || "player";
   const initials = handle.slice(0, 2).toUpperCase();
   const [showComments, setShowComments] = useState(false);
