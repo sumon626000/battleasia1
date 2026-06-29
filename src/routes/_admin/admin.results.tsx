@@ -178,6 +178,20 @@ function AdminResultsPage() {
     qc.invalidateQueries({ queryKey: ["admin-results-matches"] });
   }
 
+  async function unpublish() {
+    if (!detail) return;
+    if (!confirm("Unpublish this result? All credited prizes will be reversed from winners' wallets so you can edit and re-publish.")) return;
+    const { error, data } = await supabase.rpc("admin_unpublish_match_result", {
+      p_match_id: detail.match.id,
+    } as never);
+    if (error) return toast.error(error.message);
+    toast.success(`Unpublished — ${data} row(s) rolled back. You can now edit & re-publish.`);
+    setDescription("");
+    setImageUrl(null);
+    qc.invalidateQueries({ queryKey: ["admin-result-detail", selectedId] });
+    qc.invalidateQueries({ queryKey: ["admin-results-matches"] });
+  }
+
   const filtered = useMemo(() => {
     if (!detail) return [];
     const q = search.trim().toLowerCase();
