@@ -32,9 +32,9 @@
   --color-gold-foreground: var(--gold-foreground);
   --color-success: var(--success);
   --color-live: var(--live);
-  --font-display: "Oswald", "Rajdhani", "Inter", sans-serif;
-  --font-hud: "Rajdhani", "Oswald", sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --font-display: "Rajdhani", "Inter", sans-serif;
+  --font-hud: "Rajdhani", "Inter", sans-serif;
+  --font-mono: ui-monospace, "SFMono-Regular", Menlo, monospace;
 
 }
 
@@ -197,7 +197,7 @@
     radial-gradient(1200px 600px at 50% -10%, oklch(0.55 0.26 300 / 0.35), transparent 70%),
     radial-gradient(900px 500px at 90% 110%, oklch(0.88 0.27 132 / 0.18), transparent 70%),
     linear-gradient(180deg, oklch(0.12 0.05 295) 0%, oklch(0.08 0.03 295) 100%);
-  background-attachment: fixed;
+  min-height: 100vh;
 }
 
 /* Neon ambient glow */
@@ -312,9 +312,8 @@
     inset: 0;
     background: linear-gradient(115deg, transparent 35%, oklch(1 0 0 / 0.55) 50%, transparent 65%);
     transform: translateX(-120%);
-    animation: btn-shine 3.6s ease-in-out infinite;
+    transition: transform 1.2s ease;
     pointer-events: none;
-    will-change: transform;
   }
   &::after {
     content: "";
@@ -335,7 +334,7 @@
       0 14px 36px -8px color-mix(in oklab, var(--gold) 80%, transparent),
       0 0 0 1px var(--gold);
   }
-  &:hover::before { animation-duration: 1.4s; }
+  &:hover::before { transform: translateX(120%); }
   &:active { transform: translateY(0); filter: brightness(0.98); }
 }
 
@@ -361,10 +360,8 @@
     inset: 0;
     background: linear-gradient(115deg, transparent 35%, color-mix(in oklab, var(--gold) 45%, transparent) 50%, transparent 65%);
     transform: translateX(-120%);
-    animation: btn-shine 4.2s ease-in-out infinite;
-    animation-delay: 1.2s;
+    transition: transform 1.4s ease;
     pointer-events: none;
-    will-change: transform;
   }
   &::after {
     content: "";
@@ -384,7 +381,7 @@
       0 12px 30px -8px color-mix(in oklab, var(--gold) 55%, transparent),
       0 0 0 1px var(--gold);
   }
-  &:hover::before { animation-duration: 1.6s; }
+  &:hover::before { transform: translateX(120%); }
   &:active { transform: translateY(0); }
 }
 
