@@ -560,11 +560,12 @@ function EditorModal({
   const loserCount = Math.max(0, totalPlayers - winnerTeamSize);
   const autoTotalKills = loserCount;
 
-  // Auto Per Kill = (Entry × TotalPlayers × (1 − fee%)) / loserCount
+  // Auto Per Kill uses GREATEST(entry pool after fee, sum of rank prizes) so free matches still pay
   const entryFee = Number(draft.entry_fee_bac ?? 0);
   const feePct = Number(draft.platform_fee_pct ?? 0);
   const totalIncome = entryFee * totalPlayers;
-  const prizePool = totalIncome * (1 - feePct / 100);
+  const rankSum = Number(draft.rank_1_prize_bac ?? 0) + Number(draft.rank_2_prize_bac ?? 0) + Number(draft.rank_3_prize_bac ?? 0);
+  const prizePool = Math.max(totalIncome * (1 - feePct / 100), rankSum);
   const autoPerKill = loserCount > 0 ? Math.round((prizePool / loserCount) * 100) / 100 : 0;
   const isAutoKill = draft.kill_rate_type === "Automatic";
 
