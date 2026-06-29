@@ -20,6 +20,9 @@ type Participant = {
   rank_position: number | null;
   kills: number;
   prize_bac: number;
+  kill_prize_bac: number;
+  win_prize_bac: number;
+  bonus_bac: number;
   status: string;
   result_applied: boolean;
 };
@@ -42,13 +45,15 @@ type Match = {
   player_mode: string;
 };
 
+type RowState = { status: string; kills: string; winPrize: string; bonus: string };
+
 function AdminResultsPage() {
   const qc = useQueryClient();
   const { matchId } = Route.useSearch();
   const [selectedId, setSelectedId] = useState<number | undefined>(matchId);
   const [description, setDescription] = useState("");
   const [imageUrl, setImageUrl] = useState("");
-  const [rows, setRows] = useState<Record<string, { status: string; kills: string; prize: string }>>({});
+  const [rows, setRows] = useState<Record<string, RowState>>({});
   const [csvText, setCsvText] = useState("");
 
   useEffect(() => { if (matchId) setSelectedId(matchId); }, [matchId]);
@@ -73,7 +78,7 @@ function AdminResultsPage() {
     queryFn: async () => {
       const [{ data: m, error: e1 }, { data: parts, error: e2 }] = await Promise.all([
         supabase.from("matches").select("*").eq("id", selectedId!).maybeSingle(),
-        supabase.from("match_participants").select("id, user_id, rank_position, kills, prize_bac, status, result_applied").eq("match_id", selectedId!),
+        supabase.from("match_participants").select("id, user_id, rank_position, kills, prize_bac, kill_prize_bac, win_prize_bac, bonus_bac, status, result_applied").eq("match_id", selectedId!),
       ]);
       if (e1) throw e1;
       if (e2) throw e2;
@@ -93,20 +98,22 @@ function AdminResultsPage() {
 
   useEffect(() => {
     if (!detail) return;
-    const seed: Record<string, { status: string; kills: string; prize: string }> = {};
+    const seed: Record<string, RowState> = {};
     for (const p of detail.participants) {
+      const isWin = p.rank_position === 1;
       seed[p.user_id] = {
-        status: p.rank_position === 1 ? "Winner" : (p.rank_position || p.kills) ? "Loser" : "",
+        status: isWin ? "Winner" : (p.rank_position || p.kills) ? "Loser" : "",
         kills: p.kills ? String(p.kills) : "",
-        prize: p.prize_bac ? String(p.prize_bac) : "",
+        winPrize: p.win_prize_bac ? String(p.win_prize_bac) : "",
+        bonus: p.bonus_bac ? String(p.bonus_bac) : "",
       };
     }
     setRows(seed);
   }, [detail]);
 
-  // Pool breakdown
+  // Pool breakdown using BattleAsia formula
   const pool = useMemo(() => {
-    if (!detail) return { totalIncome: 0, platformFee: 0, prizePool: 0, killPool: 0, perKill: 0, loserCount: 0 };
+    if (!detail) return { totalIncome: 0, platformFee: 0, prizePool: 0, perKill: 0, killCount: 0, teamSize: 1 };
     const m = detail.match;
     const entry = Number(m.entry_fee_bac ?? 0);
     const total = Number(m.total_players ?? 0);
@@ -115,26 +122,25 @@ function AdminResultsPage() {
     const platformFee = totalIncome * (feePct / 100);
     const prizePool = totalIncome - platformFee;
     const teamSize = m.player_mode === "Solo" ? 1 : m.player_mode === "Duo" ? 2 : 4;
-    const loserCount = Math.max(0, total - teamSize);
-    const perKill = Number(m.per_kill_amount_bac ?? 0) || (loserCount > 0 ? Math.round((prizePool / loserCount) * 100) / 100 : 0);
-    const killPool = prizePool;
-    return { totalIncome, platformFee, prizePool, killPool, perKill, loserCount };
+    const killCount = Math.max(total - teamSize, 1);
+    const perKill = Number(m.per_kill_amount_bac ?? 0) > 0
+      ? Number(m.per_kill_amount_bac)
+      : Math.round((prizePool / killCount) * 100) / 100;
+    return { totalIncome, platformFee, prizePool, perKill, killCount, teamSize };
   }, [detail]);
 
-  const computedPrize = useMemo(() => {
-    if (!detail) return {} as Record<string, number>;
-    const m = detail.match;
-    const out: Record<string, number> = {};
+  // Live per-row totals
+  const computed = useMemo(() => {
+    const out: Record<string, { killWin: number; total: number }> = {};
+    if (!detail) return out;
     for (const p of detail.participants) {
       const r = rows[p.user_id];
-      if (!r) continue;
+      if (!r) { out[p.user_id] = { killWin: 0, total: 0 }; continue; }
       const kills = parseInt(r.kills, 10) || 0;
-      let prize = 0;
-      if (m.reward_type === "KillBased" || m.reward_type === "Mixed") prize += kills * pool.perKill;
-      if (m.reward_type === "RankBased" || m.reward_type === "Mixed") {
-        if (r.status === "Winner") prize += Number(m.rank_1_prize_bac || 0);
-      }
-      out[p.user_id] = Math.round(prize * 100) / 100;
+      const killWin = Math.round(kills * pool.perKill * 100) / 100;
+      const win = r.status === "Winner" ? (Number(r.winPrize) || 0) : 0;
+      const bonus = r.status === "Winner" ? (Number(r.bonus) || 0) : 0;
+      out[p.user_id] = { killWin, total: Math.round((killWin + win + bonus) * 100) / 100 };
     }
     return out;
   }, [detail, rows, pool.perKill]);
@@ -145,16 +151,19 @@ function AdminResultsPage() {
     const results = detail.participants
       .map((p) => {
         const r = rows[p.user_id];
-        if (!r) return null;
+        if (!r || !r.status) return null;
         const kills = parseInt(r.kills, 10) || 0;
-        const prizeOverride = r.prize.trim() === "" ? null : Number(r.prize);
-        if (!r.status && !r.kills && prizeOverride === null) return null;
-        const rank = r.status === "Winner" ? 1 : r.status === "Loser" ? 2 : null;
-        return { user_id: p.user_id, rank, kills, prize: prizeOverride };
+        return {
+          user_id: p.user_id,
+          status: r.status,
+          kills,
+          win_prize: r.status === "Winner" ? (Number(r.winPrize) || 0) : 0,
+          bonus: r.status === "Winner" ? (Number(r.bonus) || 0) : 0,
+        };
       })
       .filter(Boolean);
     if (results.length === 0) return toast.error("Fill at least one row.");
-    if (!confirm(`Publish results for ${results.length} player(s)? This will credit prizes and cannot be undone.`)) return;
+    if (!confirm(`Publish results for ${results.length} player(s)? Prizes will be credited to wallets and cannot be undone.`)) return;
     const { error, data } = await supabase.rpc("admin_publish_match_result", {
       p_match_id: detail.match.id,
       p_results: results as never,
@@ -162,7 +171,7 @@ function AdminResultsPage() {
       p_result_image_url: (imageUrl || undefined) as never,
     });
     if (error) return toast.error(error.message);
-    toast.success(`Published — ${data} row(s) processed.`);
+    toast.success(`Published — ${data} row(s) credited.`);
     qc.invalidateQueries({ queryKey: ["admin-result-detail", selectedId] });
     qc.invalidateQueries({ queryKey: ["admin-results-matches"] });
   }
@@ -205,7 +214,12 @@ function AdminResultsPage() {
       if (!uid) { skipped++; continue; }
       const rankNum = parseInt(cols[1] || "", 10);
       const kills = cols[2] || "0";
-      next[uid] = { status: rankNum === 1 ? "Winner" : Number.isFinite(rankNum) ? "Loser" : "", kills, prize: cols[3] || "" };
+      next[uid] = {
+        status: rankNum === 1 ? "Winner" : Number.isFinite(rankNum) ? "Loser" : "",
+        kills,
+        winPrize: cols[3] || "",
+        bonus: cols[4] || "",
+      };
       matched++;
     }
     setRows(next);
