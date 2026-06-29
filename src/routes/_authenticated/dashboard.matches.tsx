@@ -760,8 +760,14 @@ function HubMatchRow({
   const total = m.total_players ?? 0;
   const isFull = total > 0 && filled >= total;
   const fee = Number(m.entry_fee_bac ?? 0);
+  const feePct = Number(m.platform_fee_pct ?? 0);
+  // Real prize pool = total entry income − platform fee. For Free matches, fall back to configured 1st-place prize.
+  const prizePool = m.match_type === "Free"
+    ? Number(m.rank_1_prize_bac ?? 0)
+    : Math.max(0, Math.round(fee * (total || 0) * (1 - feePct / 100)));
   const when = m.schedule_at ? new Date(m.schedule_at) : null;
   const [countdown, setCountdown] = useState<string>("");
+
 
   // Live countdown for upcoming, or time elapsed for live
   useEffect(() => {
@@ -850,9 +856,10 @@ function HubMatchRow({
               <div className="font-hud text-[9px] uppercase tracking-widest text-foreground/50">Prize Pool</div>
               <div className="flex items-center gap-1 font-mono font-bold text-emerald-400">
                 <CoinIcon size={11} />
-                {Number(m.rank_1_prize_bac ?? 0).toLocaleString()}
+                {prizePool.toLocaleString()}
               </div>
             </div>
+
             <div>
               <div className="font-hud text-[9px] uppercase tracking-widest text-foreground/50">Entry Fee</div>
               <div className="flex items-center gap-1 font-mono font-bold text-foreground">
