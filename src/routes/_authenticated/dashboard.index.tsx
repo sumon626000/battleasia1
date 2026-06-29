@@ -157,7 +157,7 @@ function DashboardPage() {
           .order("created_at", { ascending: false }),
         supabase
           .from("balance_logs")
-          .select("amount, type, created_at")
+          .select("amount_bac, type, created_at")
           .eq("user_id", uid!)
           .order("created_at", { ascending: false })
           .limit(10),
