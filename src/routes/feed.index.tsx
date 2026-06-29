@@ -10,6 +10,7 @@ import { CommentsThread, LikeBurst } from "@/components/feed/CommentsThread";
 import { StoriesRail } from "@/components/feed/StoriesRail";
 import { SignedImage, SignedVideo } from "@/components/feed/SignedMedia";
 import { PeopleToFollow } from "@/components/feed/PeopleToFollow";
+import { PostMediaCarousel, type CarouselMedia } from "@/components/feed/PostMediaCarousel";
 
 
 export const Route = createFileRoute("/feed/")({
