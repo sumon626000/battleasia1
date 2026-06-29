@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Trophy, Crown, Medal } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { CoinIcon } from "@/components/ui/CoinIcon";
+import { CoinIcon } from "@/components/site/CoinIcon";
 
 type Row = {
   user_id: string;

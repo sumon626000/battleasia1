@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { Target, TrendingUp } from "lucide-react";
-import { CoinIcon } from "@/components/ui/CoinIcon";
+import { CoinIcon } from "@/components/site/CoinIcon";
 
 type Participant = {
   kills?: number | null;
