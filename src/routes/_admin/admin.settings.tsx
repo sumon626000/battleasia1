@@ -158,8 +158,8 @@ function AdminSettingsPage() {
               )}
               {isBool && (
                 <div className="flex justify-end">
-                  <button onClick={() => remove(s.id)} className="rounded border border-red-500/40 px-3 py-1 text-xs text-red-400">
-                    <Trash2 size={12} className="inline mr-1" /> Delete
+                  <button onClick={() => remove(s.id)} className="hud-btn hud-btn-danger !py-1 !px-3 !text-[11px]">
+                    <Trash2 size={12} /> Delete
                   </button>
                 </div>
               )}
