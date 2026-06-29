@@ -51,12 +51,14 @@ function AdminResultsPage() {
   const qc = useQueryClient();
   const { matchId } = Route.useSearch();
   const [selectedId, setSelectedId] = useState<number | undefined>(matchId);
+  const [matchSearch, setMatchSearch] = useState("");
   const [rows, setRows] = useState<Record<string, RowState>>({});
   const [search, setSearch] = useState("");
   const [description, setDescription] = useState("");
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+
 
   useEffect(() => { if (matchId) setSelectedId(matchId); }, [matchId]);
 
