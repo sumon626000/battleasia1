@@ -177,14 +177,30 @@ function AdminResultsPage() {
   }
 
   async function uploadImage(file: File) {
-    const path = `match-${detail?.match.id ?? "x"}/${Date.now()}-${file.name}`;
-    const { error } = await supabase.storage.from("avatars").upload(path, file, { upsert: true });
-    if (error) return toast.error(error.message);
-    const { data } = await supabase.storage.from("avatars").createSignedUrl(path, 60 * 60 * 24 * 365);
-    if (data?.signedUrl) {
-      setImageUrl(data.signedUrl);
-      toast.success("Image uploaded");
+    if (!/^image\/(png|jpe?g|webp|gif)$/.test(file.type)) {
+      toast.error("Please choose a PNG, JPG, WEBP or GIF image");
+      return;
     }
+    if (file.size > 8 * 1024 * 1024) {
+      toast.error("Image must be 8MB or less");
+      return;
+    }
+
+    const { data: auth } = await supabase.auth.getUser();
+    const userId = auth.user?.id;
+    if (!userId) return toast.error("Please sign in again before uploading.");
+
+    const ext = file.name.split(".").pop()?.toLowerCase() || "png";
+    const path = `${userId}/match-results/match-${detail?.match.id ?? "x"}-${Date.now()}.${ext}`;
+    const { error } = await supabase.storage.from("avatars").upload(path, file, {
+      upsert: true,
+      contentType: file.type,
+    });
+    if (error) return toast.error(error.message);
+    const { data, error: signError } = await supabase.storage.from("avatars").createSignedUrl(path, 60 * 60 * 24 * 365);
+    if (signError || !data?.signedUrl) return toast.error(signError?.message ?? "Image upload failed");
+    setImageUrl(data.signedUrl);
+    toast.success("Image uploaded");
   }
 
 
