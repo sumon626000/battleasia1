@@ -19,9 +19,14 @@ type Author = { username: string | null; full_name?: string | null; avatar_url: 
 type Group = { user_id: string; author: Author | null; stories: Story[] };
 
 export function StoriesRail() {
-  const { isAuthenticated } = useAuth();
+  const { user, isAuthenticated } = useAuth();
   const [groups, setGroups] = useState<Group[]>([]);
   const [viewer, setViewer] = useState<{ gi: number; si: number } | null>(null);
+  const [viewCounts, setViewCounts] = useState<Record<string, number>>({});
+  const [reactionFlash, setReactionFlash] = useState<string | null>(null);
+
+  const currentStory = viewer ? groups[viewer.gi]?.stories[viewer.si] : null;
+  const isOwnStory = !!(currentStory && user && currentStory.user_id === user.id);
 
   async function load() {
     const { data: rows } = await supabase
