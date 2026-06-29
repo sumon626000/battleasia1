@@ -339,6 +339,9 @@ function DashboardPage() {
             <p className="mt-1 font-mono text-[11px] text-foreground/60">
               PUBG ID: {profile?.pubg_id ?? "—"} · Server: {profile?.game_server ?? "—"}
             </p>
+            <div className="mt-2">
+              <ProfileQuickEditDrawer profile={profile} />
+            </div>
             {/* Next match countdown pill */}
             {nextMatch && (nextSoon || nextLive) && (
               <Link
