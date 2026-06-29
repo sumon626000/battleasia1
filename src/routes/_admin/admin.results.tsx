@@ -200,19 +200,32 @@ function AdminResultsPage() {
       </div>
 
       <div className="flex flex-wrap items-center gap-3">
+        <input
+          value={matchSearch}
+          onChange={(e) => setMatchSearch(e.target.value)}
+          placeholder="Search match by name or #id…"
+          className="min-w-[220px] flex-1 rounded border border-border/60 bg-background/60 px-3 py-2 font-mono text-sm outline-none focus:border-gold"
+        />
         <select
           value={selectedId ?? ""}
           onChange={(e) => setSelectedId(e.target.value ? Number(e.target.value) : undefined)}
           className="min-w-[260px] rounded border border-border/60 bg-card/40 px-3 py-2 font-hud text-xs uppercase tracking-widest"
         >
           <option value="">Select match…</option>
-          {(matches ?? []).map((m) => (
-            <option key={m.id} value={m.id}>
-              #{m.id} · {m.match_name} {m.result_applied ? "· PUBLISHED" : `· ${m.status}`}
-            </option>
-          ))}
+          {(matches ?? [])
+            .filter((m) => {
+              const q = matchSearch.trim().toLowerCase();
+              if (!q) return true;
+              return m.match_name.toLowerCase().includes(q) || String(m.id).includes(q);
+            })
+            .map((m) => (
+              <option key={m.id} value={m.id}>
+                #{m.id} · {m.match_name} {m.result_applied ? "· PUBLISHED" : `· ${m.status}`}
+              </option>
+            ))}
         </select>
       </div>
+
 
       {!selectedId && (
         <div className="hud-panel rounded-md border border-border/70 bg-card/40 p-6 text-center font-hud text-xs uppercase tracking-widest text-foreground/60">
