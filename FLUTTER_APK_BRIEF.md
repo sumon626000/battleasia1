@@ -187,3 +187,23 @@ dependencies:
 - In-app browser for external links
 - Native share sheet
 - Background notification badge count
+
+---
+
+## 📝 Pending Notes (User Requests)
+
+### 1. Offline Popup (নেট বন্ধ হলে)
+- নেট ডিসকানেক্ট হলে একটা সুন্দর modal/popup দেখাবে।
+- ডিজাইন সাইটের কালার এর সাথে মিলবে: Deep Violet (#0A0617) background + Neon Green (#7CD44A) accent + subtle glow।
+- কনটেন্ট: একটা icon (wifi-off), heading "CONNECTION LOST", subtext "ইন্টারনেট সংযোগ নেই — পুনরায় চেষ্টা করুন", এবং একটা "RETRY" button (site button style — octagonal, neon glow)।
+- Auto-dismiss হবে যখন নেট ফেরত আসবে।
+- Web side: `online`/`offline` event listener দিয়ে detect হবে।
+- APK side: Flutter এর `connectivity_plus` package দিয়ে native detection, WebView এ JS bridge দিয়ে trigger।
+
+### 2. Splash Screen (logo animation)
+- App launch এ একটা splash screen দেখাবে।
+- BATTLE ASIA logo স্টাইলিশভাবে "ভেসে উঠবে" — fade-in + subtle scale-up + neon glow pulse animation।
+- Duration: ~1.5-2s।
+- Background: Deep violet gradient, subtle particle/grid overlay (tactical HUD vibe)।
+- Logo এর নিচে ছোট tagline বা loading shimmer bar।
+- Flutter side: native splash (`flutter_native_splash`) দিয়ে instant launch screen, তারপর WebView load হলে fade-out।
