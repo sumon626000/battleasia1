@@ -24,8 +24,9 @@ const COLS: { titleKey: string; links: { labelKey: string; href: string }[] }[] 
   {
     titleKey: "footer.help",
     links: [
+      { labelKey: "nav.news", href: "/news" },
+      { labelKey: "nav.about", href: "/about" },
       { labelKey: "nav.support", href: "/dashboard/support" },
-      { labelKey: "nav.about", href: "/p/about" },
       { labelKey: "nav.contact", href: "/p/contact" },
     ],
   },
