@@ -43,6 +43,7 @@ export const ADMIN_GROUPS: NavGroup[] = [
     icon: LayoutDashboard,
     items: [
       { label: "Overview", href: "/admin", icon: LayoutDashboard },
+      { label: "Admin Profit", href: "/admin/profit", icon: Coins },
       { label: "Online Users", href: "/admin/online-users", icon: Activity },
       { label: "Login History", href: "/admin/login-history", icon: History },
     ],
