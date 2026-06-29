@@ -277,6 +277,8 @@ function AdminUsers() {
   const [fRole, setFRole] = useState<string>("all");
   const [fStatus, setFStatus] = useState<string>("all");
   const [fPremium, setFPremium] = useState<string>("all");
+  const [fDateStart, setFDateStart] = useState<string>("");
+  const [fDateEnd, setFDateEnd] = useState<string>("");
 
   const { data: isSuper = false } = useQuery({
     queryKey: ["is-super-admin"],
@@ -297,8 +299,16 @@ function AdminUsers() {
     if (fStatus === "suspended") rows = rows.filter((r) => !!r.is_suspended);
     if (fPremium === "yes") rows = rows.filter((r) => !!r.is_premium);
     if (fPremium === "no") rows = rows.filter((r) => !r.is_premium);
+    if (fDateStart) {
+      const t = new Date(fDateStart).getTime();
+      rows = rows.filter((r) => new Date(r.created_at).getTime() >= t);
+    }
+    if (fDateEnd) {
+      const t = new Date(fDateEnd).getTime() + 86400000 - 1;
+      rows = rows.filter((r) => new Date(r.created_at).getTime() <= t);
+    }
     return rows;
-  }, [data, fRole, fStatus, fPremium]);
+  }, [data, fRole, fStatus, fPremium, fDateStart, fDateEnd]);
 
   const rowPad = density === "compact" ? "py-1" : density === "comfortable" ? "py-3" : "py-2";
 
@@ -398,7 +408,7 @@ function AdminUsers() {
         <div className="relative">
           <button className={toolBtn} onClick={() => setOpenMenu(openMenu === "filters" ? null : "filters")}>
             <Filter className="h-3.5 w-3.5" /> Filters
-            {(fRole !== "all" || fStatus !== "all" || fPremium !== "all") && (
+            {(fRole !== "all" || fStatus !== "all" || fPremium !== "all" || fDateStart || fDateEnd) && (
               <span className="ml-1 rounded bg-gold/20 px-1 text-[9px] text-gold">ON</span>
             )}
           </button>
@@ -431,7 +441,17 @@ function AdminUsers() {
                   <option value="no">Free</option>
                 </select>
               </div>
-              <button onClick={() => { setFRole("all"); setFStatus("all"); setFPremium("all"); }}
+              <div>
+                <div className="mb-1 font-hud text-[10px] uppercase tracking-widest text-foreground/60">Registered Date</div>
+                <div className="flex items-center gap-1">
+                  <input type="date" value={fDateStart} onChange={(e) => setFDateStart(e.target.value)}
+                    className="w-full rounded border border-border bg-background px-2 py-1 text-sm" />
+                  <span className="text-foreground/50">–</span>
+                  <input type="date" value={fDateEnd} onChange={(e) => setFDateEnd(e.target.value)}
+                    className="w-full rounded border border-border bg-background px-2 py-1 text-sm" />
+                </div>
+              </div>
+              <button onClick={() => { setFRole("all"); setFStatus("all"); setFPremium("all"); setFDateStart(""); setFDateEnd(""); }}
                 className="w-full rounded border border-border/60 px-2 py-1 text-[10px] uppercase tracking-widest hover:border-gold hover:text-gold">
                 Reset Filters
               </button>
