@@ -358,6 +358,48 @@ function DashboardPage() {
             >
               + Add
             </Link>
+            {/* Next match countdown pill */}
+            {nextMatch && (nextSoon || nextLive) && (
+              <Link
+                to="/dashboard/matches/$matchId"
+                params={{ matchId: String(nextMatch.id) }}
+                className={`mt-3 inline-flex items-center gap-2 rounded-full border px-3 py-1.5 font-mono text-[11px] font-bold uppercase tracking-widest transition hover:scale-[1.02] ${
+                  nextLive
+                    ? "border-emerald-400/60 bg-emerald-400/10 text-emerald-300 shadow-[0_0_12px_rgba(52,211,153,0.45)]"
+                    : "border-gold/60 bg-gold/10 text-gold shadow-[0_0_12px_rgba(212,175,55,0.35)]"
+                }`}
+              >
+                {nextLive ? (
+                  <>
+                    <Radio size={12} className="animate-pulse" />
+                    <span>LIVE NOW</span>
+                  </>
+                ) : (
+                  <>
+                    <Timer size={12} />
+                    <span>{nextMatch.match_name}</span>
+                    <span className="tabular-nums text-gold/90">· {fmtCountdown(nextDiff!)}</span>
+                  </>
+                )}
+              </Link>
+            )}
+          </div>
+          <div className="flex items-center gap-3 rounded-lg border border-gold/40 bg-background/60 px-4 py-3 backdrop-blur">
+            <CoinIcon size={22} />
+            <div className="min-w-0">
+              <div className="font-hud text-[10px] uppercase tracking-widest text-foreground/55">
+                BAC Balance
+              </div>
+              <div className="font-mono text-2xl font-bold tabular-nums text-gold leading-tight">
+                <CountUp value={balance} />
+              </div>
+            </div>
+            <Link
+              to="/dashboard/vault"
+              className="ml-1 shrink-0 rounded border border-gold/60 bg-gold/10 px-3 py-1.5 font-hud text-[10px] font-bold uppercase tracking-widest text-gold transition hover:bg-gold hover:text-background"
+            >
+              + Add
+            </Link>
           </div>
         </div>
       </section>
