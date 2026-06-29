@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
@@ -24,6 +24,9 @@ import {
   Award,
   Star,
   Lock,
+  Timer,
+  Zap,
+  Radio,
 } from "lucide-react";
 import { CoinIcon } from "@/components/site/CoinIcon";
 import { CountUp } from "@/components/ui/CountUp";
@@ -263,6 +266,38 @@ function DashboardPage() {
   );
   const unlockedCount = achievements.filter((a) => a.unlocked).length;
 
+  // Live ticking clock (1s) for countdown
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    const id = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  // Next match countdown
+  const nextMatch = upcoming[0] as { id: number | string; match_name: string; schedule_at: string | null; entry_fee_bac: number | null } | undefined;
+  const nextDiff = nextMatch?.schedule_at ? new Date(nextMatch.schedule_at).getTime() - now : null;
+  const nextSoon = nextDiff !== null && nextDiff > 0 && nextDiff < 3600_000; // within 1hr
+  const nextLive = nextDiff !== null && nextDiff <= 0 && nextDiff > -3600_000;
+  const fmtCountdown = (ms: number) => {
+    const s = Math.max(0, Math.floor(ms / 1000));
+    const h = Math.floor(s / 3600);
+    const m = Math.floor((s % 3600) / 60);
+    const sec = s % 60;
+    const pad = (n: number) => String(n).padStart(2, "0");
+    return h > 0 ? `${pad(h)}:${pad(m)}:${pad(sec)}` : `${pad(m)}:${pad(sec)}`;
+  };
+
+  // Live activity feed — last 8 finished participations
+  const activity = useMemo(() => {
+    const parts = data?.participants ?? [];
+    return parts
+      .filter((p) => {
+        const m = p.matches as { status?: string; match_name?: string } | null;
+        return m && (m.status === "completed" || m.status === "result_published");
+      })
+      .slice(0, 8);
+  }, [data]);
+
   const quick = [
     { label: "Join Match", href: "/dashboard/matches", icon: Swords },
     { label: "Get BAC Coin", href: "/dashboard/vault", icon: WalletIcon },
@@ -293,6 +328,31 @@ function DashboardPage() {
             <p className="mt-1 font-mono text-[11px] text-foreground/60">
               PUBG ID: {profile?.pubg_id ?? "—"} · Server: {profile?.game_server ?? "—"}
             </p>
+            {/* Next match countdown pill */}
+            {nextMatch && (nextSoon || nextLive) && (
+              <Link
+                to="/dashboard/matches/$matchId"
+                params={{ matchId: String(nextMatch.id) }}
+                className={`mt-3 inline-flex items-center gap-2 rounded-full border px-3 py-1.5 font-mono text-[11px] font-bold uppercase tracking-widest transition hover:scale-[1.02] ${
+                  nextLive
+                    ? "border-emerald-400/60 bg-emerald-400/10 text-emerald-300 shadow-[0_0_12px_rgba(52,211,153,0.45)]"
+                    : "border-gold/60 bg-gold/10 text-gold shadow-[0_0_12px_rgba(212,175,55,0.35)]"
+                }`}
+              >
+                {nextLive ? (
+                  <>
+                    <Radio size={12} className="animate-pulse" />
+                    <span>LIVE NOW</span>
+                  </>
+                ) : (
+                  <>
+                    <Timer size={12} />
+                    <span className="truncate max-w-[140px]">{nextMatch.match_name}</span>
+                    <span className="tabular-nums text-gold/90">· {fmtCountdown(nextDiff!)}</span>
+                  </>
+                )}
+              </Link>
+            )}
             {/* Level / XP bar */}
             <div className="mt-3 max-w-sm">
               <div className="flex items-center justify-between font-mono text-[10px] uppercase tracking-widest text-foreground/60">
@@ -343,6 +403,56 @@ function DashboardPage() {
           </>
         )}
       </section>
+
+      {/* LIVE ACTIVITY TICKER */}
+      {activity.length > 0 && (
+        <section className="hud-panel relative overflow-hidden">
+          <div className="flex items-stretch">
+            <div className="flex shrink-0 items-center gap-1.5 border-r border-border/40 bg-background/60 px-3 py-2">
+              <span aria-hidden className="relative grid h-1.5 w-1.5 place-items-center">
+                <span className="absolute inset-0 rounded-full bg-emerald-400" />
+                <span className="absolute inset-0 rounded-full bg-emerald-400 animate-ping opacity-75" />
+              </span>
+              <span className="font-hud text-[10px] font-bold uppercase tracking-widest text-emerald-300">Live</span>
+            </div>
+            <div className="group relative flex-1 overflow-hidden">
+              <div className="flex animate-hud-ticker gap-6 whitespace-nowrap py-2 pr-6 [animation-play-state:running] group-hover:[animation-play-state:paused]">
+                {[...activity, ...activity].map((p, i) => {
+                  const m = p.matches as { match_name?: string } | null;
+                  const rank = Number(p.rank_position ?? 0);
+                  const kills = Number(p.kills ?? 0);
+                  const prize = Number(p.prize_bac ?? 0);
+                  const isWin = rank === 1;
+                  return (
+                    <span key={`${p.id ?? i}-${i}`} className="inline-flex items-center gap-1.5 font-mono text-[11px]">
+                      {isWin ? (
+                        <Trophy size={11} className="text-yellow-300" />
+                      ) : rank > 0 && rank <= 10 ? (
+                        <Medal size={11} className="text-emerald-300" />
+                      ) : (
+                        <Zap size={11} className="text-foreground/50" />
+                      )}
+                      <span className="text-foreground/80">{m?.match_name ?? "Match"}</span>
+                      {rank > 0 && <span className="text-foreground/60">· #{rank}</span>}
+                      {kills > 0 && (
+                        <span className="inline-flex items-center gap-0.5 text-foreground/60">
+                          · <Crosshair size={10} /> {kills}
+                        </span>
+                      )}
+                      {prize > 0 && (
+                        <span className="inline-flex items-center gap-0.5 text-gold">
+                          · <CoinIcon size={10} /> {prize}
+                        </span>
+                      )}
+                      <span aria-hidden className="ml-2 text-border/60">|</span>
+                    </span>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* STREAK + ACHIEVEMENTS quick-glance */}
       <section className="hud-panel relative overflow-hidden p-4">
