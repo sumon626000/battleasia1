@@ -221,6 +221,48 @@ function DashboardPage() {
   const xpInLevel = totalXp - (level - 1) * 200;
   const xpPct = Math.min(100, Math.max(2, Math.round((xpInLevel / xpForLevel) * 100)));
 
+  // Daily streak — consecutive days with at least one match participation
+  const streak = useMemo(() => {
+    const parts = data?.participants ?? [];
+    if (!parts.length) return 0;
+    const days = new Set(
+      parts
+        .map((p) => (p.created_at ? new Date(p.created_at).toISOString().slice(0, 10) : null))
+        .filter(Boolean) as string[],
+    );
+    let count = 0;
+    const d = new Date();
+    for (let i = 0; i < 60; i++) {
+      const key = d.toISOString().slice(0, 10);
+      if (days.has(key)) {
+        count++;
+        d.setDate(d.getDate() - 1);
+      } else {
+        if (i === 0) {
+          // allow yesterday-start streak
+          d.setDate(d.getDate() - 1);
+          continue;
+        }
+        break;
+      }
+    }
+    return count;
+  }, [data]);
+
+  // Achievements (derived)
+  const achievements = useMemo(
+    () => [
+      { id: "first-win", label: "First Blood", icon: Trophy, unlocked: stats.wins >= 1 },
+      { id: "veteran", label: "Veteran", icon: Swords, unlocked: stats.played >= 10 },
+      { id: "sharpshooter", label: "Sharpshooter", icon: Crosshair, unlocked: stats.totalKills >= 10 },
+      { id: "podium", label: "Podium", icon: Medal, unlocked: stats.top3 >= 1 },
+      { id: "high-roller", label: "High Roller", icon: Star, unlocked: stats.totalPrize >= 1000 },
+      { id: "elite", label: "Elite", icon: Award, unlocked: stats.winRate >= 50 && stats.finished >= 5 },
+    ],
+    [stats],
+  );
+  const unlockedCount = achievements.filter((a) => a.unlocked).length;
+
   const quick = [
     { label: "Join Match", href: "/dashboard/matches", icon: Swords },
     { label: "Get BAC Coin", href: "/dashboard/vault", icon: WalletIcon },
