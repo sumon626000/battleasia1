@@ -926,7 +926,7 @@ function HubMatchRow({
               disabled={joining}
               className={`w-full rounded-md px-2 py-1.5 font-hud text-[11px] font-bold uppercase tracking-widest transition disabled:opacity-50 ${theme.btnCls}`}
             >
-              {joining ? <Loader2 size={12} className="mx-auto animate-spin" /> : theme.label}
+              {joining ? <Loader2 size={12} className="mx-auto animate-spin" /> : (m.match_type === "Free" || fee === 0 ? "JOIN FREE" : theme.label)}
             </button>
           )}
           <div className="font-mono text-[10px] text-foreground/50">

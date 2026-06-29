@@ -560,11 +560,12 @@ function EditorModal({
   const loserCount = Math.max(0, totalPlayers - winnerTeamSize);
   const autoTotalKills = loserCount;
 
-  // Auto Per Kill = (Entry × TotalPlayers × (1 − fee%)) / loserCount
+  // Auto Per Kill uses GREATEST(entry pool after fee, sum of rank prizes) so free matches still pay
   const entryFee = Number(draft.entry_fee_bac ?? 0);
   const feePct = Number(draft.platform_fee_pct ?? 0);
   const totalIncome = entryFee * totalPlayers;
-  const prizePool = totalIncome * (1 - feePct / 100);
+  const rankSum = Number(draft.rank_1_prize_bac ?? 0) + Number(draft.rank_2_prize_bac ?? 0) + Number(draft.rank_3_prize_bac ?? 0);
+  const prizePool = Math.max(totalIncome * (1 - feePct / 100), rankSum);
   const autoPerKill = loserCount > 0 ? Math.round((prizePool / loserCount) * 100) / 100 : 0;
   const isAutoKill = draft.kill_rate_type === "Automatic";
 
@@ -703,7 +704,7 @@ function EditorModal({
               />
               <span className="mt-1 block font-hud text-[10px] tracking-wider text-foreground/55">
                 {isAutoKill
-                  ? `Auto: (entry × players × (1 − fee%)) ÷ loserCount = (${entryFee} × ${totalPlayers} × (1 − ${feePct}%)) ÷ ${loserCount} = ${autoPerKill}`
+                  ? `Auto: max(entry × players × (1 − fee%), rank1+2+3) ÷ loserCount = max(${totalIncome}, ${rankSum}) ÷ ${loserCount} = ${autoPerKill}`
                   : "Manual — enter custom per-kill BAC reward"}
               </span>
             </Field>
@@ -725,7 +726,18 @@ function EditorModal({
           </div>
         </div>
 
-        {/* Rank prizes managed from the Results module after match completion */}
+        {/* Rank prizes — drive Auto Per Kill for Free / low-entry matches */}
+        <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-3">
+          <Field label="Rank 1 Prize (BAC)">
+            <input type="number" min={0} className={inp} value={draft.rank_1_prize_bac ?? ""} onChange={(e) => upd({ rank_1_prize_bac: e.target.value === "" ? undefined : Number(e.target.value) })} />
+          </Field>
+          <Field label="Rank 2 Prize (BAC)">
+            <input type="number" min={0} className={inp} value={draft.rank_2_prize_bac ?? ""} onChange={(e) => upd({ rank_2_prize_bac: e.target.value === "" ? undefined : Number(e.target.value) })} />
+          </Field>
+          <Field label="Rank 3 Prize (BAC)">
+            <input type="number" min={0} className={inp} value={draft.rank_3_prize_bac ?? ""} onChange={(e) => upd({ rank_3_prize_bac: e.target.value === "" ? undefined : Number(e.target.value) })} />
+          </Field>
+        </div>
 
         {/* Banner + Prize Description side by side */}
         <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2">
