@@ -276,7 +276,14 @@ function FeedPage() {
         ) : (
           <ul className="space-y-6">
             {posts.map((p) => (
-              <PostCard key={p.id} post={p} onLike={() => toggleLike(p)} onFollow={() => toggleFollow(p)} isSelf={user?.id === p.user_id} />
+              <PostCard
+                key={p.id}
+                post={p}
+                onLike={() => toggleLike(p)}
+                onDoubleTapLike={() => doLikeOnly(p)}
+                onFollow={() => toggleFollow(p)}
+                isSelf={user?.id === p.user_id}
+              />
             ))}
           </ul>
         )}
