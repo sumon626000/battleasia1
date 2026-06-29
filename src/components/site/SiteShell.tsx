@@ -3,6 +3,7 @@ import { useRouterState } from "@tanstack/react-router";
 import { SiteHeader } from "./SiteHeader";
 import { SiteTicker } from "./SiteTicker";
 import { SiteFooter } from "./SiteFooter";
+import pageBgPubg from "@/assets/page-bg-pubg.jpg";
 import { AnnouncementBar } from "./AnnouncementBar";
 import { FeedBottomNav } from "@/components/feed/FeedBottomNav";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
@@ -26,11 +27,16 @@ export function SiteShell({ children }: { children: ReactNode }) {
   }
 
   return (
-    <div className="relative flex min-h-screen flex-col overflow-x-hidden bg-background text-foreground">
-      {/* Ambient glow */}
+    <div className="relative flex min-h-screen flex-col overflow-x-hidden text-foreground">
+      {/* Global PUBG background — spans header → footer */}
       <div aria-hidden className="pointer-events-none fixed inset-0 -z-10">
-        <div className="absolute -left-32 top-20 h-72 w-72 rounded-full bg-gold/15 blur-[120px]" />
-        <div className="absolute -right-24 top-[40%] h-80 w-80 rounded-full bg-gold/10 blur-[140px]" />
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-[0.28]"
+          style={{ backgroundImage: `url(${pageBgPubg})`, backgroundAttachment: "fixed" }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-background/85 via-background/75 to-background/95" />
+        <div className="absolute -left-32 top-20 h-72 w-72 rounded-full bg-primary/15 blur-[120px]" />
+        <div className="absolute -right-24 top-[40%] h-80 w-80 rounded-full bg-accent/10 blur-[140px]" />
       </div>
 
       <AnnouncementBar />
