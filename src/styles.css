@@ -312,9 +312,8 @@
     inset: 0;
     background: linear-gradient(115deg, transparent 35%, oklch(1 0 0 / 0.55) 50%, transparent 65%);
     transform: translateX(-120%);
-    animation: btn-shine 3.6s ease-in-out infinite;
+    transition: transform 1.2s ease;
     pointer-events: none;
-    will-change: transform;
   }
   &::after {
     content: "";
@@ -335,7 +334,7 @@
       0 14px 36px -8px color-mix(in oklab, var(--gold) 80%, transparent),
       0 0 0 1px var(--gold);
   }
-  &:hover::before { animation-duration: 1.4s; }
+  &:hover::before { transform: translateX(120%); }
   &:active { transform: translateY(0); filter: brightness(0.98); }
 }
 
@@ -361,10 +360,8 @@
     inset: 0;
     background: linear-gradient(115deg, transparent 35%, color-mix(in oklab, var(--gold) 45%, transparent) 50%, transparent 65%);
     transform: translateX(-120%);
-    animation: btn-shine 4.2s ease-in-out infinite;
-    animation-delay: 1.2s;
+    transition: transform 1.4s ease;
     pointer-events: none;
-    will-change: transform;
   }
   &::after {
     content: "";
