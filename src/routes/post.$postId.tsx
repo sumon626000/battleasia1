@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { CommentsThread, LikeBurst } from "@/components/feed/CommentsThread";
 import { PostMediaCarousel, type CarouselMedia } from "@/components/feed/PostMediaCarousel";
+import { RichText } from "@/components/feed/RichText";
 
 export const Route = createFileRoute("/post/$postId")({
   head: () => ({
