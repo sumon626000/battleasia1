@@ -9,6 +9,30 @@ import { Crown, Users, Map, Trophy, Clock, Filter, Sword, ArrowLeft, Gamepad2, L
 import { CoinIcon } from "@/components/site/CoinIcon";
 import { PlayHeroCarousel } from "@/components/dashboard/PlayHeroCarousel";
 
+function useLiveMatchUpdates() {
+  const qc = useQueryClient();
+  useEffect(() => {
+    const ch = supabase
+      .channel("live-matches-games")
+      .on("postgres_changes", { event: "*", schema: "public", table: "matches" }, () => {
+        qc.invalidateQueries({ queryKey: ["matches"] });
+        qc.invalidateQueries({ queryKey: ["match-tab-counts"] });
+        qc.invalidateQueries({ queryKey: ["match-counts"] });
+        qc.invalidateQueries({ queryKey: ["public-matches"] });
+      })
+      .on("postgres_changes", { event: "*", schema: "public", table: "games" }, () => {
+        qc.invalidateQueries({ queryKey: ["play-games"] });
+        qc.invalidateQueries({ queryKey: ["admin-games"] });
+      })
+      .on("postgres_changes", { event: "*", schema: "public", table: "match_participants" }, () => {
+        qc.invalidateQueries({ queryKey: ["match-counts"] });
+        qc.invalidateQueries({ queryKey: ["my-match-ids"] });
+      })
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, [qc]);
+}
+
 export const Route = createFileRoute("/_authenticated/dashboard/matches")({
   validateSearch: (s: Record<string, unknown>) => ({ game: s.game ? Number(s.game) : undefined }),
   head: () => ({ meta: [{ title: "Play — Battle Asia" }] }),
@@ -31,6 +55,7 @@ function MatchesPage() {
   const [type, setType] = useState<TypeFilter>("all");
   const [resultDate, setResultDate] = useState<string>(""); // YYYY-MM-DD
   const balance = Number(profile?.bac_coin_balance ?? 0);
+  useLiveMatchUpdates();
 
   const games = useQuery({
     queryKey: ["play-games"],
@@ -276,14 +301,13 @@ function MatchCard({ m, joined, filled, balance, isPremium }: { m: any; joined: 
     e.preventDefault();
     e.stopPropagation();
     if (!joined) {
-      toast.error("You are not joined to this match");
+      toast.info("Join this match first to reveal Room ID & Password", { description: "Tap the JOIN button below" });
       return;
     }
     if (!m.room_id && !m.room_password) {
       toast.info("Room ID & Password will be shared before match starts");
       return;
     }
-    setShowCreds((v) => !v);
   }
 
   async function copyText(e: React.MouseEvent, text: string, which: "id" | "pw") {
@@ -352,48 +376,58 @@ function MatchCard({ m, joined, filled, balance, isPremium }: { m: any; joined: 
       </div>
       <h3 className="mt-2 truncate font-display text-base font-bold uppercase tracking-wide">{m.match_name}</h3>
 
-      <button
-        type="button"
-        onClick={handleCredsClick}
-        className="mt-1 inline-flex items-center gap-1 font-hud text-[10px] font-bold uppercase tracking-widest text-gold underline-offset-2 hover:underline"
-      >
-        <KeyRound size={11} /> ID & PASSWORD
-      </button>
-
-      {showCreds && joined && (m.room_id || m.room_password) && (
-        <div className="mt-2 space-y-1.5 rounded-sm border border-gold/40 bg-gold/5 p-2">
-          {m.room_id && (
-            <div className="flex items-center justify-between gap-2">
-              <div className="min-w-0">
-                <div className="font-hud text-[9px] uppercase tracking-widest text-foreground/60">Room ID</div>
-                <div className="truncate font-mono text-xs text-gold">{m.room_id}</div>
-              </div>
-              <button
-                type="button"
-                onClick={(e) => copyText(e, String(m.room_id), "id")}
-                className="flex items-center gap-1 rounded-sm border border-gold/60 px-2 py-1 font-hud text-[9px] font-bold uppercase tracking-widest text-gold hover:bg-gold hover:text-background"
-              >
-                {copied === "id" ? <><Check size={10}/> COPIED</> : <><Copy size={10}/> COPY</>}
-              </button>
+      <div className="mt-2 space-y-1.5 rounded-sm border border-gold/40 bg-gold/5 p-2">
+        <div className="flex items-center justify-between gap-2">
+          <div className="min-w-0 flex-1">
+            <div className="font-hud text-[9px] uppercase tracking-widest text-foreground/60">Room ID</div>
+            <div className="truncate font-mono text-xs text-gold">
+              {joined ? (m.room_id || "— TBA —") : "•••••••"}
             </div>
-          )}
-          {m.room_password && (
-            <div className="flex items-center justify-between gap-2">
-              <div className="min-w-0">
-                <div className="font-hud text-[9px] uppercase tracking-widest text-foreground/60">Password</div>
-                <div className="truncate font-mono text-xs text-gold">{m.room_password}</div>
-              </div>
-              <button
-                type="button"
-                onClick={(e) => copyText(e, String(m.room_password), "pw")}
-                className="flex items-center gap-1 rounded-sm border border-gold/60 px-2 py-1 font-hud text-[9px] font-bold uppercase tracking-widest text-gold hover:bg-gold hover:text-background"
-              >
-                {copied === "pw" ? <><Check size={10}/> COPIED</> : <><Copy size={10}/> COPY</>}
-              </button>
-            </div>
+          </div>
+          {joined && m.room_id ? (
+            <button
+              type="button"
+              onClick={(e) => copyText(e, String(m.room_id), "id")}
+              className="flex items-center gap-1 rounded-sm border border-gold/60 px-2 py-1 font-hud text-[9px] font-bold uppercase tracking-widest text-gold hover:bg-gold hover:text-background"
+            >
+              {copied === "id" ? <><Check size={10}/> COPIED</> : <><Copy size={10}/> COPY</>}
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={handleCredsClick}
+              className="flex items-center gap-1 rounded-sm border border-gold/60 px-2 py-1 font-hud text-[9px] font-bold uppercase tracking-widest text-gold/80 hover:bg-gold hover:text-background"
+            >
+              <Lock size={10}/> JOIN
+            </button>
           )}
         </div>
-      )}
+        <div className="flex items-center justify-between gap-2">
+          <div className="min-w-0 flex-1">
+            <div className="font-hud text-[9px] uppercase tracking-widest text-foreground/60">Password</div>
+            <div className="truncate font-mono text-xs text-gold">
+              {joined ? (m.room_password || "— TBA —") : "•••••••"}
+            </div>
+          </div>
+          {joined && m.room_password ? (
+            <button
+              type="button"
+              onClick={(e) => copyText(e, String(m.room_password), "pw")}
+              className="flex items-center gap-1 rounded-sm border border-gold/60 px-2 py-1 font-hud text-[9px] font-bold uppercase tracking-widest text-gold hover:bg-gold hover:text-background"
+            >
+              {copied === "pw" ? <><Check size={10}/> COPIED</> : <><Copy size={10}/> COPY</>}
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={handleCredsClick}
+              className="flex items-center gap-1 rounded-sm border border-gold/60 px-2 py-1 font-hud text-[9px] font-bold uppercase tracking-widest text-gold/80 hover:bg-gold hover:text-background"
+            >
+              <Lock size={10}/> JOIN
+            </button>
+          )}
+        </div>
+      </div>
 
       <div className="mt-2 grid grid-cols-2 gap-1.5 text-[11px]">
         <Meta icon={Map} label={m.map_name ?? "—"} />
