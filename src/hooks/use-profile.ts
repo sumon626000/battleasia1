@@ -18,7 +18,7 @@ export function useProfile(userId: string | undefined) {
     setLoading(true);
     supabase
       .from("profiles")
-      .select("*")
+      .select("id, username, display_name, avatar_url, country, bac_coin_balance, referral_code, referred_by, created_at, updated_at, in_game_username, country_code, mobile_number, pubg_id, game_server, cover_url, is_premium, premium_expires_at, is_active, is_suspended, suspension_reason, language_preference, social_links, bio, active_theme")
       .eq("id", userId)
       .maybeSingle()
       .then(({ data }) => {
