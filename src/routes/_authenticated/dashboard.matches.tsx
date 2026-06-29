@@ -794,11 +794,11 @@ function HubMatchRow({
   const total = m.total_players ?? 0;
   const isFull = total > 0 && filled >= total;
   const fee = Number(m.entry_fee_bac ?? 0);
-  const feePct = Number(m.platform_fee_pct ?? 0);
-  // Real prize pool = total entry income − platform fee. For Free matches, fall back to configured 1st-place prize.
-  const prizePool = m.match_type === "Free"
-    ? Number(m.rank_1_prize_bac ?? 0)
-    : Math.max(0, Math.round(fee * (total || 0) * (1 - feePct / 100)));
+  // Prize pool = sum of all rank prizes configured by admin (rank 1 + 2 + 3).
+  const prizePool =
+    Number(m.rank_1_prize_bac ?? 0) +
+    Number(m.rank_2_prize_bac ?? 0) +
+    Number(m.rank_3_prize_bac ?? 0);
   const when = m.schedule_at ? new Date(m.schedule_at) : null;
   const [countdown, setCountdown] = useState<string>("");
 
