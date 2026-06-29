@@ -909,7 +909,7 @@ function HubMatchRow({
             {isLive ? "LIVE" : "Starts in"}
           </div>
           {!isLive && (
-            <div className="font-mono text-sm font-bold text-foreground">{countdown}</div>
+            <div className={`font-mono text-sm font-bold ${countdown === "STARTING NOW" ? "text-red-400 animate-pulse" : "text-foreground"}`}>{countdown}</div>
           )}
           {joined ? (
             <span className="w-full rounded-md border border-emerald-500/50 bg-emerald-500/10 px-2 py-1.5 text-center font-hud text-[10px] font-bold uppercase tracking-widest text-emerald-400">
