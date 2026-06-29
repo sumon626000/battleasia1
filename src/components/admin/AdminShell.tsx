@@ -207,7 +207,7 @@ export function AdminShell({
   return (
     <div className="min-h-screen bg-background">
       <header className="sticky top-0 z-30 border-b border-gold/30 bg-card/80 backdrop-blur">
-        <div className="mx-auto flex h-14 max-w-[1600px] items-center justify-between px-3 sm:px-4">
+        <div className="flex h-14 w-full items-center justify-between px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-2 min-w-0">
             <button
               type="button"
@@ -251,7 +251,7 @@ export function AdminShell({
       </header>
 
 
-      <div className="mx-auto flex max-w-[1600px]">
+      <div className="flex w-full">
         <aside className="hidden w-64 shrink-0 border-r border-border/70 bg-card/40 lg:block">
           <div className="sticky top-14 max-h-[calc(100vh-3.5rem)] overflow-y-auto">
             <NavBody />
@@ -284,7 +284,7 @@ export function AdminShell({
           </div>
         )}
 
-        <main className="min-w-0 flex-1 p-3 sm:p-4 md:p-6">{children}</main>
+        <main className="min-w-0 flex-1 p-3 sm:p-4 md:p-6 lg:p-8 xl:px-12 2xl:px-16">{children}</main>
       </div>
     </div>
   );
