@@ -139,6 +139,9 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  useEffect(() => {
+    applySavedViewMode();
+  }, []);
   const bareLayout =
     pathname.startsWith("/dashboard") ||
     pathname.startsWith("/admin") ||
@@ -146,6 +149,7 @@ function RootComponent() {
     pathname.startsWith("/email") ||
     pathname.startsWith("/forgot-password") ||
     pathname.startsWith("/reset-password");
+
 
   return (
     <QueryClientProvider client={queryClient}>
