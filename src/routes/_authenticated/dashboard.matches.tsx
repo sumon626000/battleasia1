@@ -55,6 +55,7 @@ function MatchesPage() {
   const [type, setType] = useState<TypeFilter>("all");
   const [resultDate, setResultDate] = useState<string>(""); // YYYY-MM-DD
   const balance = Number(profile?.bac_coin_balance ?? 0);
+  useLiveMatchUpdates();
 
   const games = useQuery({
     queryKey: ["play-games"],
