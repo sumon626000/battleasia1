@@ -127,7 +127,12 @@ function PostView() {
             </span>
           </Link>
           <div className="min-w-0 flex-1">
-            <Link to="/u/$username" params={{ username: handle }} className="block truncate font-hud text-sm font-bold text-foreground hover:text-gold">{handle}</Link>
+            <Link to="/u/$username" params={{ username: handle }} className="block truncate font-hud text-sm font-bold text-foreground hover:text-gold">
+              {handle}
+              {post.author?.in_game_username && (
+                <span className="ml-1.5 font-hud text-[11px] font-semibold text-gold/80">· 🎮 {post.author.in_game_username}</span>
+              )}
+            </Link>
             <div className="font-hud text-[10px] uppercase tracking-wider text-foreground/50">{timeAgo(post.created_at)} ago</div>
           </div>
         </div>
