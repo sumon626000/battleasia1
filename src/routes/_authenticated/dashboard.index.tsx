@@ -274,7 +274,7 @@ function DashboardPage() {
   }, []);
 
   // Next match countdown
-  const nextMatch = upcoming[0] as { id: string; match_name: string; schedule_at: string | null; entry_fee_bac: number | null } | undefined;
+  const nextMatch = upcoming[0] as { id: number | string; match_name: string; schedule_at: string | null; entry_fee_bac: number | null } | undefined;
   const nextDiff = nextMatch?.schedule_at ? new Date(nextMatch.schedule_at).getTime() - now : null;
   const nextSoon = nextDiff !== null && nextDiff > 0 && nextDiff < 3600_000; // within 1hr
   const nextLive = nextDiff !== null && nextDiff <= 0 && nextDiff > -3600_000;
