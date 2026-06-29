@@ -87,7 +87,7 @@ const DICTS: Record<Lang, Dict> = {
     "err.required": "Required", "err.invalid": "Invalid", "err.tryAgain": "Please try again",
     "ok.saved": "Saved", "ok.updated": "Updated", "ok.sent": "Sent",
   },
-  bn: {} as Dict, // removed — Bangla no longer supported
+
 
   hi: {
     "nav.home": "होम", "nav.matches": "मैच", "nav.leaderboard": "लीडरबोर्ड",
