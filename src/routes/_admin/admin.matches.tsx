@@ -76,7 +76,7 @@ const STATUS = ["Upcoming", "Active", "Ongoing", "Complete", "Cancelled"] as con
 const MATCH_TYPE = ["Free", "Paid", "Sponsored"] as const;
 const GAME_MODE = ["Classic", "TDM"] as const;
 const PLAYER_MODE = ["Solo", "Duo", "Squad"] as const;
-const CLASSIC_MAPS = ["Erangel", "Miramar", "Sanhok", "Vikendi", "Livik", "Karakin", "Haven", "Rondo", "Nusa"] as const;
+const CLASSIC_MAPS = ["Erangel", "Miramar", "Vikendi", "Rondo", "Sanhok", "Livik", "Nusa", "Karakin"] as const;
 const TDM_MAPS = ["Warehouse", "Hangar", "Ruins", "Town", "Library", "Arena"] as const;
 const MAP_IMAGES: Record<string, string> = {
   Erangel: "/maps/erangel.jpg",
