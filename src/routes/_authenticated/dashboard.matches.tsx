@@ -940,17 +940,21 @@ function HubMatchRow({
         </div>
       </div>
 
-      {/* Room credentials — visible only after join */}
-      {joined && (m.room_id || m.room_password) && (
-        <div className="mt-2 grid grid-cols-2 gap-2 border-t border-gold/20 pt-2">
-          {m.room_id && (
-            <RoomCredChip label="ROOM ID" value={String(m.room_id)} />
-          )}
-          {m.room_password && (
-            <RoomCredChip label="PASSWORD" value={String(m.room_password)} />
-          )}
-        </div>
-      )}
+      {/* Room credentials — labels always visible; masked until joined */}
+      <div className="mt-2 grid grid-cols-2 gap-2 border-t border-gold/20 pt-2">
+        <RoomCredChip
+          label="ROOM ID"
+          value={joined ? (m.room_id || "— TBA —") : "•••••••"}
+          locked={!joined}
+          onLockedClick={(e) => { e.preventDefault(); e.stopPropagation(); toast.info("Join this match to reveal Room ID"); }}
+        />
+        <RoomCredChip
+          label="PASSWORD"
+          value={joined ? (m.room_password || "— TBA —") : "•••••••"}
+          locked={!joined}
+          onLockedClick={(e) => { e.preventDefault(); e.stopPropagation(); toast.info("Join this match to reveal Password"); }}
+        />
+      </div>
     </Link>
 
   );
