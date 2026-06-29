@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 const DRAFT_KEY = "ba_admin_match_draft_v2";
 const VALID_KILL_TYPES = ["Automatic", "Manual"] as const;
@@ -76,7 +77,7 @@ const STATUS = ["Upcoming", "Active", "Ongoing", "Complete", "Cancelled"] as con
 const MATCH_TYPE = ["Free", "Paid", "Sponsored"] as const;
 const GAME_MODE = ["Classic", "TDM"] as const;
 const PLAYER_MODE = ["Solo", "Duo", "Squad"] as const;
-const CLASSIC_MAPS = ["Erangel", "Miramar", "Sanhok", "Vikendi", "Livik", "Karakin", "Haven", "Rondo", "Nusa"] as const;
+const CLASSIC_MAPS = ["Erangel", "Miramar", "Vikendi", "Rondo", "Sanhok", "Livik", "Nusa", "Karakin"] as const;
 const TDM_MAPS = ["Warehouse", "Hangar", "Ruins", "Town", "Library", "Arena"] as const;
 const MAP_IMAGES: Record<string, string> = {
   Erangel: "/maps/erangel.jpg",
@@ -99,6 +100,40 @@ const MAP_IMAGES: Record<string, string> = {
 
 const REWARD_TYPE = ["KillBased", "RankBased", "Mixed"] as const;
 const KILL_TYPE = ["Automatic", "Manual"] as const;
+
+function PortalMenu({ label, btnCls, open, onToggle, onClose, width, children }: {
+  label: React.ReactNode; btnCls: string; open: boolean; onToggle: () => void; onClose: () => void; width: number; children: React.ReactNode;
+}) {
+  const btnRef = useRef<HTMLButtonElement>(null);
+  const [pos, setPos] = useState<{ top: number; left: number } | null>(null);
+  useLayoutEffect(() => {
+    if (!open || !btnRef.current) return;
+    const r = btnRef.current.getBoundingClientRect();
+    setPos({ top: r.bottom + 6, left: Math.min(r.left, window.innerWidth - width - 8) });
+  }, [open, width]);
+  useEffect(() => {
+    if (!open) return;
+    const f = () => onClose();
+    window.addEventListener("scroll", f, true);
+    window.addEventListener("resize", f);
+    return () => { window.removeEventListener("scroll", f, true); window.removeEventListener("resize", f); };
+  }, [open, onClose]);
+  return (
+    <>
+      <button ref={btnRef} className={btnCls} onClick={onToggle}>{label}</button>
+      {open && pos && typeof document !== "undefined" && createPortal(
+        <>
+          <div className="fixed inset-0 z-[9998]" onClick={onClose} />
+          <div style={{ top: pos.top, left: pos.left, width }}
+            className="fixed z-[9999] max-h-[70vh] overflow-y-auto rounded-md border border-border bg-popover p-2 shadow-xl">
+            {children}
+          </div>
+        </>,
+        document.body,
+      )}
+    </>
+  );
+}
 
 function emptyDraft(): Partial<Match> {
   return {
@@ -303,43 +338,38 @@ function AdminMatchesPage() {
 
       {/* Toolbar */}
       <div className="hud-panel relative flex flex-wrap items-center gap-2 rounded-md border border-border/70 bg-card/40 px-3 py-2">
-        <div className="relative">
-          <button className={tBtn} onClick={() => setOpenMenu(openMenu === "cols" ? null : "cols")}>
-            <Columns3 className="h-3.5 w-3.5" /> Columns
-          </button>
-          {openMenu === "cols" && (
-            <>
-              <div className="fixed inset-0 z-30" onClick={() => setOpenMenu(null)} />
-              <div className="absolute left-0 top-full z-40 mt-1 w-48 rounded-md border border-border bg-popover p-2 shadow-lg">
-                {ALL_M_COLS.map((c) => (
-                  <label key={c.key} className="flex cursor-pointer items-center gap-2 rounded px-2 py-1 text-sm hover:bg-secondary/40">
-                    <input type="checkbox" checked={visibleCols[c.key]} onChange={(e) =>
-                      setVisibleCols((v) => ({ ...v, [c.key]: e.target.checked }))} />
-                    <span>{c.label}</span>
-                  </label>
-                ))}
-              </div>
-            </>
-          )}
-        </div>
-        <div className="relative">
-          <button className={tBtn} onClick={() => setOpenMenu(openMenu === "density" ? null : "density")}>
-            <Rows3 className="h-3.5 w-3.5" /> Density
-          </button>
-          {openMenu === "density" && (
-            <>
-              <div className="fixed inset-0 z-30" onClick={() => setOpenMenu(null)} />
-              <div className="absolute left-0 top-full z-40 mt-1 w-40 rounded-md border border-border bg-popover p-1 shadow-lg">
-                {(["compact", "standard", "comfortable"] as const).map((d) => (
-                  <button key={d} onClick={() => { setDensity(d); setOpenMenu(null); }}
-                    className={`block w-full rounded px-2 py-1 text-left text-sm capitalize hover:bg-secondary/40 ${density === d ? "text-gold" : ""}`}>
-                    {d}
-                  </button>
-                ))}
-              </div>
-            </>
-          )}
-        </div>
+        <PortalMenu
+          label={<><Columns3 className="h-3.5 w-3.5" /> Columns</>}
+          btnCls={tBtn}
+          open={openMenu === "cols"}
+          onToggle={() => setOpenMenu(openMenu === "cols" ? null : "cols")}
+          onClose={() => setOpenMenu(null)}
+          width={200}
+        >
+          {ALL_M_COLS.map((c) => (
+            <label key={c.key} className="flex cursor-pointer items-center gap-2 rounded px-2 py-1 text-sm hover:bg-secondary/40">
+              <input type="checkbox" checked={visibleCols[c.key]} onChange={(e) =>
+                setVisibleCols((v) => ({ ...v, [c.key]: e.target.checked }))} />
+              <span>{c.label}</span>
+            </label>
+          ))}
+        </PortalMenu>
+        <PortalMenu
+          label={<><Rows3 className="h-3.5 w-3.5" /> Density</>}
+          btnCls={tBtn}
+          open={openMenu === "density"}
+          onToggle={() => setOpenMenu(openMenu === "density" ? null : "density")}
+          onClose={() => setOpenMenu(null)}
+          width={160}
+        >
+          {(["compact", "standard", "comfortable"] as const).map((d) => (
+            <button key={d} onClick={() => { setDensity(d); setOpenMenu(null); }}
+              className={`block w-full rounded px-2 py-1 text-left text-sm capitalize hover:bg-secondary/40 ${density === d ? "text-gold" : ""}`}>
+              {d}
+            </button>
+          ))}
+        </PortalMenu>
+
         <button className={tBtn} onClick={exportCSV}>
           <Download className="h-3.5 w-3.5" /> Export
         </button>

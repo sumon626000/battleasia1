@@ -1,4 +1,5 @@
-import { useMemo, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -359,16 +360,42 @@ function ActionModal({
 }
 
 function Popover({ open, onClose, children, align = "left" }: { open: boolean; onClose: () => void; children: React.ReactNode; align?: "left" | "right" }) {
-  if (!open) return null;
+  const ref = useRef<HTMLSpanElement>(null);
+  const [pos, setPos] = useState<{ top: number; left: number; right: number } | null>(null);
+  useLayoutEffect(() => {
+    if (!open || !ref.current) return;
+    const parent = ref.current.parentElement;
+    if (!parent) return;
+    const r = parent.getBoundingClientRect();
+    setPos({ top: r.bottom + 6, left: r.left, right: window.innerWidth - r.right });
+  }, [open]);
+  useEffect(() => {
+    if (!open) return;
+    const onScroll = () => onClose();
+    window.addEventListener("scroll", onScroll, true);
+    window.addEventListener("resize", onScroll);
+    return () => { window.removeEventListener("scroll", onScroll, true); window.removeEventListener("resize", onScroll); };
+  }, [open, onClose]);
+  if (!open) return <span ref={ref} className="hidden" />;
   return (
     <>
-      <div className="fixed inset-0 z-40" onClick={onClose} />
-      <div className={`absolute z-50 mt-2 ${align === "right" ? "right-0" : "left-0"} min-w-[240px] rounded-md border border-border/70 bg-popover p-2 shadow-xl`}>
-        {children}
-      </div>
+      <span ref={ref} className="hidden" />
+      {typeof document !== "undefined" && pos && createPortal(
+        <>
+          <div className="fixed inset-0 z-[9998]" onClick={onClose} />
+          <div
+            style={align === "right" ? { top: pos.top, right: pos.right } : { top: pos.top, left: pos.left }}
+            className="fixed z-[9999] min-w-[240px] max-h-[70vh] overflow-y-auto rounded-md border border-border/70 bg-popover p-2 shadow-xl"
+          >
+            {children}
+          </div>
+        </>,
+        document.body,
+      )}
     </>
   );
 }
+
 
 function AdminUsers() {
   const qc = useQueryClient();
