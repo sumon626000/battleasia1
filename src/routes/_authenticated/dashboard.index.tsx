@@ -404,6 +404,56 @@ function DashboardPage() {
         )}
       </section>
 
+      {/* LIVE ACTIVITY TICKER */}
+      {activity.length > 0 && (
+        <section className="hud-panel relative overflow-hidden">
+          <div className="flex items-stretch">
+            <div className="flex shrink-0 items-center gap-1.5 border-r border-border/40 bg-background/60 px-3 py-2">
+              <span aria-hidden className="relative grid h-1.5 w-1.5 place-items-center">
+                <span className="absolute inset-0 rounded-full bg-emerald-400" />
+                <span className="absolute inset-0 rounded-full bg-emerald-400 animate-ping opacity-75" />
+              </span>
+              <span className="font-hud text-[10px] font-bold uppercase tracking-widest text-emerald-300">Live</span>
+            </div>
+            <div className="group relative flex-1 overflow-hidden">
+              <div className="flex animate-hud-ticker gap-6 whitespace-nowrap py-2 pr-6 [animation-play-state:running] group-hover:[animation-play-state:paused]">
+                {[...activity, ...activity].map((p, i) => {
+                  const m = p.matches as { match_name?: string } | null;
+                  const rank = Number(p.rank_position ?? 0);
+                  const kills = Number(p.kills ?? 0);
+                  const prize = Number(p.prize_bac ?? 0);
+                  const isWin = rank === 1;
+                  return (
+                    <span key={`${p.id ?? i}-${i}`} className="inline-flex items-center gap-1.5 font-mono text-[11px]">
+                      {isWin ? (
+                        <Trophy size={11} className="text-yellow-300" />
+                      ) : rank > 0 && rank <= 10 ? (
+                        <Medal size={11} className="text-emerald-300" />
+                      ) : (
+                        <Zap size={11} className="text-foreground/50" />
+                      )}
+                      <span className="text-foreground/80">{m?.match_name ?? "Match"}</span>
+                      {rank > 0 && <span className="text-foreground/60">· #{rank}</span>}
+                      {kills > 0 && (
+                        <span className="inline-flex items-center gap-0.5 text-foreground/60">
+                          · <Crosshair size={10} /> {kills}
+                        </span>
+                      )}
+                      {prize > 0 && (
+                        <span className="inline-flex items-center gap-0.5 text-gold">
+                          · <CoinIcon size={10} /> {prize}
+                        </span>
+                      )}
+                      <span aria-hidden className="ml-2 text-border/60">|</span>
+                    </span>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* STREAK + ACHIEVEMENTS quick-glance */}
       <section className="hud-panel relative overflow-hidden p-4">
         <div className="flex items-center gap-4">
