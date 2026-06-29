@@ -40,6 +40,8 @@ import { TournamentsShowcase } from "@/components/dashboard/TournamentsShowcase"
 import { QuestProgressMini } from "@/components/dashboard/QuestProgressMini";
 import { SquadActivityCard } from "@/components/dashboard/SquadActivityCard";
 import { PersonalBestsCard } from "@/components/dashboard/PersonalBestsCard";
+import { NotificationsDigest } from "@/components/dashboard/NotificationsDigest";
+import { QuickBalanceCard } from "@/components/dashboard/QuickBalanceCard";
 import squadHero from "@/assets/pubg-squad-action.webp";
 import sniperImg from "@/assets/pubg-sniper-rooftop.webp";
 import airdropImg from "@/assets/pubg-airdrop.webp";
@@ -508,6 +510,12 @@ function DashboardPage() {
 
       {/* FEATURED TOURNAMENTS CAROUSEL */}
       <TournamentsShowcase />
+
+      {/* SMART DIGEST: Notifications + Quick Wallet */}
+      <section className="grid gap-3 lg:grid-cols-2">
+        <NotificationsDigest />
+        <QuickBalanceCard balance={balance} />
+      </section>
 
       {/* DAILY QUEST PROGRESS MINI */}
       <QuestProgressMini />
