@@ -408,20 +408,9 @@ function PostCard({ post, onLike, onDoubleTapLike, onFollow, isSelf }: { post: P
         </Link>
       </div>
 
-      {/* media */}
-      {post.media_url ? (
-        <div className="relative bg-black">
-          {post.media_type === "video" ? (
-            <SignedVideo src={post.media_url} controls className="max-h-[640px] w-full object-contain" />
-          ) : (
-            <SignedImage src={post.media_url} alt="post" className="max-h-[640px] w-full object-contain" loading="lazy" />
-          )}
-          {/* corner HUD bracket */}
-          <span className="pointer-events-none absolute left-2 top-2 h-3 w-3 border-l-2 border-t-2 border-gold/70" />
-          <span className="pointer-events-none absolute right-2 top-2 h-3 w-3 border-r-2 border-t-2 border-gold/70" />
-          <span className="pointer-events-none absolute bottom-2 left-2 h-3 w-3 border-b-2 border-l-2 border-gold/70" />
-          <span className="pointer-events-none absolute bottom-2 right-2 h-3 w-3 border-b-2 border-r-2 border-gold/70" />
-        </div>
+      {/* media — carousel + double-tap to like */}
+      {post.media && post.media.length > 0 ? (
+        <PostMediaCarousel media={post.media} onDoubleTapLike={onDoubleTapLike} liked={post.liked_by_me} />
       ) : null}
 
       {/* action bar — Instagram-style */}
