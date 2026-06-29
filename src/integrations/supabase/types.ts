@@ -1787,6 +1787,27 @@ export type Database = {
           },
         ]
       }
+      social_hashtags: {
+        Row: {
+          created_at: string
+          id: number
+          posts_count: number
+          tag: string
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          posts_count?: number
+          tag: string
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          posts_count?: number
+          tag?: string
+        }
+        Relationships: []
+      }
       social_likes: {
         Row: {
           created_at: string
@@ -1806,6 +1827,39 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "social_likes_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "social_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      social_post_hashtags: {
+        Row: {
+          created_at: string
+          hashtag_id: number
+          post_id: string
+        }
+        Insert: {
+          created_at?: string
+          hashtag_id: number
+          post_id: string
+        }
+        Update: {
+          created_at?: string
+          hashtag_id?: number
+          post_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "social_post_hashtags_hashtag_id_fkey"
+            columns: ["hashtag_id"]
+            isOneToOne: false
+            referencedRelation: "social_hashtags"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "social_post_hashtags_post_id_fkey"
             columns: ["post_id"]
             isOneToOne: false
             referencedRelation: "social_posts"
