@@ -443,13 +443,25 @@ function AdminMatchesPage() {
           </thead>
           <tbody>
             {isLoading && (
-              <tr><td colSpan={7} className="px-3 py-6 text-center font-hud text-xs uppercase tracking-widest text-foreground/50">Loading…</td></tr>
+              <tr><td colSpan={8} className="px-3 py-6 text-center font-hud text-xs uppercase tracking-widest text-foreground/50">Loading…</td></tr>
             )}
             {!isLoading && matches.length === 0 && (
-              <tr><td colSpan={7} className="px-3 py-6 text-center font-hud text-xs uppercase tracking-widest text-foreground/50">No matches</td></tr>
+              <tr><td colSpan={8} className="px-3 py-6 text-center font-hud text-xs uppercase tracking-widest text-foreground/50">No matches</td></tr>
             )}
             {matches.map((m) => (
               <tr key={m.id} className="border-b border-border/40 last:border-0">
+                <td className={`px-3 ${rowPad}`}>
+                  <input
+                    type="checkbox"
+                    checked={selectedIds.has(m.id)}
+                    onChange={(e) => {
+                      const next = new Set(selectedIds);
+                      if (e.target.checked) next.add(m.id);
+                      else next.delete(m.id);
+                      setSelectedIds(next);
+                    }}
+                  />
+                </td>
                 {showCol("match") && (
                 <td className={`px-3 ${rowPad}`}>
                   <div className="font-display text-foreground">{m.match_name}</div>
