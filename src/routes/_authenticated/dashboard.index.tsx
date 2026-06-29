@@ -504,6 +504,12 @@ function DashboardPage() {
         </div>
       </section>
 
+      {/* FEATURED TOURNAMENTS CAROUSEL */}
+      <TournamentsShowcase />
+
+      {/* DAILY QUEST PROGRESS MINI */}
+      <QuestProgressMini />
+
       {/* QUICK ACTIONS */}
       <section>
         <div className="mb-3 flex items-center gap-3">
