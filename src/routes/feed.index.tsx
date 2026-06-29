@@ -332,7 +332,20 @@ function FeedPage() {
             ))}
           </ul>
         )}
+
+        {/* Infinite-scroll sentinel — keyset paginated */}
+        {posts.length > 0 && hasMore && (
+          <div ref={sentinelRef} className="py-8 text-center font-hud text-xs uppercase tracking-widest text-foreground/40">
+            {loadingMore ? "Loading more…" : "Scroll for more"}
+          </div>
+        )}
+        {posts.length > 0 && !hasMore && (
+          <div className="py-8 text-center font-hud text-xs uppercase tracking-widest text-foreground/30">
+            — End of feed —
+          </div>
+        )}
       </div>
+
       <aside className="hidden lg:block">
         <div className="sticky top-20 space-y-4">
           <div className="rounded-xl border border-border/60 bg-card/60 p-4">
