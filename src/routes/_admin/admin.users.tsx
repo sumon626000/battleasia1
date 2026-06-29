@@ -142,15 +142,15 @@ function ActionModal({
     run(async () => {
       const { error } = await supabase.rpc("admin_update_profile", {
         p_user_id: user.id,
-        p_username: form.username || null,
-        p_in_game_username: form.in_game_username || null,
-        p_pubg_id: form.pubg_id || null,
-        p_country_code: form.country_code || null,
-        p_mobile_number: form.mobile_number || null,
-        p_game_server: form.game_server || null,
-        p_referral_code: form.referral_code || null,
+        p_username: form.username || undefined,
+        p_in_game_username: form.in_game_username || undefined,
+        p_pubg_id: form.pubg_id || undefined,
+        p_country_code: form.country_code || undefined,
+        p_mobile_number: form.mobile_number || undefined,
+        p_game_server: form.game_server || undefined,
+        p_referral_code: form.referral_code || undefined,
         p_is_active: form.is_active,
-        p_avatar_url: form.avatar_url || null,
+        p_avatar_url: form.avatar_url || undefined,
       });
       if (error) throw error;
       if (form.email || form.password) {
