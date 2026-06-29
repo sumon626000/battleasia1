@@ -39,7 +39,7 @@ type Post = {
   comments_count: number;
   views_count: number;
   created_at: string;
-  author?: { username: string | null; full_name: string | null; avatar_url: string | null } | null;
+  author?: { username: string | null; full_name: string | null; avatar_url: string | null; in_game_username: string | null } | null;
   liked_by_me?: boolean;
   following_author?: boolean;
   media?: CarouselMedia[];
