@@ -15,9 +15,10 @@ type Match = {
   match_name: string;
   schedule_at: string | null;
   entry_fee_bac: number | null;
-  prize_pool_bac?: number | null;
+  rank_1_prize_bac?: number | null;
   status?: string | null;
-  max_slots?: number | null;
+  total_players?: number | null;
+  banner_image_url?: string | null;
 };
 
 function fmtCountdown(ms: number) {
