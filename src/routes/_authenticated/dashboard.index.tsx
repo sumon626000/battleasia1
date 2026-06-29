@@ -20,6 +20,10 @@ import {
   Calendar,
   Clock,
   Medal,
+  Flame,
+  Award,
+  Star,
+  Lock,
 } from "lucide-react";
 import { CoinIcon } from "@/components/site/CoinIcon";
 import { CountUp } from "@/components/ui/CountUp";
@@ -217,6 +221,48 @@ function DashboardPage() {
   const xpInLevel = totalXp - (level - 1) * 200;
   const xpPct = Math.min(100, Math.max(2, Math.round((xpInLevel / xpForLevel) * 100)));
 
+  // Daily streak — consecutive days with at least one match participation
+  const streak = useMemo(() => {
+    const parts = data?.participants ?? [];
+    if (!parts.length) return 0;
+    const days = new Set(
+      parts
+        .map((p) => (p.created_at ? new Date(p.created_at).toISOString().slice(0, 10) : null))
+        .filter(Boolean) as string[],
+    );
+    let count = 0;
+    const d = new Date();
+    for (let i = 0; i < 60; i++) {
+      const key = d.toISOString().slice(0, 10);
+      if (days.has(key)) {
+        count++;
+        d.setDate(d.getDate() - 1);
+      } else {
+        if (i === 0) {
+          // allow yesterday-start streak
+          d.setDate(d.getDate() - 1);
+          continue;
+        }
+        break;
+      }
+    }
+    return count;
+  }, [data]);
+
+  // Achievements (derived)
+  const achievements = useMemo(
+    () => [
+      { id: "first-win", label: "First Blood", icon: Trophy, unlocked: stats.wins >= 1 },
+      { id: "veteran", label: "Veteran", icon: Swords, unlocked: stats.played >= 10 },
+      { id: "sharpshooter", label: "Sharpshooter", icon: Crosshair, unlocked: stats.totalKills >= 10 },
+      { id: "podium", label: "Podium", icon: Medal, unlocked: stats.top3 >= 1 },
+      { id: "high-roller", label: "High Roller", icon: Star, unlocked: stats.totalPrize >= 1000 },
+      { id: "elite", label: "Elite", icon: Award, unlocked: stats.winRate >= 50 && stats.finished >= 5 },
+    ],
+    [stats],
+  );
+  const unlockedCount = achievements.filter((a) => a.unlocked).length;
+
   const quick = [
     { label: "Join Match", href: "/dashboard/matches", icon: Swords },
     { label: "Get BAC Coin", href: "/dashboard/vault", icon: WalletIcon },
@@ -298,6 +344,53 @@ function DashboardPage() {
         )}
       </section>
 
+      {/* STREAK + ACHIEVEMENTS quick-glance */}
+      <section className="hud-panel relative overflow-hidden p-4">
+        <div className="flex items-center gap-4">
+          {/* Streak */}
+          <div className="flex shrink-0 items-center gap-2.5 border-r border-border/40 pr-4">
+            <div className={`relative grid h-10 w-10 place-items-center rounded-md border ${streak > 0 ? "border-orange-400/60 bg-orange-500/10" : "border-border/40 bg-background/40"}`}>
+              <Flame size={20} className={streak > 0 ? "text-orange-400 drop-shadow-[0_0_6px_rgba(251,146,60,0.7)]" : "text-foreground/40"} />
+              {streak > 0 && (
+                <span aria-hidden className="absolute inset-0 rounded-md ring-1 ring-orange-400/40 animate-pulse" />
+              )}
+            </div>
+            <div className="min-w-0">
+              <div className="font-mono text-[10px] uppercase tracking-widest text-foreground/55">Streak</div>
+              <div className="font-display text-lg font-bold leading-tight tabular-nums">
+                <span className={streak > 0 ? "text-orange-400" : "text-foreground/60"}>{streak}</span>
+                <span className="ml-1 text-[11px] font-normal text-foreground/55">day{streak === 1 ? "" : "s"}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Achievements row */}
+          <div className="min-w-0 flex-1">
+            <div className="mb-1.5 flex items-center justify-between">
+              <div className="font-mono text-[10px] uppercase tracking-widest text-foreground/55">Achievements</div>
+              <div className="font-mono text-[10px] tabular-nums text-gold/80">{unlockedCount}/{achievements.length}</div>
+            </div>
+            <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none">
+              {achievements.map((a) => {
+                const Icon = a.unlocked ? a.icon : Lock;
+                return (
+                  <div
+                    key={a.id}
+                    title={a.label}
+                    className={`group/ach relative grid h-9 w-9 shrink-0 place-items-center rounded-md border transition-all ${
+                      a.unlocked
+                        ? "border-gold/50 bg-gold/10 text-gold hover:scale-110 hover:shadow-[0_0_10px_rgba(212,175,55,0.55)]"
+                        : "border-border/40 bg-background/40 text-foreground/35"
+                    }`}
+                  >
+                    <Icon size={15} />
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* QUICK ACTIONS */}
       <section>
