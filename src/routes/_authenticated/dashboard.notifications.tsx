@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
@@ -12,6 +12,7 @@ export const Route = createFileRoute("/_authenticated/dashboard/notifications")(
 type N = {
   id: number; title: string; message: string; type: string | null;
   read_at: string | null; archived_at: string | null; created_at: string;
+  link?: string | null;
 };
 
 function NotificationsPage() {
@@ -24,7 +25,7 @@ function NotificationsPage() {
     if (!user) return;
     setLoading(true);
     const { data } = await supabase.from("user_notifications")
-      .select("id,title,message,type,read_at,archived_at,created_at")
+      .select("id,title,message,type,read_at,archived_at,created_at,link")
       .eq("user_id", user.id).order("created_at", { ascending: false }).limit(100);
     setItems((data as N[]) ?? []);
     setLoading(false);
@@ -91,6 +92,12 @@ function NotificationsPage() {
                 </div>
                 <h3 className="mt-1 font-display text-base uppercase tracking-wide text-foreground">{n.title}</h3>
                 <p className="mt-1 font-mono text-sm text-foreground/80">{n.message}</p>
+                {n.link && (
+                  <Link to={n.link as any} onClick={() => !n.read_at && markOne(n.id)}
+                    className="mt-1 inline-block font-hud text-[11px] uppercase tracking-wider text-gold hover:underline">
+                    Open →
+                  </Link>
+                )}
               </div>
               <div className="flex shrink-0 flex-col gap-1">
                 {!n.read_at && !n.archived_at && (

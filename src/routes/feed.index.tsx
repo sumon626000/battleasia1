@@ -12,6 +12,7 @@ import { StoriesRail } from "@/components/feed/StoriesRail";
 import { PeopleToFollow } from "@/components/feed/PeopleToFollow";
 import { PostMediaCarousel, type CarouselMedia } from "@/components/feed/PostMediaCarousel";
 import { RichText } from "@/components/feed/RichText";
+import { NotificationBell } from "@/components/feed/NotificationBell";
 
 
 export const Route = createFileRoute("/feed/")({
@@ -242,6 +243,7 @@ function FeedPage() {
             <Link to="/explore" className="rounded border border-border/70 p-2 text-foreground/70 transition hover:border-gold/60 hover:text-gold" aria-label="Explore">
               <Search size={14} />
             </Link>
+            <NotificationBell />
             <button onClick={load} className="rounded border border-border/70 p-2 text-foreground/70 transition hover:border-gold/60 hover:text-gold" aria-label="Refresh">
               <RefreshCw size={14} />
             </button>

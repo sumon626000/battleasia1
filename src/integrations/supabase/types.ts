@@ -1923,6 +1923,64 @@ export type Database = {
         }
         Relationships: []
       }
+      social_story_reactions: {
+        Row: {
+          created_at: string
+          emoji: string
+          id: string
+          story_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          emoji: string
+          id?: string
+          story_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          emoji?: string
+          id?: string
+          story_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "social_story_reactions_story_id_fkey"
+            columns: ["story_id"]
+            isOneToOne: false
+            referencedRelation: "social_stories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      social_story_views: {
+        Row: {
+          created_at: string
+          story_id: string
+          viewer_id: string
+        }
+        Insert: {
+          created_at?: string
+          story_id: string
+          viewer_id: string
+        }
+        Update: {
+          created_at?: string
+          story_id?: string
+          viewer_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "social_story_views_story_id_fkey"
+            columns: ["story_id"]
+            isOneToOne: false
+            referencedRelation: "social_stories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       spin_history: {
         Row: {
           created_at: string
@@ -2235,9 +2293,13 @@ export type Database = {
       }
       user_notifications: {
         Row: {
+          actor_id: string | null
           archived_at: string | null
           created_at: string
+          entity_id: string | null
+          entity_type: string | null
           id: number
+          link: string | null
           message: string
           notification_id: number | null
           read_at: string | null
@@ -2247,9 +2309,13 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          actor_id?: string | null
           archived_at?: string | null
           created_at?: string
+          entity_id?: string | null
+          entity_type?: string | null
           id?: number
+          link?: string | null
           message: string
           notification_id?: number | null
           read_at?: string | null
@@ -2259,9 +2325,13 @@ export type Database = {
           user_id: string
         }
         Update: {
+          actor_id?: string | null
           archived_at?: string | null
           created_at?: string
+          entity_id?: string | null
+          entity_type?: string | null
           id?: number
+          link?: string | null
           message?: string
           notification_id?: number | null
           read_at?: string | null

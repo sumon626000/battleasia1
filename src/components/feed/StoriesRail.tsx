@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Plus, X, ChevronLeft, ChevronRight } from "lucide-react";
+import { Plus, X, ChevronLeft, ChevronRight, Eye } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { SignedImage, SignedVideo } from "@/components/feed/SignedMedia";
+
+const STORY_REACTIONS = ["🔥", "❤️", "😂", "😮", "👏", "💀"];
 
 type Story = {
   id: string;
@@ -17,9 +19,14 @@ type Author = { username: string | null; full_name?: string | null; avatar_url: 
 type Group = { user_id: string; author: Author | null; stories: Story[] };
 
 export function StoriesRail() {
-  const { isAuthenticated } = useAuth();
+  const { user, isAuthenticated } = useAuth();
   const [groups, setGroups] = useState<Group[]>([]);
   const [viewer, setViewer] = useState<{ gi: number; si: number } | null>(null);
+  const [viewCounts, setViewCounts] = useState<Record<string, number>>({});
+  const [reactionFlash, setReactionFlash] = useState<string | null>(null);
+
+  const currentStory = viewer ? groups[viewer.gi]?.stories[viewer.si] : null;
+  const isOwnStory = !!(currentStory && user && currentStory.user_id === user.id);
 
   async function load() {
     const { data: rows } = await supabase
@@ -73,6 +80,36 @@ export function StoriesRail() {
     }, 5000);
     return () => clearTimeout(t);
   }, [viewer, groups]);
+
+  // Record view + load view count when current story changes
+  useEffect(() => {
+    if (!currentStory || !user) return;
+    const sid = currentStory.id;
+    const isOwn = currentStory.user_id === user.id;
+    (async () => {
+      if (!isOwn) {
+        await supabase.from("social_story_views").insert({ story_id: sid, viewer_id: user.id }).select();
+      }
+      if (isOwn) {
+        const { count } = await supabase
+          .from("social_story_views")
+          .select("viewer_id", { count: "exact", head: true })
+          .eq("story_id", sid);
+        setViewCounts((p) => ({ ...p, [sid]: count ?? 0 }));
+      }
+    })();
+  }, [currentStory?.id, user?.id]);
+
+  async function sendReaction(emoji: string) {
+    if (!user || !currentStory) return;
+    setReactionFlash(emoji);
+    window.setTimeout(() => setReactionFlash(null), 900);
+    await supabase.from("social_story_reactions").insert({
+      story_id: currentStory.id,
+      user_id: user.id,
+      emoji,
+    });
+  }
 
   return (
     <>
@@ -148,8 +185,40 @@ export function StoriesRail() {
             })()}
 
             {groups[viewer.gi].stories[viewer.si].caption && (
-              <div className="absolute bottom-6 left-4 right-4 z-10 rounded-lg bg-black/60 p-2.5 text-center font-hud text-sm text-white">
+              <div className="absolute bottom-20 left-4 right-4 z-10 rounded-lg bg-black/60 p-2.5 text-center font-hud text-sm text-white">
                 {groups[viewer.gi].stories[viewer.si].caption}
+              </div>
+            )}
+
+            {/* Reactions bar (others) or seen-by (own) */}
+            {currentStory && (
+              isOwnStory ? (
+                <div className="absolute bottom-3 left-3 right-3 z-20 flex items-center justify-center gap-2 rounded-full bg-black/60 px-3 py-2 font-hud text-xs text-white">
+                  <Eye size={14} className="text-gold" />
+                  <span>{viewCounts[currentStory.id] ?? 0} viewer{(viewCounts[currentStory.id] ?? 0) === 1 ? "" : "s"}</span>
+                </div>
+              ) : user ? (
+                <div className="absolute bottom-3 left-3 right-3 z-20 flex items-center justify-around gap-1 rounded-full bg-black/55 px-2 py-1.5 backdrop-blur">
+                  {STORY_REACTIONS.map((e) => (
+                    <button
+                      key={e}
+                      onClick={(ev) => { ev.stopPropagation(); sendReaction(e); }}
+                      className="rounded-full p-1.5 text-2xl leading-none transition active:scale-125 hover:bg-white/10"
+                      aria-label={`React ${e}`}
+                    >
+                      {e}
+                    </button>
+                  ))}
+                </div>
+              ) : null
+            )}
+
+            {/* Reaction flash burst */}
+            {reactionFlash && (
+              <div className="pointer-events-none absolute inset-0 z-30 grid place-items-center">
+                <span className="animate-[reactionPop_900ms_ease-out] text-7xl drop-shadow-[0_4px_24px_rgba(0,0,0,0.6)]">
+                  {reactionFlash}
+                </span>
               </div>
             )}
 
@@ -183,7 +252,7 @@ export function StoriesRail() {
         </div>
       )}
 
-      <style>{`@keyframes story { from { width: 0% } to { width: 100% } }`}</style>
+      <style>{`@keyframes story { from { width: 0% } to { width: 100% } } @keyframes reactionPop { 0%{transform:scale(.4) translateY(20px);opacity:0} 30%{transform:scale(1.4) translateY(-10px);opacity:1} 100%{transform:scale(1) translateY(-80px);opacity:0} }`}</style>
     </>
   );
 }
