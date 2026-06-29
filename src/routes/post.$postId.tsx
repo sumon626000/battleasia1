@@ -63,7 +63,7 @@ function PostView() {
       .maybeSingle();
     if (!row) { setPost(null); setLoading(false); return; }
     const [{ data: prof }, likeRes, mediaRes] = await Promise.all([
-      supabase.from("profiles").select("username,full_name,avatar_url").eq("id", row.user_id).maybeSingle(),
+      supabase.from("profiles").select("username,full_name,avatar_url,in_game_username").eq("id", row.user_id).maybeSingle(),
       user
         ? supabase.from("social_likes").select("post_id").eq("post_id", row.id).eq("user_id", user.id).maybeSingle()
         : Promise.resolve({ data: null }),
