@@ -185,8 +185,40 @@ export function StoriesRail() {
             })()}
 
             {groups[viewer.gi].stories[viewer.si].caption && (
-              <div className="absolute bottom-6 left-4 right-4 z-10 rounded-lg bg-black/60 p-2.5 text-center font-hud text-sm text-white">
+              <div className="absolute bottom-20 left-4 right-4 z-10 rounded-lg bg-black/60 p-2.5 text-center font-hud text-sm text-white">
                 {groups[viewer.gi].stories[viewer.si].caption}
+              </div>
+            )}
+
+            {/* Reactions bar (others) or seen-by (own) */}
+            {currentStory && (
+              isOwnStory ? (
+                <div className="absolute bottom-3 left-3 right-3 z-20 flex items-center justify-center gap-2 rounded-full bg-black/60 px-3 py-2 font-hud text-xs text-white">
+                  <Eye size={14} className="text-gold" />
+                  <span>{viewCounts[currentStory.id] ?? 0} viewer{(viewCounts[currentStory.id] ?? 0) === 1 ? "" : "s"}</span>
+                </div>
+              ) : user ? (
+                <div className="absolute bottom-3 left-3 right-3 z-20 flex items-center justify-around gap-1 rounded-full bg-black/55 px-2 py-1.5 backdrop-blur">
+                  {STORY_REACTIONS.map((e) => (
+                    <button
+                      key={e}
+                      onClick={(ev) => { ev.stopPropagation(); sendReaction(e); }}
+                      className="rounded-full p-1.5 text-2xl leading-none transition active:scale-125 hover:bg-white/10"
+                      aria-label={`React ${e}`}
+                    >
+                      {e}
+                    </button>
+                  ))}
+                </div>
+              ) : null
+            )}
+
+            {/* Reaction flash burst */}
+            {reactionFlash && (
+              <div className="pointer-events-none absolute inset-0 z-30 grid place-items-center">
+                <span className="animate-[reactionPop_900ms_ease-out] text-7xl drop-shadow-[0_4px_24px_rgba(0,0,0,0.6)]">
+                  {reactionFlash}
+                </span>
               </div>
             )}
 
