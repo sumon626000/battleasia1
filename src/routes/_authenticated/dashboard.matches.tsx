@@ -794,11 +794,10 @@ function HubMatchRow({
   const total = m.total_players ?? 0;
   const isFull = total > 0 && filled >= total;
   const fee = Number(m.entry_fee_bac ?? 0);
-  // Prize pool = sum of all rank prizes configured by admin (rank 1 + 2 + 3).
-  const prizePool =
-    Number(m.rank_1_prize_bac ?? 0) +
-    Number(m.rank_2_prize_bac ?? 0) +
-    Number(m.rank_3_prize_bac ?? 0);
+  // Kill-based prize pool = per-kill × total kills (loserCount).
+  const winnerTeam = m.player_mode === "Solo" ? 1 : m.player_mode === "Duo" ? 2 : 4;
+  const loserCount = Math.max(0, total - winnerTeam);
+  const prizePool = Number(m.per_kill_amount_bac ?? 0) * loserCount;
   const when = m.schedule_at ? new Date(m.schedule_at) : null;
   const [countdown, setCountdown] = useState<string>("");
 
