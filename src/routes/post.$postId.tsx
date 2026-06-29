@@ -81,16 +81,13 @@ function PostView() {
 
   useEffect(() => {
     load();
-    const ch = supabase
-      .channel(`post-${postId}`)
-      .on("postgres_changes", { event: "UPDATE", schema: "public", table: "social_posts", filter: `id=eq.${postId}` }, (payload) => {
-        const n = payload.new as any;
-        setPost((p) => (p ? { ...p, likes_count: n.likes_count, comments_count: n.comments_count } : p));
-      })
-      .subscribe();
-    return () => { supabase.removeChannel(ch); };
+    // Phase B: skip realtime on social_posts; refresh on tab focus.
+    const onVis = () => { if (document.visibilityState === "visible") load(); };
+    document.addEventListener("visibilitychange", onVis);
+    return () => { document.removeEventListener("visibilitychange", onVis); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [postId, user?.id]);
+
 
   async function toggleLike() {
     if (!user || !post) return;
