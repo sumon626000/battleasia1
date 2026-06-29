@@ -17,7 +17,7 @@ import { ApkIcon } from "@/components/site/ApkIcon";
 import { useT } from "@/lib/i18n";
 import heroSoldier from "@/assets/hero-soldier.webp";
 import phoneApp from "@/assets/phone-app.webp";
-import bacCoin from "@/assets/battleasia-coin.png";
+import bacCoin from "@/assets/battleasia-coin.webp";
 import modeSoloBg from "@/assets/mode-solo.webp";
 import modeDuoBg from "@/assets/mode-duo.webp";
 import modeSquadBg from "@/assets/mode-squad.webp";
