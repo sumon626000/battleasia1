@@ -328,36 +328,6 @@ function DashboardPage() {
             <p className="mt-1 font-mono text-[11px] text-foreground/60">
               PUBG ID: {profile?.pubg_id ?? "—"} · Server: {profile?.game_server ?? "—"}
             </p>
-            {/* Level / XP bar */}
-            <div className="mt-3 max-w-sm">
-              <div className="flex items-center justify-between font-mono text-[10px] uppercase tracking-widest text-foreground/60">
-                <span className="text-gold">Lv {level}</span>
-                <span className="tabular-nums">{xpInLevel} / {xpForLevel} XP</span>
-              </div>
-              <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full border border-gold/30 bg-background/60">
-                <div
-                  className="h-full bg-gradient-to-r from-gold/70 via-gold to-amber-300 shadow-[0_0_8px_rgba(212,175,55,0.6)] transition-all duration-700"
-                  style={{ width: `${xpPct}%` }}
-                />
-              </div>
-            </div>
-          </div>
-          <div className="flex items-center gap-3 rounded-lg border border-gold/40 bg-background/60 px-4 py-3 backdrop-blur">
-            <CoinIcon size={22} />
-            <div className="min-w-0">
-              <div className="font-hud text-[10px] uppercase tracking-widest text-foreground/55">
-                BAC Balance
-              </div>
-              <div className="font-mono text-2xl font-bold tabular-nums text-gold leading-tight">
-                <CountUp value={balance} />
-              </div>
-            </div>
-            <Link
-              to="/dashboard/vault"
-              className="ml-1 shrink-0 rounded border border-gold/60 bg-gold/10 px-3 py-1.5 font-hud text-[10px] font-bold uppercase tracking-widest text-gold transition hover:bg-gold hover:text-background"
-            >
-              + Add
-            </Link>
             {/* Next match countdown pill */}
             {nextMatch && (nextSoon || nextLive) && (
               <Link
@@ -377,12 +347,25 @@ function DashboardPage() {
                 ) : (
                   <>
                     <Timer size={12} />
-                    <span>{nextMatch.match_name}</span>
+                    <span className="truncate max-w-[140px]">{nextMatch.match_name}</span>
                     <span className="tabular-nums text-gold/90">· {fmtCountdown(nextDiff!)}</span>
                   </>
                 )}
               </Link>
             )}
+            {/* Level / XP bar */}
+            <div className="mt-3 max-w-sm">
+              <div className="flex items-center justify-between font-mono text-[10px] uppercase tracking-widest text-foreground/60">
+                <span className="text-gold">Lv {level}</span>
+                <span className="tabular-nums">{xpInLevel} / {xpForLevel} XP</span>
+              </div>
+              <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full border border-gold/30 bg-background/60">
+                <div
+                  className="h-full bg-gradient-to-r from-gold/70 via-gold to-amber-300 shadow-[0_0_8px_rgba(212,175,55,0.6)] transition-all duration-700"
+                  style={{ width: `${xpPct}%` }}
+                />
+              </div>
+            </div>
           </div>
           <div className="flex items-center gap-3 rounded-lg border border-gold/40 bg-background/60 px-4 py-3 backdrop-blur">
             <CoinIcon size={22} />
