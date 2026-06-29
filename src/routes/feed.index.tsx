@@ -435,6 +435,11 @@ function PostCard({ post, onLike, onDoubleTapLike, onFollow, isSelf }: { post: P
             className="block truncate font-hud text-sm font-bold text-foreground hover:text-gold"
           >
             {handle}
+            {post.author?.in_game_username && (
+              <span className="ml-1.5 font-hud text-[11px] font-semibold text-gold/80">
+                · 🎮 {post.author.in_game_username}
+              </span>
+            )}
           </Link>
           <Link
             to="/post/$postId"
