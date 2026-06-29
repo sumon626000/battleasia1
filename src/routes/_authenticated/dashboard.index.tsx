@@ -18,6 +18,8 @@ import {
   Crosshair,
   Activity,
   Calendar,
+  Clock,
+  Medal,
 } from "lucide-react";
 import { CoinIcon } from "@/components/site/CoinIcon";
 import { CountUp } from "@/components/ui/CountUp";
