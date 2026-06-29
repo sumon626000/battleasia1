@@ -960,11 +960,12 @@ function HubMatchRow({
   );
 }
 
-function RoomCredChip({ label, value }: { label: string; value: string }) {
+function RoomCredChip({ label, value, locked, onLockedClick }: { label: string; value: string; locked?: boolean; onLockedClick?: (e: React.MouseEvent) => void }) {
   const [copied, setCopied] = useState(false);
   async function copy(e: React.MouseEvent) {
     e.preventDefault();
     e.stopPropagation();
+    if (locked) { onLockedClick?.(e); return; }
     try {
       await navigator.clipboard.writeText(value);
       setCopied(true);
@@ -982,9 +983,9 @@ function RoomCredChip({ label, value }: { label: string; value: string }) {
     >
       <div className="min-w-0 flex-1">
         <div className="font-hud text-[8px] uppercase tracking-widest text-foreground/50">{label}</div>
-        <div className="truncate font-mono text-xs font-bold text-gold">{value}</div>
+        <div className={`truncate font-mono text-xs font-bold ${locked ? "text-foreground/40" : "text-gold"}`}>{value}</div>
       </div>
-      {copied ? <Check size={12} className="text-emerald-400" /> : <Copy size={12} className="text-foreground/60 group-hover:text-gold" />}
+      {locked ? <Lock size={12} className="text-foreground/50" /> : copied ? <Check size={12} className="text-emerald-400" /> : <Copy size={12} className="text-foreground/60 group-hover:text-gold" />}
     </button>
   );
 }
