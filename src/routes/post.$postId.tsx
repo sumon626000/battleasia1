@@ -61,13 +61,20 @@ function PostView() {
       .eq("id", postId)
       .maybeSingle();
     if (!row) { setPost(null); setLoading(false); return; }
-    const [{ data: prof }, likeRes] = await Promise.all([
+    const [{ data: prof }, likeRes, mediaRes] = await Promise.all([
       supabase.from("profiles").select("username,full_name,avatar_url").eq("id", row.user_id).maybeSingle(),
       user
         ? supabase.from("social_likes").select("post_id").eq("post_id", row.id).eq("user_id", user.id).maybeSingle()
         : Promise.resolve({ data: null }),
+      supabase.from("social_post_media").select("url,media_type,position").eq("post_id", row.id).order("position", { ascending: true }),
     ]);
-    setPost({ ...(row as Post), author: prof as any, liked_by_me: !!likeRes.data });
+    const extra = (mediaRes.data ?? []) as { url: string; media_type: string }[];
+    const media: CarouselMedia[] = extra.length
+      ? extra.map((m) => ({ url: m.url, media_type: m.media_type }))
+      : row.media_url
+        ? [{ url: row.media_url, media_type: row.media_type ?? "image" }]
+        : [];
+    setPost({ ...(row as Post), author: prof as any, liked_by_me: !!likeRes.data, media });
     setLoading(false);
   }
 
