@@ -252,7 +252,7 @@ export function StoriesRail() {
         </div>
       )}
 
-      <style>{`@keyframes story { from { width: 0% } to { width: 100% } }`}</style>
+      <style>{`@keyframes story { from { width: 0% } to { width: 100% } } @keyframes reactionPop { 0%{transform:scale(.4) translateY(20px);opacity:0} 30%{transform:scale(1.4) translateY(-10px);opacity:1} 100%{transform:scale(1) translateY(-80px);opacity:0} }`}</style>
     </>
   );
 }
