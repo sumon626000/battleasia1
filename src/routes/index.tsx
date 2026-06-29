@@ -538,7 +538,7 @@ function BattleAsiaLanding() {
       </section>
 
       {/* ============ HOW TO PLAY ============ */}
-      <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6">
+      <section id="how-to-play" className="mx-auto max-w-7xl px-4 py-14 sm:px-6 scroll-mt-24">
         <div className="text-center">
           <div className="chip-tag mx-auto mb-3 inline-flex"><Swords size={12} /> GUIDE</div>
           <h2 className="font-display text-3xl font-bold sm:text-4xl">
