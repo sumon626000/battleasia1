@@ -474,13 +474,27 @@ function DashboardPage() {
             <ul className="space-y-2">
               {recent.slice(0, 3).map((p) => {
                 const m = p.matches as { id?: number; match_name?: string } | null;
+                const rank = Number(p.rank_position ?? 0);
+                const prize = Number(p.prize_bac ?? 0);
+                const isWin = rank === 1;
+                const tintBorder = isWin
+                  ? "border-l-2 border-l-yellow-400/70"
+                  : rank > 0 && rank <= 10
+                    ? "border-l-2 border-l-emerald-400/60"
+                    : prize > 0
+                      ? "border-l-2 border-l-gold/50"
+                      : "";
                 const inner = (
-                  <div className="flex items-center justify-between gap-2 rounded border border-border/40 bg-background/40 px-3 py-2 text-xs hover:border-gold/60 hover:text-gold">
-                    <span className="truncate">{m?.match_name ?? "Match"}</span>
-                    <span className="flex shrink-0 items-center gap-3 font-mono">
-                      <span className="text-foreground/60">{p.rank_position ? `#${p.rank_position}` : "—"}</span>
-                      <span className="text-foreground/60">{p.kills ?? 0}K</span>
-                      <span className="text-gold">{Number(p.prize_bac ?? 0).toLocaleString()}</span>
+                  <div className={`group flex items-center justify-between gap-2 rounded border border-border/40 bg-background/40 px-3 py-2 text-xs transition hover:border-gold/60 hover:bg-gold/5 ${tintBorder}`}>
+                    <span className="truncate font-semibold group-hover:text-gold">{m?.match_name ?? "Match"}</span>
+                    <span className="flex shrink-0 items-center gap-2 font-mono">
+                      <RankBadge rank={p.rank_position} />
+                      <span className="inline-flex items-center gap-0.5 text-foreground/70">
+                        <Crosshair size={10} className="text-foreground/45" />{p.kills ?? 0}
+                      </span>
+                      <span className={`inline-flex items-center gap-0.5 ${prize > 0 ? "text-gold" : "text-foreground/40"}`}>
+                        <CoinIcon size={10} />{prize.toLocaleString()}
+                      </span>
                     </span>
                   </div>
                 );
