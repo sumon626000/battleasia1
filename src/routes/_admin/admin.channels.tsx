@@ -130,7 +130,7 @@ function AdminChannelsPage() {
 
       {editing && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
-          <div className="w-full max-w-lg space-y-4 rounded border border-gold/40 bg-card p-6">
+          <div className="w-full max-w-lg max-h-[90vh] overflow-y-auto space-y-4 rounded border border-gold/40 bg-card p-6">
             <h2 className="font-display text-lg uppercase tracking-widest text-gold">
               {editing.id ? "Edit Channel" : "New Channel"}
             </h2>

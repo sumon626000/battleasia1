@@ -478,7 +478,7 @@ function CategoryFormModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-md rounded border border-gold/40 bg-card p-6 shadow-2xl"
+        className="w-full max-w-md max-h-[90vh] overflow-y-auto rounded border border-gold/40 bg-card p-6 shadow-2xl"
       >
         <h3 className="mb-4 font-display text-lg uppercase tracking-[0.2em] text-gold">
           {category ? "Edit Category" : "New Category"}

@@ -101,7 +101,7 @@ function AdminPagesPage() {
 
       {editing && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
-          <div className="w-full max-w-2xl space-y-3 rounded border border-gold/40 bg-card p-6">
+          <div className="w-full max-w-2xl max-h-[90vh] overflow-y-auto space-y-3 rounded border border-gold/40 bg-card p-6">
             <h2 className="font-display text-lg uppercase tracking-widest text-gold">{editing.id ? "Edit Page" : "New Page"}</h2>
             <div className="grid grid-cols-2 gap-3">
               <Field label="Slug"><input className="hud-input" value={editing.slug ?? ""} onChange={(e) => setEditing({ ...editing, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "-") })} /></Field>
