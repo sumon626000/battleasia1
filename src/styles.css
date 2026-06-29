@@ -610,3 +610,11 @@
 }
 .hud-btn-danger:hover { background: hsl(0 75% 55% / 0.22); border-color: hsl(0 75% 55% / 0.7); }
 
+/* Mobile perf: backdrop-filter is very expensive on phones.
+   Disable blur under 768px — keeps the translucent background, drops the GPU cost. */
+@media (max-width: 767px) {
+  [class*="backdrop-blur"] {
+    backdrop-filter: none !important;
+  }
+}
+
