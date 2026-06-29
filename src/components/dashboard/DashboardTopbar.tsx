@@ -70,6 +70,8 @@ export function DashboardTopbar({ profile, onOpenMobileNav }: Props) {
         </div>
 
         <div className="flex items-center gap-2">
+          <ViewModeToggle compact />
+
           
           <Link
             to="/dashboard/notifications"
