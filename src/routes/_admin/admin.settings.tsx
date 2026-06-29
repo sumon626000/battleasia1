@@ -78,7 +78,7 @@ function AdminSettingsPage() {
             Global key/value configuration
           </p>
         </div>
-        <button onClick={addNew} className="flex items-center gap-2 rounded border border-gold/50 bg-gold/10 px-3 py-2 font-hud text-xs uppercase tracking-widest text-gold">
+        <button onClick={addNew} className="hud-btn hud-btn-primary">
           <Plus size={14} /> Add Setting
         </button>
       </div>
