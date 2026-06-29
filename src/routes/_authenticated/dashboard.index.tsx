@@ -42,6 +42,7 @@ import { SquadActivityCard } from "@/components/dashboard/SquadActivityCard";
 import { PersonalBestsCard } from "@/components/dashboard/PersonalBestsCard";
 import { NotificationsDigest } from "@/components/dashboard/NotificationsDigest";
 import { QuickBalanceCard } from "@/components/dashboard/QuickBalanceCard";
+import { TipAndCheckInCard } from "@/components/dashboard/TipAndCheckInCard";
 import squadHero from "@/assets/pubg-squad-action.webp";
 import sniperImg from "@/assets/pubg-sniper-rooftop.webp";
 import airdropImg from "@/assets/pubg-airdrop.webp";
