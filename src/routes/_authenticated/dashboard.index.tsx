@@ -587,6 +587,12 @@ function DashboardPage() {
         totalPrize={stats.totalPrize}
       />
 
+      {/* PERSONAL BESTS */}
+      <PersonalBestsCard participants={data?.participants ?? []} />
+
+      {/* SQUAD ACTIVITY */}
+      <SquadActivityCard />
+
       {/* COMBAT STATISTICS — unified inline panel */}
       <section className="hud-panel overflow-hidden">
         <div className="flex items-center justify-between gap-3 border-b border-border/40 px-4 py-3">
