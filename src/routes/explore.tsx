@@ -27,7 +27,7 @@ type GridPost = {
   created_at: string;
 };
 
-type UserHit = { id: string; username: string | null; full_name: string | null; avatar_url: string | null };
+type UserHit = { id: string; username: string | null; display_name: string | null; avatar_url: string | null };
 type TagHit = { tag: string; count: number };
 
 function extractTags(caption: string | null): string[] {
@@ -87,8 +87,8 @@ function ExplorePage() {
       const [u, p] = await Promise.all([
         supabase
           .from("profiles")
-          .select("id,username,full_name,avatar_url")
-          .or(`username.ilike.${pattern},full_name.ilike.${pattern}`)
+          .select("id,username,display_name,avatar_url")
+          .or(`username.ilike.${pattern},display_name.ilike.${pattern}`)
           .limit(8),
         supabase
           .from("social_posts")
@@ -96,7 +96,7 @@ function ExplorePage() {
           .ilike("caption", `%#${term}%`)
           .limit(80),
       ]);
-      setUsers(((u.data ?? []) as UserHit[]).filter((x) => x.username || x.full_name));
+      setUsers(((u.data ?? []) as UserHit[]).filter((x) => x.username || x.display_name));
       const counts = new Map<string, number>();
       for (const r of (p.data ?? []) as { caption: string | null }[]) {
         for (const t of extractTags(r.caption)) {
@@ -193,7 +193,7 @@ function ExplorePage() {
               <div>
                 <div className="px-3 py-1.5 font-hud text-[10px] uppercase tracking-widest text-foreground/40">Players</div>
                 {users.map((u) => {
-                  const handle = u.username || u.full_name || "player";
+                  const handle = u.username || u.display_name || "player";
                   return (
                     <Link
                       key={u.id}
@@ -214,8 +214,8 @@ function ExplorePage() {
                           <AtSign size={12} className="-mt-0.5 mr-0.5 inline text-foreground/40" />
                           {handle}
                         </div>
-                        {u.full_name && u.username && (
-                          <div className="truncate font-hud text-[10px] text-foreground/50">{u.full_name}</div>
+                        {u.display_name && u.username && (
+                          <div className="truncate font-hud text-[10px] text-foreground/50">{u.display_name}</div>
                         )}
                       </div>
                     </Link>
