@@ -301,14 +301,13 @@ function MatchCard({ m, joined, filled, balance, isPremium }: { m: any; joined: 
     e.preventDefault();
     e.stopPropagation();
     if (!joined) {
-      toast.error("You are not joined to this match");
+      toast.info("Join this match first to reveal Room ID & Password", { description: "Tap the JOIN button below" });
       return;
     }
     if (!m.room_id && !m.room_password) {
       toast.info("Room ID & Password will be shared before match starts");
       return;
     }
-    setShowCreds((v) => !v);
   }
 
   async function copyText(e: React.MouseEvent, text: string, which: "id" | "pw") {
