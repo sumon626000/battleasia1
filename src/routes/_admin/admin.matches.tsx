@@ -143,14 +143,14 @@ function emptyDraft(): Partial<Match> {
     match_type: "Free",
     game_mode: "Classic",
     player_mode: "Squad",
-    reward_type: "RankBased",
+    reward_type: "KillBased",
     kill_rate_type: "Automatic",
     total_players: 100,
     entry_fee_bac: 0,
     per_kill_amount_bac: 0,
-    rank_1_prize_bac: 500,
-    rank_2_prize_bac: 250,
-    rank_3_prize_bac: 100,
+    rank_1_prize_bac: 0,
+    rank_2_prize_bac: 0,
+    rank_3_prize_bac: 0,
     platform_fee_pct: 5,
     schedule_at: new Date(Date.now() + 24 * 3600 * 1000).toISOString().slice(0, 16),
     premium_only: false,
@@ -560,12 +560,11 @@ function EditorModal({
   const loserCount = Math.max(0, totalPlayers - winnerTeamSize);
   const autoTotalKills = loserCount;
 
-  // Auto Per Kill uses GREATEST(entry pool after fee, sum of rank prizes) so free matches still pay
+  // Kill-based only — prize pool = entry × players × (1 − fee%), split equally per kill
   const entryFee = Number(draft.entry_fee_bac ?? 0);
   const feePct = Number(draft.platform_fee_pct ?? 0);
   const totalIncome = entryFee * totalPlayers;
-  const rankSum = Number(draft.rank_1_prize_bac ?? 0) + Number(draft.rank_2_prize_bac ?? 0) + Number(draft.rank_3_prize_bac ?? 0);
-  const prizePool = Math.max(totalIncome * (1 - feePct / 100), rankSum);
+  const prizePool = totalIncome * (1 - feePct / 100);
   const autoPerKill = loserCount > 0 ? Math.round((prizePool / loserCount) * 100) / 100 : 0;
   const isAutoKill = draft.kill_rate_type === "Automatic";
 
@@ -704,7 +703,7 @@ function EditorModal({
               />
               <span className="mt-1 block font-hud text-[10px] tracking-wider text-foreground/55">
                 {isAutoKill
-                  ? `Auto: max(entry × players × (1 − fee%), rank1+2+3) ÷ loserCount = max(${totalIncome}, ${rankSum}) ÷ ${loserCount} = ${autoPerKill}`
+                  ? `Auto: entry × players × (1 − fee%) ÷ loserCount = ${totalIncome} ÷ ${loserCount} = ${autoPerKill}`
                   : "Manual — enter custom per-kill BAC reward"}
               </span>
             </Field>
@@ -726,18 +725,7 @@ function EditorModal({
           </div>
         </div>
 
-        {/* Rank prizes — drive Auto Per Kill for Free / low-entry matches */}
-        <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-3">
-          <Field label="Rank 1 Prize (BAC)">
-            <input type="number" min={0} className={inp} value={draft.rank_1_prize_bac ?? ""} onChange={(e) => upd({ rank_1_prize_bac: e.target.value === "" ? undefined : Number(e.target.value) })} />
-          </Field>
-          <Field label="Rank 2 Prize (BAC)">
-            <input type="number" min={0} className={inp} value={draft.rank_2_prize_bac ?? ""} onChange={(e) => upd({ rank_2_prize_bac: e.target.value === "" ? undefined : Number(e.target.value) })} />
-          </Field>
-          <Field label="Rank 3 Prize (BAC)">
-            <input type="number" min={0} className={inp} value={draft.rank_3_prize_bac ?? ""} onChange={(e) => upd({ rank_3_prize_bac: e.target.value === "" ? undefined : Number(e.target.value) })} />
-          </Field>
-        </div>
+        {/* Rank prizes removed — kill-based rewards only */}
 
         {/* Banner + Prize Description side by side */}
         <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2">
@@ -793,7 +781,7 @@ function EditorModal({
             <input className={inp} placeholder="https://youtube.com/watch?v=…" value={draft.live_stream_url ?? ""} onChange={(e) => upd({ live_stream_url: e.target.value })} />
           </Field>
           <Select label="Match Status" required value={draft.status} options={STATUS} onChange={(v) => upd({ status: v })} />
-          <Select label="Reward Type" value={draft.reward_type} options={REWARD_TYPE} onChange={(v) => upd({ reward_type: v })} />
+          
         </div>
 
         <div className="mt-6 flex justify-end gap-2">

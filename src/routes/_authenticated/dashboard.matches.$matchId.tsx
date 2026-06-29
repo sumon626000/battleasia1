@@ -137,15 +137,7 @@ function MatchDetailPage() {
           <div className="hud-panel p-4">
             <h2 className="font-hud text-sm font-bold uppercase tracking-widest text-gold">Prize Pool</h2>
             <div className="mt-3 grid gap-2">
-              {m.reward_type === "RankBased" ? (
-                <>
-                  <PrizeRow rank="#1" amount={Number(m.rank_1_prize_bac)} />
-                  {Number(m.rank_2_prize_bac) > 0 && <PrizeRow rank="#2" amount={Number(m.rank_2_prize_bac)} />}
-                  {Number(m.rank_3_prize_bac) > 0 && <PrizeRow rank="#3" amount={Number(m.rank_3_prize_bac)} />}
-                </>
-              ) : (
-                <PrizeRow rank="Per Kill" amount={Number(m.per_kill_amount_bac)} />
-              )}
+              <PrizeRow rank="Per Kill" amount={Number(m.per_kill_amount_bac)} />
               {m.prize_description && <p className="text-xs text-foreground/60">{m.prize_description}</p>}
             </div>
           </div>

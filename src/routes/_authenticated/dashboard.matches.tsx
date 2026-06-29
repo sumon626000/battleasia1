@@ -433,7 +433,7 @@ function MatchCard({ m, joined, filled, balance, isPremium }: { m: any; joined: 
         <Meta icon={Map} label={m.map_name ?? "—"} />
         <Meta icon={Users} label={`${m.player_mode} · ${m.game_mode}`} />
         {when && <Meta icon={Clock} label={when.toLocaleString([], { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })} />}
-        <Meta icon={Trophy} label={m.reward_type === "KillBased" ? `${m.per_kill_amount_bac}/kill` : `1st: ${m.rank_1_prize_bac}`} />
+        <Meta icon={Trophy} label={`${m.per_kill_amount_bac}/kill`} />
       </div>
 
       <div className="mt-3 flex items-center justify-between border-t border-border/40 pt-2">
@@ -794,11 +794,10 @@ function HubMatchRow({
   const total = m.total_players ?? 0;
   const isFull = total > 0 && filled >= total;
   const fee = Number(m.entry_fee_bac ?? 0);
-  // Prize pool = sum of all rank prizes configured by admin (rank 1 + 2 + 3).
-  const prizePool =
-    Number(m.rank_1_prize_bac ?? 0) +
-    Number(m.rank_2_prize_bac ?? 0) +
-    Number(m.rank_3_prize_bac ?? 0);
+  // Kill-based prize pool = per-kill × total kills (loserCount).
+  const winnerTeam = m.player_mode === "Solo" ? 1 : m.player_mode === "Duo" ? 2 : 4;
+  const loserCount = Math.max(0, total - winnerTeam);
+  const prizePool = Number(m.per_kill_amount_bac ?? 0) * loserCount;
   const when = m.schedule_at ? new Date(m.schedule_at) : null;
   const [countdown, setCountdown] = useState<string>("");
 

@@ -120,17 +120,17 @@ const DEMO_PLAYERS: Array<{ name: string; avatar: null; profit: number; kills: n
 ];
 
 const DEMO_HIGH_PRIZE = [
-  { id: -101, match_name: "ERANGEL CHAMPIONSHIP",  player_mode: "SQUAD", map_name: "Erangel",  rank_1_prize_bac: 50000 },
-  { id: -102, match_name: "MIRAMAR SHOWDOWN",      player_mode: "DUO",   map_name: "Miramar",  rank_1_prize_bac: 32000 },
-  { id: -103, match_name: "SANHOK SOLO KING",      player_mode: "SOLO",  map_name: "Sanhok",   rank_1_prize_bac: 18000 },
-  { id: -104, match_name: "VIKENDI SNOW CLASH",    player_mode: "SQUAD", map_name: "Vikendi",  rank_1_prize_bac: 12000 },
-  { id: -105, match_name: "LIVIK BLITZ CUP",       player_mode: "DUO",   map_name: "Livik",    rank_1_prize_bac:  8000 },
+  { id: -101, match_name: "ERANGEL CHAMPIONSHIP",  player_mode: "SQUAD", map_name: "Erangel",  per_kill_amount_bac: 500 },
+  { id: -102, match_name: "MIRAMAR SHOWDOWN",      player_mode: "DUO",   map_name: "Miramar",  per_kill_amount_bac: 320 },
+  { id: -103, match_name: "SANHOK SOLO KING",      player_mode: "SOLO",  map_name: "Sanhok",   per_kill_amount_bac: 180 },
+  { id: -104, match_name: "VIKENDI SNOW CLASH",    player_mode: "SQUAD", map_name: "Vikendi",  per_kill_amount_bac: 120 },
+  { id: -105, match_name: "LIVIK BLITZ CUP",       player_mode: "DUO",   map_name: "Livik",    per_kill_amount_bac:  80 },
 ];
 const DEMO_ONGOING = [
-  { id: -201, match_name: "NIGHT OPS · SQUAD",     player_mode: "SQUAD", map_name: "Erangel",  rank_1_prize_bac: 22000 },
-  { id: -202, match_name: "TDM RAPID FIRE",        player_mode: "TDM",   map_name: "Warehouse",rank_1_prize_bac: 15000 },
-  { id: -203, match_name: "DUO DOMINATION",        player_mode: "DUO",   map_name: "Miramar",  rank_1_prize_bac: 10000 },
-  { id: -204, match_name: "SOLO HUNTER ARENA",     player_mode: "SOLO",  map_name: "Sanhok",   rank_1_prize_bac:  6500 },
+  { id: -201, match_name: "NIGHT OPS · SQUAD",     player_mode: "SQUAD", map_name: "Erangel",  per_kill_amount_bac: 220 },
+  { id: -202, match_name: "TDM RAPID FIRE",        player_mode: "TDM",   map_name: "Warehouse",per_kill_amount_bac: 150 },
+  { id: -203, match_name: "DUO DOMINATION",        player_mode: "DUO",   map_name: "Miramar",  per_kill_amount_bac: 100 },
+  { id: -204, match_name: "SOLO HUNTER ARENA",     player_mode: "SOLO",  map_name: "Sanhok",   per_kill_amount_bac:  65 },
 ];
 
 function mergeMatches(live: any[], demo: any[], limit = 5) {
@@ -243,9 +243,9 @@ function BattleAsiaLanding() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("matches")
-        .select("id, match_name, map_name, player_mode, schedule_at, rank_1_prize_bac, total_players, banner_image_url")
+        .select("id, match_name, map_name, player_mode, schedule_at, per_kill_amount_bac, total_players, banner_image_url")
         .in("status", ["Upcoming", "Active"])
-        .order("rank_1_prize_bac", { ascending: false })
+        .order("per_kill_amount_bac", { ascending: false })
         .limit(6);
       if (error) throw error;
       return data ?? [];
@@ -257,7 +257,7 @@ function BattleAsiaLanding() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("matches")
-        .select("id, match_name, map_name, player_mode, rank_1_prize_bac")
+        .select("id, match_name, map_name, player_mode, per_kill_amount_bac")
         .in("status", ["Active", "Ongoing"])
         .order("schedule_at", { ascending: true })
         .limit(6);
@@ -484,8 +484,8 @@ function BattleAsiaLanding() {
           empty="No high-prize battles right now."
           items={(highPrize.data ?? []).map((m: any) => ({
             id: m.id, name: m.match_name, mode: m.player_mode, map: m.map_name,
-            value: formatBAC(Number(m.rank_1_prize_bac)),
-            valueLabel: "RANK 1 PRIZE",
+            value: formatBAC(Number(m.per_kill_amount_bac)),
+            valueLabel: "PER KILL",
           }))}
         />
         <MatchStrip title="ONGOING" highlight="MATCHES" tag="LIVE" icon={Radio}
@@ -493,8 +493,8 @@ function BattleAsiaLanding() {
           empty="No ongoing matches right now. Check back soon."
           items={(ongoingMatches.data ?? []).map((m: any) => ({
             id: m.id, name: m.match_name, mode: m.player_mode, map: m.map_name,
-            value: formatBAC(Number(m.rank_1_prize_bac)),
-            valueLabel: "TOP PRIZE",
+            value: formatBAC(Number(m.per_kill_amount_bac)),
+            valueLabel: "PER KILL",
           }))}
         />
       </section>

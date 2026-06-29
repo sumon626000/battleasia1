@@ -23,7 +23,6 @@ type Match = {
   player_mode: string;
   schedule_at: string;
   entry_fee_bac: number;
-  rank_1_prize_bac: number;
   per_kill_amount_bac: number;
   total_players: number;
   premium_only: boolean;
@@ -97,7 +96,7 @@ function PublicMatchesPage() {
                 </div>
                 <div className="flex items-center justify-between text-xs">
                   <span className="flex items-center gap-1 text-gold"><CoinIcon className="h-3 w-3" /> Entry: {m.entry_fee_bac}</span>
-                  <span className="flex items-center gap-1 text-emerald-400"><Coins size={12} /> #1: {m.rank_1_prize_bac}</span>
+                  <span className="flex items-center gap-1 text-emerald-400"><Coins size={12} /> {m.per_kill_amount_bac}/kill</span>
                   <span className="flex items-center gap-1 text-foreground/60"><Users size={12} /> {m.total_players}</span>
                 </div>
               </div>
