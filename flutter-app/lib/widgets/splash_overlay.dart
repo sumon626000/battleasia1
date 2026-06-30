@@ -46,28 +46,42 @@ class _SplashOverlayState extends State<SplashOverlay>
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                const Text(
+                  'WELCOME TO',
+                  style: TextStyle(
+                    color: Colors.white70,
+                    fontSize: 13,
+                    letterSpacing: 6,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(height: 14),
                 Container(
-                  padding: const EdgeInsets.all(24),
+                  padding: const EdgeInsets.all(18),
                   decoration: BoxDecoration(
-                    border: Border.all(color: const Color(0xFF7CD44A), width: 2),
                     boxShadow: [
                       BoxShadow(
-                        color: const Color(0xFF7CD44A).withOpacity(0.6),
-                        blurRadius: 40,
-                        spreadRadius: 4,
+                        color: const Color(0xFF7CD44A).withOpacity(0.55),
+                        blurRadius: 50,
+                        spreadRadius: 6,
                       ),
                     ],
                   ),
-                  child: const Text(
-                    'BATTLE\nASIA',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 36,
-                      fontWeight: FontWeight.w900,
-                      letterSpacing: 6,
-                      height: 1.0,
-                    ),
+                  child: Image.asset(
+                    'assets/splash_logo.png',
+                    width: 180,
+                    height: 180,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+                const SizedBox(height: 18),
+                const Text(
+                  'BATTLE ASIA',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 26,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 5,
                   ),
                 ),
                 const SizedBox(height: 20),
