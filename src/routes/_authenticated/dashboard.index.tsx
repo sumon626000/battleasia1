@@ -609,14 +609,10 @@ function DashboardPage() {
       {/* WEEKLY PERFORMANCE + GOAL RING */}
       <WeeklyPerformanceCard participants={data?.participants ?? []} />
 
-      {/* TOP OPERATORS — weekly leaderboard */}
-      <WeeklyLeaderboardMini currentUserId={uid} />
-
       {/* PERSONAL BESTS */}
       <PersonalBestsCard participants={data?.participants ?? []} />
 
-      {/* SQUAD ACTIVITY */}
-      <SquadActivityCard />
+
 
 
       {/* COMBAT STATISTICS — unified inline panel */}
