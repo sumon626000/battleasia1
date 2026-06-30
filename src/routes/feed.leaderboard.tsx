@@ -58,14 +58,15 @@ function tierFor(score: number) {
 
 function FeedLeaderboardPage() {
   const { user } = useAuth() as any;
-  const tf: TF = "all";
-  const tab: GameTab = "OVERALL";
-  const country = "ALL";
-  const mode: ModeFilter = "ALL";
+  const tf = "all" as TF;
+  const tab = "OVERALL" as GameTab;
+  const country = "ALL" as string;
+  const mode = "ALL" as ModeFilter;
 
   const q = useQuery({
     queryKey: ["feed-leaderboard", tf, tab, country, mode],
     queryFn: async () => {
+
 
       let since: string | null = null;
       if (tf === "week") since = new Date(Date.now() - 7 * 86400000).toISOString();
