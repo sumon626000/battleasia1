@@ -660,7 +660,9 @@ function DashboardPage() {
             })}
           </dl>
         )}
+      </section>
     </div>
+
   );
 }
 
