@@ -673,6 +673,39 @@ function EditorModal({
               upd({ game_mode: v, map_name: nextMap, map_image_url: MAP_IMAGES[nextMap as string] ?? null, banner_image_url: MAP_IMAGES[nextMap as string] ?? null });
             }} />
 
+            {isTDM && (
+              <>
+                <Field label="TDM Format" required>
+                  <select
+                    className={inp}
+                    value={tdmFormat}
+                    onChange={(e) => setTdmFormat(e.target.value as TdmFmt)}
+                  >
+                    {TDM_FORMATS.map((f) => (
+                      <option key={f} value={f}>{f === "Custom" ? "Custom (manual total players)" : f}</option>
+                    ))}
+                  </select>
+                  <span className="mt-1 block font-hud text-[10px] tracking-wider text-foreground/55">
+                    Auto-fills Total Players (e.g. 2v4 → 6 players)
+                  </span>
+                </Field>
+
+                <Field label="Max Kills Cap (TDM)">
+                  <input
+                    type="number"
+                    min={1}
+                    className={inp}
+                    value={tdmMaxKills}
+                    onChange={(e) => setTdmMaxKills(Math.max(1, Number(e.target.value) || 0))}
+                  />
+                  <span className="mt-1 block font-hud text-[10px] tracking-wider text-foreground/55">
+                    Per-Kill payout = Prize Pool ÷ Max Kills
+                  </span>
+                </Field>
+              </>
+            )}
+
+
 
             <Field label={`Total Kills (${draft.game_mode ?? "Classic"})`}>
               <input
