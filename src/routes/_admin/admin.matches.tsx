@@ -745,8 +745,13 @@ function EditorModal({
 
             <Select label="Set Kill Rate" required error={errors.kill_rate_type} value={draft.kill_rate_type} options={KILL_TYPE} onChange={(v) => upd({ kill_rate_type: v })} />
 
-            <Field label="Entry Fee" required error={errors.entry_fee_bac}>
+            <Field label={isTDM ? "Deposit / Entry per Player" : "Entry Fee"} required error={errors.entry_fee_bac}>
               <input type="number" min={0} className={inp} value={draft.entry_fee_bac ?? ""} onChange={(e) => upd({ entry_fee_bac: e.target.value === "" ? undefined : Number(e.target.value) })} />
+              {isTDM && (
+                <span className="mt-1 block font-hud text-[10px] tracking-wider text-foreground/55">
+                  Pool = {entryFee} × {totalPlayers} = {totalIncome} BAC · Fee ({feePct}%) = {Math.round(platformFee * 100) / 100} · Kill Pool = {Math.round(prizePool * 100) / 100}
+                </span>
+              )}
             </Field>
 
             <Field label={isAutoKill ? "Per Kill (Auto)" : "Per Kill"}>
@@ -760,10 +765,13 @@ function EditorModal({
               />
               <span className="mt-1 block font-hud text-[10px] tracking-wider text-foreground/55">
                 {isAutoKill
-                  ? `Auto: entry × players × (1 − fee%) ÷ loserCount = ${totalIncome} ÷ ${loserCount} = ${autoPerKill}`
+                  ? isTDM
+                    ? `Auto (TDM): Kill Pool ÷ Max Kills = ${Math.round(prizePool * 100) / 100} ÷ ${tdmMaxKills} = ${autoPerKill}`
+                    : `Auto: entry × players × (1 − fee%) ÷ loserCount = ${totalIncome} ÷ ${loserCount} = ${autoPerKill}`
                   : "Manual — enter custom per-kill BAC reward"}
               </span>
             </Field>
+
 
 
 
