@@ -259,50 +259,7 @@ function FeedLeaderboardPage() {
 
 /* ---------- pieces ---------- */
 
-function FilterChip({
-  label, active, onClick, color, icon,
-}: { label: string; active?: boolean; onClick?: () => void; color?: "red"; icon?: React.ReactNode }) {
-  const red = color === "red";
-  return (
-    <button
-      onClick={onClick}
-      className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[12px] font-medium transition ${
-        active && red
-          ? "border-red-500/70 text-red-500 bg-red-500/5"
-          : "border-border/60 text-foreground/80 hover:border-foreground/40"
-      }`}
-    >
-      {icon}
-      <span>{label}</span>
-      <ChevronDown size={13} className="opacity-70" />
-    </button>
-  );
-}
 
-function SelectChip({
-  value, onChange, options,
-}: { value: string; onChange: (v: string) => void; options: { value: string; label: string }[] }) {
-  const current = options.find((o) => o.value === value) ?? options[0];
-  return (
-    <div className="relative inline-flex items-center">
-      <span className="pointer-events-none inline-flex items-center gap-1.5 rounded-full border border-border/60 px-3 py-1.5 text-[12px] font-medium text-foreground/80">
-        {current.label}
-        <ChevronDown size={13} className="opacity-70" />
-      </span>
-      <select
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="absolute inset-0 cursor-pointer opacity-0"
-      >
-        {options.map((o) => (
-          <option key={o.value} value={o.value} className="bg-background text-foreground">
-            {o.label}
-          </option>
-        ))}
-      </select>
-    </div>
-  );
-}
 
 function Avatar({ row, size = 40, ring = "ring-border/60" }: { row: Row; size?: number; ring?: string }) {
   return (
