@@ -145,12 +145,8 @@ function FeedLeaderboardPage() {
     return idx < 0 ? null : { rank: idx + 1, row: rows[idx] };
   }, [rows, user?.id]);
 
-  const tabs: { key: GameTab; label: string }[] = [
-    { key: "OVERALL", label: "OVERALL" },
-    { key: "BGMI", label: "BATTLEGROUNDS MOBILE INDIA" },
-    { key: "FFMAX", label: "FREE FIRE MAX" },
-    { key: "CODM", label: "CALL OF DUTY MOBILE" },
-  ];
+
+
 
   return (
     <div className="min-h-screen bg-background pb-32 text-foreground">
