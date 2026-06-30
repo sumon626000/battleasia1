@@ -38,15 +38,13 @@ import {
 import { RewardsHub } from "@/components/dashboard/RewardsHub";
 import { TournamentsShowcase } from "@/components/dashboard/TournamentsShowcase";
 import { WeeklyPerformanceCard } from "@/components/dashboard/WeeklyPerformanceCard";
-import { WeeklyLeaderboardMini as _WLM } from "@/components/dashboard/WeeklyLeaderboardMini";
 import { QuestProgressMini } from "@/components/dashboard/QuestProgressMini";
-import { SquadActivityCard as _SAC } from "@/components/dashboard/SquadActivityCard";
 import { PersonalBestsCard } from "@/components/dashboard/PersonalBestsCard";
 import { TipAndCheckInCard } from "@/components/dashboard/TipAndCheckInCard";
 import { TransactionsTimeline } from "@/components/dashboard/TransactionsTimeline";
 import { ProfileQuickEditDrawer } from "@/components/dashboard/ProfileQuickEditDrawer";
 import squadHero from "@/assets/pubg-squad-action.webp";
-void _WLM; void _SAC;
+
 
 
 export const Route = createFileRoute("/_authenticated/dashboard/")({
