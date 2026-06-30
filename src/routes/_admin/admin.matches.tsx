@@ -555,18 +555,42 @@ function EditorModal({
     },
   });
 
+  const isTDM = draft.game_mode === "TDM";
+
+  const TDM_FORMATS = [
+    "1v1", "2v2", "3v3", "4v4", "5v5", "6v6",
+    "2v4", "3v6", "4v6", "Custom",
+  ] as const;
+  type TdmFmt = typeof TDM_FORMATS[number];
+  const [tdmFormat, setTdmFormat] = useState<TdmFmt>("4v4");
+  const [tdmMaxKills, setTdmMaxKills] = useState<number>(40);
+
   const winnerTeamSize = draft.player_mode === "Solo" ? 1 : draft.player_mode === "Duo" ? 2 : 4;
   const totalPlayers = Number(draft.total_players ?? 0);
   const loserCount = Math.max(0, totalPlayers - winnerTeamSize);
   const autoTotalKills = loserCount;
 
-  // Kill-based only — prize pool = entry × players × (1 − fee%), split equally per kill
   const entryFee = Number(draft.entry_fee_bac ?? 0);
   const feePct = Number(draft.platform_fee_pct ?? 0);
   const totalIncome = entryFee * totalPlayers;
-  const prizePool = totalIncome * (1 - feePct / 100);
-  const autoPerKill = loserCount > 0 ? Math.round((prizePool / loserCount) * 100) / 100 : 0;
+  const platformFee = totalIncome * (feePct / 100);
+  const prizePool = totalIncome - platformFee;
+
+  const autoPerKill = isTDM
+    ? (tdmMaxKills > 0 ? Math.round((prizePool / tdmMaxKills) * 100) / 100 : 0)
+    : (loserCount > 0 ? Math.round((prizePool / loserCount) * 100) / 100 : 0);
   const isAutoKill = draft.kill_rate_type === "Automatic";
+
+  // Auto-fill total_players from TDM format
+  useEffect(() => {
+    if (!isTDM || tdmFormat === "Custom") return;
+    const [a, b] = tdmFormat.split("v").map((n) => Number(n));
+    const sum = (a || 0) + (b || 0);
+    if (sum > 0 && sum !== draft.total_players) {
+      setDraft({ ...draft, total_players: sum });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tdmFormat, isTDM]);
 
   useEffect(() => {
     if (isAutoKill && draft.per_kill_amount_bac !== autoPerKill) {
