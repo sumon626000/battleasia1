@@ -42,8 +42,6 @@ import { WeeklyLeaderboardMini } from "@/components/dashboard/WeeklyLeaderboardM
 import { QuestProgressMini } from "@/components/dashboard/QuestProgressMini";
 import { SquadActivityCard } from "@/components/dashboard/SquadActivityCard";
 import { PersonalBestsCard } from "@/components/dashboard/PersonalBestsCard";
-import { NotificationsDigest } from "@/components/dashboard/NotificationsDigest";
-import { QuickBalanceCard } from "@/components/dashboard/QuickBalanceCard";
 import { TipAndCheckInCard } from "@/components/dashboard/TipAndCheckInCard";
 import { TransactionsTimeline } from "@/components/dashboard/TransactionsTimeline";
 import { ProfileQuickEditDrawer } from "@/components/dashboard/ProfileQuickEditDrawer";
