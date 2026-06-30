@@ -155,66 +155,44 @@ function FeedLeaderboardPage() {
   return (
     <div className="min-h-screen bg-background pb-32 text-foreground">
       {/* Top bar */}
-      <header className="sticky top-0 z-30 flex items-center justify-between border-b border-border/40 bg-background/95 px-4 py-3 backdrop-blur">
-        <Link to="/feed" className="font-display text-2xl tracking-tight">
-          <span className="text-foreground">BATTLE</span><span className="text-red-500">ASIA</span>
-        </Link>
-        <div className="flex items-center gap-2">
-          <button className="rounded-full p-2 text-foreground/80 hover:text-gold">
-            <Bell size={20} />
-          </button>
-          <Link to="/dashboard/messages" className="rounded-full p-2 text-foreground/80 hover:text-gold">
-            <MessageSquare size={20} />
+      <header className="sticky top-0 z-30 border-b border-border/40 bg-background/95 px-4 py-3 backdrop-blur">
+        <div className="mx-auto flex max-w-5xl items-center justify-between">
+          <Link to="/feed" className="font-display text-2xl tracking-tight">
+            <span className="text-foreground">BATTLE</span><span className="text-red-500">ASIA</span>
           </Link>
+          <div className="flex items-center gap-2">
+            <button className="rounded-full p-2 text-foreground/80 hover:text-gold">
+              <Bell size={20} />
+            </button>
+            <Link to="/dashboard/messages" className="rounded-full p-2 text-foreground/80 hover:text-gold">
+              <MessageSquare size={20} />
+            </Link>
+          </div>
         </div>
       </header>
 
-      {/* Game tabs */}
-      <nav className="border-b border-border/40 overflow-x-auto no-scrollbar">
-        <div className="mx-auto flex max-w-5xl items-center gap-6 px-4">
-          {tabs.map((t) => {
-            const active = tab === t.key;
-            return (
-              <button
-                key={t.key}
-                onClick={() => setTab(t.key)}
-                className={`relative shrink-0 py-3 font-display text-[12px] tracking-[0.18em] transition ${
-                  active ? "text-red-500" : "text-foreground/60 hover:text-foreground"
-                }`}
-              >
-                {t.label}
-                {active && <span className="absolute inset-x-1 -bottom-px h-[2px] rounded bg-red-500" />}
-              </button>
-            );
-          })}
+      {/* Hero banner */}
+      <section className="relative overflow-hidden border-b border-border/40">
+        <div className="absolute inset-0 bg-gradient-to-br from-red-500/20 via-purple-500/10 to-transparent" />
+        <div className="absolute -top-20 -right-20 h-64 w-64 rounded-full bg-amber-400/20 blur-3xl" />
+        <div className="absolute -bottom-20 -left-20 h-64 w-64 rounded-full bg-red-500/20 blur-3xl" />
+        <div className="relative mx-auto max-w-5xl px-4 py-8 text-center">
+          <div className="inline-flex items-center gap-2 rounded-full border border-amber-400/40 bg-amber-400/10 px-3 py-1 text-[10px] font-hud uppercase tracking-[0.25em] text-amber-300">
+            <span className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse" />
+            Hall of Champions
+          </div>
+          <h1 className="mt-3 font-display text-3xl sm:text-4xl uppercase tracking-wider">
+            <span className="text-foreground">Global </span>
+            <span className="bg-gradient-to-r from-amber-300 via-amber-400 to-red-500 bg-clip-text text-transparent">Leaderboard</span>
+          </h1>
+          <p className="mt-2 text-xs sm:text-sm text-foreground/60">
+            Top operatives ranked by total combat score
+          </p>
         </div>
-      </nav>
+      </section>
 
-      <div className="mx-auto max-w-5xl px-4 pt-4 space-y-5">
-        {/* Filter chips */}
-        <div className="flex flex-wrap items-center gap-2.5">
-          <FilterChip
-            active
-            label={tf === "all" ? "Total Ranking" : tf === "week" ? "Weekly" : "Monthly"}
-            onClick={() => setTf(tf === "all" ? "week" : tf === "week" ? "month" : "all")}
-            color="red"
-          />
-          <SelectChip
-            value={country}
-            onChange={setCountry}
-            options={COUNTRY_OPTIONS.map((c) => ({ value: c.code, label: `${c.flag} ${c.name}` }))}
-          />
-          <SelectChip
-            value={mode}
-            onChange={(v) => setMode(v as ModeFilter)}
-            options={[
-              { value: "ALL", label: "👥 All Modes" },
-              { value: "Solo", label: "👤 Solo" },
-              { value: "Duo", label: "👬 Duo" },
-              { value: "Squad", label: "👥 Squad" },
-            ]}
-          />
-        </div>
+      <div className="mx-auto max-w-5xl px-4 pt-6 space-y-5">
+
 
         {/* Podium */}
         {q.isLoading ? (
